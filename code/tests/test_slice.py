@@ -58,6 +58,20 @@ class SliceTest(unittest.TestCase):
         kinds = {e.kind for i in result.items for e in i.target.edges}
         self.assertNotIn("job_burst", kinds)
 
+    def test_job_burst_with_one_candidate_still_links(self):
+        # case_01: the worker burst touches one account only, and gold has it.
+        result = self._run(self.requests["case_01"])
+        edges = {(i.target.resource_id, e.kind) for i in result.items for e in i.target.edges}
+        self.assertIn(("account_001", "job_burst"), edges)
+
+    def test_job_burst_with_two_candidates_in_one_system_gives_no_edge(self):
+        # case_62 (evaluation set): the burst touches account_034 and account_483; neither is linked.
+        req = {r.case_id: r for r in load_requests(DATASET_DIR / "deletion_requests.csv")}["case_62"]
+        result = self._run(req)
+        self.assertIn("job_burst_ambiguous:account_service", result.flags)
+        kinds = {(i.target.system_id, e.kind) for i in result.items for e in i.target.edges}
+        self.assertNotIn(("account_service", "job_burst"), kinds)
+
     def test_no_foreign_record_is_acted_on(self):
         # Every remediated resource must carry a link to the case subject.
         for req in self.requests.values():

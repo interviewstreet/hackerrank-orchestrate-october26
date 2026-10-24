@@ -10,7 +10,9 @@ Edges (only those with time <= audit_at count):
 * medium ``job_burst``   - the deletion worker touched the resource within ``JOB_WINDOW`` of this
   case's ``reported_at``, no other known request reported inside that window, and the subject
   has no strong target in that system yet (a fallback for systems where no file names the
-  subject). Measured on the samples before use (config ``JOB_LINK_ENABLED``).
+  subject). Measured on the samples before use (config ``JOB_LINK_ENABLED``). Uniqueness guard:
+  when the burst touches more than one resource in a system, that system gets no edge
+  (flag ``job_burst_ambiguous:<system>``).
 
 A target whose every edge predates ``requested_at`` is ``stale``: the link describes the
 subject's data before the request, so the record is not a target of this request. The
@@ -161,10 +163,17 @@ class LinkIndex:
 
         if JOB_LINK_ENABLED and req.reported_at is not None:
             strong_systems = {t.system_id for t in found.values() if t.tier == STRONG}
+            burst: dict[str, list[Observation]] = {}
             for obs in self._job_burst(req, run_requests):
-                if obs.system_id in strong_systems:
+                if obs.system_id not in strong_systems:
+                    burst.setdefault(obs.system_id, []).append(obs)
+            for system_id, claims in sorted(burst.items()):
+                if len({o.resource_id for o in claims}) > 1:
+                    # Several resources in one system: the burst cannot say which one is the subject's.
+                    flags.append(f"job_burst_ambiguous:{system_id}")
                     continue
-                edge(obs.system_id, obs.resource_id, "job_burst", MEDIUM, obs.obs_id, obs.state_observed_at)
+                for obs in claims:
+                    edge(obs.system_id, obs.resource_id, "job_burst", MEDIUM, obs.obs_id, obs.state_observed_at)
 
         self._check_ownership(found, subject, cutoff, flags)
         _flag_links(found, req, flags)
