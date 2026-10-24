@@ -82,7 +82,7 @@ SYSTEM_CATEGORY = {
 }
 # Category from the words that describe a record (D10), for records that state none: catalog
 # link text such as "Attachment catalog confirmed ...". Ids, file names and emails are removed
-# first, so only descriptive words count. First match wins; the order puts specific phrases first.
+# first, so only descriptive words count. Two different categories give none (UNPROVEN).
 CONTENT_CATEGORY: tuple[tuple[re.Pattern, str], ...] = tuple((re.compile(p, re.I), c) for p, c in (
     (r"\battachments?\b", "SUPPORT_ATTACHMENT"),
     (r"\bsearch[- ]?index\b|\bsearch documents?\b", "SEARCH_INDEX_ENTRY"),
@@ -99,6 +99,7 @@ CONTENT_CATEGORY: tuple[tuple[re.Pattern, str], ...] = tuple((re.compile(p, re.I
     (r"\bsupport (?:ticket|conversation|message)s?\b", "SUPPORT_MESSAGE"),
     (r"\bconnector\b|\bdata flow\b", "DATA_FLOW"),
 ))
+AMBIGUOUS_CATEGORY = "?ambiguous"   # category_of: the catalog words name two or more categories
 NOT_WORDS = re.compile(r"\S+@\S+|\S*\d\S*|\([^)]*\)")
 RETENTION_KEYS = ("retention_until", "retain_until", "retention_expires_at")
 
@@ -130,18 +131,24 @@ def category_of(state: ResourceState) -> str:
     if state.record_type in RULES:
         return state.record_type
     system = state.target.system_id
-    return (COLLECTION_CATEGORY.get((system, state.collection)) or content_category(state.target.descriptions)
-            or SYSTEM_CATEGORY.get(system, ""))
+    if (system, state.collection) in COLLECTION_CATEGORY:
+        return COLLECTION_CATEGORY[(system, state.collection)]
+    named = content_categories(state.target.descriptions)
+    if len(named) > 1:   # the words name two categories: no category, the record stays unproven
+        return AMBIGUOUS_CATEGORY
+    return named.pop() if named else SYSTEM_CATEGORY.get(system, "")
+
+
+def content_categories(texts) -> set[str]:
+    """Every category named by the descriptive words of a record's catalog text."""
+    return {category for text in texts for pattern, category in CONTENT_CATEGORY
+            if pattern.search(NOT_WORDS.sub(" ", text))}
 
 
 def content_category(texts) -> str:
-    """Category named by the descriptive words of a record's catalog text, or ``""``."""
-    for text in texts:
-        words = NOT_WORDS.sub(" ", text)
-        for pattern, category in CONTENT_CATEGORY:
-            if pattern.search(words):
-                return category
-    return ""
+    """The one category the catalog text names, or ``""`` when it names none or several."""
+    named = content_categories(texts)
+    return named.pop() if len(named) == 1 else ""
 
 
 def _present_copies(state: ResourceState) -> list:
@@ -215,6 +222,8 @@ def _process_decision(d: Decision, state: ResourceState, check: str) -> Decision
 
 def evaluate(state: ResourceState, cutoff) -> Decision:
     category = category_of(state)
+    if category == AMBIGUOUS_CATEGORY:   # no rule applies with proof: unproven, never the first match
+        return Decision("", "", UNPROVEN, reason="ambiguous category")
     if category not in RULES:
         return Decision(category, "", NOT_TARGET, reason="out of rules")
     rule_id, check, finding, remediation, verify = RULES[category]

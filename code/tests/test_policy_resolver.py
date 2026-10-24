@@ -31,6 +31,7 @@ from policy import (
     Decision,
     SafetyViolation,
     check_safety,
+    content_category,
     evaluate,
 )
 from resolver import UNKNOWN, exists_rollup, resolve
@@ -253,6 +254,19 @@ class StatusAndSafetyTest(unittest.TestCase):
                          [("account_1", "VERIFY_RECORD_ABSENT", ""), ("account_2", "VERIFY_RECORD_ABSENT", "")])
         _, steps = planner.plan([unknown])
         self.assertEqual([(s["operation"], s["evidence_id"]) for s in steps], [("VERIFY_RECORD_ABSENT", "")])
+
+    def test_catalog_words_naming_two_categories_give_no_category(self):
+        def decide(*texts):
+            store = FactStore()
+            store.add([obs("object_storage", "object_1", exists=PRESENT)], [])
+            target = Target("object_storage", "object_1", [Edge("identifier", "strong", "x", T0)],
+                            descriptions=list(texts))
+            return evaluate(resolve(store, target, SUBJECT, AUDIT), AUDIT)
+
+        self.assertEqual(decide("Attachment catalog confirmed object_1").category, "SUPPORT_ATTACHMENT")
+        both = decide("Attachment catalog confirmed object_1", "Nightly backup set holds object_1")
+        self.assertEqual((both.outcome, both.category, both.reason), (UNPROVEN, "", "ambiguous category"))
+        self.assertEqual(content_category(["attachment in the nightly backup"]), "")
 
     def test_never_delete_or_anonymize_retained(self):
         for op in (Op.DELETE_RECORD, Op.ANONYMIZE_RECORD):

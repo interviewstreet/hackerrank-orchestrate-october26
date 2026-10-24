@@ -45,7 +45,7 @@ from identity import FutureDataError, IdentityIndex, SubjectIdentity
 from links import LinkIndex, assign_windows, subject_keys
 from llm_client import LLMClient
 from loaders import DATASET_DIR, REPO_ROOT, Dataset, Request, case_number, load_dataset, load_requests
-from policy import RULES, SYSTEM_CATEGORY, UNPROVEN, content_category, evaluate
+from policy import RULES, SYSTEM_CATEGORY, UNPROVEN, content_categories, evaluate
 from resolver import resolve
 from schema import HEADER, OP_PHASE, OP_STATE, IntentLabel, OutputRow, Status, step_sort_key
 
@@ -240,14 +240,16 @@ class CaseFailure(RuntimeError):
 def fallback_result(req: Request, ctx: Context, exc: Exception) -> CaseResult:
     """Conservative row for a case that raised: INCOMPLETE plus a future verification step
     (evidence_id "") for every known, non-stale target, with the verification of its policy row.
-    The category comes from the system (or catalog words); a target with no category is skipped.
+    The category comes from the catalog words, else the system; a target with none, or with
+    two named categories, is skipped.
     With no step, or when this lookup fails too, raise ``CaseFailure``."""
     try:
         subject = ctx.identities.resolve(req.email, req.audit_at)
         found = ctx.links.targets(subject, req, ctx.all_requests, []) if subject is not None else {}
         steps = []
         for (system_id, resource_id), target in sorted(found.items()):
-            category = content_category(target.descriptions) or SYSTEM_CATEGORY.get(system_id, "")
+            named = content_categories(target.descriptions)
+            category = named.pop() if len(named) == 1 else "" if named else SYSTEM_CATEGORY.get(system_id, "")
             if target.stale or category not in RULES:
                 continue
             op = RULES[category][4]
