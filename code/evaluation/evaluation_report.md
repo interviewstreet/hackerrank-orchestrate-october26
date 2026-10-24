@@ -38,6 +38,10 @@ Ensure `user_1` does not match evidence for `user_10` or `user_100`. Matching us
 
 Reject a manifest path that escapes `dataset/`, deny SQLite `ATTACH` and extension loading, treat malformed non-object cache content as empty, reject duplicate output cases, and confirm atomic output writes leave no temporary file.
 
+### Custom Case 6 — Exact Case Coverage and Release Preflight
+
+Reject unknown or duplicate `--cases` values and detect equal-sized output files that substitute an unexpected case for a required one. The release preflight also verifies all evidence files, required report sections, source secret patterns, archive integrity, required ZIP members, and forbidden archive content.
+
 ## Failures Found and Improvements Made
 
 Phase 1 used raw substring matching, classified heterogeneous SQL rows from table names alone, and parsed logs line by line. This produced false cross-user hits, missed trace-correlated resources, and misclassified data flows, blocked backups, redacted support records, and tombstones.
@@ -47,3 +51,5 @@ Phase 2 added boundary-safe identifier matching; normalized service/category/sta
 Phase 4 fixed support-attachment parsing, added newest-readback reconstruction for migrated account resource IDs, and cached immutable SQL, JSON, PDF, image, and text extraction work within each run. These changes improved sample status accuracy from the Phase 1 baseline of **68.8% to 100.0%**, exact positional step accuracy from **0.0% to 65.8%**, field accuracy to **73.6%**, and sequence accuracy from **0.0% to 46.9%**.
 
 Phase 5 performed a security and submission-integrity review. It added strict CSV schemas and uniqueness checks, evidence path confinement, a SQLite authorizer, malformed-cache recovery, atomic output writes, duplicate-row detection, and stricter phase/evidence validation. These controls do not alter the measured prediction metrics; they fail closed on malformed or unsafe inputs and protect the final artifact from partial writes.
+
+Phase 6 added exact input/output case-set comparison, strict partial-run case selection, and a single release preflight covering dataset counts, all 94 manifest paths, the 518-row output, required report sections, source secret scanning, ZIP integrity, required archive members, and forbidden content. Packaging now runs this preflight automatically and fails before submission when any release invariant is broken.

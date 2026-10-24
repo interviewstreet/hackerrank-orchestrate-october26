@@ -17,7 +17,7 @@ from code.identity import resolve_identity
 from code.ingest import load_all
 from code.planner import plan_steps
 from code.temporal import filter_events
-from code.validate import validate_output, validate_row_count
+from code.validate import validate_case_coverage, validate_output, validate_row_count
 
 
 class MemoryCache:
@@ -69,6 +69,11 @@ def run_pipeline(repo_root, cases=None, no_cache=False, sample=False):
         selected.extend(
             case for case in data["sample_requests"] if case["case_id"] in wanted - found
         )
+    if wanted:
+        found = {case["case_id"] for case in selected}
+        unknown = sorted(wanted - found)
+        if unknown:
+            raise ValueError(f"unknown case_id values: {', '.join(unknown)}")
     transient = MemoryCache() if no_cache else None
     return sorted(
         (process_case(case, data, repo_root, transient) for case in selected),
@@ -103,10 +108,20 @@ def main(argv=None):
 
     root = Path(__file__).resolve().parents[1]
     case_ids = [value.strip() for value in args.cases.split(",")] if args.cases else None
-    rows = run_pipeline(root, case_ids, args.no_cache)
+    if case_ids is not None:
+        if any(not value for value in case_ids):
+            parser.error("--cases contains a blank case_id")
+        if len(case_ids) != len(set(case_ids)):
+            parser.error("--cases contains duplicate case_id values")
+    try:
+        rows = run_pipeline(root, case_ids, args.no_cache)
+    except ValueError as exc:
+        parser.error(str(exc))
     errors = validate_output(rows)
     if case_ids is None:
-        errors.extend(validate_row_count(rows))
+        expected_cases = load_all(root)["deletion_requests"]
+        errors.extend(validate_row_count(rows, expected=len(expected_cases)))
+        errors.extend(validate_case_coverage(rows, (case["case_id"] for case in expected_cases)))
 
     for error in errors:
         print(f"VALIDATION ERROR: {error}")
