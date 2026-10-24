@@ -6,14 +6,14 @@ Target 193/193 public steps, 1,158/1,158 fields, and 32/32 complete sequences on
 
 A 100% claim is conditional on candidate observability. A ranker cannot recover an exact resource ID that is absent from every legal candidate source. The first gate therefore tests whether every expected resource is present in participant-visible input at or before the case cutoff; failure is reported as a dataset/evaluator blocker rather than bypassed.
 
-## Stage 1 — Candidate-observability audit
+## Stage 1 — Candidate-observability audit (Complete)
 
-1. Build an evaluation-only diagnostic that compares expected public resources with resource IDs available from participant inputs at or before each `audit_at`.
-2. Classify every miss as: absent globally, present only post-audit, present pre-audit but unlinked, or present and linked but retrieval failed.
-3. Keep this diagnostic outside prediction code and prohibit its outputs from becoming runtime mappings.
-4. Gate: do not claim that training can reach 100% unless pre-audit candidate recall is 100%.
+1. Built `code/evaluation/observability.py`, an evaluation-only diagnostic that compares expected public resources with IDs available from participant inputs at or before each `audit_at`.
+2. Classified resources as retrievable, linked-but-unretrieved, pre-audit unlinked, post-audit only, or globally absent.
+3. Kept the diagnostic outside prediction code and added a test preventing production modules from importing it.
+4. Enforced the gate: training cannot claim 100% unless pre-audit candidate recall is 100%.
 
-Current known result: seven security verifications fail the gate. Five IDs first appear in post-audit captures and two do not occur in participant-facing prediction inputs.
+Measured result: **104/111 unique case-resource pairs (93.7%)** are observable before their cutoffs, so the gate **fails**. Seven security verifications are blocked: five IDs first appear in post-audit captures and two do not occur in participant-facing prediction inputs. See `code/evaluation/observability_report.md`.
 
 ## Stage 2 — Build a self-supervised lineage training set
 
