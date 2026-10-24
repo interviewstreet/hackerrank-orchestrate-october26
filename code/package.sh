@@ -10,4 +10,5 @@ zip -r code.zip README.md code \
   -x "*/__pycache__/*" "*/.venv/*" "*/venv/*" "*/node_modules/*" \
      "*/.git/*" "*/.DS_Store" "code/cache.json" "*.pyc"
 unzip -t code.zip >/dev/null
+python3 code/preflight.py --require-package
 printf 'Created %s/code.zip\n' "$ROOT"

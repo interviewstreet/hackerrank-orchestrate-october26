@@ -1,5 +1,5 @@
 import json,unittest
-from code.validate import validate_output, validate_row_count
+from code.validate import validate_case_coverage, validate_output, validate_row_count
 BASE={'step_no':1,'phase':'FINDING','system_id':'s','resource_id':'r','operation':'REPORT_REMAINING_RECORD','state':'PRESENT','evidence_id':'e'}
 def row(step,status='INCOMPLETE'):return {'case_id':'c','deletion_status':status,'steps_json':json.dumps(step)}
 class ValidateTests(unittest.TestCase):
@@ -17,3 +17,7 @@ class ValidateTests(unittest.TestCase):
  def test_complete_findings_rejected(self):self.assertError(row([BASE],'COMPLETE'),'verification steps only')
  def test_row_count_duplicates(self):
   self.assertTrue(any('duplicate case_id' in e for e in validate_row_count([{'case_id':'c'},{'case_id':'c'}],expected=2)))
+ def test_case_coverage(self):
+  errors=validate_case_coverage([{'case_id':'case_1'},{'case_id':'case_extra'}],['case_1','case_2'])
+  self.assertTrue(any('missing case_id' in e for e in errors))
+  self.assertTrue(any('unexpected case_id' in e for e in errors))

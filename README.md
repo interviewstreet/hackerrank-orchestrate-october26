@@ -68,6 +68,9 @@ python3 -m unittest discover -s code/tests -v
 
 # Submission archive (excludes datasets, caches, and environments)
 ./code/package.sh
+
+# Final dataset/output/report/archive/security checks
+python3 code/preflight.py --require-package
 ```
 
 ### Architecture

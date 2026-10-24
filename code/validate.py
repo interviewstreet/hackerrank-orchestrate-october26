@@ -92,3 +92,19 @@ def validate_row_count(rows: list, expected=518) -> list[str]:
     if case_ids != sorted(case_ids):
         errors.append("rows are not sorted by case_id")
     return errors
+
+
+def validate_case_coverage(rows: list, expected_case_ids) -> list[str]:
+    """Require exactly one output for every input case, not merely the same row count."""
+    actual = {row.get("case_id", "") for row in rows}
+    expected = set(expected_case_ids)
+    errors = []
+    missing = sorted(expected - actual)
+    unexpected = sorted(actual - expected)
+    if missing:
+        preview = ", ".join(missing[:10])
+        errors.append(f"missing case_id values: {preview}" + (" ..." if len(missing) > 10 else ""))
+    if unexpected:
+        preview = ", ".join(unexpected[:10])
+        errors.append(f"unexpected case_id values: {preview}" + (" ..." if len(unexpected) > 10 else ""))
+    return errors
