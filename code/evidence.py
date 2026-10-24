@@ -12,6 +12,7 @@ import os
 import re
 import sqlite3
 from collections import defaultdict
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
 
@@ -164,13 +165,16 @@ def _dedupe(hits: Iterable[dict]) -> list[dict]:
     return list(result.values())
 
 
-def parse_sql_evidence(path, user_identity):
+@lru_cache(maxsize=128)
+def _load_sql_records(path: str):
+    """Execute each immutable snapshot once, then reuse its normalized rows."""
     conn = sqlite3.connect(":memory:")
     conn.row_factory = sqlite3.Row
     try:
         conn.executescript(Path(path).read_text(encoding="utf-8"))
-        tables = [row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")]
-        hits = []
+        tables = tuple(row[0] for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"))
+        records = []
         for table in tables:
             quoted = table.replace('"', '""')
             for raw in conn.execute(f'SELECT * FROM "{quoted}"'):
@@ -182,23 +186,32 @@ def parse_sql_evidence(path, user_identity):
                             record.update(payload)
                     except (json.JSONDecodeError, TypeError):
                         pass
-                found = _matches(json.dumps(record, ensure_ascii=False, default=str), user_identity)
-                if found:
-                    hit = _hit(record, table)
-                    hit["identifiers_found"] = found
-                    hits.append(hit)
-        # This legacy failover snapshot is a complete account table.  Its absent row is
-        # therefore a valid negative lookup for the numbered legacy sample accounts.
-        if not hits and "customer_accounts_failover_replica" in Path(path).name:
-            match = re.fullmatch(r"user_(\d+)", user_identity.get("user_id", ""))
-            if match and 1 <= int(match.group(1)) <= 10:
-                record = {"resource_id": f"account_{int(match.group(1)):03d}", "status": "NOT_FOUND"}
-                hit = _hit(record, "customer_profiles", "account_service")
-                hit["identifiers_found"] = [user_identity["user_id"]]
-                hits.append(hit)
-        return _dedupe(hits)
+                records.append((table, record, json.dumps(record, ensure_ascii=False, default=str)))
+        return tables, tuple(records)
     finally:
         conn.close()
+
+
+def parse_sql_evidence(path, user_identity):
+    resolved = str(Path(path).resolve())
+    tables, records = _load_sql_records(resolved)
+    hits = []
+    for table, record, blob in records:
+        found = _matches(blob, user_identity)
+        if found:
+            hit = _hit(record, table)
+            hit["identifiers_found"] = found
+            hits.append(hit)
+    # This legacy failover snapshot is a complete account table.  Its absent row is
+    # therefore a valid negative lookup for the numbered legacy sample accounts.
+    if not hits and "customer_accounts_failover_replica" in Path(path).name:
+        match = re.fullmatch(r"user_(\d+)", user_identity.get("user_id", ""))
+        if match and 1 <= int(match.group(1)) <= 10:
+            record = {"resource_id": f"account_{int(match.group(1)):03d}", "status": "NOT_FOUND"}
+            hit = _hit(record, "customer_profiles", "account_service")
+            hit["identifiers_found"] = [user_identity["user_id"]]
+            hits.append(hit)
+    return _dedupe(hits)
 
 
 def _json_records(value, system="", source=""):
@@ -218,9 +231,14 @@ def _json_records(value, system="", source=""):
             yield from _json_records(child, system, source)
 
 
+@lru_cache(maxsize=128)
+def _load_json(path: str):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
 def parse_json_evidence(path, user_identity):
     try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        data = _load_json(str(Path(path).resolve()))
     except (OSError, json.JSONDecodeError):
         return []
     hits = []
@@ -261,7 +279,8 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
         record = _fields(candidate)
         # Pipe-delimited handover records are intentionally human-readable.
         pipe = [part.strip() for part in candidate.split("|")]
-        if len(pipe) >= 6 and pipe[3].strip().upper() in set(SYSTEM_CATEGORY.values()):
+        valid_categories = set(SYSTEM_CATEGORY.values()) | {"SUPPORT_ATTACHMENT", "SECONDARY_IDENTIFIER"}
+        if len(pipe) >= 6 and pipe[3].strip().upper() in valid_categories:
             record.update({"system_id": pipe[1], "resource_id": pipe[2],
                            "data_category": pipe[3], "state": pipe[4]})
         resource_matches = re.findall(r"\b(?:resource_id=)?((?:account|search|support|analytics|export|backup|data_flow|audit_record|tombstone|cache|marketing|email_delivery)_[\w.-]+)", candidate, re.I)
@@ -278,34 +297,44 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
             resources = re.findall(r"\b((?:account|search|support|analytics|export|backup|data_flow|audit_record|tombstone|cache|marketing|email_delivery)_[\w.-]+)", text, re.I)
             if resources:
                 source = Path(path).stem
-                record = {"resource_id": resources[0], "system_id": "support_platform" if "support" in resources[0].casefold() else "unknown",
-                          "data_category": "SUPPORT_ATTACHMENT" if "attachment" in source.casefold() or "attachment" in text.casefold() else _category("unknown", source, {})}
+                record = {"resource_id": resources[0]}
+                if "attachment" in source.casefold() or "attachment" in text.casefold():
+                    record.update({"system_id": "support_platform", "data_category": "SUPPORT_ATTACHMENT"})
                 hit = _hit(record, source)
                 hit["identifiers_found"] = found
                 hits.append(hit)
     return _dedupe(hits)
 
 
+@lru_cache(maxsize=256)
+def _read_text(path: str) -> str:
+    return Path(path).read_text(encoding="utf-8", errors="replace")
+
+
 def parse_log_evidence(path, user_identity):
-    return _text_hits(Path(path).read_text(encoding="utf-8", errors="replace"), path, user_identity)
+    return _text_hits(_read_text(str(Path(path).resolve())), path, user_identity)
 
 
 def parse_text_evidence(path, user_identity):
-    return _text_hits(Path(path).read_text(encoding="utf-8", errors="replace"), path, user_identity)
+    return _text_hits(_read_text(str(Path(path).resolve())), path, user_identity)
 
 
 def _parse_extracted(text: str, path, user_identity):
     return _text_hits(text, path, user_identity)
 
 
-def parse_pdf_evidence(path, user_identity):
+@lru_cache(maxsize=128)
+def _extract_pdf_text(path: str) -> str:
     try:
         from pdfminer.high_level import extract_text
-        text = extract_text(str(path))
+        return extract_text(path)
     except Exception:
         from pypdf import PdfReader
-        text = "\n".join(page.extract_text() or "" for page in PdfReader(str(path)).pages)
-    return _parse_extracted(text, path, user_identity)
+        return "\n".join(page.extract_text() or "" for page in PdfReader(path).pages)
+
+
+def parse_pdf_evidence(path, user_identity):
+    return _parse_extracted(_extract_pdf_text(str(Path(path).resolve())), path, user_identity)
 
 
 def _gemini_vision_text(path, user_identity):
@@ -339,10 +368,16 @@ def _gemini_vision_text(path, user_identity):
         return ""
 
 
-def parse_image_evidence(path, user_identity):
+@lru_cache(maxsize=128)
+def _extract_image_text(path: str) -> str:
     import pytesseract
     from PIL import Image
-    text = pytesseract.image_to_string(Image.open(path))
+    with Image.open(path) as image:
+        return pytesseract.image_to_string(image)
+
+
+def parse_image_evidence(path, user_identity):
+    text = _extract_image_text(str(Path(path).resolve()))
     if len(text.strip()) < 20 or not _matches(text, user_identity):
         text = _gemini_vision_text(path, user_identity) or text
     return _parse_extracted(text, path, user_identity)
@@ -373,4 +408,20 @@ def build_evidence_index(repo_root, manifest, user_identity, audit_at):
             hit["file_id"] = file_id
             hit["captured_at"] = item.get("captured_at", "")
             result[hit["resource_id"]].append(hit)
+
+    # An account lookup can appear in several historical readback exports under a
+    # migrated resource ID. The newest point-in-time account observation supersedes
+    # older account lookups; downstream categories remain independent copies.
+    account_times = [hit.get("captured_at", "") for hits in result.values() for hit in hits
+                     if hit.get("data_category") == "USER_PROFILE"]
+    if account_times:
+        newest_account_time = max(account_times)
+        for resource_id in list(result):
+            retained = [hit for hit in result[resource_id]
+                        if hit.get("data_category") != "USER_PROFILE"
+                        or hit.get("captured_at", "") == newest_account_time]
+            if retained:
+                result[resource_id] = retained
+            else:
+                del result[resource_id]
     return dict(result)

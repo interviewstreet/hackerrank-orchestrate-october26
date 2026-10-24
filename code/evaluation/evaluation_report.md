@@ -2,19 +2,19 @@
 
 ## Case-Level Deletion-Status Accuracy
 
-The Phase 2 regression run against all 32 participant-visible sample cases classified **32 of 32 cases correctly (100.0%)**. This metric compares only `deletion_status` and does not imply that every generated step is canonical.
+The Phase 4 regression run against all 32 participant-visible sample cases classified **32 of 32 cases correctly (100.0%)**. This metric compares only `deletion_status` and does not imply that every generated step is canonical.
 
 ## Step-Level and Field-Level Accuracy
 
-- Exact step count: **14 of 32 cases (43.8%)**
-- Exact positional step match across phase, operation, state, system, resource, and evidence: **118 of 193 expected steps (61.1%)**
-- Individual compared fields: **831 of 1,158 (71.8%)**
+- Exact step count: **15 of 32 cases (46.9%)**
+- Exact positional step match across phase, operation, state, system, resource, and evidence: **127 of 193 expected steps (65.8%)**
+- Individual compared fields: **852 of 1,158 (73.6%)**
 
 The principal remaining gap is evidence that proves an anonymized or absent resource without retaining a direct identifier. Such resources can be correctly classified as compliant but cannot always be linked to a subject using content-only identifier matching.
 
 ## Sequence Accuracy
 
-**13 of 32 cases (40.6%)** have the complete canonical sequence in the correct position. Ordering of generated steps that are present follows the required operation table, then `system_id`, then `resource_id`.
+**15 of 32 cases (46.9%)** have the complete canonical sequence in the correct position. Ordering of generated steps that are present follows the required operation table, then `system_id`, then `resource_id`.
 
 ## Additional Evaluation Cases
 
@@ -38,4 +38,6 @@ Ensure `user_1` does not match evidence for `user_10` or `user_100`. Matching us
 
 Phase 1 used raw substring matching, classified heterogeneous SQL rows from table names alone, and parsed logs line by line. This produced false cross-user hits, missed trace-correlated resources, and misclassified data flows, blocked backups, redacted support records, and tombstones.
 
-Phase 2 added boundary-safe identifier matching; normalized service/category/state inference; recursive JSON records; SQLite `record_json` expansion; trace-level log correlation; pipe-delimited handover parsing; PDF extraction with fallback; OCR support; deterministic deduplication; temporal evidence selection; and explicit process/restore compliance handling. The incomplete-case planner now includes verification for both remediated and already-compliant resources. These changes improved sample status accuracy from **68.8% to 100.0%**, exact positional step accuracy from **0.0% to 61.1%**, and sequence accuracy from **0.0% to 40.6%**.
+Phase 2 added boundary-safe identifier matching; normalized service/category/state inference; recursive JSON records; SQLite `record_json` expansion; trace-level log correlation; pipe-delimited handover parsing; PDF extraction with fallback; OCR support; deterministic deduplication; temporal evidence selection; and explicit process/restore compliance handling. The incomplete-case planner now includes verification for both remediated and already-compliant resources.
+
+Phase 4 fixed support-attachment parsing, added newest-readback reconstruction for migrated account resource IDs, and cached immutable SQL, JSON, PDF, image, and text extraction work within each run. These changes improved sample status accuracy from the Phase 1 baseline of **68.8% to 100.0%**, exact positional step accuracy from **0.0% to 65.8%**, field accuracy to **73.6%**, and sequence accuracy from **0.0% to 46.9%**.

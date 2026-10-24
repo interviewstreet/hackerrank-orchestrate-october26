@@ -1,7 +1,13 @@
 import unittest
 from pathlib import Path
 
-from code.evidence import parse_json_evidence, parse_log_evidence, parse_sql_evidence
+from code.evidence import (
+    build_evidence_index,
+    parse_json_evidence,
+    parse_log_evidence,
+    parse_sql_evidence,
+    parse_text_evidence,
+)
 from code.identity import resolve_identity
 from code.ingest import load_all
 
@@ -44,3 +50,18 @@ class EvidenceParserTests(unittest.TestCase):
         )
         resources = {hit["resource_id"] for hit in hits}
         self.assertTrue({"search_4013", "support_5569", "analytics_037", "data_flow_4890"} <= resources)
+
+    def test_handover_support_attachment_keeps_resource_id_and_category(self):
+        hits = parse_text_evidence(
+            self.root / "records/customer_account_handover_20261001.txt",
+            self.identity("noor-khalil@proton.me"),
+        )
+        attachment = next(hit for hit in hits if hit["resource_id"] == "support_4218")
+        self.assertEqual(attachment["data_category"], "SUPPORT_ATTACHMENT")
+        self.assertEqual(attachment["system_id"], "support_platform")
+
+    def test_newest_account_readback_supersedes_migrated_resource_id(self):
+        identity = self.identity("leonie.g9352@outlook.com")
+        index = build_evidence_index(".", self.data["evidence_manifest"], identity, "2026-09-18T12:00:00Z")
+        self.assertIn("account_4092", index)
+        self.assertNotIn("account_6523", index)
