@@ -708,3 +708,116 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-24T19:39:53Z] Continue: finish Phase 5 Part 1 gate, commit, start Codex review
+
+User Prompt (verbatim, secrets redacted):
+Continue where you left off.
+
+Agent Response Summary:
+Finished step E (ruff clean, mypy clean on 50 files, four long functions split with byte-identical output), wrote the evaluation and usage report drafts and the DESIGN.md Phase 5 rules, then ran the gate: 155 tests pass, strict validation 0 errors on samples and 518, offline replay SHA-256 equals the live run. Committed b657810. Started Part 2: delegated a read-only Codex review (codex / gpt-5.6-sol / reasoningEffort high, worktree isolation, async, clientRequestId codex-review-r1) with the user's brief verbatim; triage waits for its result.
+
+Actions:
+* code/ (ruff/mypy fixes, function splits), code/mypy.ini, code/DESIGN.md, code/evaluation/evaluation_report.md, code/evaluation/usage_report.md
+* Ran: full pytest suite, ruff, mypy, live runs with --export-snapshot, ZENMUX_OFFLINE=1 replay, validate.py strict, evaluation/main.py
+* git commit b657810
+* mcp t3-code orchestrator_capabilities, delegate_task (Codex review r1)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+## [2026-10-24T19:46:19Z] Phase 5 Part 2: Codex review r1 result and triage (no fixes)
+
+User Prompt (verbatim, secrets redacted):
+Delegated task node:delegated-task:command%3Amcp%3A8c0d1138-d0d2-4f23-8222-a77062ea9a42%3Adelegate-task%3Acodex-review-r1 (Codex review r1: deletion-audit agent) [completed]: <14 findings, Top 3 and What is solid; full text in the chat reply>
+
+Agent Response Summary:
+Received the Codex review (codex / gpt-5.6-sol / reasoningEffort high) and verified each finding by code reading and offline trace measurements. Measured: job_burst gives 7/7 correct sample targets but 19 of 20 job_burst cases on 518 get two account targets; the any-compliant status rule affects only case_46 on 518 and no sample; no shared attachment and no inactive legal hold exists in the data. Triage: 8 ACCEPT, 3 REJECT, 3 NEEDS-DATA. No code was changed; the fixes wait for the user's decision.
+
+Actions:
+* Ran: offline samples run with --trace; trace analyses for status rule, job_burst, shared attachments; greps of deletion_rules.csv and legal-hold evidence
+* Read: code/planner.py, code/main.py, code/facts.py, code/evidence/extract_text.py, code/policy.py, code/evaluation/main.py
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+## [2026-10-24T22:34:27Z] Phase 6: review fixes #4 #2 #11 #9 #10 #14 #12 #8 #7 #6, reports, final run
+
+User Prompt (verbatim, secrets redacted):
+Good triage. My decisions:
+
+#3 stale-link — KEEP the rule (REJECT stays), with data. system_activity.csv has 12 data_catalog
+LINK_RESOURCE_IDENTITY rows (activity_4000-4011). 10 of them fall AFTER their user's requested_at and point at
+hidden cases (34, 35, 39, 45, 46, 50, 52, 53, 55, 61, 63). The only 2 that fall BEFORE a request are in sample case_07
+(object_19) and case_17 (tombstone_17), and gold excludes both. export_1260 (Codex's example) is linked
+2026-06-18: before case_33's request, but after case_52's. It belongs to case_52; case_33 has export_1842
+(linked 07-18, after its request). The rule is a dataset design, not a sample fit. Make sure the link window is
+requested_at <= link_time <= audit_at (inclusive), and put this evidence in the evaluation report.
+
+Apply in this order, one commit per fix ("fix(#N): ..."), each with a regression test:
+1. #4  job_burst uniqueness guard: no edge if the burst has more than one candidate resource in the same system.
+       Report job_burst targets on the 518 before/after.
+2. #2  COMPLETE only when every included target is proven compliant; an unproven/conflicting target -> INCOMPLETE
+       with an empty-evidence verification step. Update the test at test_policy_resolver.py:245. Report which
+       cases change (expected: case_46).
+3. #11 Evaluation: report BOTH metrics, labeled: "exact step (7 fields incl. step_no)" and "content match
+       (6 fields)". Fix the report text.
+4. #9  Vision state grounding: source_text must ground to ONE OCR line (same noise tolerance), and that line must
+       hold the resource id and the state cue. List every vision row that this drops; for each, one line saying if
+       the image really supports it. Keep the strict rule; I accept fewer rows over wrong rows.
+5. #10 Per-case fallback: write valid conservative rows (INCOMPLETE + empty-evidence verification for the known
+       targets). If no target is known, fail loudly; never write a contract-invalid row. main.py runs strict
+       validation before it reports success.
+6. #14 OCR per file inside try/except; a failure is a coverage error, and the run continues without that file.
+7. #12 Category mapping: two or more different category matches -> no category (unproven), never the first match.
+8. #8  Legal hold: an explicit INACTIVE/RELEASED hold is not retained; missing hold status -> unproven.
+9. #7  ACCEPT (changed from NEEDS-DATA): rule 06 says "belongs solely", and activity_4007 says "belongs only to",
+       so exclusivity is real data. A SUPPORT_ATTACHMENT that is not proven exclusive -> unproven, no DELETE_RECORD.
+       Report how many targets this changes (expected 0 or close to it).
+#6  Time box 10 min: check whether any real SQL/JSON file has several scoped systems where a subject appears in only
+    one. If yes, scope the subjects per system/collection; if no, record it as a known limit in DESIGN.md.
+#5  Accept the loss for now. Put it in the report's limits section: the samples' missing targets, why
+    window_assignment was dropped (5/15 precision), what would fix it.
+#13 Keep rejected: gold case_01 cites evidence_54 under tier-then-newest.
+
+Time box: 2 h total. If you run out of time, stop after fix 6 and report.
+
+Gate: full suite passes; strict validation 0 errors on samples and 518; ruff clean; offline replay hash equals the
+live hash (re-run live only if a prompt or vision rule changed the cache key; otherwise replay is enough).
+
+Reply format:
+1. Commit list (hash + title)
+2. Test line; validation; ruff
+3. Sample scores before/after: status, exact-step P/R/F1 (7 fields), content P/R/F1 (6 fields), sequence
+4. 518 status distribution before/after, and the list of changed case_ids with the reason per case
+5. Dropped vision rows (#9) with your verdict per row
+6. #6 finding
+7. Anything that contradicts plan.md
+
+Agent Response Summary:
+Applied the accepted review fixes in the given order, one commit each with a regression test: job_burst uniqueness (#4), COMPLETE only when every target is proven (#2), exact 7-field and content 6-field metrics (#11), one-OCR-line vision grounding (#9), a valid conservative fallback row plus strict validation in main.py (#10), per-file OCR guard (#14), ambiguous content category gives UNPROVEN (#12), legal hold retained only with a proven active hold (#8), attachment deleted only when proven exclusive (#7), and per-system subject scopes (#6; all 22 multi-system scoped files had partial subjects, 0 rows changed). Sample scores are unchanged (status 32/32, exact 0.764/0.653/0.704, content 1.000/0.855/0.922, sequence 15/32); on the 518, 23 rows changed and the counts went to COMPLETE 153 / INCOMPLETE 355 / NOT_APPLICABLE 10. Interpretations reported to the user: #8 uses retained_until as the hold status when no status field exists (no evidence file states one), and #7 counts a strong identifier edge with no other linked user as proof of exclusivity (a catalog-only reading would have removed gold-correct steps in sample case_07 and case_13). The evaluation report gained the stale-link evidence, the Phase 6 fix table and a known-limits section (missing sample targets, window_assignment 5/15, two vision losses incl. a likely wrong COMPLETE on case_53); the usage report now covers the final live run. Gate: 167 tests pass, strict validation 0 errors on samples and 518, ruff and mypy clean, replay hash equals live hash.
+
+Actions:
+* code/links.py, code/planner.py, code/evaluation/main.py, code/evidence/extract_vision.py, code/agent/loop.py (commits e3dd417, 3b9265f, 317a74a, b91f885)
+* code/main.py, code/facts.py, code/policy.py, code/evidence/extract_json.py, code/evidence/extract_sql.py, code/evidence/common.py, code/DESIGN.md (commits 66d1804, cb0ecce, a59d107, 58742d2, 80e24a5, 7705d6d, d2fa70d)
+* code/tests/test_slice.py, test_policy_resolver.py, test_evaluation.py, test_adversarial.py, test_main.py, test_logs_pdf.py (regression tests; c2add79 link-window boundary test)
+* code/evaluation/evaluation_report.md, code/evaluation/usage_report.md, code/evaluation/results.md/json, code/llm_snapshot.py (commit c24d806)
+* Ran: replay and live runs of samples and 518 (live with --export-snapshot, 4 live agent calls), offline replay hash check, agent-off hash check, validate.py strict, evaluation/main.py, full pytest suite, ruff, mypy; copied the final 518 output to output.csv (not committed)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
