@@ -58,6 +58,24 @@ class SliceTest(unittest.TestCase):
         kinds = {e.kind for i in result.items for e in i.target.edges}
         self.assertNotIn("job_burst", kinds)
 
+    def test_link_window_is_requested_at_to_audit_at_inclusive(self):
+        # case_07: activity_4007 links object_19 at 2026-02-13 08:07:01, before the request (stale).
+        req = self.requests["case_07"]
+        subject = self.ctx.identities.resolve(req.email, req.audit_at)
+        link_at = self.ctx.links.targets(subject, req, self.ctx.all_requests, [])[("object_storage", "object_19")]
+        at = link_at.edges[0].at
+        second = timedelta(seconds=1)
+
+        def target(**times):
+            found = self.ctx.links.targets(subject, replace(req, **times), self.ctx.all_requests, [])
+            return found.get(("object_storage", "object_19"))
+
+        self.assertTrue(link_at.stale)
+        self.assertFalse(target(requested_at=at).stale)            # a link at requested_at is in the window
+        self.assertTrue(target(requested_at=at + second).stale)    # one second earlier than the request
+        self.assertIsNotNone(target(requested_at=at, audit_at=at))  # a link at audit_at counts
+        self.assertIsNone(target(requested_at=at - second, audit_at=at - second))   # after audit_at: unseen
+
     def test_job_burst_with_one_candidate_still_links(self):
         # case_01: the worker burst touches one account only, and gold has it.
         result = self._run(self.requests["case_01"])
