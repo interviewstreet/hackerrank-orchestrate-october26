@@ -29,26 +29,11 @@ import config
 import safety
 from agent.tools import Corpus
 from evidence.common import AGENT_READBACK, Identifiers, Observation
-from evidence.extract_vision import grounded, state_fields
+from evidence.extract_vision import NEGATIVE, STATE_WORDS, grounded, state_fields
 from llm_client import LLMClient, render_prompt
 from schema import AgentAction, AgentProposal, RawState
 
 PROMPT = config.PROMPT_VERSIONS["agent"]
-
-NEGATIVE = r"not[ _]found|absent|deleted|removed|missing|no results|\b404\b|rows=\"?0\b|purged"
-STATE_WORDS = {
-    RawState.FOUND: r"\bfound\b|present|exists|available|listed|retained|rows=\"?[1-9]|\b200\b",
-    RawState.PRESENT: r"\bfound\b|present|exists|available|listed|retained|rows=\"?[1-9]|\b200\b",
-    RawState.NOT_FOUND: NEGATIVE,
-    RawState.ABSENT: NEGATIVE,
-    RawState.IDENTIFIABLE: r"identifiable|@|\+\d",
-    RawState.REDACTED: r"redact|masked|\*\*\*",
-    RawState.ANONYMIZED: r"anonymi[sz]",
-    RawState.ACTIVE: r"\bactive\b|enabled|running|enabled=\"?true",
-    RawState.DISABLED: r"disabled|paused|stopped|inactive|enabled=\"?false",
-    RawState.BLOCKED: r"blocked|denied|not allowed|restore_allowed=\"?false",
-}
-
 
 @dataclass
 class AgentStats:

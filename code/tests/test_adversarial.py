@@ -121,8 +121,10 @@ class AdversarialTest(unittest.TestCase):
         late = datetime(2026, 5, 2, tzinfo=UTC)
         alias = extract_vision.Alias("delivery_confirmation_19.pdf", "account_service", "account_919", late)
         other = extract_vision.Alias("invoice_NS-10493.pdf", "account_service", "account_920", AT)
-        reply = {"file_id": "evidence_99", "rows": [row(resource_id="account_919", identifier=None),
-                                                    row(resource_id="account_920", identifier=None)]}
+        listing = "delivery_confirmation_19.pdf 684 KB 12 Feb 18:42 Standard"
+        reply = {"file_id": "evidence_99", "rows": [
+            row(resource_id="account_919", identifier=None, source_text=listing),
+            row(resource_id="account_920", identifier=None, source_text="invoice_NS-10493.pdf 318 KB")]}
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "x.png"
             path.write_bytes(b"\x89PNG fake")
@@ -133,6 +135,22 @@ class AdversarialTest(unittest.TestCase):
         self.assertEqual(rows[0].available_at, late)      # a reading cannot exist before its alias
         self.assertEqual(rows[0].state_observed_at, AT)
         self.assertEqual([d["resource_id"] for d in report.dropped], ["account_920"])   # alias not on screen
+
+    def test_state_must_be_grounded_on_the_row_line(self):
+        ocr = ("Records\naccount_901 | ana.test@example.org | Active\n"
+               "Lookup account_902 | ana.test@example.org | not found\n"
+               "support_77 Kofi A. Normal priority\nEmail ana.test@example.org")
+        reply = {"file_id": "evidence_99", "rows": [
+            row(),                                                                        # line 2: ok
+            row(resource_id="account_902", observed_state="PRESENT",
+                source_text="account_902 ana.test@example.org"),                          # line says not found
+            row(system_id="support_platform", resource_id="support_77", observed_state="IDENTIFIABLE",
+                source_text="support_77 Kofi A. Normal priority"),                        # email on another line
+        ]}
+        rows, report = vision(Always(reply), ocr)
+        self.assertEqual([o.resource_id for o in rows], ["account_901"])
+        self.assertEqual([d["resource_id"] for d in report.dropped], ["account_902", "support_77"])
+        self.assertTrue(all(d["reason"].startswith("no OCR line") for d in report.dropped))
 
     def test_model_row_naming_another_users_resource_is_rejected(self):
         keys = Identifiers(emails={"ana.test@example.org"}, user_ids={"user_5"})

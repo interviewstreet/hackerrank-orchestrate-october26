@@ -10,6 +10,9 @@ Flow per file:
    ``identifier`` both appear in the local text of that file. OCR noise allowed, as character
    classes: separators ``_ - . ,`` / space / none; ``o``/``0``; ``i``/``l``/``1``/``|`` (Tesseract
    reads "gmail" as "gmall"). Other digits must match. Every dropped row is listed with a reason.
+   State grounding (``row_line``): one OCR line must hold the resource id (or its visible
+   catalog alias), the state cue (``state_cue``) and at least half of the ``source_text`` words.
+   A row whose id, words and state are spread over different lines is dropped.
 4. Accepted rows become observations with assertion ``vision_row`` (resolver tier "vision",
    below parsed text rows). ``UNREADABLE`` rows are dropped.
 
@@ -51,6 +54,21 @@ from schema import RawState, VisionExtraction, VisionRow
 PROMPT = config.PROMPT_VERSIONS["vision"]
 SEP = r"[_\-\s.,]?"
 CONFUSABLE = str.maketrans({"o": "0", "l": "1", "i": "1", "|": "1", "!": "1"})
+MIN_SOURCE_SHARE = 0.5   # share of source_text words that must be on the grounding OCR line
+# State cue words, shared with the agent acceptance check (agent/loop.py).
+NEGATIVE = r"not[ _]found|absent|deleted|removed|missing|no results|\b404\b|rows=\"?0\b|purged"
+STATE_WORDS = {
+    RawState.FOUND: r"\bfound\b|present|exists|available|listed|retained|rows=\"?[1-9]|\b200\b",
+    RawState.PRESENT: r"\bfound\b|present|exists|available|listed|retained|rows=\"?[1-9]|\b200\b",
+    RawState.NOT_FOUND: NEGATIVE,
+    RawState.ABSENT: NEGATIVE,
+    RawState.IDENTIFIABLE: r"identifiable|@|\+\d",
+    RawState.REDACTED: r"redact|masked|\*\*\*",
+    RawState.ANONYMIZED: r"anonymi[sz]",
+    RawState.ACTIVE: r"\bactive\b|enabled|running|enabled=\"?true",
+    RawState.DISABLED: r"disabled|paused|stopped|inactive|enabled=\"?false",
+    RawState.BLOCKED: r"blocked|denied|not allowed|restore_allowed=\"?false",
+}
 
 
 @dataclass(frozen=True)
@@ -191,6 +209,40 @@ def _grounding_time(row: VisionRow, text: str, aliases: list[Alias]) -> tuple[bo
     return (True, min(times)) if times else (False, None)
 
 
+def _source_tokens(source_text: str) -> list[str]:
+    """Words of ``source_text`` (table separators and edge punctuation removed)."""
+    tokens = (t.strip("|:;,()[]{}\"'") for t in source_text.split())
+    return [t for t in tokens if re.search(r"[0-9A-Za-z]", t)]
+
+
+def state_cue(state: RawState, line: str) -> bool:
+    """The OCR line supports ``state``. A listed row with no negative word shows a present record
+    (a file listing or console row is itself the cue); every other state needs its own cue word
+    (IDENTIFIABLE: an email or phone on the line)."""
+    low = line.lower()
+    if state in (RawState.FOUND, RawState.PRESENT):
+        return re.search(NEGATIVE, low) is None
+    return re.search(STATE_WORDS[state], low) is not None if state in STATE_WORDS else False
+
+
+def row_line(row: VisionRow, text: str, aliases: list[Alias]) -> str | None:
+    """The one OCR line that grounds the row: it holds the resource id (or a visible catalog alias
+    of it), the state cue, and at least ``MIN_SOURCE_SHARE`` of the ``source_text`` words (OCR
+    misreads words such as sizes and dates, so not all of them)."""
+    tokens = _source_tokens(row.source_text)
+    if not tokens:
+        return None
+    names = [a.name for a in aliases if (a.system_id, a.resource_id) == (row.system_id, row.resource_id)]
+    for line in text.splitlines():
+        if not (grounded(row.resource_id, line) or any(grounded(n, line) for n in names)):
+            continue
+        if not state_cue(row.observed_state, line):
+            continue
+        if sum(grounded(t, line) for t in tokens) >= MIN_SOURCE_SHARE * len(tokens):
+            return line
+    return None
+
+
 def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, known_systems: set[str],
             known_categories: set[str], system_category: dict[str, str],
             aliases: Sequence[Alias] = ()) -> tuple[list[Observation], FileReport]:
@@ -225,6 +277,8 @@ def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, k
             reason = "resource_id not in OCR text"
         elif row.identifier and not grounded(row.identifier, local_text):
             reason = "identifier not in OCR text"
+        elif row_line(row, local_text, aliases) is None:
+            reason = "no OCR line holds source_text, the id and the state cue"
         elif safety.screen(row.source_text):
             reason = "injection pattern in source_text"
         obs = None
