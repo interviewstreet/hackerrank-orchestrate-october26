@@ -12,3 +12,6 @@ class ClassifyTests(unittest.TestCase):
  def test_french(self): self.check('Je demande la suppression définitive','DELETION')
  def test_access(self): self.check('I request access to my records','NOT_APPLICABLE')
  def test_marketing(self): self.check('Please opt out of marketing','NOT_APPLICABLE')
+ def test_korean_deletion(self): self.check('이 계정의 영구 삭제를 요청합니다','DELETION')
+ def test_portable_copy(self): self.check('I need a copy of my data in a portable format','NOT_APPLICABLE')
+ def test_keep_active(self): self.check('Replace my phone and leave the account active','NOT_APPLICABLE')

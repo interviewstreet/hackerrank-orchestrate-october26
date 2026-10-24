@@ -11,7 +11,7 @@ from code.identity import resolve_identity
 from code.ingest import load_all
 from code.planner import plan_steps
 from code.temporal import filter_events
-from code.validate import validate_output
+from code.validate import validate_output, validate_row_count
 class MemoryCache:
  def __init__(self):self.data={}
  def make_key(self,a,b):return a+b
@@ -19,6 +19,8 @@ class MemoryCache:
  def set(self,k,v):self.data[k]=v
 def process_case(case,data,repo_root,cache_override=None):
  identity=resolve_identity(case['email'],case['requested_at'],data)
+ if identity:
+  identity['case_id']=case['case_id']
  evidence=build_evidence_index(repo_root,data['evidence_manifest'],identity,case['audit_at'])
  events=filter_events(data['system_activity'],identity,case['audit_at'])
  classifier=lambda text,cid:classify_request(text,cid,cache_override) if cache_override else classify_request(text,cid)
@@ -42,6 +44,8 @@ def main(argv=None):
  with (root/'output.csv').open('w',encoding='utf-8',newline='') as h:
   writer=csv.DictWriter(h,fieldnames=['case_id','deletion_status','steps_json'],lineterminator='\n');writer.writeheader();writer.writerows(rows)
  errors=validate_output(rows)
+ if case_ids is None:
+  errors.extend(validate_row_count(rows))
  for error in errors:print(f'VALIDATION ERROR: {error}')
  print(f'Total cases processed: {len(rows)}');print(f'Validation error count: {len(errors)}')
  return 1 if errors else 0
