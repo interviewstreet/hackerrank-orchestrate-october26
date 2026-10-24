@@ -82,7 +82,10 @@ class FactStore:
             fmt = ev.file_path.rsplit(".", 1)[-1].lower()
             item = FileCoverage(ev.file_id, ev.file_path, fmt, DEFERRED)
             if fmt == "png":
-                text = extract_text.ocr_text(ev.abs_path(dataset_dir), ocr_cache)
+                try:
+                    text = extract_text.ocr_text(ev.abs_path(dataset_dir), ocr_cache)
+                except (ShapeError, OSError, ValueError) as exc:   # one bad image: coverage error, run goes on
+                    text, item.status, item.error = None, ERROR, f"ocr: {type(exc).__name__}: {exc}"
                 if text is not None:
                     store.grounding[ev.file_id] = text
                     item.status, item.family, item.grounding_chars = GROUNDING, "png_ocr", len(text)

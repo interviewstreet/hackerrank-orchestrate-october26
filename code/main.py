@@ -367,6 +367,8 @@ def main(argv: list[str] | None = None) -> int:
     ambiguous = sum(any(f.startswith("intent_ambiguous") for f in r.flags) for r in results)
     print(f"errors: {errors}, ambiguous intent: {ambiguous}, "
           f"unresolved identity: {sum('identity_unresolved' in r.flags for r in results)}")
+    for bad in ctx.store.coverage.errors(formats=("png",)):   # owned formats already stopped the build
+        print(f"[coverage] {bad.file_id} ({bad.path}) skipped: {bad.error}", file=sys.stderr)
     if client is not None:
         summary = usage_summary(ctx, len(results))
         calls = sum(t["calls"] for t in summary["per_purpose"].values())

@@ -7,7 +7,10 @@ from unittest import mock
 
 import helpers
 import main as pipeline
-from loaders import DATASET_DIR, case_number, load_requests
+from evidence import extract_text
+from evidence.common import ShapeError
+from facts import FactStore
+from loaders import DATASET_DIR, case_number, load_dataset, load_requests
 from validate import validate_file
 
 
@@ -79,6 +82,26 @@ class PipelineTest(unittest.TestCase):
                 mock.patch.object(pipeline, "run_cases", lambda *a, **kw: invalid), mock.patch("sys.stderr"):
             code = pipeline.main(["--no-llm", "--requests", str(requests), "--out", str(self.dir / "o.csv")])
         self.assertEqual(code, 1)
+
+    def test_ocr_failure_on_one_image_is_a_coverage_error_and_the_build_goes_on(self):
+        real = extract_text.ocr_text
+        data = load_dataset()
+        bad = next(ev for ev in data.evidence_files if ev.file_path.endswith(".png"))
+
+        def broken(path, cache_dir=None):
+            if path.name == Path(bad.file_path).name:
+                raise ShapeError("tesseract failed")
+            return real(path, cache_dir)
+
+        with mock.patch.object(extract_text, "ocr_text", broken):
+            store = FactStore.build(data)
+        store.coverage.check()   # PNG grounding is not an owned format: the run continues
+        status = {f.file_id: (f.status, f.error) for f in store.coverage.files}
+        self.assertEqual(status[bad.file_id][0], "error")
+        self.assertIn("ShapeError", status[bad.file_id][1])
+        self.assertNotIn(bad.file_id, store.grounding)
+        pngs = [ev.file_id for ev in data.evidence_files if ev.file_path.endswith(".png") and ev is not bad]
+        self.assertTrue(all(status[f][0] != "error" for f in pngs))
 
     def test_serialization_is_compact_and_sorted(self):
         text = pipeline.serialize_steps([{"step_no": 1, "phase": "VERIFICATION", "evidence_id": "e"}])
