@@ -40,7 +40,10 @@ from loaders import DATASET_DIR, load_requests  # noqa: E402
 DEFAULT_OUT = Path(__file__).resolve().parent / "results.md"
 
 STEP_FIELDS = ("step_no", "phase", "system_id", "resource_id", "operation", "state", "evidence_id")
-TUPLE_FIELDS = ("phase", "system_id", "resource_id", "operation", "state", "evidence_id")
+CONTENT_FIELDS = STEP_FIELDS[1:]
+# "exact": a step matches only when all 7 fields are equal (a step shifted by a missing earlier
+# step does not match). "content": the 6 fields without step_no (which step, not where).
+STEP_METRICS = {"exact": STEP_FIELDS, "content": CONTENT_FIELDS}
 
 
 def read_answers(path: Path) -> dict[str, tuple[str, list[dict]]]:
@@ -62,10 +65,24 @@ def _ratio(num: float, den: float) -> float:
     return num / den if den else 0.0
 
 
+def _matched(g_steps: list[dict], p_steps: list[dict], fields: tuple[str, ...]) -> int:
+    """Multiset matches of steps compared on ``fields``."""
+    g = Counter(tuple(s.get(f) for f in fields) for s in g_steps)
+    p = Counter(tuple(s.get(f) for f in fields) for s in p_steps)
+    return sum((g & p).values())
+
+
+def _prf(tp: int, n_gold: int, n_pred: int) -> dict:
+    precision, recall = _ratio(tp, n_pred), _ratio(tp, n_gold)
+    f1 = _ratio(2 * precision * recall, precision + recall) if precision + recall else 0.0
+    return {"gold": n_gold, "pred": n_pred, "matched": tp, "precision": precision, "recall": recall, "f1": f1}
+
+
 def score(gold: dict[str, tuple[str, list[dict]]], pred: dict[str, tuple[str, list[dict]]]) -> dict:
     n = len(gold)
     status_ok = seq_ok = row_ok = 0
-    tp = n_gold_steps = n_pred_steps = 0
+    tp = dict.fromkeys(STEP_METRICS, 0)
+    n_gold_steps = n_pred_steps = 0
     field_hits: Counter[str] = Counter()
     field_den = 0
     confusion: Counter[tuple[str, str]] = Counter()
@@ -79,10 +96,9 @@ def score(gold: dict[str, tuple[str, list[dict]]], pred: dict[str, tuple[str, li
         seq_ok += q_ok
         row_ok += s_ok and q_ok
 
-        g_tuples = Counter(tuple(s.get(f) for f in TUPLE_FIELDS) for s in g_steps)
-        p_tuples = Counter(tuple(s.get(f) for f in TUPLE_FIELDS) for s in p_steps)
-        hit = sum((g_tuples & p_tuples).values())
-        tp += hit
+        hits = {name: _matched(g_steps, p_steps, fields) for name, fields in STEP_METRICS.items()}
+        for name, hit in hits.items():
+            tp[name] += hit
         n_gold_steps += len(g_steps)
         n_pred_steps += len(p_steps)
 
@@ -91,18 +107,14 @@ def score(gold: dict[str, tuple[str, list[dict]]], pred: dict[str, tuple[str, li
         for i in range(min(len(g_steps), len(p_steps))):
             for f in STEP_FIELDS:
                 field_hits[f] += g_steps[i].get(f) == p_steps[i].get(f)
-        per_case.append((case_id, g_status, p_status, len(g_steps), len(p_steps), hit))
+        per_case.append((case_id, g_status, p_status, len(g_steps), len(p_steps), hits["exact"], hits["content"]))
 
-    precision = _ratio(tp, n_pred_steps)
-    recall = _ratio(tp, n_gold_steps)
-    f1 = _ratio(2 * precision * recall, precision + recall) if precision + recall else 0.0
     return {
         "cases": n,
         "status_accuracy": (status_ok, n),
         "sequence_accuracy": (seq_ok, n),
         "row_accuracy": (row_ok, n),
-        "steps": {"gold": n_gold_steps, "pred": n_pred_steps, "matched": tp,
-                  "precision": precision, "recall": recall, "f1": f1},
+        "steps": {name: _prf(tp[name], n_gold_steps, n_pred_steps) for name in STEP_METRICS},
         "field_accuracy": {f: (field_hits[f], field_den) for f in STEP_FIELDS},
         "confusion": confusion,
         "per_case": per_case,
@@ -114,7 +126,7 @@ def render(report: dict, details: bool = False) -> str:
         num, den = pair
         return f"{num}/{den} = {_ratio(num, den):.3f}"
 
-    st = report["steps"]
+    ex, co = report["steps"]["exact"], report["steps"]["content"]
     lines = [
         "| Metric | Value |",
         "| --- | --- |",
@@ -122,16 +134,19 @@ def render(report: dict, details: bool = False) -> str:
         f"| Status accuracy | {frac(report['status_accuracy'])} |",
         f"| Sequence accuracy (exact steps) | {frac(report['sequence_accuracy'])} |",
         f"| Row accuracy (status + steps) | {frac(report['row_accuracy'])} |",
-        f"| Steps gold / pred / matched | {st['gold']} / {st['pred']} / {st['matched']} |",
-        f"| Step precision / recall / F1 | {st['precision']:.3f} / {st['recall']:.3f} / {st['f1']:.3f} |",
+        f"| Steps gold / pred | {ex['gold']} / {ex['pred']} |",
+        f"| Exact step (7 fields incl. step_no): matched, P / R / F1 | {ex['matched']}, "
+        f"{ex['precision']:.3f} / {ex['recall']:.3f} / {ex['f1']:.3f} |",
+        f"| Content match (6 fields, no step_no): matched, P / R / F1 | {co['matched']}, "
+        f"{co['precision']:.3f} / {co['recall']:.3f} / {co['f1']:.3f} |",
     ]
     for f, pair in report["field_accuracy"].items():
         lines.append(f"| Field accuracy `{f}` | {frac(pair)} |")
     lines += ["", *confusion_table(report["confusion"])]
     if details:
         lines.append("")
-        lines.append("| case | gold | pred | gold steps | pred steps | matched |")
-        lines.append("| --- | --- | --- | --- | --- | --- |")
+        lines.append("| case | gold | pred | gold steps | pred steps | exact matched | content matched |")
+        lines.append("| --- | --- | --- | --- | --- | --- | --- |")
         for row in report["per_case"]:
             lines.append("| " + " | ".join(str(x) for x in row) + " |")
     return "\n".join(lines)

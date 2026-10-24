@@ -31,13 +31,20 @@ Status accuracy: **32/32 = 1.000**.
 
 ## 3. Step-level and field-level accuracy (32 samples)
 
-A step matches when all seven fields are equal. Field accuracy compares step `i` of the
-prediction with step `i` of the gold list.
+Two step metrics, both multiset matches per case:
+
+- **Exact step (7 fields incl. `step_no`)**: all seven fields are equal. A correct step that
+  moves because an earlier gold step is missing does **not** match. This is the strict metric.
+- **Content match (6 fields, no `step_no`)**: phase, system, resource, operation, state and
+  evidence are equal. It measures which steps we emit, not their position.
+
+Field accuracy compares step `i` of the prediction with step `i` of the gold list.
 
 | Metric | Value |
 | --- | --- |
-| Steps gold / predicted / matched | 193 / 165 / 165 |
-| Step precision / recall / F1 | 1.000 / 0.855 / 0.922 |
+| Steps gold / predicted | 193 / 165 |
+| Exact step (7 fields): matched, P / R / F1 | 126, 0.764 / 0.653 / 0.704 |
+| Content match (6 fields): matched, P / R / F1 | 165, 1.000 / 0.855 / 0.922 |
 | Field `step_no` | 165/193 = 0.855 |
 | Field `phase` | 165/193 = 0.855 |
 | Field `system_id` | 126/193 = 0.653 |
@@ -54,7 +61,8 @@ prediction with step `i` of the gold list.
 | Row accuracy (status + steps) | 15/32 = 0.469 |
 
 All 17 non-exact rows have the same cause: a **missing target** (recall, not precision).
-The pipeline emits no wrong step. The missing records are linked to the subject only by a
+The pipeline emits no step outside the gold content (content precision 1.000); the exact
+precision is 0.764 only because missing steps shift the `step_no` of the later ones. The missing records are linked to the subject only by a
 worker claim in `system_activity.csv` or by log lines without a subject key, so the strict
 linking rules leave them out (Phase 3 cause table; section 7, Phase 5 D).
 
@@ -90,15 +98,15 @@ All 7 passed on the first run, before any Phase 5 change.
 
 ## 7. Failures found and improvements made, phase by phase
 
-Sample scores (32 cases). "Exact" = exact step list.
+Sample scores (32 cases). "Sequence" = exact step list. The sample rows of Phases 3-5 are identical, so their 7-field score is the same; Phase 2 was scored with the 6-field metric only.
 
-| Phase | Commit | Status | Exact | Step P / R / F1 | Main change |
-| --- | --- | --- | --- | --- | --- |
-| 1 | (Phase 1) | 22/32 | 0/32 | 0 / 0 / 0 | Loaders, identity, intent, validator; no evidence yet (every row INCOMPLETE `[]`) |
-| 2 | aa443ff | 29/32 | 9/32 | 0.966 / 0.591 / 0.733 | SQL/JSON/TXT/activity extractors, fact store, per-copy resolver, policy table, planner |
-| 3 | 887c92b | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | Logs + PDF, ownership graph, newest-wins dominance, citation order fix |
-| 4 | 6d55ef8 | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | Vision, model intent, investigator agent, snapshot replay |
-| 5 | this draft | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | Stale-link exclusion, content category, vision prompt v2 |
+| Phase | Commit | Status | Sequence | Content P / R / F1 (6 fields) | Exact P / R / F1 (7 fields) | Main change |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | (Phase 1) | 22/32 | 0/32 | 0 / 0 / 0 | 0 / 0 / 0 | Loaders, identity, intent, validator; no evidence yet (every row INCOMPLETE `[]`) |
+| 2 | aa443ff | 29/32 | 9/32 | 0.966 / 0.591 / 0.733 | not measured | SQL/JSON/TXT/activity extractors, fact store, per-copy resolver, policy table, planner |
+| 3 | 887c92b | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Logs + PDF, ownership graph, newest-wins dominance, citation order fix |
+| 4 | 6d55ef8 | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Vision, model intent, investigator agent, snapshot replay |
+| 5 | b657810 | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Stale-link exclusion, content category, vision prompt v2 |
 
 Failures found and fixed:
 
@@ -144,7 +152,8 @@ case_61 (object_19 finding added). No status changed.
 | --- | --- | --- |
 | Status accuracy | 32/32 | 32/32 |
 | Exact step lists | 15/32 | 15/32 |
-| Step P / R / F1 | 1.000 / 0.855 / 0.922 | same |
+| Content P / R / F1 (6 fields) | 1.000 / 0.855 / 0.922 | same |
+| Exact P / R / F1 (7 fields) | 0.764 / 0.653 / 0.704 | same |
 
 On the 518 the agent ran 3 times (11 turns): 3 proposals, 1 accepted (case_55 `backup_9287`,
 STATE PRESENT, no row change), 2 rejected `state_mismatch` (case_39, case_46: the quote did

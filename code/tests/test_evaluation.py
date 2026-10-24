@@ -1,5 +1,6 @@
 """Frozen custom cases and metamorphic checks (code/evaluation). No network."""
 
+import importlib.util
 import sys
 import unittest
 
@@ -44,6 +45,24 @@ class MetamorphicTest(unittest.TestCase):
         for check in metamorphic.all_checks():
             with self.subTest(check["name"]):
                 self.assertTrue(check["passed"], check["detail"])
+
+
+class ScorerTest(unittest.TestCase):
+    def test_shifted_step_is_a_content_match_but_not_an_exact_match(self):
+        spec = importlib.util.spec_from_file_location("eval_main", config.CODE_DIR / "evaluation" / "main.py")
+        scorer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(scorer)
+
+        def step(n, rid):
+            return {"step_no": n, "phase": "VERIFICATION", "system_id": "s", "resource_id": rid,
+                    "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": "e"}
+
+        gold = {"case_1": ("COMPLETE", [step(1, "a"), step(2, "b")])}
+        pred = {"case_1": ("COMPLETE", [step(1, "b")])}   # "a" is missing, so "b" moves to step 1
+        steps = scorer.score(gold, pred)["steps"]
+        self.assertEqual((steps["exact"]["matched"], steps["content"]["matched"]), (0, 1))
+        self.assertEqual(steps["content"]["precision"], 1.0)
+        self.assertEqual(steps["exact"]["precision"], 0.0)
 
 
 if __name__ == "__main__":
