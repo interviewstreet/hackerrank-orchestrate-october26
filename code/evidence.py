@@ -50,7 +50,7 @@ def _identifiers(identity: dict) -> list[str]:
     if cached is not None:
         return cached
     values = [identity.get("user_id", "")]
-    for key in ("all_emails", "all_phones", "all_email_hashes"):
+    for key in ("all_emails", "all_phones", "all_email_hashes", "lineage_resource_ids"):
         values.extend(identity.get(key, []))
     identifiers = list(dict.fromkeys(str(value) for value in values if value))
     identity["_match_identifiers"] = identifiers
@@ -413,10 +413,16 @@ def _gemini_vision_text(path, user_identity):
 
 @lru_cache(maxsize=128)
 def _extract_image_text(path: str) -> str:
-    import pytesseract
-    from PIL import Image
-    with Image.open(path) as image:
-        return pytesseract.image_to_string(image)
+    try:
+        import pytesseract
+        from PIL import Image
+        with Image.open(path) as image:
+            return pytesseract.image_to_string(image)
+    except (ImportError, OSError, RuntimeError) as exc:
+        logging.getLogger(__name__).warning(
+            "Local OCR unavailable for %s: %s", Path(path).name, type(exc).__name__
+        )
+        return ""
 
 
 def parse_image_evidence(path, user_identity):

@@ -1,9 +1,11 @@
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from code.evidence import (
     _contains,
     build_evidence_index,
+    parse_image_evidence,
     parse_json_evidence,
     parse_log_evidence,
     parse_sql_evidence,
@@ -56,6 +58,22 @@ class EvidenceParserTests(unittest.TestCase):
         self.assertTrue(_contains('subject=user_1;', 'user_1'))
         self.assertFalse(_contains('subject=user_10;', 'user_1'))
         self.assertTrue(_contains('EMAIL=AMINA.ELMASRI@GMAIL.COM', 'amina.elmasri@gmail.com'))
+
+    def test_image_uses_vision_fallback_when_tesseract_is_unavailable(self):
+        identity = {
+            "user_id": "user_1", "all_emails": ["a@example.test"],
+            "all_phones": [], "all_email_hashes": [],
+        }
+        transcription = (
+            "service=search_service resource_id=search_1 state=PRESENT "
+            "email=a@example.test"
+        )
+        with patch("code.evidence._extract_image_text", return_value=""), patch(
+            "code.evidence._gemini_vision_text", return_value=transcription
+        ):
+            hits = parse_image_evidence(Path("screen.png"), identity)
+        self.assertEqual(hits[0]["resource_id"], "search_1")
+        self.assertEqual(hits[0]["system_id"], "search_service")
 
     def test_handover_support_attachment_keeps_resource_id_and_category(self):
         hits = parse_text_evidence(

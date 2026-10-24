@@ -15,6 +15,7 @@ from code.decision import decide
 from code.evidence import build_evidence_index
 from code.identity import resolve_identity
 from code.ingest import load_all
+from code.lineage import augment_identity_lineage
 from code.planner import plan_steps
 from code.temporal import filter_events
 from code.validate import validate_case_coverage, validate_output, validate_row_count
@@ -38,10 +39,11 @@ def process_case(case, data, repo_root, cache_override=None):
     identity = resolve_identity(case["email"], case["requested_at"], data)
     if identity:
         identity["case_id"] = case["case_id"]
+    events = filter_events(data["system_activity"], identity, case["audit_at"])
+    augment_identity_lineage(identity, events)
     evidence = build_evidence_index(
         repo_root, data["evidence_manifest"], identity, case["audit_at"]
     )
-    events = filter_events(data["system_activity"], identity, case["audit_at"])
     classifier = (
         (lambda text, case_id: classify_request(text, case_id, cache_override))
         if cache_override

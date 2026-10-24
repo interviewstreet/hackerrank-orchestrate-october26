@@ -1,6 +1,8 @@
 """Temporal boundary and activity reconstruction helpers."""
 from __future__ import annotations
 
+from code.evidence import _contains
+
 
 def filter_events(activity_list: list[dict], user_identity: dict, audit_at: str) -> list[dict]:
     if not user_identity:
@@ -13,8 +15,8 @@ def filter_events(activity_list: list[dict], user_identity: dict, audit_at: str)
     for event in activity_list:
         if event.get("event_time", "") > audit_at:
             continue
-        haystack = f"{event.get('resource_id', '')} {event.get('details', '')}".casefold()
-        if any(v in haystack for v in needles):
+        haystack = f"{event.get('resource_id', '')} {event.get('details', '')}"
+        if any(_contains(haystack, value) for value in needles):
             result.append(event)
     return sorted(result, key=lambda e: e.get("event_time", ""))
 

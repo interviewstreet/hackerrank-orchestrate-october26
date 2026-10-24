@@ -77,8 +77,8 @@ python3 code/preflight.py --require-package
 
 1. `ingest.py` loads and indexes participant-facing CSV data.
 2. `identity.py` joins current and historical emails, phones, and hashes to the stable user ID.
-3. `temporal.py` enforces each case's `audit_at` boundary.
-4. `evidence.py` normalizes SQLite snapshots, nested JSON, trace-correlated logs, text handovers, PDFs, and OCR output into evidence-backed resource states.
+3. `temporal.py` enforces each case's `audit_at` boundary, and `lineage.py` grounds explicit data-catalog subject-to-resource links.
+4. `evidence.py` normalizes SQLite snapshots, nested JSON, trace-correlated logs, text handovers, PDFs, and OCR or Gemini vision output into evidence-backed resource states.
 5. `policy.py` and `decision.py` apply all 15 deletion rules and identify remaining records, exposed PII, active data flows, and restore risks.
 6. `planner.py` emits deterministically ordered finding, remediation, and verification steps.
 7. `validate.py` enforces the output contract before the run succeeds.
