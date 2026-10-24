@@ -561,3 +561,33 @@ branch=arena/6dfb0fbb-hackerrank-orchestrate-october
 repo_root=/home/user/hackerrank-orchestrate-october26
 worktree=/home/user/hackerrank-orchestrate-october26
 parent_agent=none
+
+## [2026-10-24T18:28:03Z] Three-phase lineage improvement — Phase 1
+
+User Prompt (verbatim, secrets redacted):
+let make it in three phase 3 start phase one
+
+Agent Response Summary:
+Defined a three-phase resource-lineage improvement plan and completed Phase 1 groundwork. Added audit-time-filtered data-catalog lineage seeds, boundary-safe activity identity matching, resource-ID-assisted evidence retrieval, and Gemini vision fallback when Tesseract is unavailable. Public metrics remain unchanged by design in this first phase; 49 tests pass and the next phase will address workflow and negative-evidence correlation for the 28 missing verification steps.
+
+Actions:
+* Created code/LINEAGE_PLAN.md with Phase 1–3 scope, safeguards, and acceptance targets.
+* Added code/lineage.py to extract resources only from identity-filtered LINK_RESOURCE_IDENTITY events.
+* Reordered case processing so temporal activity is filtered and lineage is attached before evidence retrieval.
+* Extended evidence matching to use grounded lineage resource IDs in addition to subject identifiers.
+* Fixed temporal user-ID boundary matching so user_1 cannot match user_10.
+* Hardened image parsing to use cached local OCR and Gemini 2.5 Pro vision fallback when Tesseract is unavailable or ambiguous.
+* Added lineage, temporal boundary, and image vision-fallback tests.
+* Updated README.md architecture, evaluation notes, and the three-phase plan documentation.
+* Ran 49 unit tests and py_compile successfully.
+* Ran the 32-case public regression: status 100.0%, exact step 65.8%, field 73.6%, sequence 46.9% (unchanged Phase 1 baseline).
+* Rebuilt code.zip and passed repository/package preflight plus ZIP integrity checks.
+* Removed the temporary virtual environment, bytecode directories, and generated cache.
+
+Context:
+tool=Arena.ai Agent Mode
+model=managed-runtime (exact identifier unavailable to agent)
+branch=arena/6dfb0fbb-hackerrank-orchestrate-october
+repo_root=/home/user/hackerrank-orchestrate-october26
+worktree=/home/user/hackerrank-orchestrate-october26
+parent_agent=none
