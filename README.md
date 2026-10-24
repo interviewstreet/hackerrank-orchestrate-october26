@@ -82,6 +82,15 @@ python3 -m unittest discover -s code/tests -v
 
 Gemini results are cached in `code/cache.json` by SHA-256 of `case_id + prompt`; this generated cache is excluded from `code.zip`.
 
+### Security and integrity controls
+
+- CSV schemas and primary keys are validated before processing.
+- Manifest evidence paths are resolved beneath `dataset/`; traversal and missing files fail closed.
+- SQL snapshots execute only in an in-memory SQLite database. Database attachment, detachment, and extension loading are denied.
+- API keys are read only from `GOOGLE_API_KEY` and are never included in prompts, logs, outputs, or cache values.
+- Cache updates and final CSV writes use temporary files followed by atomic replacement.
+- Final validation rejects duplicate cases, malformed steps, invalid phase or operation ordering, and incorrect evidence placement.
+
 
 ## Dataset
 

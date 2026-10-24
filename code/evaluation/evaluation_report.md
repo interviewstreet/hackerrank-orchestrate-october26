@@ -34,6 +34,10 @@ Compare a tombstone containing only a stable subject reference with one still ex
 
 Ensure `user_1` does not match evidence for `user_10` or `user_100`. Matching uses token boundaries for stable IDs, emails, phones, and hashes to prevent cross-subject evidence contamination.
 
+### Custom Case 5 — Evidence Sandbox and Output Integrity
+
+Reject a manifest path that escapes `dataset/`, deny SQLite `ATTACH` and extension loading, treat malformed non-object cache content as empty, reject duplicate output cases, and confirm atomic output writes leave no temporary file.
+
 ## Failures Found and Improvements Made
 
 Phase 1 used raw substring matching, classified heterogeneous SQL rows from table names alone, and parsed logs line by line. This produced false cross-user hits, missed trace-correlated resources, and misclassified data flows, blocked backups, redacted support records, and tombstones.
@@ -41,3 +45,5 @@ Phase 1 used raw substring matching, classified heterogeneous SQL rows from tabl
 Phase 2 added boundary-safe identifier matching; normalized service/category/state inference; recursive JSON records; SQLite `record_json` expansion; trace-level log correlation; pipe-delimited handover parsing; PDF extraction with fallback; OCR support; deterministic deduplication; temporal evidence selection; and explicit process/restore compliance handling. The incomplete-case planner now includes verification for both remediated and already-compliant resources.
 
 Phase 4 fixed support-attachment parsing, added newest-readback reconstruction for migrated account resource IDs, and cached immutable SQL, JSON, PDF, image, and text extraction work within each run. These changes improved sample status accuracy from the Phase 1 baseline of **68.8% to 100.0%**, exact positional step accuracy from **0.0% to 65.8%**, field accuracy to **73.6%**, and sequence accuracy from **0.0% to 46.9%**.
+
+Phase 5 performed a security and submission-integrity review. It added strict CSV schemas and uniqueness checks, evidence path confinement, a SQLite authorizer, malformed-cache recovery, atomic output writes, duplicate-row detection, and stricter phase/evidence validation. These controls do not alter the measured prediction metrics; they fail closed on malformed or unsafe inputs and protect the final artifact from partial writes.
