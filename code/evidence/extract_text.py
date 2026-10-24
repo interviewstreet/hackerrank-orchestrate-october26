@@ -15,9 +15,11 @@ non-empty line raises ``ShapeError``.
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
+import config
 from evidence.common import (
     PRESENT,
     RE_EMAIL,
@@ -154,30 +156,72 @@ def scan_text_identifiers(text: str) -> Identifiers:
 
 # ------------------------------------------------------------------ PNG grounding text
 #
-# PNG screenshots are not facts in this phase. Tesseract OCR text is kept per file as
-# grounding text only: Phase 4 vision rows are accepted only when their ids appear in it.
+# PNG screenshots are not facts. Tesseract output is kept per file as grounding only: vision
+# rows are accepted only when their ids appear in it (extract_vision). Two readings per image:
+# plain text (``--psm 6``, uniform lines) and a TSV layout (``--psm 3``, automatic page
+# segmentation with block / paragraph / line numbers).
+#
+# Lookup order: ``ocr_snapshot.json`` (shipped, keyed by image SHA-256 and reading), then the
+# local cache, then Tesseract. The snapshot makes a run reproducible on a machine without
+# Tesseract or with another Tesseract version. Every reading used in a run is kept in ``USED``
+# for ``export_ocr_snapshot``.
 
 TESSERACT_PATHS = ("tesseract", r"C:\Program Files\Tesseract-OCR\tesseract.exe")
+READINGS = {"text": (["--psm", "6"], "txt"), "layout": (["--psm", "3", "tsv"], "psm3.tsv")}
+USED: dict[str, str] = {}
+_SNAPSHOT: dict[str, str] | None = None
 
 
-def ocr_text(path: Path, cache_dir: Path | None = None) -> str | None:
-    """OCR text of an image, cached by content hash. None when Tesseract is not installed."""
+def _ocr_snapshot() -> dict[str, str]:
+    global _SNAPSHOT
+    if _SNAPSHOT is None:
+        path = config.OCR_SNAPSHOT_FILE
+        _SNAPSHOT = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    return _SNAPSHOT
+
+
+def _tesseract(path: Path, reading: str, cache_dir: Path | None) -> str | None:
+    """One Tesseract reading of an image (see ``READINGS``). None when no source has it."""
     import hashlib
     import shutil
     import subprocess
 
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    cached = cache_dir / f"{digest}.txt" if cache_dir else None
-    if cached is not None and cached.exists():
-        return cached.read_text(encoding="utf-8")
-    exe = next((p for p in TESSERACT_PATHS if shutil.which(p) or Path(p).exists()), None)
-    if exe is None:
-        return None
-    result = subprocess.run([exe, str(path), "-", "--psm", "6"], capture_output=True, text=True,  # noqa: S603 - fixed exe, no shell
-                            encoding="utf-8", check=False)
-    if result.returncode != 0:
-        raise ShapeError(f"tesseract failed on {path.name}: {result.stderr.strip()[:80]}")
-    if cached is not None:
-        cached.parent.mkdir(parents=True, exist_ok=True)
-        cached.write_text(result.stdout, encoding="utf-8")
-    return result.stdout
+    key = f"{digest}:{reading}"
+    args, suffix = READINGS[reading]
+    out = _ocr_snapshot().get(key)
+    cached = cache_dir / f"{digest}.{suffix}" if cache_dir else None
+    if out is None and cached is not None and cached.exists():
+        out = cached.read_text(encoding="utf-8")
+    if out is None:
+        exe = next((p for p in TESSERACT_PATHS if shutil.which(p) or Path(p).exists()), None)
+        if exe is None:
+            return None
+        result = subprocess.run([exe, str(path), "-", *args], capture_output=True, text=True,  # noqa: S603 - fixed exe, no shell
+                                encoding="utf-8", check=False)
+        if result.returncode != 0:
+            raise ShapeError(f"tesseract failed on {path.name}: {result.stderr.strip()[:80]}")
+        out = result.stdout
+        if cached is not None:
+            cached.parent.mkdir(parents=True, exist_ok=True)
+            cached.write_text(out, encoding="utf-8")
+    USED[key] = out
+    return out
+
+
+def ocr_text(path: Path, cache_dir: Path | None = None) -> str | None:
+    """OCR text of an image (``--psm 6``). None when no snapshot, cache or Tesseract has it."""
+    return _tesseract(path, "text", cache_dir)
+
+
+def ocr_layout(path: Path, cache_dir: Path | None = None) -> str | None:
+    """Tesseract TSV of an image (``--psm 3``): words with block, paragraph and line numbers."""
+    return _tesseract(path, "layout", cache_dir)
+
+
+def export_ocr_snapshot(path: Path | None = None) -> int:
+    """Write every OCR reading used in this run (merged with the existing snapshot)."""
+    path = path or config.OCR_SNAPSHOT_FILE
+    merged = {**_ocr_snapshot(), **USED}
+    path.write_text(json.dumps(merged, indent=0, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    return len(merged)

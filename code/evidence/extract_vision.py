@@ -10,9 +10,10 @@ Flow per file:
    ``identifier`` both appear in the local text of that file. OCR noise allowed, as character
    classes: separators ``_ - . ,`` / space / none; ``o``/``0``; ``i``/``l``/``1``/``|`` (Tesseract
    reads "gmail" as "gmall"). Other digits must match. Every dropped row is listed with a reason.
-   State grounding (``row_line``): one OCR line must hold the resource id (or its visible
-   catalog alias), the state cue (``state_cue``) and at least half of the ``source_text`` words.
-   A row whose id, words and state are spread over different lines is dropped.
+   State grounding (``row_block``): one OCR block (Tesseract layout block, or one text line)
+   must hold the resource id (or its visible catalog alias) with the state cue - on the id's own
+   line when the block lists other records - and at least half of the ``source_text`` words.
+   The identifier must be in that block, or anywhere on a page that shows no other record.
 4. Accepted rows become observations with assertion ``vision_row`` (resolver tier "vision",
    below parsed text rows). ``UNREADABLE`` rows are dropped.
 
@@ -22,6 +23,8 @@ A PDF without a text layer cannot be grounded, so it is not sent (listed in the 
 from __future__ import annotations
 
 import base64
+import csv
+import io
 import json
 import re
 from collections.abc import Sequence
@@ -54,7 +57,8 @@ from schema import RawState, VisionExtraction, VisionRow
 PROMPT = config.PROMPT_VERSIONS["vision"]
 SEP = r"[_\-\s.,]?"
 CONFUSABLE = str.maketrans({"o": "0", "l": "1", "i": "1", "|": "1", "!": "1"})
-MIN_SOURCE_SHARE = 0.5   # share of source_text words that must be on the grounding OCR line
+MIN_SOURCE_SHARE = 0.5   # share of source_text words that must be in the grounding OCR block
+RE_RECORD = re.compile(r"\b[a-z]+(?:_[a-z]+)*_\d+\b")   # a record name: resource id or file stem
 # State cue words, shared with the agent acceptance check (agent/loop.py).
 NEGATIVE = r"not[ _]found|absent|deleted|removed|missing|no results|\b404\b|rows=\"?0\b|purged"
 STATE_WORDS = {
@@ -225,28 +229,79 @@ def state_cue(state: RawState, line: str) -> bool:
     return re.search(STATE_WORDS[state], low) is not None if state in STATE_WORDS else False
 
 
-def row_line(row: VisionRow, text: str, aliases: list[Alias]) -> str | None:
-    """The one OCR line that grounds the row: it holds the resource id (or a visible catalog alias
-    of it), the state cue, and at least ``MIN_SOURCE_SHARE`` of the ``source_text`` words (OCR
-    misreads words such as sizes and dates, so not all of them)."""
+def layout_blocks(tsv: str | None) -> list[list[str]]:
+    """Lines of each Tesseract TSV block (``--psm 3``), in reading order."""
+    if not tsv:
+        return []
+    lines: dict[tuple[int, int, int], list[str]] = {}
+    for rec in csv.DictReader(io.StringIO(tsv), delimiter="\t", quoting=csv.QUOTE_NONE):
+        if rec.get("level") == "5" and (rec.get("text") or "").strip():
+            key = (int(rec["block_num"]), int(rec["par_num"]), int(rec["line_num"]))
+            lines.setdefault(key, []).append(rec["text"])
+    blocks: dict[int, list[str]] = {}
+    for (block, _, _), words in sorted(lines.items()):
+        blocks.setdefault(block, []).append(" ".join(words))
+    return list(blocks.values())
+
+
+def _other_record(text: str, names: list[str]) -> bool:
+    """``text`` names a record other than ``names`` (the row's id and its aliases): a token shaped
+    like a resource id or a file stem (``name_123``). User ids are identifiers, not records."""
+    for m in RE_RECORD.finditer(text.lower()):
+        token = m.group(0)
+        if not RE_USER_ID.fullmatch(token) and not any(grounded(token, n) or grounded(n, token) for n in names):
+            return True
+    return False
+
+
+def _cue(row: VisionRow, scope: str, region: str) -> bool:
+    """The state cue is in ``scope``. An IDENTIFIABLE row is also supported by its own direct
+    identifier (email, phone, hash) visible in the record's region: that identifier is the exposure."""
+    if state_cue(row.observed_state, scope):
+        return True
+    return (row.observed_state == RawState.IDENTIFIABLE and bool(_identifiers(row.identifier).direct())
+            and grounded(row.identifier or "", region))
+
+
+def row_block(row: VisionRow, text: str, layout: str | None, aliases: list[Alias]) -> str | None:
+    """The OCR block that grounds the row, or None.
+
+    Candidate blocks: every ``--psm 3`` layout block, and every ``--psm 6`` text line as a block of
+    its own (two segmentations of the same image). A block grounds the row when:
+
+    - a line of it holds the resource id (or a visible catalog alias);
+    - the state cue is in the block, or only on that line when the block lists other records (a
+      table: the state must come from the record's own row);
+    - the identifier is in the block, or in the record's region: the whole page when the page
+      names no other record (a single-record view such as a ticket page with an email card);
+    - at least ``MIN_SOURCE_SHARE`` of the ``source_text`` words are in the block (OCR misreads
+      sizes and dates, so not all of them).
+    """
     tokens = _source_tokens(row.source_text)
     if not tokens:
         return None
-    names = [a.name for a in aliases if (a.system_id, a.resource_id) == (row.system_id, row.resource_id)]
-    for line in text.splitlines():
-        if not (grounded(row.resource_id, line) or any(grounded(n, line) for n in names)):
+    names = [row.resource_id] + [a.name for a in aliases
+                                 if (a.system_id, a.resource_id) == (row.system_id, row.resource_id)]
+    single_record_page = not _other_record(text, names)
+    for lines in [*layout_blocks(layout), *([ln] for ln in text.splitlines() if ln.strip())]:
+        block = "\n".join(lines)
+        if sum(grounded(t, block) for t in tokens) < MIN_SOURCE_SHARE * len(tokens):
             continue
-        if not state_cue(row.observed_state, line):
+        listing = _other_record(block, names)
+        region = text if single_record_page else block
+        if row.identifier and not grounded(row.identifier, region):
             continue
-        if sum(grounded(t, line) for t in tokens) >= MIN_SOURCE_SHARE * len(tokens):
-            return line
+        for line in lines:
+            if any(grounded(n, line) for n in names) and _cue(row, line if listing else block, region):
+                return block
     return None
 
 
 def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, known_systems: set[str],
             known_categories: set[str], system_category: dict[str, str],
-            aliases: Sequence[Alias] = ()) -> tuple[list[Observation], FileReport]:
-    """``aliases``: catalog display names (file names, statement numbers) for resource ids."""
+            aliases: Sequence[Alias] = (), layout: str | None = None) -> tuple[list[Observation], FileReport]:
+    """``aliases``: catalog display names (file names, statement numbers) for resource ids.
+    ``layout``: the Tesseract TSV of the image (``--psm 3``), for block grounding."""
     aliases = list(aliases)
     report = FileReport(ev.file_id, ev.file_path)
     if not local_text or not local_text.strip():
@@ -277,8 +332,8 @@ def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, k
             reason = "resource_id not in OCR text"
         elif row.identifier and not grounded(row.identifier, local_text):
             reason = "identifier not in OCR text"
-        elif row_line(row, local_text, aliases) is None:
-            reason = "no OCR line holds source_text, the id and the state cue"
+        elif row_block(row, local_text, layout, aliases) is None:
+            reason = "no OCR block holds the id with its state cue, identifier and source_text"
         elif safety.screen(row.source_text):
             reason = "injection pattern in source_text"
         obs = None

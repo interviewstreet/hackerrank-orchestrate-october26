@@ -38,7 +38,7 @@ import planner
 import validate
 from agent.loop import AgentStats, investigate
 from agent.tools import Corpus
-from evidence import extract_vision
+from evidence import extract_text, extract_vision
 from evidence.extract_text import pdf_text
 from facts import FactStore, catalog_alias_rows
 from identity import FutureDataError, IdentityIndex, SubjectIdentity
@@ -106,7 +106,7 @@ def add_vision(ctx: Context, dataset_dir: Path) -> None:
         assert ctx.client is not None   # add_vision runs only with a client
         rows, report = extract_vision.extract(ev, ev.abs_path(dataset_dir), ctx.store.grounding.get(ev.file_id),
                                               ctx.client, ctx.known_systems, set(RULES), SYSTEM_CATEGORY,
-                                              aliases)
+                                              aliases, ctx.store.layout.get(ev.file_id))
         ctx.store.add(rows, [])
         ctx.vision_reports.append(report)
     ctx.store.db.commit()
@@ -342,7 +342,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-vision", action="store_true")
     parser.add_argument("--no-agent", action="store_true")
     parser.add_argument("--export-snapshot", action="store_true",
-                        help="write every validated model result of this run to code/llm_snapshot.py")
+                        help="write every validated model result of this run to code/llm_snapshot.py "
+                             "and every OCR reading to code/ocr_snapshot.json")
     args = parser.parse_args(argv)
 
     client = None if args.no_llm else LLMClient.from_config(offline=args.offline or None)
@@ -381,6 +382,8 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.usage).write_text(json.dumps(summary, indent=1, sort_keys=True, default=str), encoding="utf-8")
         if args.export_snapshot:
             print(f"snapshot: {client.cache.export_snapshot()} validated results -> {config.SNAPSHOT_FILE}")
+    if args.export_snapshot:
+        print(f"ocr snapshot: {extract_text.export_ocr_snapshot()} readings -> {config.OCR_SNAPSHOT_FILE}")
     return 0
 
 

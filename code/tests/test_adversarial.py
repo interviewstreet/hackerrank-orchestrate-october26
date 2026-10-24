@@ -49,6 +49,20 @@ def vision(transport, ocr=OCR):
                                       {"account_service": "USER_PROFILE"})
 
 
+def tsv(lines):
+    """A Tesseract TSV with one word row per token: lines are (block, line, text)."""
+    out = ["level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext"]
+    for block, line, text in lines:
+        for n, word in enumerate(text.split(), start=1):
+            out.append(f"5\t1\t{block}\t1\t{line}\t{n}\t0\t0\t1\t1\t96\t{word}")
+    return "\n".join(out)
+
+
+def vrow(r):
+    ctx = {"known_systems": KNOWN, "known_categories": {"USER_PROFILE"}, "file_id": "evidence_99"}
+    return extract_vision.VisionRow.model_validate(r, context=ctx)
+
+
 def row(**over):
     r = {"system_id": "account_service", "resource_id": "account_901", "category": None, "observed_state": "FOUND",
          "identifier": "ana.test@example.org", "observed_at": None, "source_text": "account_901 ana.test@example.org"}
@@ -150,7 +164,34 @@ class AdversarialTest(unittest.TestCase):
         rows, report = vision(Always(reply), ocr)
         self.assertEqual([o.resource_id for o in rows], ["account_901"])
         self.assertEqual([d["resource_id"] for d in report.dropped], ["account_902", "support_77"])
-        self.assertTrue(all(d["reason"].startswith("no OCR line") for d in report.dropped))
+        self.assertTrue(all(d["reason"].startswith("no OCR block") for d in report.dropped))
+
+    def test_layout_blocks_group_tesseract_words_by_block(self):
+        layout = tsv([(1, 1, "account_901 Active"), (1, 2, "ana.test@example.org"), (2, 1, "Help")])
+        self.assertEqual(extract_vision.layout_blocks(layout),
+                         [["account_901 Active", "ana.test@example.org"], ["Help"]])
+        self.assertEqual(extract_vision.layout_blocks(None), [])
+
+    def test_listing_block_takes_the_state_from_the_records_own_line(self):
+        # One table block: the "not found" cue belongs to account_902's line, not to account_901's.
+        layout = tsv([(1, 1, "account_901 ana.test@example.org Active"), (1, 2, "account_902 not found")])
+        text = "account_901 ana.test@example.org Active\naccount_902 not found"
+        ok = vrow(row())
+        moved = vrow(row(observed_state="NOT_FOUND"))
+        self.assertIsNotNone(extract_vision.row_block(ok, text, layout, []))
+        self.assertIsNone(extract_vision.row_block(moved, text, layout, []))
+
+    def test_single_record_page_grounds_the_identifier_in_another_card(self):
+        # A ticket page: the id and its cue in one block, the requester email in a separate card.
+        layout = tsv([(1, 1, "support_77 Open"), (1, 2, "Normal priority"), (2, 1, "Email ana.test@example.org")])
+        text = "support_77 Open Normal priority\nEmail ana.test@example.org"
+        r = vrow(
+            row(system_id="support_platform", resource_id="support_77", observed_state="IDENTIFIABLE",
+                source_text="support_77 Open Normal priority"))
+        self.assertIsNotNone(extract_vision.row_block(r, text, layout, []))
+        # The same card on a page that also lists another record does not ground the identifier.
+        listing = text + "\nsupport_78 Closed"
+        self.assertIsNone(extract_vision.row_block(r, listing, layout, []))
 
     def test_model_row_naming_another_users_resource_is_rejected(self):
         keys = Identifiers(emails={"ana.test@example.org"}, user_ids={"user_5"})

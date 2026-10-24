@@ -74,6 +74,7 @@ PROMPT_VERSIONS = {"vision": "vision_extract_v2", "intent": "intent_v1", "agent"
 PROMPTS_DIR = CODE_DIR / "prompts"
 CACHE_DIR = REPO_ROOT / ".cache" / "llm"
 SNAPSHOT_FILE = CODE_DIR / "llm_snapshot.py"
+OCR_SNAPSHOT_FILE = CODE_DIR / "ocr_snapshot.json"   # Tesseract readings by image hash
 
 
 def api_key() -> str:

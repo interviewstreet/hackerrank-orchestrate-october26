@@ -53,7 +53,7 @@ def _iso(dt: datetime) -> str:
 
 
 class FactStore:
-    def __init__(self):
+    def __init__(self) -> None:
         self.observations: dict[str, Observation] = {}
         self.scopes: list[Scope] = []
         self.coverage = CoverageReport()
@@ -62,6 +62,7 @@ class FactStore:
         self._scopes_by_system: dict[str, list[Scope]] = defaultdict(list)
         self._rows_in_file: set[tuple[str, str, str]] = set()   # (file_id, resource_id, copy)
         self.grounding: dict[str, str] = {}   # file_id -> OCR text (grounding only, never facts)
+        self.layout: dict[str, str] = {}      # file_id -> OCR TSV layout (--psm 3, grounding only)
         self.db = sqlite3.connect(":memory:")
         self.db.executescript("""
             CREATE TABLE obs (obs_id TEXT PRIMARY KEY, file_id TEXT, system_id TEXT, resource_id TEXT,
@@ -84,8 +85,11 @@ class FactStore:
             if fmt == "png":
                 try:
                     text = extract_text.ocr_text(ev.abs_path(dataset_dir), ocr_cache)
+                    layout = extract_text.ocr_layout(ev.abs_path(dataset_dir), ocr_cache)
                 except (ShapeError, OSError, ValueError) as exc:   # one bad image: coverage error, run goes on
-                    text, item.status, item.error = None, ERROR, f"ocr: {type(exc).__name__}: {exc}"
+                    text, layout, item.status, item.error = None, None, ERROR, f"ocr: {type(exc).__name__}: {exc}"
+                if layout is not None:
+                    store.layout[ev.file_id] = layout
                 if text is not None:
                     store.grounding[ev.file_id] = text
                     item.status, item.family, item.grounding_chars = GROUNDING, "png_ocr", len(text)
