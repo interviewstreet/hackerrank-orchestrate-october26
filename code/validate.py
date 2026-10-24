@@ -17,38 +17,10 @@ from datetime import datetime
 from pathlib import Path
 
 from loaders import DATASET_DIR, REPO_ROOT, case_number, load_requests, parse_ts, read_csv
+from schema import HEADER, OP_PHASE, OP_RANK, OP_STATE, PHASE_ORDER, STEP_KEYS, Phase, Status, step_sort_key
 
-HEADER = ["case_id", "deletion_status", "steps_json"]
-STATUSES = ("COMPLETE", "INCOMPLETE", "NOT_APPLICABLE")
-PHASES = ("FINDING", "REMEDIATION", "VERIFICATION")
-STEP_KEYS = frozenset({"step_no", "phase", "system_id", "resource_id", "operation", "state", "evidence_id"})
-
-# (phase, operation, state) in the mandated table order. Index = sort rank.
-OPERATIONS = (
-    ("FINDING", "REPORT_REMAINING_RECORD", "PRESENT"),
-    ("FINDING", "REPORT_EXPOSED_PII", "PRESENT"),
-    ("FINDING", "REPORT_ACTIVE_DATA_FLOW", "ACTIVE"),
-    ("FINDING", "REPORT_RESTORE_RISK", "ACTIVE"),
-    ("REMEDIATION", "DISABLE_DATA_FLOW", "DISABLED"),
-    ("REMEDIATION", "BLOCK_RESTORE", "BLOCKED"),
-    ("REMEDIATION", "DELETE_RECORD", "ABSENT"),
-    ("REMEDIATION", "REDACT_RECORD", "REDACTED"),
-    ("REMEDIATION", "ANONYMIZE_RECORD", "ANONYMIZED"),
-    ("VERIFICATION", "VERIFY_RECORD_ABSENT", "ABSENT"),
-    ("VERIFICATION", "VERIFY_RECORD_PRESENT", "PRESENT"),
-    ("VERIFICATION", "VERIFY_RECORD_REDACTED", "REDACTED"),
-    ("VERIFICATION", "VERIFY_RECORD_ANONYMIZED", "ANONYMIZED"),
-    ("VERIFICATION", "VERIFY_DATA_FLOW_DISABLED", "DISABLED"),
-    ("VERIFICATION", "VERIFY_RESTORE_BLOCKED", "BLOCKED"),
-)
-OP_RANK = {op: i for i, (_, op, _) in enumerate(OPERATIONS)}
-OP_PHASE = {op: phase for phase, op, _ in OPERATIONS}
-OP_STATE = {op: state for _, op, state in OPERATIONS}
-
-
-def step_sort_key(step: dict) -> tuple:
-    """Mandated order: phase, operation table order, system_id, resource_id."""
-    return (PHASES.index(step["phase"]), OP_RANK[step["operation"]], step["system_id"], step["resource_id"])
+STATUSES = tuple(s.value for s in Status)
+PHASES = tuple(p.value for p in PHASE_ORDER)
 
 
 def evidence_times(dataset_dir: Path = DATASET_DIR) -> dict[str, datetime]:
@@ -81,12 +53,12 @@ def validate_steps(case_id: str, status: str, steps_json: str, *, phase1: bool =
         err("steps_json is not a JSON array")
         return errors
 
-    if status == "NOT_APPLICABLE":
+    if status == Status.NOT_APPLICABLE:
         if steps:
             err("NOT_APPLICABLE must have steps_json=[]")
         return errors
     if not steps:
-        if not (phase1 and status == "INCOMPLETE"):
+        if not (phase1 and status == Status.INCOMPLETE):
             err(f"{status} must have at least one step")
         return errors
 
@@ -128,15 +100,15 @@ def validate_steps(case_id: str, status: str, steps_json: str, *, phase1: bool =
             err(f"{where}: operation {op} needs state {OP_STATE[op]}, got {step['state']!r}")
 
         ev = step["evidence_id"]
-        if status == "COMPLETE":
-            if step["phase"] != "VERIFICATION":
+        if status == Status.COMPLETE:
+            if step["phase"] != Phase.VERIFICATION:
                 err(f"{where}: COMPLETE allows only VERIFICATION steps")
             if not ev:
                 err(f"{where}: COMPLETE verification must cite evidence")
-        elif status == "INCOMPLETE":
-            if step["phase"] == "FINDING" and not ev:
+        elif status == Status.INCOMPLETE:
+            if step["phase"] == Phase.FINDING and not ev:
                 err(f"{where}: FINDING must cite evidence")
-            if step["phase"] in ("REMEDIATION", "VERIFICATION") and ev:
+            if step["phase"] in (Phase.REMEDIATION, Phase.VERIFICATION) and ev:
                 err(f"{where}: INCOMPLETE {step['phase']} must have evidence_id \"\"")
         if ev and ev_times is not None:
             if ev not in ev_times:
@@ -151,8 +123,8 @@ def validate_steps(case_id: str, status: str, steps_json: str, *, phase1: bool =
         targets = [(s["operation"], s["system_id"], s["resource_id"]) for s in steps]
         if len(set(targets)) != len(targets):
             err("duplicate step for the same operation and target")
-        if status == "INCOMPLETE" and not any(s["phase"] == "REMEDIATION" for s in steps) \
-                and not any(s["phase"] == "VERIFICATION" for s in steps):
+        if status == Status.INCOMPLETE and not any(s["phase"] in (Phase.REMEDIATION, Phase.VERIFICATION)
+                                                   for s in steps):
             err("INCOMPLETE needs remediation or verification steps")
     return errors
 
@@ -167,7 +139,7 @@ def validate_file(output_path: Path, requests_path: Path, *, phase1: bool = Fals
 
     with open(output_path, encoding="utf-8-sig", newline="") as handle:
         rows = list(csv.reader(handle))
-    if not rows or rows[0] != HEADER:
+    if not rows or rows[0] != list(HEADER):
         errors.append(f"header must be {','.join(HEADER)}, got {rows[0] if rows else 'empty file'}")
         return errors
     body = rows[1:]

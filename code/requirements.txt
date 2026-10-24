@@ -1,2 +1,5 @@
-# Phase 1 uses the Python standard library only (Python 3.10+).
-# Later phases list their third-party dependencies here.
+# Python 3.11+ (developed on 3.14). Install: python -m pip install -r code/requirements.txt
+pydantic>=2.6,<3       # schema.py contract models (D21)
+pypdf>=4.0             # PDF text layer, pure Python (cross-check for vision extraction)
+rank_bm25>=0.2.2       # BM25 search tool for the investigator agent (D19)
+pytest>=8.0            # test runner (tests are unittest-compatible)

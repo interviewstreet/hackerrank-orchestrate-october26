@@ -72,3 +72,60 @@ repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
 
+## [2026-10-24T13:38:33Z] Refactor: schema.py single contract, requirements, DESIGN.md
+
+User Prompt (verbatim, secrets redacted):
+Good. Before Phase 2, I am adding design decisions from research on how Orchestrate is judged.
+The code judge scores agent architecture, prompt/tool craft, robustness and rigor, and counts only what the code
+actually does. The output also gets a safety score for adversarial inputs.
+
+Re-read C:\Users\sanka\Downloads\plan.md sections 7.3, 7.4 and 14 (D18-D22). Summary:
+- D18: meta/muse-spark-1.3 via ZenMux (OpenAI-compatible, key in env ZENMUX_API_KEY), live + cached;
+  with no key, replay the committed code/llm_snapshot.py.
+- D19: a bounded investigator agent runs only on items the rules leave UNKNOWN. It has narrow tools, and code
+  accepts a proposal only if the evidence it cites really proves it.
+- D20: all dataset text is untrusted; screen for injection before any model call; the model never sets status or steps.
+- D21: code/schema.py is the single source of truth (enums, operation table, sort order, Pydantic v2 models).
+My rule: the model reads and proposes; deterministic code decides and writes output.csv.
+
+Tasks:
+1. Refactor: move every enum, the operation/state table and the canonical sort key into code/schema.py.
+   validate.py, main.py and intent.py must import them from there. No behavior change: the tests and
+   validate.py --phase1 must still pass with the same results.
+2. Create code/requirements.txt (pydantic>=2, pytest, rank_bm25, plus any PDF text library you choose) and
+   install it. Report the Python version and whether pdftotext is available.
+3. If ZENMUX_API_KEY is set, make ONE smoke call to confirm meta/muse-spark-1.3 exists and accepts one PNG from
+   dataset/evidence. Print only the model id, the first 200 chars of the reply and the token usage. Never print
+   or write the key. If the key is not set, say so and skip this step.
+4. Write code/DESIGN.md (max ~150 lines): inputs; output contract; model-vs-code boundary; agent loop (tools, caps,
+   acceptance check); module list; 6 failure modes with the guard for each; evaluation plan; injection-safety plan.
+5. Critique my plan: give the 5 biggest risks or the places you disagree with, each with a concrete alternative.
+6. Ask me up to 5 questions whose answers would change the build.
+
+Commit as "refactor: schema.py single contract + design doc". Then STOP.
+
+Reply format:
+1. Commit hash
+2. Test result line + validate.py result
+3. Environment + smoke-call result
+4. Your 5 risks/disagreements
+5. Your questions
+
+Agent Response Summary:
+Created code/schema.py (StrEnum enums, operation table, PHASE_ORDER, step_sort_key, Pydantic v2 Step and OutputRow) and made validate.py, main.py and intent.py import from it; main.py now guards each row with OutputRow and falls back to INCOMPLETE on failure. output.csv is byte-identical before and after (same SHA-256); 62 tests pass under pytest; validate.py --phase1 is VALID on 518 rows and the gold sample file is VALID in strict mode. Installed pydantic, pypdf, rank_bm25, pytest; Python 3.14.7, pdftotext 4.06 (xpdf, Git Bash path) and Tesseract present, sqlite3 CLI absent (stdlib module used). ZENMUX_API_KEY is not set, so the smoke call was skipped. Wrote code/DESIGN.md (120 lines) and gave a 5-point plan critique plus 5 questions.
+
+Actions:
+* Created code/schema.py, code/tests/test_schema.py, code/DESIGN.md; edited code/validate.py, code/main.py, code/intent.py, code/requirements.txt
+* python -m pip install -r code/requirements.txt
+* python code/main.py (sha256 unchanged), python code/validate.py output.csv --phase1, python code/evaluation/main.py
+* python ~/.claude/bin/full_suite.py -- python -m pytest code/tests (62 passed)
+* git commit "refactor: schema.py single contract + design doc"
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+

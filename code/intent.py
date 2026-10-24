@@ -26,12 +26,15 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
-DELETE = "DELETE"
-VERIFY_DELETE = "VERIFY_DELETE"
-NOT_DELETION = "NOT_DELETION"
-AMBIGUOUS = "AMBIGUOUS"
-CLASSES = (DELETE, VERIFY_DELETE, NOT_DELETION, AMBIGUOUS)
-DELETION_CLASSES = (DELETE, VERIFY_DELETE)
+from schema import DELETION_INTENTS, IntentLabel
+
+# Plain-string labels; the values come from schema.IntentLabel.
+DELETE = IntentLabel.DELETE.value
+VERIFY_DELETE = IntentLabel.VERIFY_DELETE.value
+NOT_DELETION = IntentLabel.NOT_DELETION.value
+AMBIGUOUS = IntentLabel.AMBIGUOUS.value
+CLASSES = tuple(label.value for label in IntentLabel)
+DELETION_CLASSES = tuple(label.value for label in DELETION_INTENTS)
 
 
 # ------------------------------------------------------------------ lexicon

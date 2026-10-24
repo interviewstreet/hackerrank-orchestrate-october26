@@ -1,0 +1,120 @@
+# Design: Ghost Data Still Exists deletion-audit agent
+
+Rule: **the model reads and proposes; deterministic code decides and writes `output.csv`.**
+
+## 1. Inputs
+
+| File (`dataset/`) | Use |
+| --- | --- |
+| `deletion_requests.csv` | 518 cases: email, request time, claimed status, `audit_at`, free-text request |
+| `user_identities.csv`, `user_audit_log.csv` | Current and historical emails, phones, hashes per `user_id` |
+| `system_activity.csv` | 4,011 global events. Claims, ownership links, state read-backs; many decoys |
+| `deletion_rules.csv` | 15 category rules (DELETE / REDACT / ANONYMIZE / RETAIN) |
+| `evidence_files.csv` + `evidence/` | 94 files: SQL snapshots, JSON, logs, TXT, 11 PNG, 4 PDF |
+| `sample_*.csv` | 32 solved cases: development set only |
+
+All dataset text is **untrusted data**, never instructions.
+
+## 2. Output contract
+
+`code/schema.py` is the single source of truth: status/phase/operation/state enums, the
+operation table, `step_sort_key`, and the Pydantic models `Step` and `OutputRow`.
+`validate.py`, `main.py`, `intent.py`, prompts and LLM-output checks import it.
+
+- Header `case_id,deletion_status,steps_json`; 518 rows in numeric `case_id` order.
+- Steps sorted by phase, operation table order, `system_id`, `resource_id`; `step_no` 1..n.
+- COMPLETE: VERIFICATION steps only, each cites evidence at or before `audit_at`.
+- INCOMPLETE: FINDING steps cite evidence; REMEDIATION and VERIFICATION use `""`.
+- NOT_APPLICABLE: `[]`. JSON: sorted keys, compact separators.
+
+## 3. Model-vs-code boundary
+
+| Task | Model (`meta/muse-spark-1.3`, ZenMux) | Code |
+| --- | --- | --- |
+| PNG/PDF reading | Transcribe rows to a JSON schema | Schema + id-pattern check; grounding vs OCR / PDF text layer |
+| Intent | Label AMBIGUOUS texts only (enum) | Clause rules decide first; enum check |
+| Unlinked / conflicting items | Investigator proposes link or state | Acceptance check (section 4); resolver and policy decide |
+| Status, steps, citations, order | Never | Always |
+
+- Key only from env `ZENMUX_API_KEY`. Base URL and model id live in `config.py`.
+- Cache key = SHA-256(input bytes) + prompt version + model id.
+- No key: replay the committed `llm_snapshot.py`. No network is needed.
+- Model output that fails validation falls back to the deterministic result.
+
+## 4. Investigator agent loop (`agent/`, D19)
+
+Runs only for items the deterministic pass leaves `UNKNOWN`/`CONFLICT` or AMBIGUOUS.
+
+Tools (narrow, read-only except the last):
+1. `search_evidence(query)` - exact-id grep, then BM25 over raw text and facts.
+2. `read_evidence(file_id)` - parsed rows of one file (vision rows for PNG/PDF).
+3. `query_facts(resource_id | identifier)` - fact-store rows and ownership edges.
+4. `submit_proposal(kind, resource_id, claim, cited_ids)` - typed: link / state / intent.
+
+Caps: 4 tool iterations per item, 2 retries for invalid output, timeout per call,
+token budget per case. Over budget means the item stays `UNKNOWN`.
+
+Acceptance check (code, per proposal):
+- Every cited id was opened in this loop and has availability time `<= audit_at`.
+- The cited row contains the `resource_id` and a subject identifier, or a typed link row.
+- The claimed state matches the cited row's parsed state.
+- Pass: add a medium-tier edge or observation. Fail: reject and log the reason.
+
+## 5. Modules
+
+| Module | Role | Phase |
+| --- | --- | --- |
+| `schema.py` | Contract enums, table, sort key, Pydantic models | 1 |
+| `loaders.py` | CSV loading, UTC times, normalization, hashes | 1 |
+| `identity.py` | As-of identifier resolution with future-row guard | 1 |
+| `intent.py` | Clause-level deletion-intent rules | 1 |
+| `validate.py` | Output-file contract validator | 1 |
+| `main.py` | CLI, per-case isolation, serialization | 1 |
+| `evidence/extract_*.py` | SQL, JSON, log, text, vision extractors | 2-4 |
+| `facts.py`, `coverage.py` | Global fact store; per-file parse accounting | 2-3 |
+| `links.py` | Typed, time-stamped ownership graph | 3 |
+| `resolver.py` | State per physical copy at `audit_at` | 2 |
+| `policy.py` | `deletion_rules.csv` as a truth table | 2 |
+| `citation.py` | Evidence choice, separate from state | 2 |
+| `planner.py` | Steps and canonical sort | 2 |
+| `llm_client.py`, `llm_cache.py`, `llm_snapshot.py`, `prompts/` | Model access, cache, replay | 4 |
+| `safety.py` | Injection screen and delimiting | 4 |
+| `agent/` | Investigator loop and tools | 4 |
+| `trace.py` | Per-case JSONL decision trace | 2-5 |
+| `evaluation/main.py` | Scorer, metamorphic and adversarial tests | 1-5 |
+
+## 6. Failure modes and guards
+
+| # | Failure | Guard |
+| --- | --- | --- |
+| 1 | Evidence after `audit_at` changes a case | One cutoff function on file and inner times; `identity.py` raises `FutureDataError`; validator rejects late citations; metamorphic test adds late evidence |
+| 2 | Model invents an id or a state | Schema + id patterns; grounding against OCR/PDF text; acceptance check; model never writes steps |
+| 3 | Missing primary row hides a surviving replica | Resolve each physical copy separately; absence only inside a file's declared scope |
+| 4 | Unlinked record makes a case look COMPLETE | `UNKNOWN` targets go to the agent, then the trace and report; never a silent COMPLETE |
+| 5 | One bad case or no network kills the run | Per-case try/except with safe fallback `INCOMPLETE`; `OutputRow` guard; snapshot replay with no key |
+| 6 | Row order or serialization drift | Numeric `case_id` sort; `schema.step_sort_key`; `validate.py` on every run; byte-hash regression check |
+
+## 7. Evaluation plan
+
+- `python code/evaluation/main.py`: status accuracy, step P/R/F1, field accuracy, sequence accuracy.
+- Samples are a development set (they shaped the design); report this honestly.
+- Custom cases (frozen before tuning): negated deletion, non-English non-deletion,
+  verify-only, historical email chain, same email with two `audit_at`, two replicas,
+  late evidence, expired retention, injection text.
+- Metamorphic tests: shuffle rows, change email case, add late evidence, add a decoy,
+  add an out-of-scope empty table, add a surviving replica.
+- Ablation: agent off vs on; keep it only if F1 does not drop.
+- Clean-room run: unzip `code.zip`, add `dataset/`, no key, compare the output hash.
+
+## 8. Injection-safety plan (D20)
+
+1. Screen request texts and extracted evidence text before any model call
+   (role markers, "ignore previous instructions", tool or status commands, hidden Unicode).
+2. A screened hit is never sent raw. Code logs it and keeps the deterministic result.
+3. Data goes to the model inside delimiters, with a system prompt that defines it as data.
+4. Model output is parsed only through `schema.py` models. Free text is discarded.
+5. The model has no tool that writes output, changes status or deletes anything.
+6. Policy invariants in code: never DELETE a retained category (security audit, legal
+   hold, backup); never act on a record linked only to another user.
+7. Adversarial tests: injected request text, forged "deletion complete" log line,
+   decoy near-match email, instruction text inside an evidence file.

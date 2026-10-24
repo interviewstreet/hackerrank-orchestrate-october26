@@ -24,7 +24,7 @@ from pathlib import Path
 import intent
 from identity import IdentityIndex, SubjectIdentity
 from loaders import DATASET_DIR, REPO_ROOT, Dataset, Request, case_number, load_dataset, load_requests
-from validate import HEADER
+from schema import HEADER, OutputRow, Status
 
 
 @dataclass
@@ -51,11 +51,11 @@ def build_context(dataset_dir: Path = DATASET_DIR) -> Context:
 
 def run_case(req: Request, ctx: Context) -> CaseResult:
     decision = intent.classify(req.request_text)
-    result = CaseResult(req.case_id, "INCOMPLETE", intent=decision.label)
+    result = CaseResult(req.case_id, Status.INCOMPLETE.value, intent=decision.label)
     if decision.flagged:
         result.flags.append("intent_ambiguous")
     if not intent.treat_as_deletion(decision):
-        result.status = "NOT_APPLICABLE"
+        result.status = Status.NOT_APPLICABLE.value
         return result
 
     result.subject = ctx.identities.resolve(req.email, req.audit_at)
@@ -72,11 +72,15 @@ def run_cases(requests: list[Request], ctx: Context) -> list[CaseResult]:
     results = []
     for req in sorted(requests, key=lambda r: case_number(r.case_id)):
         try:
-            results.append(run_case(req, ctx))
+            result = run_case(req, ctx)
+            # Contract guard: a row that breaks schema.OutputRow is never written.
+            OutputRow(case_id=result.case_id, deletion_status=result.status, steps=result.steps)
+            results.append(result)
         except Exception as exc:  # per-case isolation: never lose a row
             print(f"[error] {req.case_id}: {exc!r}", file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
-            results.append(CaseResult(req.case_id, "INCOMPLETE", error=repr(exc), flags=["case_error"]))
+            # Safe fallback: never claim COMPLETE for a case we could not process.
+            results.append(CaseResult(req.case_id, Status.INCOMPLETE.value, error=repr(exc), flags=["case_error"]))
     return results
 
 
