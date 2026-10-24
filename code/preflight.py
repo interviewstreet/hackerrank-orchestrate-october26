@@ -152,7 +152,12 @@ def main(argv=None):
     if errors:
         print(f"Preflight failed with {len(errors)} error(s).")
         return 1
-    print("Preflight passed: dataset, output, reports, source, and package are ready.")
+    scope = (
+        "dataset, output, reports, source, and package"
+        if args.require_package
+        else "dataset, output, reports, and source"
+    )
+    print(f"Preflight passed: {scope} are ready.")
     return 0
 
 

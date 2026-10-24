@@ -2,6 +2,7 @@ import unittest
 from pathlib import Path
 
 from code.evidence import (
+    _contains,
     build_evidence_index,
     parse_json_evidence,
     parse_log_evidence,
@@ -50,6 +51,11 @@ class EvidenceParserTests(unittest.TestCase):
         )
         resources = {hit["resource_id"] for hit in hits}
         self.assertTrue({"search_4013", "support_5569", "analytics_037", "data_flow_4890"} <= resources)
+
+    def test_identifier_boundaries_and_casefolding(self):
+        self.assertTrue(_contains('subject=user_1;', 'user_1'))
+        self.assertFalse(_contains('subject=user_10;', 'user_1'))
+        self.assertTrue(_contains('EMAIL=AMINA.ELMASRI@GMAIL.COM', 'amina.elmasri@gmail.com'))
 
     def test_handover_support_attachment_keeps_resource_id_and_category(self):
         hits = parse_text_evidence(

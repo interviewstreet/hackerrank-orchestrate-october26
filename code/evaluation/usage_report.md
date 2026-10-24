@@ -1,6 +1,6 @@
 # Usage Report
 
-This report describes the final Phase 4 518-case run that generated the root `output.csv` on 2026-10-24. The run completed in approximately **235 seconds**, produced 518 sorted data rows, and returned zero contract-validation errors.
+This report describes the final Phase 4 518-case run that generated the root `output.csv` on 2026-10-24. The run completed in approximately **194 seconds**, produced 518 sorted data rows, and returned zero contract-validation errors.
 
 ## Model Providers and Model Names
 
