@@ -1,0 +1,109 @@
+# Grounded Plan Toward 100% Benchmark Accuracy
+
+## Objective and non-negotiable boundary
+
+Target 193/193 public steps, 1,158/1,158 fields, and 32/32 complete sequences only through a method that generalizes to the 518-case evaluation set. `sample_output.csv` remains evaluation-only: the predictor, training code, feature generation, and saved weights must never read it. Exact sample resource IDs may not be memorized, mapped by case ID, or inferred from organizer-only or post-`audit_at` data.
+
+A 100% claim is conditional on candidate observability. A ranker cannot recover an exact resource ID that is absent from every legal candidate source. The first gate therefore tests whether every expected resource is present in participant-visible input at or before the case cutoff; failure is reported as a dataset/evaluator blocker rather than bypassed.
+
+## Stage 1 — Candidate-observability audit
+
+1. Build an evaluation-only diagnostic that compares expected public resources with resource IDs available from participant inputs at or before each `audit_at`.
+2. Classify every miss as: absent globally, present only post-audit, present pre-audit but unlinked, or present and linked but retrieval failed.
+3. Keep this diagnostic outside prediction code and prohibit its outputs from becoming runtime mappings.
+4. Gate: do not claim that training can reach 100% unless pre-audit candidate recall is 100%.
+
+Current known result: seven security verifications fail the gate. Five IDs first appear in post-audit captures and two do not occur in participant-facing prediction inputs.
+
+## Stage 2 — Build a self-supervised lineage training set
+
+Generate labels only from unambiguous participant-visible edges:
+
+- stable `user_id` or historical/current identifier inside a resource record;
+- explicit `LINK_RESOURCE_IDENTITY` events;
+- trace groups containing both a resolved identity and resource;
+- workflow actions connected to an already grounded resource through request/report boundaries and operation dependencies;
+- complete negative lookups for a previously grounded resource ID.
+
+Create hard negatives from other resources in the same system, evidence artifact, workflow batch, and time window. Split by user ID, not rows, so records for a subject cannot appear in both training and validation.
+
+## Stage 3 — Train a deterministic resource-lineage ranker
+
+Implement a small regularized logistic or pairwise ranking model using Python stdlib only. Features must be case-independent:
+
+- explicit identifier/stable-reference match;
+- catalog-link and trace-link strength;
+- resource-ID continuity across actions and evidence;
+- event-to-report and event-to-audit time distance;
+- operation order and dependency cadence;
+- source/target system and policy compatibility;
+- reported-outcome compatibility, used only for identity correlation;
+- same-artifact and same-workflow evidence;
+- ambiguity count and competing-subject evidence;
+- post-audit flag, which is a hard rejection rather than a learned feature.
+
+Use leave-one-user-out validation, deterministic initialization, and fixed iteration order. Calibrate a confidence threshold that preserves 100% edge precision; abstain below the threshold.
+
+## Stage 4 — Security-specific lineage reconstruction
+
+For retained security records, search in this order:
+
+1. stable subject reference in a pre-audit security record;
+2. explicit catalog identity link;
+3. request-scoped security readback trace;
+4. resource continuity from a grounded retain/archive workflow;
+5. uniquely ranked candidate with no competing subject and confidence above the calibrated threshold.
+
+A `RETAIN_RECORD` claim may identify a resource but cannot prove `PRESENT`; final-state verification still requires eligible evidence. Never choose the nearest global security record solely by timestamp.
+
+## Stage 5 — Safe two-pass integration
+
+1. Run current identifier/catalog retrieval.
+2. Score unresolved candidate edges with the trained ranker.
+3. Add only unique, above-threshold, pre-audit resource IDs to lineage.
+4. Re-run evidence retrieval.
+5. Use evidence for state and workflow claims only for resource identity or future checks.
+6. Preserve deterministic planner ordering and deduplication.
+
+Add an automated guard proving that prediction modules do not import or open `sample_output.csv`.
+
+## Stage 6 — Evaluation gates
+
+Report both canonical-set and positional metrics:
+
+- candidate recall and edge precision;
+- status accuracy;
+- set step precision/recall;
+- positional step accuracy;
+- field accuracy;
+- complete sequence accuracy;
+- abstention count and false cross-user edges.
+
+Acceptance for a real 100% result:
+
+- 100% pre-audit candidate recall;
+- 100% lineage edge precision;
+- 193/193 positional steps;
+- 1,158/1,158 fields;
+- 32/32 complete sequences;
+- zero extra steps and zero contract errors;
+- all existing and new leakage/boundary tests pass.
+
+## Stage 7 — Blocker resolution when candidate recall is below 100%
+
+If the observability gate remains below 100%, do not weaken safeguards or train on expected outputs. Produce a minimal dataset/evaluator change request instead:
+
+- add a pre-audit `subject_reference` or `LINK_RESOURCE_IDENTITY` edge for each missing security resource;
+- move an eligible security readback capture to or before `audit_at` only if that reflects intended truth; or
+- remove/relax exact resource-ID expectations that cannot be derived from participant input.
+
+After that correction, retrain from participant data, rerun the 32-case regression, then proceed to the 518-case Phase 3 release run.
+
+## Explicitly rejected shortcuts
+
+- training on or loading `sample_output.csv` in prediction code;
+- case-ID/resource-ID lookup tables;
+- post-audit resource discovery;
+- nearest-record guesses in the global stream;
+- organizer-only truth or generator internals;
+- optimizing public sequence metrics by adding ungrounded steps.
