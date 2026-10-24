@@ -41,9 +41,12 @@ class EvidenceParserTests(unittest.TestCase):
 
     def test_json_distinguishes_clean_and_exposed_tombstones(self):
         path = self.root / "records/customer_data_snapshot_bundle_20260915.json"
-        clean = parse_json_evidence(path, self.identity("a.eze08@gmail.com"))
+        clean_identity = self.identity("a.eze08@gmail.com")
+        clean_identity["lineage_resource_ids"] = ["account_4857"]
+        clean = parse_json_evidence(path, clean_identity)
         exposed = parse_json_evidence(path, self.identity("addo.kofi@gmail.com"))
         self.assertTrue(any(hit["resource_id"] == "tombstone_440" and hit["state"] == "REDACTED" for hit in clean))
+        self.assertTrue(any(hit["resource_id"] == "account_4857" and hit["state"] == "ABSENT" for hit in clean))
         self.assertTrue(any(hit["resource_id"] == "tombstone_9178" and hit["state"] == "PRESENT" for hit in exposed))
 
     def test_log_trace_correlates_start_and_completion(self):

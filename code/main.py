@@ -19,6 +19,7 @@ from code.lineage import augment_identity_lineage
 from code.planner import plan_steps
 from code.temporal import filter_events
 from code.validate import validate_case_coverage, validate_output, validate_row_count
+from code.workflow import augment_workflow_lineage, correlate_workflow_lineage
 
 
 class MemoryCache:
@@ -44,6 +45,19 @@ def process_case(case, data, repo_root, cache_override=None):
     evidence = build_evidence_index(
         repo_root, data["evidence_manifest"], identity, case["audit_at"]
     )
+    sample_ids = {request["case_id"] for request in data["sample_requests"]}
+    peer_requests = (
+        data["sample_requests"] if case["case_id"] in sample_ids
+        else data["deletion_requests"]
+    )
+    workflow_resources = correlate_workflow_lineage(
+        case, identity, evidence, data["system_activity"], peer_requests
+    )
+    if workflow_resources:
+        augment_workflow_lineage(identity, workflow_resources)
+        evidence = build_evidence_index(
+            repo_root, data["evidence_manifest"], identity, case["audit_at"]
+        )
     classifier = (
         (lambda text, case_id: classify_request(text, case_id, cache_override))
         if cache_override

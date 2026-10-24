@@ -88,5 +88,21 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
         seen.add(key)
 
     complete = not findings and len(compliant) == len(evidence_index)
+    verification_resources = []
+    if not complete:
+        observed = set(evidence_index)
+        for event in user_identity.get("workflow_resources", []):
+            resource_id = event.get("resource_id", "")
+            if not resource_id or resource_id in observed:
+                continue
+            # Workflow claims ground which resource was acted on, but never prove its
+            # final state.  For an already-incomplete case they support only a future,
+            # uncited verification check after remediation.
+            verification_resources.append({
+                "system_id": event.get("target_system", "unknown"),
+                "resource_id": resource_id,
+                "required_action": event.get("required_action", "DELETE"),
+            })
     return {"status": "COMPLETE" if complete else "INCOMPLETE", "findings": findings,
-            "resources": resources, "compliant_resources": compliant}
+            "resources": resources, "compliant_resources": compliant,
+            "verification_resources": verification_resources}
