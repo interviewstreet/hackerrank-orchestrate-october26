@@ -131,7 +131,7 @@ def _inventory(ev: EvidenceFile, con, tables) -> Extraction:
     scope_at = {r["origin_system"]: require_ts(r["captured_at"]) for r in scope_rows}
     if not scope_at:
         raise ShapeError(f"{ev.file_id}: empty snapshot_scope")
-    subjects = Identifiers()
+    subjects: dict[str, Identifiers] = {}   # per system: a table is complete only for its own subjects
     n = 0
     for table in tables:
         if table == "snapshot_scope":
@@ -145,10 +145,10 @@ def _inventory(ev: EvidenceFile, con, tables) -> Extraction:
                 out.skip(f"row outside snapshot_scope ({system})")
                 continue
             obs = _observation(ev, out.family, n, system, PRIMARY, table, row, scope_at[system], table)
-            subjects.update(obs.link_ids)
+            subjects.setdefault(system, Identifiers()).update(obs.link_ids)
             out.observations.append(obs)
             out.rows_parsed += 1
     for system, at in sorted(scope_at.items()):
         out.scopes.append(Scope(ev.file_id, out.family, system, PRIMARY, ev.captured_at, at,
-                                subjects=subjects))
+                                subjects=subjects.get(system, Identifiers())))
     return out

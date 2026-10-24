@@ -127,12 +127,15 @@ def _bundle(ev, data) -> Extraction:
         stores.append((system, snap["collection"], at))
         for j, rec in enumerate(snap["records"]):
             b.row(system, rec, at, snap["collection"], f"snapshots[{i}].records[{j}]")
-    subjects = Identifiers()
+    # Each snapshot is complete only for the subjects it lists itself, not those of a sibling
+    # snapshot in the same bundle.
+    subjects: dict[tuple[str, str], Identifiers] = {}
     for obs in b.out.observations:
-        subjects.update(obs.link_ids)
+        subjects.setdefault((obs.system_id, obs.collection), Identifiers()).update(obs.link_ids)
     for system, collection, at in stores:
         b.out.scopes.append(Scope(ev.file_id, b.out.family, system, PRIMARY, ev.captured_at, at,
-                                  collection=collection, subjects=subjects))
+                                  collection=collection,
+                                  subjects=subjects.get((system, collection), Identifiers())))
     return b.out
 
 

@@ -115,6 +115,15 @@ class DatasetEvidenceTest(unittest.TestCase):
         self.assertEqual(len(obs), 1)
         self.assertEqual((obs[0].source_kind, obs[0].exists), ("pdf", PRESENT))
 
+    def test_subject_scope_is_per_system(self):
+        # evidence_63 (SQL inventory) lists user_492 only in its security table; evidence_02 (JSON
+        # bundle) lists user_24 in some snapshots only. Neither proves absence in another system.
+        scopes = {(s.file_id, s.system_id): s.subjects for s in self.store.scopes if s.subjects is not None}
+        self.assertIn("user_492", scopes[("evidence_63", "security_service")].user_ids)
+        self.assertNotIn("user_492", scopes[("evidence_63", "account_service")].user_ids)
+        self.assertIn("user_24", scopes[("evidence_02", "account_service")].user_ids)
+        self.assertNotIn("user_24", scopes[("evidence_02", "analytics_platform")].user_ids)
+
     def test_pdf_without_resource_id_is_counted(self):
         item = next(f for f in self.store.coverage.files if f.file_id == "evidence_27")
         self.assertEqual(item.skipped, {"document without a resource id": 1})

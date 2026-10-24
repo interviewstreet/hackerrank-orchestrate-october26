@@ -136,7 +136,8 @@ class Scope:
     """A file lists every record of ``system_id``/``physical_copy`` at ``observed_at``.
 
     ``subjects`` is None for a full snapshot. Otherwise the listing is complete only for
-    those subjects (identifiers found in the file).
+    those subjects: the identifiers found in this system's (and collection's) own rows of the
+    file, never those of a sibling system in the same file.
     """
     file_id: str
     family: str
