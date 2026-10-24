@@ -1,0 +1,142 @@
+"""State of each physical copy of a target resource at ``audit_at`` (plan 8.3).
+
+Rules:
+
+* only admissible observations count (``available_at`` and inner time both <= audit_at);
+* operation claims, sync facts and ownership links never set state;
+* a file's scope proves ABSENT for a copy only when the scope applies to the subject
+  (full snapshot, or a subject-scoped listing that names one of the subject's identifiers)
+  and the file has no row for the resource in that copy;
+* per copy and per attribute, plan 9.4 dominance: in-scope row / read-back > scoped absence >
+  activity read-back; the newest statement wins inside a tier (``DOMINANCE = "tier_first"``).
+  ``"newest_first"`` (time first, tier breaks ties) is kept as a measured alternative;
+* equal key and different values give CONFLICT; no statement gives UNKNOWN.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+from evidence.common import (ABSENT, ACTIVITY_READBACK, PRESENT, SNAPSHOT_ROW, STATE_READBACK, Identifiers,
+                             Observation, Scope)
+from facts import FactStore
+from links import Target
+
+UNKNOWN, CONFLICT = "UNKNOWN", "CONFLICT"
+SCOPED_ABSENCE = "scoped_absence"
+RANK = {SNAPSHOT_ROW: 3, STATE_READBACK: 3, SCOPED_ABSENCE: 2, ACTIVITY_READBACK: 1}
+DOMINANCE = "tier_first"
+ATTRIBUTES = ("exists", "treatment", "flow_state", "restore_state", "exposed_ids")
+
+
+@dataclass
+class Statement:
+    """One admissible statement about a copy. ``obs`` is None for a scoped absence."""
+    copy: str
+    at: object
+    rank: int
+    evidence_id: str
+    values: dict
+    obs: Observation | None = None
+    scope: Scope | None = None
+
+
+@dataclass
+class CopyState:
+    copy: str
+    values: dict = field(default_factory=dict)        # attribute -> value | UNKNOWN | CONFLICT
+    proof: dict = field(default_factory=dict)         # attribute -> Statement that set it
+    statements: list[Statement] = field(default_factory=list)
+
+    def get(self, attr: str):
+        return self.values.get(attr, UNKNOWN)
+
+
+@dataclass
+class ResourceState:
+    target: Target
+    copies: dict[str, CopyState] = field(default_factory=dict)
+    record_type: str = ""
+    collection: str = ""
+
+    @property
+    def known(self) -> bool:
+        return bool(self.copies)
+
+
+def _scope_applies(scope: Scope, keys: Identifiers) -> bool:
+    if scope.subjects is None:
+        return True
+    return any(getattr(scope.subjects, k) & getattr(keys, k) for k in ("emails", "user_ids", "phones", "hashes"))
+
+
+def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff) -> tuple[list[Statement], list]:
+    out: list[Statement] = []
+    observations = store.for_resource(target.resource_id, cutoff)
+    for obs in observations:
+        if obs.system_id != target.system_id or obs.assertion not in RANK:
+            continue
+        values = {a: getattr(obs, a) for a in ATTRIBUTES if getattr(obs, a) is not None}
+        if obs.exists == ABSENT:
+            values.pop("exposed_ids", None)
+        out.append(Statement(obs.physical_copy, obs.state_observed_at, RANK[obs.assertion], obs.file_id,
+                             values, obs=obs))
+    for scope in store.scopes_for(target.system_id, cutoff):
+        if not _scope_applies(scope, keys) or store.file_has_row(scope.file_id, target.resource_id, scope.physical_copy):
+            continue
+        out.append(Statement(scope.physical_copy, scope.observed_at, RANK[SCOPED_ABSENCE], scope.file_id,
+                             {"exists": ABSENT}, scope=scope))
+    return out, observations
+
+
+def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff) -> ResourceState:
+    statements, observations = statements_for(store, target, keys, cutoff)
+    state = ResourceState(target)
+    for obs in observations:
+        if obs.system_id == target.system_id:
+            state.record_type = state.record_type or obs.record_type
+            state.collection = state.collection or obs.collection
+    for st in statements:
+        state.copies.setdefault(st.copy, CopyState(st.copy)).statements.append(st)
+    for cs in state.copies.values():
+        cs.statements.sort(key=lambda s: (s.at, s.rank, s.evidence_id))
+        for attr in ATTRIBUTES:
+            stating = [s for s in cs.statements if attr in s.values]
+            if not stating:
+                continue
+            best = max(stating, key=_dominance)
+            peers = [s for s in stating if _dominance(s) == _dominance(best)]
+            distinct = {_fingerprint(s.values[attr]) for s in peers}
+            if len(distinct) > 1:
+                cs.values[attr] = CONFLICT
+            else:
+                cs.values[attr] = best.values[attr]
+            cs.proof[attr] = min(peers, key=lambda s: s.evidence_id)
+        # A newer absence makes older identifier/treatment statements moot.
+        if cs.values.get("exists") == ABSENT:
+            for attr in ("treatment", "exposed_ids"):
+                if attr in cs.proof and cs.proof[attr].at <= cs.proof["exists"].at:
+                    cs.values.pop(attr), cs.proof.pop(attr)
+    return state
+
+
+def _dominance(st: Statement) -> tuple:
+    return (st.rank, st.at) if DOMINANCE == "tier_first" else (st.at, st.rank)
+
+
+def _fingerprint(value):
+    return tuple((k, tuple(v)) for k, v in sorted(value.as_dict().items())) if isinstance(value, Identifiers) else value
+
+
+def exists_rollup(state: ResourceState) -> str:
+    """PRESENT if any copy is present; ABSENT only if every known copy is absent."""
+    values = [cs.get("exists") for cs in state.copies.values()]
+    if not values:
+        return UNKNOWN
+    if PRESENT in values:
+        return PRESENT
+    if CONFLICT in values:
+        return CONFLICT
+    if all(v == ABSENT for v in values):
+        return ABSENT
+    return UNKNOWN

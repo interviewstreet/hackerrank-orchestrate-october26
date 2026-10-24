@@ -128,6 +128,16 @@ _RE_OTHER = re.compile(
 )
 _RE_STATEMENT_OTHER = re.compile(r"\binformation request\b|\bnot a request to\b", re.I)
 
+# Decision 5: text that tries to instruct the auditor is never trusted as a plain request.
+_RE_INSTRUCTION = re.compile(
+    r"(?:^|\n|[\[<(])\s*(?:system|assistant|developer|admin)\s*[:\]>]"
+    r"|\b(?:mark|set|report|flag|record)\b[^.\n]{0,30}\bas\s+(?:complete|completed|not_applicable)\b"
+    r"|\bignore\b[^.\n]{0,40}\b(?:instructions?|rules?|polic(?:y|ies)|evidence|prompt|above|previous)\b"
+    r"|\b(?:deletion_status|steps_json)\b"
+    r"|\byou are (?:an? )?(?:ai|assistant|agent|model|auditor)\b",
+    re.I,
+)
+
 _RE_SENTENCE = re.compile(r"(?<=[.!?。？！])\s*")
 _RE_CLAUSE = re.compile(
     r"[,;:、，；]|\s[-–—]\s|\b(?:but|so|however|although|though|pero|mas|mais|aber|ma)\b",
@@ -213,6 +223,10 @@ def clause_signals(clause: str) -> list[str]:
     return signals
 
 
+def has_instruction(text: str) -> bool:
+    return bool(_RE_INSTRUCTION.search(_normalize(text)))
+
+
 def classify(text: str) -> IntentResult:
     clauses = [ClauseSignals(c, clause_signals(c)) for c in split_clauses(text)]
     seen = {s for c in clauses for s in c.signals}
@@ -220,7 +234,10 @@ def classify(text: str) -> IntentResult:
     negative = {"negated", "keep", "marketing", "other"} & seen
     reasons = sorted(seen)
 
-    if positive and negative:
+    if has_instruction(text):
+        label = AMBIGUOUS
+        reasons.append("instruction_pattern")
+    elif positive and negative:
         label = AMBIGUOUS
     elif "delete" in positive:
         label = DELETE
