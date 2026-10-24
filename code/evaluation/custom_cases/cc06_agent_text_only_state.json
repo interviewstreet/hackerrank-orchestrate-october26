@@ -1,0 +1,62 @@
+{
+  "name": "cc06_agent_text_only_state",
+  "purpose": "A catalog links a cache entry to the subject, but only a free-text inspection note states that it still exists. Deterministic code leaves its state UNKNOWN; the investigator must read the note and propose PRESENT, and the code acceptance check must accept it.",
+  "rule": "rule_04 CACHE_ENTRY Always DELETE: a present entry is a remaining record. Activity operation results are claims; a manual inspection read-back is evidence text only the agent can type.",
+  "request": {
+    "case_id": "case_906",
+    "email": "rosa.lindqvist@example.net",
+    "requested_at": "2026-05-01T09:00:00Z",
+    "reported_status": "COMPLETE",
+    "reported_at": "2026-05-03T10:00:00Z",
+    "audit_at": "2026-05-10T12:00:00Z",
+    "request_text": "Please delete my account and all data you hold about me."
+  },
+  "identities": [
+    {"user_id": "user_9906", "name": "Rosa Lindqvist", "email": "rosa.lindqvist@example.net", "phone": "+46 70 090 0606", "updated_at": "2026-03-01T08:00:00Z"}
+  ],
+  "audit_log": [],
+  "activity": [
+    {"activity_id": "activity_9601", "event_time": "2026-05-04T07:00:00Z", "event_type": "LINK_RESOURCE_IDENTITY",
+     "source_system": "data_catalog", "target_system": "cache_service", "resource_id": "cache_9601",
+     "reported_result": "SUCCESS", "details": "Data catalog linked cache_9601 to rosa.lindqvist@example.net."},
+    {"activity_id": "activity_9602", "event_time": "2026-05-06T09:30:00Z", "event_type": "INSPECT_RECORD",
+     "source_system": "ops_console", "target_system": "cache_service", "resource_id": "cache_9601",
+     "reported_result": "SUCCESS", "details": "Manual inspection: cache_9601 entry for rosa.lindqvist@example.net is still present in the edge cache."}
+  ],
+  "evidence": [
+    {
+      "file_id": "evidence_9601", "path": "evidence/records/custom_ledger_9601.json", "origin": "security_audit_service",
+      "captured_at": "2026-05-05T08:00:00Z",
+      "content": {
+        "exported_at": "2026-05-05T08:00:00Z", "origin": "security_audit_service", "record_count": 1,
+        "records": [
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "account_service", "resource_id": "account_9601",
+           "record_type": "USER_PROFILE", "result": "NOT_FOUND", "subject_reference": "rosa.lindqvist@example.net"}
+        ]
+      }
+    }
+  ],
+  "agent_replies": [
+    {"tool": "search_evidence", "query": "cache_9601"},
+    {"tool": "read_evidence", "file_id": "activity_9602"},
+    {"tool": "submit_proposal", "proposal": {
+      "kind": "STATE", "case_id": "case_906", "system_id": "cache_service", "resource_id": "cache_9601",
+      "user_identifier": null, "proposed_state": "PRESENT", "evidence_ids": ["activity_9602"],
+      "quotes": ["cache_9601 entry for rosa.lindqvist@example.net is still present"],
+      "reason": "the inspection note says the cache entry is still present"}}
+  ],
+  "expected_agent": {"runs": 1, "proposals": 1, "accepted": 1},
+  "expected": {
+    "deletion_status": "INCOMPLETE",
+    "steps": [
+      {"step_no": 1, "phase": "FINDING", "system_id": "cache_service", "resource_id": "cache_9601",
+       "operation": "REPORT_REMAINING_RECORD", "state": "PRESENT", "evidence_id": "activity_9602"},
+      {"step_no": 2, "phase": "REMEDIATION", "system_id": "cache_service", "resource_id": "cache_9601",
+       "operation": "DELETE_RECORD", "state": "ABSENT", "evidence_id": ""},
+      {"step_no": 3, "phase": "VERIFICATION", "system_id": "account_service", "resource_id": "account_9601",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": ""},
+      {"step_no": 4, "phase": "VERIFICATION", "system_id": "cache_service", "resource_id": "cache_9601",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": ""}
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "cc05_flow_and_restore_risk",
+  "purpose": "The profile is gone, but an active connector and an open restore path can recreate it: INCOMPLETE; disable and block first.",
+  "rule": "AGENTS.md 6.5: COMPLETE needs no active sync or restore path; remediation disables flows and blocks restores first (rule_14 BACKUP_ARCHIVE -> BLOCK_RESTORE).",
+  "request": {
+    "case_id": "case_905",
+    "email": "aiko.morimoto@example.net",
+    "requested_at": "2026-05-01T09:00:00Z",
+    "reported_status": "COMPLETE",
+    "reported_at": "2026-05-03T10:00:00Z",
+    "audit_at": "2026-05-10T12:00:00Z",
+    "request_text": "Please erase my account and every copy of my personal data."
+  },
+  "identities": [
+    {"user_id": "user_9905", "name": "Aiko Morimoto", "email": "aiko.morimoto@example.net", "phone": "+81 90 0905 0505", "updated_at": "2026-03-01T08:00:00Z"}
+  ],
+  "audit_log": [],
+  "activity": [],
+  "evidence": [
+    {
+      "file_id": "evidence_9501", "path": "evidence/records/custom_ledger_9501.json", "origin": "integration_management_service",
+      "captured_at": "2026-05-05T08:00:00Z",
+      "content": {
+        "exported_at": "2026-05-05T08:00:00Z", "origin": "integration_management_service", "record_count": 3,
+        "records": [
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "account_service", "resource_id": "account_9501",
+           "record_type": "USER_PROFILE", "result": "NOT_FOUND", "subject_reference": "aiko.morimoto@example.net"},
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "integration_service", "resource_id": "data_flow_9501",
+           "record_type": "DATA_FLOW", "result": "ACTIVE", "subject_reference": "aiko.morimoto@example.net"},
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "backup_service", "resource_id": "backup_9501",
+           "record_type": "BACKUP_ARCHIVE", "result": "ACTIVE", "subject_reference": "aiko.morimoto@example.net"}
+        ]
+      }
+    }
+  ],
+  "agent_replies": [],
+  "expected": {
+    "deletion_status": "INCOMPLETE",
+    "steps": [
+      {"step_no": 1, "phase": "FINDING", "system_id": "integration_service", "resource_id": "data_flow_9501",
+       "operation": "REPORT_ACTIVE_DATA_FLOW", "state": "ACTIVE", "evidence_id": "evidence_9501"},
+      {"step_no": 2, "phase": "FINDING", "system_id": "backup_service", "resource_id": "backup_9501",
+       "operation": "REPORT_RESTORE_RISK", "state": "ACTIVE", "evidence_id": "evidence_9501"},
+      {"step_no": 3, "phase": "REMEDIATION", "system_id": "integration_service", "resource_id": "data_flow_9501",
+       "operation": "DISABLE_DATA_FLOW", "state": "DISABLED", "evidence_id": ""},
+      {"step_no": 4, "phase": "REMEDIATION", "system_id": "backup_service", "resource_id": "backup_9501",
+       "operation": "BLOCK_RESTORE", "state": "BLOCKED", "evidence_id": ""},
+      {"step_no": 5, "phase": "VERIFICATION", "system_id": "account_service", "resource_id": "account_9501",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": ""},
+      {"step_no": 6, "phase": "VERIFICATION", "system_id": "integration_service", "resource_id": "data_flow_9501",
+       "operation": "VERIFY_DATA_FLOW_DISABLED", "state": "DISABLED", "evidence_id": ""},
+      {"step_no": 7, "phase": "VERIFICATION", "system_id": "backup_service", "resource_id": "backup_9501",
+       "operation": "VERIFY_RESTORE_BLOCKED", "state": "BLOCKED", "evidence_id": ""}
+    ]
+  }
+}

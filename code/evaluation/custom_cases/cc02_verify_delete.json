@@ -1,0 +1,40 @@
+{
+  "name": "cc02_verify_delete",
+  "purpose": "A request to confirm an earlier deletion authorizes deletion verification; a read-back proves the profile absent.",
+  "rule": "AGENTS.md 6.3/6.5: a COMPLETE case has only evidence-backed verification steps (rule_01 USER_PROFILE -> VERIFY_RECORD_ABSENT).",
+  "request": {
+    "case_id": "case_902",
+    "email": "tomas.ferreira@example.net",
+    "requested_at": "2026-05-01T09:00:00Z",
+    "reported_status": "COMPLETE",
+    "reported_at": "2026-05-03T10:00:00Z",
+    "audit_at": "2026-05-10T12:00:00Z",
+    "request_text": "I asked you to delete my account in April. Please confirm that my profile has really been removed."
+  },
+  "identities": [
+    {"user_id": "user_9902", "name": "Tomas Ferreira", "email": "tomas.ferreira@example.net", "phone": "+351 912 090 202", "updated_at": "2026-03-01T08:00:00Z"}
+  ],
+  "audit_log": [],
+  "activity": [],
+  "evidence": [
+    {
+      "file_id": "evidence_9201", "path": "evidence/records/custom_ledger_9201.json", "origin": "security_audit_service",
+      "captured_at": "2026-05-05T08:00:00Z",
+      "content": {
+        "exported_at": "2026-05-05T08:00:00Z", "origin": "security_audit_service", "record_count": 1,
+        "records": [
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "account_service", "resource_id": "account_9201",
+           "record_type": "USER_PROFILE", "result": "NOT_FOUND", "subject_reference": "tomas.ferreira@example.net"}
+        ]
+      }
+    }
+  ],
+  "agent_replies": [],
+  "expected": {
+    "deletion_status": "COMPLETE",
+    "steps": [
+      {"step_no": 1, "phase": "VERIFICATION", "system_id": "account_service", "resource_id": "account_9201",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": "evidence_9201"}
+    ]
+  }
+}

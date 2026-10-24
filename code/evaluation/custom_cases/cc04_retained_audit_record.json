@@ -1,0 +1,45 @@
+{
+  "name": "cc04_retained_audit_record",
+  "purpose": "The profile is gone and a security audit record inside its retention period stays: COMPLETE with VERIFY_RECORD_PRESENT for the retained record.",
+  "rule": "rule_01 USER_PROFILE -> VERIFY_RECORD_ABSENT; rule_12 SECURITY_AUDIT_LOG within retention -> RETAIN -> VERIFY_RECORD_PRESENT.",
+  "request": {
+    "case_id": "case_904",
+    "email": "kofi.mensah@example.net",
+    "requested_at": "2026-05-01T09:00:00Z",
+    "reported_status": "COMPLETE",
+    "reported_at": "2026-05-03T10:00:00Z",
+    "audit_at": "2026-05-10T12:00:00Z",
+    "request_text": "Please delete my account."
+  },
+  "identities": [
+    {"user_id": "user_9904", "name": "Kofi Mensah", "email": "kofi.mensah@example.net", "phone": "+233 24 090 0404", "updated_at": "2026-03-01T08:00:00Z"}
+  ],
+  "audit_log": [],
+  "activity": [],
+  "evidence": [
+    {
+      "file_id": "evidence_9401", "path": "evidence/records/custom_ledger_9401.json", "origin": "security_audit_service",
+      "captured_at": "2026-05-05T08:00:00Z",
+      "content": {
+        "exported_at": "2026-05-05T08:00:00Z", "origin": "security_audit_service", "record_count": 2,
+        "records": [
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "account_service", "resource_id": "account_9401",
+           "record_type": "USER_PROFILE", "result": "NOT_FOUND", "subject_reference": "kofi.mensah@example.net"},
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "security_service", "resource_id": "audit_record_9401",
+           "record_type": "SECURITY_AUDIT_LOG", "result": "FOUND", "subject_reference": "kofi.mensah@example.net",
+           "retention_until": "2027-05-01T00:00:00Z"}
+        ]
+      }
+    }
+  ],
+  "agent_replies": [],
+  "expected": {
+    "deletion_status": "COMPLETE",
+    "steps": [
+      {"step_no": 1, "phase": "VERIFICATION", "system_id": "account_service", "resource_id": "account_9401",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": "evidence_9401"},
+      {"step_no": 2, "phase": "VERIFICATION", "system_id": "security_service", "resource_id": "audit_record_9401",
+       "operation": "VERIFY_RECORD_PRESENT", "state": "PRESENT", "evidence_id": "evidence_9401"}
+    ]
+  }
+}

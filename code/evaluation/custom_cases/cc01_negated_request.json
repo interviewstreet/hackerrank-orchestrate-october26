@@ -1,0 +1,34 @@
+{
+  "name": "cc01_negated_request",
+  "purpose": "A negated deletion plus an export request does not authorize deletion.",
+  "rule": "AGENTS.md 6.5: access, correction, export or other non-deletion requests are NOT_APPLICABLE with [].",
+  "request": {
+    "case_id": "case_901",
+    "email": "maren.holt@example.net",
+    "requested_at": "2026-05-01T09:00:00Z",
+    "reported_status": "NOT_STARTED",
+    "reported_at": "2026-05-03T10:00:00Z",
+    "audit_at": "2026-05-10T12:00:00Z",
+    "request_text": "Please do not delete my account. I only want to download a copy of my order history."
+  },
+  "identities": [
+    {"user_id": "user_9901", "name": "Maren Holt", "email": "maren.holt@example.net", "phone": "+47 412 90 101", "updated_at": "2026-03-01T08:00:00Z"}
+  ],
+  "audit_log": [],
+  "activity": [],
+  "evidence": [
+    {
+      "file_id": "evidence_9101", "path": "evidence/records/custom_ledger_9101.json", "origin": "security_audit_service",
+      "captured_at": "2026-05-05T08:00:00Z",
+      "content": {
+        "exported_at": "2026-05-05T08:00:00Z", "origin": "security_audit_service", "record_count": 1,
+        "records": [
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "account_service", "resource_id": "account_9101",
+           "record_type": "USER_PROFILE", "result": "FOUND", "subject_reference": "maren.holt@example.net"}
+        ]
+      }
+    }
+  ],
+  "agent_replies": [],
+  "expected": {"deletion_status": "NOT_APPLICABLE", "steps": []}
+}

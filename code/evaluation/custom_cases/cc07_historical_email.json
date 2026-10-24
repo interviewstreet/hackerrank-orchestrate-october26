@@ -1,0 +1,51 @@
+{
+  "name": "cc07_historical_email",
+  "purpose": "The request uses the subject's old email. The profile (new email) is gone, but a search entry under the old email remains.",
+  "rule": "AGENTS.md 6.5: resolve current and historical identifiers; rule_03 SEARCH_INDEX_ENTRY Always DELETE.",
+  "request": {
+    "case_id": "case_907",
+    "email": "jakub.nowak.old@example.net",
+    "requested_at": "2026-05-01T09:00:00Z",
+    "reported_status": "COMPLETE",
+    "reported_at": "2026-05-03T10:00:00Z",
+    "audit_at": "2026-05-10T12:00:00Z",
+    "request_text": "Please remove my account and my personal details from your shop."
+  },
+  "identities": [
+    {"user_id": "user_9907", "name": "Jakub Nowak", "email": "jakub.nowak@example.net", "phone": "+48 501 090 707", "updated_at": "2026-03-01T08:00:00Z"}
+  ],
+  "audit_log": [
+    {"audit_id": "audit_9701", "user_id": "user_9907", "event_time": "2026-02-01T10:00:00Z", "field_name": "email",
+     "old_value": "jakub.nowak.old@example.net", "new_value": "jakub.nowak@example.net"}
+  ],
+  "activity": [],
+  "evidence": [
+    {
+      "file_id": "evidence_9701", "path": "evidence/records/custom_ledger_9701.json", "origin": "security_audit_service",
+      "captured_at": "2026-05-05T08:00:00Z",
+      "content": {
+        "exported_at": "2026-05-05T08:00:00Z", "origin": "security_audit_service", "record_count": 2,
+        "records": [
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "account_service", "resource_id": "account_9701",
+           "record_type": "USER_PROFILE", "result": "NOT_FOUND", "subject_reference": "jakub.nowak@example.net"},
+          {"recorded_at": "2026-05-05T08:00:00Z", "system": "search_service", "resource_id": "search_9701",
+           "record_type": "SEARCH_INDEX_ENTRY", "result": "FOUND", "subject_reference": "jakub.nowak.old@example.net"}
+        ]
+      }
+    }
+  ],
+  "agent_replies": [],
+  "expected": {
+    "deletion_status": "INCOMPLETE",
+    "steps": [
+      {"step_no": 1, "phase": "FINDING", "system_id": "search_service", "resource_id": "search_9701",
+       "operation": "REPORT_REMAINING_RECORD", "state": "PRESENT", "evidence_id": "evidence_9701"},
+      {"step_no": 2, "phase": "REMEDIATION", "system_id": "search_service", "resource_id": "search_9701",
+       "operation": "DELETE_RECORD", "state": "ABSENT", "evidence_id": ""},
+      {"step_no": 3, "phase": "VERIFICATION", "system_id": "account_service", "resource_id": "account_9701",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": ""},
+      {"step_no": 4, "phase": "VERIFICATION", "system_id": "search_service", "resource_id": "search_9701",
+       "operation": "VERIFY_RECORD_ABSENT", "state": "ABSENT", "evidence_id": ""}
+    ]
+  }
+}
