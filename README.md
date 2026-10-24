@@ -66,6 +66,9 @@ python3 code/evaluate.py
 # Evaluation-only pre-audit candidate observability gate
 python3 code/evaluation/observability.py
 
+# Build the aggregate self-supervised lineage training-set report
+python3 code/evaluation/build_training_set.py
+
 # Unit tests
 python3 -m unittest discover -s code/tests -v
 
