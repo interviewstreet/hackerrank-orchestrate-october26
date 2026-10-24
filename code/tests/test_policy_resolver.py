@@ -205,6 +205,22 @@ class PolicyRowTest(unittest.TestCase):
         self.assertEqual((d.rule_id, d.outcome, d.finding, d.remediation, d.verification),
                          ("rule_12", COMPLIANT, None, None, Op.VERIFY_RECORD_PRESENT))
 
+    def test_rule_06_attachment_is_deleted_only_when_proven_exclusive(self):
+        def decide(edge_kind, *, exclusive=False, shared=()):
+            store = FactStore()
+            store.add([obs("object_storage", "object_1", exists=PRESENT, record_type="SUPPORT_ATTACHMENT")], [])
+            target = Target("object_storage", "object_1", [Edge(edge_kind, "strong", "x", T0)],
+                            exclusive=exclusive, shared_with=set(shared))
+            return evaluate(resolve(store, target, SUBJECT, AUDIT), AUDIT)
+
+        own = decide("identifier")   # the record carries only the subject's identifier
+        self.assertEqual((own.outcome, own.remediation), (VIOLATION, Op.DELETE_RECORD))
+        catalog = decide("catalog_link", exclusive=True)   # "belongs only to" in the catalog
+        self.assertEqual((catalog.outcome, catalog.remediation), (VIOLATION, Op.DELETE_RECORD))
+        for d in (decide("catalog_link"), decide("identifier", shared={"user_9"})):
+            self.assertEqual((d.outcome, d.reason, d.finding, d.remediation, d.verification),
+                             (UNPROVEN, "attachment not proven exclusive", None, None, None))
+
     def test_rule_13_legal_hold_needs_an_active_hold(self):
         def hold(**fields):
             return self._one("legal_service", "legal_hold_1", exists=PRESENT, fields=fields)

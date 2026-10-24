@@ -24,6 +24,7 @@ from evidence.common import (
     REDACTED,
     Identifiers,
 )
+from links import STRONG, Target
 from loaders import parse_ts
 from resolver import CONFLICT, UNKNOWN, ResourceState, exists_rollup
 from schema import Operation as Op
@@ -187,6 +188,15 @@ def _retention_expired(state: ResourceState, cutoff) -> bool | None:
     return None
 
 
+def attachment_exclusive(target: Target) -> bool:
+    """rule_06 deletes an attachment that "belongs only to the deletion subject". Proof: a catalog
+    says so (``exclusive``), or the record itself carries the subject's identifier (a strong
+    identifier edge) and no other user is linked to it."""
+    if target.exclusive:
+        return True
+    return not target.shared_with and any(e.kind == "identifier" and e.tier == STRONG for e in target.edges)
+
+
 def _hold_status(state: ResourceState) -> str:
     """Explicit status of a legal hold (newest statement first), upper case, or ``""``.
     A workflow operation claim is not a status."""
@@ -246,6 +256,10 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
         return Decision(category, "", NOT_TARGET, reason="out of rules")
     rule_id, check, finding, remediation, verify = RULES[category]
     d = Decision(category, rule_id, UNPROVEN, finding, remediation, verify, check=check)
+    if category == "SUPPORT_ATTACHMENT" and not attachment_exclusive(state.target):
+        d.finding = d.remediation = d.verification = None   # no rule applies with proof: no DELETE_RECORD
+        d.reason = "attachment not proven exclusive"
+        return d
     exists = exists_rollup(state)
 
     if check == "retain":
