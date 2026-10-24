@@ -170,6 +170,17 @@ def _load_sql_records(path: str):
     """Execute each immutable snapshot once, then reuse its normalized rows."""
     conn = sqlite3.connect(":memory:")
     conn.row_factory = sqlite3.Row
+    conn.enable_load_extension(False)
+
+    def authorize(action, arg1, arg2, database, trigger):
+        del arg1, database, trigger
+        if action in {sqlite3.SQLITE_ATTACH, sqlite3.SQLITE_DETACH}:
+            return sqlite3.SQLITE_DENY
+        if action == sqlite3.SQLITE_FUNCTION and str(arg2 or "").casefold() == "load_extension":
+            return sqlite3.SQLITE_DENY
+        return sqlite3.SQLITE_OK
+
+    conn.set_authorizer(authorize)
     try:
         conn.executescript(Path(path).read_text(encoding="utf-8"))
         tables = tuple(row[0] for row in conn.execute(
@@ -383,11 +394,23 @@ def parse_image_evidence(path, user_identity):
     return _parse_extracted(text, path, user_identity)
 
 
+def _safe_evidence_path(dataset: Path, manifest_path: str) -> Path:
+    dataset = dataset.resolve()
+    candidate = (dataset / manifest_path).resolve()
+    try:
+        candidate.relative_to(dataset)
+    except ValueError as exc:
+        raise ValueError(f"evidence path escapes dataset/: {manifest_path}") from exc
+    if not candidate.is_file():
+        raise FileNotFoundError(f"evidence file is missing: {manifest_path}")
+    return candidate
+
+
 def build_evidence_index(repo_root, manifest, user_identity, audit_at):
     result = defaultdict(list)
     if not user_identity:
         return {}
-    dataset = Path(repo_root).resolve() / "dataset"
+    dataset = (Path(repo_root).resolve() / "dataset").resolve()
     parsers = {".sql": parse_sql_evidence, ".json": parse_json_evidence,
                ".log": parse_log_evidence, ".pdf": parse_pdf_evidence,
                ".png": parse_image_evidence, ".txt": parse_text_evidence}
@@ -395,7 +418,7 @@ def build_evidence_index(repo_root, manifest, user_identity, audit_at):
     for file_id, item in ordered:
         if item.get("captured_at", "") > audit_at:
             continue
-        path = dataset / item["file_path"]
+        path = _safe_evidence_path(dataset, item["file_path"])
         parser = parsers.get(path.suffix.casefold())
         if not parser:
             continue
