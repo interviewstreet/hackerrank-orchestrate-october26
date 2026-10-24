@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging, os
 from code import cache as default_cache
 
-DELETION_SIGNALS=("delete","deletion","erase","erasure","remove","close my account","right to be forgotten","gdpr","data removal","wipe","eliminar","borrar","suprimir","cerrar mi cuenta","derecho al olvido","supprimer","suppression","effacer","fermer mon compte","droit à l'oubli","löschen","konto schließen","vergessenwerden","excluir","apagar","encerrar minha conta","削除","アカウント削除")
-NON_DELETION_SIGNALS=("access","export","download my data","marketing","unsubscribe","opt out","opt-out","correction","update my data","right to access")
+DELETION_SIGNALS=("delete","deletion","erase","erasure","remove","close my account","right to be forgotten","gdpr","data removal","wipe","eliminar","eliminación","borrar","suprimir","cerrar mi cuenta","derecho al olvido","supprimer","suppression","effacer","fermer mon compte","droit à l'oubli","löschen","konto schließen","vergessenwerden","excluir","exclusão","apagar","encerrar minha conta","削除","アカウント削除","삭제")
+NON_DELETION_SIGNALS=("access","export","download my data","portable format","marketing","unsubscribe","opt out","opt-out","correction","update my data","right to access","leave the account active","keep the account","without removing","copy of","leave my profile","change the email address","continue using")
 
 def classify_request(request_text: str, case_id: str, cache=default_cache) -> str:
     key=cache.make_key(case_id,request_text)

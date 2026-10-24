@@ -5,7 +5,10 @@ claims are never treated as case membership or proof of a final state.
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import logging
+import os
 import re
 import sqlite3
 from collections import defaultdict
@@ -305,10 +308,44 @@ def parse_pdf_evidence(path, user_identity):
     return _parse_extracted(text, path, user_identity)
 
 
+def _gemini_vision_text(path, user_identity):
+    """Use Gemini Pro only when local OCR cannot ground the subject."""
+    if not os.environ.get("GOOGLE_API_KEY"):
+        return ""
+    from code import cache
+    image_bytes = Path(path).read_bytes()
+    digest = hashlib.sha256(image_bytes).hexdigest()
+    prompt = ("Transcribe this business screenshot exactly. Preserve resource IDs, system names, "
+              "emails, phones, hashes, status words, enabled flags, and restore flags. Return only "
+              f"plain transcription text. Image sha256: {digest}")
+    key = cache.make_key(user_identity.get("case_id", user_identity.get("user_id", "")), prompt)
+    cached = cache.get(key)
+    if cached is not None:
+        return cached
+    try:
+        from google import genai
+        from google.genai import types
+        client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
+        response = client.models.generate_content(
+            model="gemini-2.5-pro",
+            contents=[prompt, types.Part.from_bytes(data=image_bytes, mime_type="image/png")],
+            config=types.GenerateContentConfig(temperature=0),
+        )
+        text = response.text or ""
+        cache.set(key, text)
+        return text
+    except Exception as exc:
+        logging.getLogger(__name__).error("Gemini vision extraction failed: %s", type(exc).__name__)
+        return ""
+
+
 def parse_image_evidence(path, user_identity):
     import pytesseract
     from PIL import Image
-    return _parse_extracted(pytesseract.image_to_string(Image.open(path)), path, user_identity)
+    text = pytesseract.image_to_string(Image.open(path))
+    if len(text.strip()) < 20 or not _matches(text, user_identity):
+        text = _gemini_vision_text(path, user_identity) or text
+    return _parse_extracted(text, path, user_identity)
 
 
 def build_evidence_index(repo_root, manifest, user_identity, audit_at):

@@ -39,6 +39,49 @@ python3 code/main.py
 
 The blank template at `dataset/output.csv` is provided as a reference. Your final generated file for submission must be the root-level `output.csv`.
 
+### Solution setup
+
+This submission targets Python 3.12 and uses no agent framework. Create an isolated environment and install the pinned model SDK plus evidence dependencies:
+
+```bash
+python3.12 -m venv .venv
+. .venv/bin/activate
+pip install -r code/requirements.txt
+```
+
+Set `GOOGLE_API_KEY` only when Gemini fallback classification or vision extraction is needed. The key is read from the environment and is never written to output, logs, or cache files. Deterministic multilingual intent rules handle clear requests before any model call.
+
+Useful commands:
+
+```bash
+# Full 518-case run; writes root output.csv
+python3 code/main.py
+
+# Partial smoke test
+python3 code/main.py --cases case_33,case_34
+
+# Public 32-case regression
+python3 code/evaluate.py
+
+# Unit tests
+python3 -m unittest discover -s code/tests -v
+
+# Submission archive (excludes datasets, caches, and environments)
+./code/package.sh
+```
+
+### Architecture
+
+1. `ingest.py` loads and indexes participant-facing CSV data.
+2. `identity.py` joins current and historical emails, phones, and hashes to the stable user ID.
+3. `temporal.py` enforces each case's `audit_at` boundary.
+4. `evidence.py` normalizes SQLite snapshots, nested JSON, trace-correlated logs, text handovers, PDFs, and OCR output into evidence-backed resource states.
+5. `policy.py` and `decision.py` apply all 15 deletion rules and identify remaining records, exposed PII, active data flows, and restore risks.
+6. `planner.py` emits deterministically ordered finding, remediation, and verification steps.
+7. `validate.py` enforces the output contract before the run succeeds.
+
+Gemini results are cached in `code/cache.json` by SHA-256 of `case_id + prompt`; this generated cache is excluded from `code.zip`.
+
 
 ## Dataset
 
