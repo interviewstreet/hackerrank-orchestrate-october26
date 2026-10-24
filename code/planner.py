@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from citation import cite
 from links import Target
-from policy import COMPLIANT, MISSING_RETAINED, NOT_TARGET, VIOLATION, Decision, check_safety
+from policy import COMPLIANT, NOT_TARGET, VIOLATION, Decision, check_safety
 from resolver import ResourceState, Statement
 from schema import OP_PHASE, OP_STATE, Operation, Status, step_sort_key
 
@@ -49,13 +49,12 @@ def build_item(target: Target, state: ResourceState, decision: Decision) -> Item
 def decide_status(items: list[Item]) -> str:
     """Decision 4, the only status rule.
 
-    INCOMPLETE if at least one violation is proven by evidence (a missing retained record
-    proven absent counts); else COMPLETE when at least one target is proven compliant;
-    else INCOMPLETE (nothing can be proven).
+    COMPLETE only when there is at least one target and every target is proven compliant
+    (problem statement 6.5: "every relevant copy has the required treatment"). Anything else
+    is INCOMPLETE: a proven violation, a proven missing retained record, or a target whose
+    state is unproven or in conflict (it gets an empty-evidence verification step).
     """
-    if any(i.violation or (i.decision.outcome == MISSING_RETAINED and i.state.known) for i in items):
-        return Status.INCOMPLETE.value
-    if any(i.proven_compliant for i in items):
+    if items and all(i.proven_compliant for i in items):
         return Status.COMPLETE.value
     return Status.INCOMPLETE.value
 

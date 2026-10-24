@@ -242,10 +242,15 @@ class StatusAndSafetyTest(unittest.TestCase):
         _, _, good = run([], [scope("account_service", "evidence_9")])
         _, _, unknown = run([], system="account_service", rid="account_2")
         self.assertEqual(planner.decide_status([bad, good]), Status.INCOMPLETE.value)
-        self.assertEqual(planner.decide_status([good, unknown]), Status.COMPLETE.value)
+        self.assertEqual(planner.decide_status([good]), Status.COMPLETE.value)
+        # One unproven target keeps the case INCOMPLETE (every relevant copy must be proven).
+        self.assertEqual(planner.decide_status([good, unknown]), Status.INCOMPLETE.value)
         self.assertEqual(planner.decide_status([unknown]), Status.INCOMPLETE.value)
-        _, steps = planner.plan([good, unknown])
-        self.assertEqual([s["resource_id"] for s in steps], ["account_1"])  # unproven targets are left out
+        self.assertEqual(planner.decide_status([]), Status.INCOMPLETE.value)
+        status, steps = planner.plan([good, unknown])
+        self.assertEqual(status, Status.INCOMPLETE.value)
+        self.assertEqual([(s["resource_id"], s["operation"], s["evidence_id"]) for s in steps],
+                         [("account_1", "VERIFY_RECORD_ABSENT", ""), ("account_2", "VERIFY_RECORD_ABSENT", "")])
         _, steps = planner.plan([unknown])
         self.assertEqual([(s["operation"], s["evidence_id"]) for s in steps], [("VERIFY_RECORD_ABSENT", "")])
 
