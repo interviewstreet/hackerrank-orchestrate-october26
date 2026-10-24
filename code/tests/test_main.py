@@ -70,10 +70,34 @@ class PipelineTest(unittest.TestCase):
         pipeline.write_output(results, out)
         self.assertEqual(validate_file(out, two), [])
 
-    def test_bad_case_with_no_known_target_fails_loudly(self):
-        requests = load_requests(helpers.write_requests(self.dir / "req.csv", ["case_1", "case_2"]))
-        with self._failing("case_2"), mock.patch("sys.stderr"), self.assertRaises(pipeline.CaseFailure):
-            pipeline.run_cases(requests, self.ctx)
+    def test_bad_case_with_no_known_target_keeps_the_batch_going(self):
+        requests = load_requests(helpers.write_requests(self.dir / "req.csv", ["case_1", "case_2", "case_3"]))
+        with self._failing("case_2"), mock.patch("sys.stderr"):
+            results = pipeline.run_cases(requests, self.ctx)
+        self.assertEqual([r.case_id for r in results], ["case_1", "case_2", "case_3"])
+        bad = results[1]
+        self.assertEqual((bad.status, bad.steps, bad.flags), ("INCOMPLETE", [], ["case_error", "no_fallback_row"]))
+        self.assertIn("boom", bad.error)
+
+    def test_main_writes_every_row_and_a_failure_list_and_exits_non_zero(self):
+        samples = DATASET_DIR / "sample_deletion_requests.csv"
+        with open(samples, encoding="utf-8-sig", newline="") as handle:
+            rows = list(csv.reader(handle))
+        two = helpers.write_rows(self.dir / "two.csv", [r for r in rows[1:] if r[0] in ("case_01", "case_02")],
+                                 header=rows[0])
+        out = self.dir / "o.csv"
+        with self._failing("case_01"), mock.patch.object(pipeline, "build_context", lambda **kw: self.ctx), \
+                mock.patch("sys.stderr"), mock.patch("sys.stdout"):
+            code = pipeline.main(["--no-llm", "--requests", str(two), "--out", str(out)])
+        self.assertEqual(code, 1)                        # a failed case fails the run ...
+        self.assertEqual(validate_file(out, two), [])    # ... after every row was written
+        with open(pipeline.failures_path(out), encoding="utf-8", newline="") as handle:
+            listed = list(csv.DictReader(handle))
+        self.assertEqual([(r["case_id"], r["row"]) for r in listed], [("case_01", "fallback_row")])
+        with mock.patch.object(pipeline, "build_context", lambda **kw: self.ctx), \
+                mock.patch("sys.stderr"), mock.patch("sys.stdout"):
+            self.assertEqual(pipeline.main(["--no-llm", "--requests", str(two), "--out", str(out)]), 0)
+        self.assertFalse(pipeline.failures_path(out).exists())   # a clean run removes the old list
 
     def test_main_fails_when_the_written_file_is_invalid(self):
         requests = helpers.write_requests(self.dir / "req.csv", ["case_1"])
@@ -113,6 +137,7 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(pipeline.main(["--out", str(out)]), 0)   # main validates strictly before success
         requests = helpers.CODE_DIR.parent / "dataset" / "deletion_requests.csv"
         self.assertEqual(validate_file(out, requests), [])
+        self.assertFalse(pipeline.failures_path(out).exists())   # 0 failed cases on the full set
 
 
 if __name__ == "__main__":

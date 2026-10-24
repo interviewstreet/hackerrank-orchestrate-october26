@@ -8,9 +8,9 @@ Defaults: dataset/deletion_requests.csv -> ./output.csv (repository root).
 
 Per case: intent -> identity -> ownership links -> per-copy state at audit_at ->
 policy -> citation -> planner. Non-deletion requests get ``NOT_APPLICABLE,[]``.
-One failing case never stops the run: it is logged and gets a conservative row
-(``fallback_result``). The run fails only when no contract-valid row exists, and it
-reports success only after strict validation of the written file.
+One failing case never stops the run: it is logged, gets a conservative row
+(``fallback_result``) and is listed in ``<out>_failures.csv``. Every row is written; the
+exit code is non-zero when any case failed or strict validation of the written file fails.
 
 Model use (plan 7.3, 7.4): vision rows for PNG screenshots, labels for AMBIGUOUS request
 texts, and the bounded investigator for UNPROVEN / CONFLICT items. With no key, or
@@ -233,20 +233,19 @@ def run_case(req: Request, ctx: Context) -> CaseResult:
     return result
 
 
-class CaseFailure(RuntimeError):
-    """A failed case with no known target: no contract-valid row exists, so the run stops."""
-
-
 def fallback_result(req: Request, ctx: Context, exc: Exception) -> CaseResult:
     """Conservative row for a case that raised: INCOMPLETE plus a future verification step
     (evidence_id "") for every known, non-stale target, with the verification of its policy row.
     The category comes from the catalog words, else the system; a target with none, or with
     two named categories, or a non-exclusive attachment (rule_06), is skipped.
-    With no step, or when this lookup fails too, raise ``CaseFailure``."""
+    With no step, or when this lookup fails too, the row is ``INCOMPLETE,[]`` (flag
+    ``no_fallback_row``): strict validation rejects it and main exits non-zero, but the batch
+    goes on and every other row is written."""
+    result = CaseResult(req.case_id, Status.INCOMPLETE.value, [], error=repr(exc), flags=["case_error"])
+    steps: list[dict] = []
     try:
-        subject = ctx.identities.resolve(req.email, req.audit_at)
+        subject = result.subject = ctx.identities.resolve(req.email, req.audit_at)
         found = ctx.links.targets(subject, req, ctx.all_requests, []) if subject is not None else {}
-        steps = []
         for (system_id, resource_id), target in sorted(found.items()):
             named = content_categories(target.descriptions)
             category = named.pop() if len(named) == 1 else "" if named else SYSTEM_CATEGORY.get(system_id, "")
@@ -257,16 +256,15 @@ def fallback_result(req: Request, ctx: Context, exc: Exception) -> CaseResult:
             steps.append({"step_no": 0, "phase": str(OP_PHASE[op]), "system_id": system_id,
                           "resource_id": resource_id, "operation": op.value, "state": str(OP_STATE[op]),
                           "evidence_id": ""})
-    except Exception as inner:   # re-raised below as the case failure
-        raise CaseFailure(f"{req.case_id}: fallback failed: {inner!r} (case error: {exc!r})") from inner
-    if not steps:
-        raise CaseFailure(f"{req.case_id}: no known target for a fallback row (case error: {exc!r})") from exc
-    steps.sort(key=step_sort_key)
-    for n, step in enumerate(steps, start=1):
-        step["step_no"] = n
-    result = CaseResult(req.case_id, Status.INCOMPLETE.value, steps, subject=subject, error=repr(exc),
-                        flags=["case_error", "fallback_row"])
-    OutputRow.model_validate({"case_id": result.case_id, "deletion_status": result.status, "steps": result.steps})
+        steps.sort(key=step_sort_key)
+        for n, step in enumerate(steps, start=1):
+            step["step_no"] = n
+        OutputRow.model_validate({"case_id": req.case_id, "deletion_status": result.status, "steps": steps})
+    except Exception as inner:  # noqa: BLE001 - the row stays INCOMPLETE,[] and the failure is listed
+        result.error += f" | fallback failed: {inner!r}"
+        steps = []
+    result.steps = steps
+    result.flags.append("fallback_row" if steps else "no_fallback_row")
     return result
 
 
@@ -303,6 +301,27 @@ def write_output(results: list[CaseResult], path: Path) -> None:
         writer.writerow(HEADER)
         for res in results:
             writer.writerow([res.case_id, res.status, serialize_steps(res.steps)])
+
+
+def failures_path(out: Path) -> Path:
+    """``output.csv`` -> ``output_failures.csv`` in the same directory."""
+    return out.with_name(f"{out.stem}_failures.csv")
+
+
+def write_failures(results: list[CaseResult], path: Path) -> int:
+    """Write the cases that raised (case_id, the row written, the error). With none, remove a
+    list left by an earlier run so it cannot be read as current. Returns the failure count."""
+    failed = [r for r in results if r.error]
+    if not failed:
+        path.unlink(missing_ok=True)
+        return 0
+    with open(path, "w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["case_id", "row", "error"])
+        for res in failed:
+            row = "fallback_row" if "fallback_row" in res.flags else "no_fallback_row"
+            writer.writerow([res.case_id, row, res.error])
+    return len(failed)
 
 
 def usage_summary(ctx: Context, requests: int) -> dict:
@@ -355,12 +374,17 @@ def main(argv: list[str] | None = None) -> int:
     finally:
         tracer.close()
     write_output(results, Path(args.out))
+    code = 0
+    failures = write_failures(results, failures_path(Path(args.out)))
+    if failures:
+        print(f"FAILED: {failures} cases raised; list -> {failures_path(Path(args.out))}", file=sys.stderr)
+        code = 1
     invalid = validate.validate_file(Path(args.out), Path(args.requests))
     if invalid:
         for line in invalid[:20]:
             print(f"[invalid] {line}", file=sys.stderr)
         print(f"FAILED: {len(invalid)} contract errors in {args.out}", file=sys.stderr)
-        return 1
+        code = 1
 
     statuses = Counter(r.status for r in results)
     intents = Counter(r.intent for r in results if r.intent)
@@ -384,7 +408,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"snapshot: {client.cache.export_snapshot()} validated results -> {config.SNAPSHOT_FILE}")
     if args.export_snapshot:
         print(f"ocr snapshot: {extract_text.export_ocr_snapshot()} readings -> {config.OCR_SNAPSHOT_FILE}")
-    return 0
+    return code
 
 
 if __name__ == "__main__":
