@@ -8,7 +8,9 @@ Defaults: dataset/deletion_requests.csv -> ./output.csv (repository root).
 
 Per case: intent -> identity -> ownership links -> per-copy state at audit_at ->
 policy -> citation -> planner. Non-deletion requests get ``NOT_APPLICABLE,[]``.
-One failing case never stops the run: it is logged and still gets a row.
+One failing case never stops the run: it is logged and gets a conservative row
+(``fallback_result``). The run fails only when no contract-valid row exists, and it
+reports success only after strict validation of the written file.
 
 Model use (plan 7.3, 7.4): vision rows for PNG screenshots, labels for AMBIGUOUS request
 texts, and the bounded investigator for UNPROVEN / CONFLICT items. With no key, or
@@ -33,6 +35,7 @@ import intent
 import intent_model
 import links
 import planner
+import validate
 from agent.loop import AgentStats, investigate
 from agent.tools import Corpus
 from evidence import extract_vision
@@ -42,9 +45,9 @@ from identity import FutureDataError, IdentityIndex, SubjectIdentity
 from links import LinkIndex, assign_windows, subject_keys
 from llm_client import LLMClient
 from loaders import DATASET_DIR, REPO_ROOT, Dataset, Request, case_number, load_dataset, load_requests
-from policy import RULES, SYSTEM_CATEGORY, UNPROVEN, evaluate
+from policy import RULES, SYSTEM_CATEGORY, UNPROVEN, content_category, evaluate
 from resolver import resolve
-from schema import HEADER, IntentLabel, OutputRow, Status
+from schema import HEADER, OP_PHASE, OP_STATE, IntentLabel, OutputRow, Status, step_sort_key
 
 REQUEST_FILES = ("deletion_requests.csv", "sample_deletion_requests.csv")
 
@@ -230,6 +233,40 @@ def run_case(req: Request, ctx: Context) -> CaseResult:
     return result
 
 
+class CaseFailure(RuntimeError):
+    """A failed case with no known target: no contract-valid row exists, so the run stops."""
+
+
+def fallback_result(req: Request, ctx: Context, exc: Exception) -> CaseResult:
+    """Conservative row for a case that raised: INCOMPLETE plus a future verification step
+    (evidence_id "") for every known, non-stale target, with the verification of its policy row.
+    The category comes from the system (or catalog words); a target with no category is skipped.
+    With no step, or when this lookup fails too, raise ``CaseFailure``."""
+    try:
+        subject = ctx.identities.resolve(req.email, req.audit_at)
+        found = ctx.links.targets(subject, req, ctx.all_requests, []) if subject is not None else {}
+        steps = []
+        for (system_id, resource_id), target in sorted(found.items()):
+            category = content_category(target.descriptions) or SYSTEM_CATEGORY.get(system_id, "")
+            if target.stale or category not in RULES:
+                continue
+            op = RULES[category][4]
+            steps.append({"step_no": 0, "phase": str(OP_PHASE[op]), "system_id": system_id,
+                          "resource_id": resource_id, "operation": op.value, "state": str(OP_STATE[op]),
+                          "evidence_id": ""})
+    except Exception as inner:   # re-raised below as the case failure
+        raise CaseFailure(f"{req.case_id}: fallback failed: {inner!r} (case error: {exc!r})") from inner
+    if not steps:
+        raise CaseFailure(f"{req.case_id}: no known target for a fallback row (case error: {exc!r})") from exc
+    steps.sort(key=step_sort_key)
+    for n, step in enumerate(steps, start=1):
+        step["step_no"] = n
+    result = CaseResult(req.case_id, Status.INCOMPLETE.value, steps, subject=subject, error=repr(exc),
+                        flags=["case_error", "fallback_row"])
+    OutputRow.model_validate({"case_id": result.case_id, "deletion_status": result.status, "steps": result.steps})
+    return result
+
+
 def run_cases(requests: list[Request], ctx: Context, tracer: audit_trace.TraceWriter | None = None) -> list[CaseResult]:
     label_ambiguous(requests, ctx)
     results = []
@@ -244,8 +281,7 @@ def run_cases(requests: list[Request], ctx: Context, tracer: audit_trace.TraceWr
         except Exception as exc:  # noqa: BLE001 - per-case isolation: never lose a row
             print(f"[error] {req.case_id}: {exc!r}", file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
-            # Safe fallback: never claim COMPLETE for a case we could not process.
-            results.append(CaseResult(req.case_id, Status.INCOMPLETE.value, error=repr(exc), flags=["case_error"]))
+            results.append(fallback_result(req, ctx, exc))
         if ctx.client:
             results[-1].model_calls = ctx.client.calls[calls_before:]
         if tracer is not None:
@@ -315,6 +351,12 @@ def main(argv: list[str] | None = None) -> int:
     finally:
         tracer.close()
     write_output(results, Path(args.out))
+    invalid = validate.validate_file(Path(args.out), Path(args.requests))
+    if invalid:
+        for line in invalid[:20]:
+            print(f"[invalid] {line}", file=sys.stderr)
+        print(f"FAILED: {len(invalid)} contract errors in {args.out}", file=sys.stderr)
+        return 1
 
     statuses = Counter(r.status for r in results)
     intents = Counter(r.intent for r in results if r.intent)
