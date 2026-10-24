@@ -4,8 +4,9 @@
 | Status accuracy | 32/32 = 1.000 |
 | Sequence accuracy (exact steps) | 15/32 = 0.469 |
 | Row accuracy (status + steps) | 15/32 = 0.469 |
-| Steps gold / pred / matched | 193 / 165 / 165 |
-| Step precision / recall / F1 | 1.000 / 0.855 / 0.922 |
+| Steps gold / pred | 193 / 165 |
+| Exact step (7 fields incl. step_no): matched, P / R / F1 | 126, 0.764 / 0.653 / 0.704 |
+| Content match (6 fields, no step_no): matched, P / R / F1 | 165, 1.000 / 0.855 / 0.922 |
 | Field accuracy `step_no` | 165/193 = 0.855 |
 | Field accuracy `phase` | 165/193 = 0.855 |
 | Field accuracy `system_id` | 126/193 = 0.653 |

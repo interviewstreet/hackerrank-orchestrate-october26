@@ -1,11 +1,11 @@
-# Evaluation report (draft, Phase 5)
+# Evaluation report (Phase 6, final)
 
-Final numbers come in Phase 6. Every number here is reproducible with the commands below.
+Every number here is reproducible with the commands below.
 
 ```text
 python code/evaluation/main.py            # samples scorer + custom cases + metamorphic checks (snapshot replay)
 python code/validate.py output.csv        # strict contract check on the 518 rows
-python -m pytest code/tests               # 155 tests
+python -m pytest code/tests               # 167 tests
 ```
 
 `code/evaluation/main.py` writes `code/evaluation/results.md` and `results.json`.
@@ -64,7 +64,7 @@ All 17 non-exact rows have the same cause: a **missing target** (recall, not pre
 The pipeline emits no step outside the gold content (content precision 1.000); the exact
 precision is 0.764 only because missing steps shift the `step_no` of the later ones. The missing records are linked to the subject only by a
 worker claim in `system_activity.csv` or by log lines without a subject key, so the strict
-linking rules leave them out (Phase 3 cause table; section 7, Phase 5 D).
+linking rules leave them out (section 12 lists them).
 
 ## 5. Custom evaluation cases (7, frozen before tuning)
 
@@ -107,6 +107,7 @@ Sample scores (32 cases). "Sequence" = exact step list. The sample rows of Phase
 | 3 | 887c92b | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Logs + PDF, ownership graph, newest-wins dominance, citation order fix |
 | 4 | 6d55ef8 | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Vision, model intent, investigator agent, snapshot replay |
 | 5 | b657810 | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Stale-link exclusion, content category, vision prompt v2 |
+| 6 | c2add79 | 32/32 | 15/32 | 1.000 / 0.855 / 0.922 | 0.764 / 0.653 / 0.704 | Review fixes #2, #4, #6-#12, #14 (below); no sample row changed |
 
 Failures found and fixed:
 
@@ -146,6 +147,28 @@ Failures found and fixed:
 Rows changed on the 518 in Phase 5 (vs Phase 4): case_33 (stale `export_1260` removed) and
 case_61 (object_19 finding added). No status changed.
 
+**Phase 6 (code review fixes).** An independent review (Codex) gave 14 findings. Each
+accepted fix has its own commit and regression test. The sample rows did not change. On the
+518, 23 rows changed and the status counts went from COMPLETE 154 / INCOMPLETE 354 to
+COMPLETE 153 / INCOMPLETE 355 (NOT_APPLICABLE 10 both).
+
+| Fix | Commit | Rule now | 518 effect |
+| --- | --- | --- | --- |
+| #4 job_burst | e3dd417 | A job burst links a record only when it names exactly one candidate in that system; two or more give no edge (`job_burst_ambiguous`) | Before: 20 of the 518 had a job_burst link; 19 of them had 2 account candidates in one burst. Now those 19 get no burst edge (flag `job_burst_ambiguous`) and lose one account target: case_62, 102, 122, 152, 162, 212, 222, 242, 262, 282, 332, 342, 362, 382, 402, 452, 482, 502, 512. case_302 (one candidate) keeps its link. Samples: 7/7 burst links correct before and after |
+| #2 status | 3b9265f | COMPLETE only when every included target is proven compliant; an unproven or conflicting target gives INCOMPLETE with an empty-evidence verification step | case_46 COMPLETE -> INCOMPLETE (`tombstone_17` unproven) |
+| #11 metrics | 317a74a | Report both step metrics: exact (7 fields) and content (6 fields) | report only |
+| #9 vision | b91f885 | A vision row is kept only when one OCR line holds the resource id (or a visible alias), the state cue and at least half of `source_text` | 2 rows dropped (section 12): case_53 INCOMPLETE -> COMPLETE, case_61 object_19 finding -> unproven verification |
+| #10 fallback | 66d1804 | A failed case gets INCOMPLETE plus empty-evidence verification for its known targets; no target stops the run; `main.py` validates strictly before it reports success | 0 (no case fails) |
+| #14 OCR | cb0ecce | An OCR failure on one image is a coverage error; the run goes on without the file | 0 |
+| #12 category | a59d107 | Catalog words that name two categories give no category (UNPROVEN), never the first match | 0 (no target names two) |
+| #8 legal hold | 58742d2 | A legal hold is retained while an active hold is proven: an explicit status, else the end date (`retained_until`). INACTIVE/RELEASED is not retained; neither gives UNPROVEN | case_390 COMPLETE -> INCOMPLETE (`legal_hold_8049` is only in an export manifest, with no status or date). The other 5 holds have `retained_until` 2033 |
+| #7 attachment | 80e24a5 | A SUPPORT_ATTACHMENT is deleted only when proven exclusive: a catalog "belongs only to" statement, or the subject's own identifier on the record with no other linked user | 0 of 14 attachment targets (samples + 518) |
+| #6 scope | 7705d6d | A subject-scoped listing covers only the subjects of that system's (and collection's) own rows | 0. All 22 multi-system scoped files list subjects in only some systems |
+| #3 stale window | c2add79 | Test only: the link window is `requested_at <= link time <= audit_at`, inclusive | 0 |
+
+Rejected findings: #3 (stale-link rule, section 11), #13 (citation tier-then-newest: gold
+case_01 cites `evidence_54`) and #5 (accepted loss, section 12).
+
 ## 8. Agent ablation and its honest limits
 
 | Metric (32 samples) | Agent off | Agent on |
@@ -155,9 +178,15 @@ case_61 (object_19 finding added). No status changed.
 | Content P / R / F1 (6 fields) | 1.000 / 0.855 / 0.922 | same |
 | Exact P / R / F1 (7 fields) | 0.764 / 0.653 / 0.704 | same |
 
-On the 518 the agent ran 3 times (11 turns): 3 proposals, 1 accepted (case_55 `backup_9287`,
-STATE PRESENT, no row change), 2 rejected `state_mismatch` (case_39, case_46: the quote did
-not state the claimed state). 0 rows changed.
+On the 518 the agent ran 5 times (19 turns): 4 proposals, 2 accepted, 2 rejected, 1 stop.
+
+- Accepted: case_55 `backup_9287` and case_390 `legal_hold_8049` (both STATE PRESENT). Neither
+  changes a row: the backup was already decided, and the legal hold stays UNPROVEN because
+  presence does not prove an active hold (fix #8).
+- Rejected `state_mismatch`: case_39, case_46 (the quote did not state the claimed state).
+- Stop: case_61 `object_19` (no further evidence).
+
+0 rows changed by the agent.
 
 Limits:
 
@@ -188,6 +217,69 @@ records are not linked by any strong edge, so they have no account step. The tra
 ## 10. Contract validity and status counts (518 cases)
 
 - `python code/validate.py output.csv`: VALID, 518 rows, 0 errors (strict mode).
+  `main.py` runs the same strict check before it reports success.
 - Samples: VALID, 32 rows, 0 errors.
-- Status counts: COMPLETE 154, INCOMPLETE 354, NOT_APPLICABLE 10.
-- Replay: `ZENMUX_OFFLINE=1 python code/main.py` gives the same SHA-256 as the live run.
+- Status counts: COMPLETE 153, INCOMPLETE 355, NOT_APPLICABLE 10.
+- Replay: `ZENMUX_OFFLINE=1 python code/main.py` gives the same SHA-256 as the live run
+  (518: `4f63cd85...e590`; samples: `d59f689e...5e45`). The agent-off run gives the same hashes.
+
+## 11. Why the stale-link rule stays (finding #3 rejected, with data)
+
+The rule: a target whose every link predates `requested_at` is not part of the request.
+The link window is `requested_at <= link time <= audit_at`, both ends inclusive
+(test `test_link_window_is_requested_at_to_audit_at_inclusive`).
+
+`system_activity.csv` has 12 `data_catalog` `LINK_RESOURCE_IDENTITY` rows
+(`activity_4000` to `activity_4011`):
+
+- 10 fall after their user's `requested_at`. They point at hidden cases 34, 35, 39, 45, 46,
+  50, 52, 53, 55, 61 and 63.
+- Only 2 fall before a request: sample case_07 (`object_19`) and case_17 (`tombstone_17`).
+  The gold rows of both cases exclude these records.
+- `export_1260` (the review's example) is linked on 2026-06-18. That is before case_33's
+  request, but after case_52's request. It belongs to case_52. case_33 has `export_1842`,
+  linked on 2026-07-18, after its request.
+
+So the rule follows the dataset design: catalog links are made for the request they serve.
+It is not a fit to the two samples.
+
+## 12. Known limits
+
+**Missing sample targets (finding #5, accepted loss).** 28 gold steps in 17 sample rows have
+no prediction. All are missing targets; no predicted step is outside the gold content:
+
+| Missing system | Targets | Cases |
+| --- | --- | --- |
+| account_service | 15 | case_04, 09, 18, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32 |
+| security_service | 7 | case_09, 18, 20, 23, 24, 29, 30 |
+| analytics_platform | 6 | case_03, 21, 25, 26, 27, 28 |
+
+These records are linked to the subject only by a worker claim in `system_activity.csv`
+(a DELETE_RECORD near the request time) or by log lines without a subject key. No id is
+fabricated: an unlinked record gets no step.
+
+`window_assignment` tried to recover them: a global one-to-one assignment of activity-only
+accounts to requests by time distance to `reported_at`. On the samples it assigned 15
+accounts and 5 were correct (precision 0.33). It would have changed 302 of the 518 rows. It
+is off (`links.WINDOW_ASSIGNMENT_ENABLED = False`) because a wrong account step costs more
+than a missing one.
+
+What would fix it: a subject key on the worker rows (a request id, user id or email hash), or
+a join key between the deletion job and the request. With such a key the link is exact and
+needs no time heuristic.
+
+**Vision rows dropped by fix #9.** The model returned 24 rows and 19 are grounded. 3 rows
+fail the older id checks (evidence_04 twice, evidence_14). The new one-line rule drops 2
+more. The image supports both of these rows, so both are real losses:
+
+| File | Row | Why dropped | Does the image support it? | Effect |
+| --- | --- | --- | --- | --- |
+| evidence_28 | `support_1034` IDENTIFIABLE | The email is on a separate card, not on the id line | Yes: the ticket screen shows the subject's email | case_53 INCOMPLETE -> COMPLETE. The older evidence_29 (ABSENT, before the request) now wins. This is probably a wrong COMPLETE |
+| evidence_46 | `object_19` FOUND | OCR garbles the table row, so less than half of `source_text` is on one line | Yes: the listing shows `delivery_confirmation_19.pdf` | case_61: the object_19 finding becomes an unproven verification step (still INCOMPLETE) |
+
+We keep the strict rule ("fewer rows over wrong rows"). A layout-aware OCR (cards, table
+cells) would recover both rows.
+
+**Legal hold status (fix #8).** No evidence file states a hold status. The rule uses the
+hold's end date (`retained_until`) as the status when no status field exists. `legal_hold_8049`
+(case_390) has neither, so it is UNPROVEN.
