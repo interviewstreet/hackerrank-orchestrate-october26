@@ -200,11 +200,11 @@ def attachment_exclusive(target: Target) -> bool:
 def _hold_status(state: ResourceState) -> str:
     """Explicit status of a legal hold (newest statement first), upper case, or ``""``.
     A workflow operation claim is not a status."""
-    stated = [st for cs in state.copies.values() for st in cs.statements
+    stated = [st.obs for cs in state.copies.values() for st in cs.statements
               if st.obs is not None and st.obs.assertion != OPERATION_CLAIM]
-    for st in sorted(stated, key=lambda s: (s.obs.state_observed_at, s.obs.obs_id), reverse=True):
+    for obs in sorted(stated, key=lambda o: (o.state_observed_at, o.obs_id), reverse=True):
         for key in HOLD_STATUS_KEYS:
-            value = st.obs.fields.get(key)
+            value = obs.fields.get(key)
             if isinstance(value, str) and value.strip():
                 return value.strip().upper()
     return ""
