@@ -7,19 +7,38 @@ mention this resource", always with a time cutoff.
 
 from __future__ import annotations
 
+import re
 import sqlite3
 import traceback
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-from coverage import DEFERRED, ERROR, PARSED, CoverageReport, FileCoverage
-from evidence import extract_activity, extract_json, extract_sql, extract_text
+from parse_coverage import DEFERRED, ERROR, GROUNDING, PARSED, CoverageReport, FileCoverage
+from evidence import extract_activity, extract_json, extract_log, extract_sql, extract_text
 from evidence.common import Identifiers, Observation, Scope, ShapeError
-from loaders import DATASET_DIR, Dataset
+from loaders import DATASET_DIR, REPO_ROOT, Dataset
 
-EXTRACTORS = {"sql": extract_sql.extract, "json": extract_json.extract, "txt": extract_text.extract}
+EXTRACTORS = {"sql": extract_sql.extract, "json": extract_json.extract, "txt": extract_text.extract,
+              "log": extract_log.extract}
 ID_KINDS = ("emails", "user_ids", "phones", "hashes")   # names never link (plan 8.2)
+OCR_CACHE = REPO_ROOT / ".cache" / "ocr"
+# Catalog rows name a display reference for a resource: "linked export_1842 (NST-2026-0718-1842)".
+RE_ALIAS = re.compile(r"\b(?:linked|confirmed) ([a-z]+(?:_[a-z]+)*_\d+) \(([^)]+)\)")
+RE_USER = re.compile(r"^user_\d+$")
+
+
+def catalog_aliases(data: Dataset) -> dict[str, tuple[str, str]]:
+    """alias -> (system_id, resource_id) from LINK_RESOURCE_IDENTITY rows (aliases that are ids are skipped)."""
+    aliases = {}
+    for a in data.activity:
+        if a.event_type != "LINK_RESOURCE_IDENTITY":
+            continue
+        for rid, alias in RE_ALIAS.findall(a.details):
+            alias = alias.strip()
+            if rid == a.resource_id and alias != rid and not RE_USER.match(alias) and len(alias) >= 6:
+                aliases[alias] = (a.target_system, rid)
+    return aliases
 
 
 def _iso(dt: datetime) -> str:
@@ -35,6 +54,7 @@ class FactStore:
         self._refs_to: dict[str, list[Observation]] = defaultdict(list)
         self._scopes_by_system: dict[str, list[Scope]] = defaultdict(list)
         self._rows_in_file: set[tuple[str, str, str]] = set()   # (file_id, resource_id, copy)
+        self.grounding: dict[str, str] = {}   # file_id -> OCR text (grounding only, never facts)
         self.db = sqlite3.connect(":memory:")
         self.db.executescript("""
             CREATE TABLE obs (obs_id TEXT PRIMARY KEY, file_id TEXT, system_id TEXT, resource_id TEXT,
@@ -47,12 +67,19 @@ class FactStore:
     # ------------------------------------------------------------ build
 
     @classmethod
-    def build(cls, data: Dataset, dataset_dir: Path = DATASET_DIR) -> "FactStore":
+    def build(cls, data: Dataset, dataset_dir: Path = DATASET_DIR, ocr_cache: Path | None = OCR_CACHE) -> "FactStore":
         store = cls()
+        aliases = catalog_aliases(data)
+        extractors = dict(EXTRACTORS, pdf=lambda ev, path: extract_text.extract_pdf(ev, path, aliases))
         for ev in data.evidence_files:
             fmt = ev.file_path.rsplit(".", 1)[-1].lower()
             item = FileCoverage(ev.file_id, ev.file_path, fmt, DEFERRED)
-            extractor = EXTRACTORS.get(fmt)
+            if fmt == "png":
+                text = extract_text.ocr_text(ev.abs_path(dataset_dir), ocr_cache)
+                if text is not None:
+                    store.grounding[ev.file_id] = text
+                    item.status, item.family, item.grounding_chars = GROUNDING, "png_ocr", len(text)
+            extractor = extractors.get(fmt)
             if extractor is not None:
                 try:
                     result = extractor(ev, ev.abs_path(dataset_dir))

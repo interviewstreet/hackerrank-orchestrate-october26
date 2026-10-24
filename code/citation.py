@@ -1,7 +1,9 @@
 """Evidence choice, kept separate from state (plan 9.7).
 
 After the resolver and the policy fix the state, ``cite`` picks one evidence id among
-the admissible statements that support that state:
+the admissible statements that support that state. In each copy a statement supports the
+state only if no contradicting statement of that copy is newer (same rule as the resolver).
+Among supporters:
 
 1. the strongest tier (row / read-back > scoped absence > activity read-back);
 2. then the newest statement;
@@ -47,13 +49,25 @@ def _supports(st: Statement, decision: Decision, violating: bool) -> bool:
     return False
 
 
+def _states(st: Statement, attr: str) -> bool:
+    """True when the statement says something about ``attr`` (an absence speaks to exposure too)."""
+    if attr in ("exists", "exposure"):
+        return "exists" in st.values
+    return attr in st.values
+
+
 def cite(state: ResourceState, decision: Decision, violating: bool) -> tuple[str, list[Statement]]:
     """Return (evidence_id, supporting statements). ``""`` when nothing supports the state."""
-    copies = [state.copies[decision.copy]] if violating and decision.copy in state.copies else list(state.copies.values())
+    # A violation is cited from any copy in the violating state, never from a compliant copy.
+    names = (decision.bad_copies or [decision.copy]) if violating else sorted(state.copies)
+    copies = [state.copies[n] for n in names if n in state.copies]
     support: dict[str, list[Statement]] = {}
     for cs in copies:
-        for st in cs.statements:
-            if _supports(st, decision, violating):
+        stating = [st for st in cs.statements if _states(st, decision.attribute)]
+        backers = [st for st in stating if _supports(st, decision, violating)]
+        latest_contra = max((st.at for st in stating if st not in backers), default=None)
+        for st in backers:
+            if latest_contra is None or st.at >= latest_contra:
                 support.setdefault(st.evidence_id, []).append(st)
     if not support:
         return "", []

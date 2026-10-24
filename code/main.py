@@ -23,7 +23,7 @@ from pathlib import Path
 
 import intent
 import planner
-import trace
+import audit_trace
 from facts import FactStore
 from identity import IdentityIndex, SubjectIdentity
 from links import LinkIndex, subject_keys
@@ -94,7 +94,7 @@ def run_case(req: Request, ctx: Context) -> CaseResult:
     return result
 
 
-def run_cases(requests: list[Request], ctx: Context, tracer: trace.TraceWriter | None = None) -> list[CaseResult]:
+def run_cases(requests: list[Request], ctx: Context, tracer: audit_trace.TraceWriter | None = None) -> list[CaseResult]:
     results = []
     for req in sorted(requests, key=lambda r: case_number(r.case_id)):
         try:
@@ -108,7 +108,7 @@ def run_cases(requests: list[Request], ctx: Context, tracer: trace.TraceWriter |
             # Safe fallback: never claim COMPLETE for a case we could not process.
             results.append(CaseResult(req.case_id, Status.INCOMPLETE.value, error=repr(exc), flags=["case_error"]))
         if tracer is not None:
-            tracer.write(trace.case_record(results[-1], results[-1].items))
+            tracer.write(audit_trace.case_record(results[-1], results[-1].items))
     return results
 
 
@@ -134,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
 
     ctx = build_context()
     requests = load_requests(Path(args.requests))
-    tracer = trace.TraceWriter(Path(args.trace) if args.trace else None)
+    tracer = audit_trace.TraceWriter(Path(args.trace) if args.trace else None)
     try:
         results = run_cases(requests, ctx, tracer)
     finally:

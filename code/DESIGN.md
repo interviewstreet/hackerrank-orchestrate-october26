@@ -71,7 +71,7 @@ Acceptance check (code, per proposal):
 | `validate.py` | Output-file contract validator | 1 |
 | `main.py` | CLI, per-case isolation, serialization | 1 |
 | `evidence/extract_*.py` | SQL, JSON, log, text, vision extractors | 2-4 |
-| `facts.py`, `coverage.py` | Global fact store; per-file parse accounting | 2-3 |
+| `facts.py`, `parse_coverage.py` | Global fact store; per-file parse accounting | 2-3 |
 | `links.py` | Typed, time-stamped ownership graph | 3 |
 | `resolver.py` | State per physical copy at `audit_at` | 2 |
 | `policy.py` | `deletion_rules.csv` as a truth table | 2 |
@@ -80,8 +80,16 @@ Acceptance check (code, per proposal):
 | `llm_client.py`, `llm_cache.py`, `llm_snapshot.py`, `prompts/` | Model access, cache, replay | 4 |
 | `safety.py` | Injection screen and delimiting | 4 |
 | `agent/` | Investigator loop and tools | 4 |
-| `trace.py` | Per-case JSONL decision trace | 2-5 |
+| `audit_trace.py` | Per-case JSONL decision trace | 2-5 |
 | `evaluation/main.py` | Scorer, metamorphic and adversarial tests | 1-5 |
+
+Phase 3 rules:
+
+- Dominance (`resolver.DOMINANCE`): per physical copy, the newest observation at or before `audit_at` wins. Tier breaks ties only at the same time. Same time, same tier, different states gives `CONFLICT`. Claims never set state. `tier_first` stays as a swappable rule for comparison.
+- Logs: six line shapes (`evidence/log_lines.py`), events typed by table (`evidence/extract_log.py`). A "delete completed" line is an operation claim. An unknown shape or event is a coverage error.
+- PDF text (pypdf) gives facts. PNG OCR text (Tesseract) is grounding text only, stored in `FactStore.grounding`.
+- Medium edge `job_burst` only; it is flagged `M:job_burst:<id>` in the trace.
+- A target whose links all predate `requested_at` is stale. It gets steps only as a proven violation (flag `stale_link:<id>`).
 
 ## 6. Failure modes and guards
 

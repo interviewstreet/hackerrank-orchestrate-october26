@@ -4,7 +4,7 @@ Every manifest file gets one ``FileCoverage`` row: format, family, rows parsed, 
 skipped (with reasons) and any shape error. Formats that an extractor owns must parse
 with no error; ``check()`` raises ``CoverageError`` otherwise.
 
-Usage: python code/coverage.py   (prints the report; exit 1 on unknown shapes)
+Usage: python code/parse_coverage.py   (prints the report; exit 1 on unknown shapes)
 """
 
 from __future__ import annotations
@@ -13,9 +13,9 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-PARSED, DEFERRED, ERROR = "parsed", "deferred", "error"
-# Formats parsed in this phase. Logs, PNG and PDF come in later phases.
-OWNED_FORMATS = ("sql", "json", "txt", "csv")
+PARSED, DEFERRED, ERROR, GROUNDING = "parsed", "deferred", "error", "grounding"
+# Formats with a fact extractor. PNG files get OCR grounding text only (Phase 4 vision).
+OWNED_FORMATS = ("sql", "json", "txt", "csv", "log", "pdf")
 
 
 class CoverageError(RuntimeError):
@@ -33,6 +33,7 @@ class FileCoverage:
     scopes: int = 0
     skipped: dict[str, int] = field(default_factory=dict)
     error: str = ""
+    grounding_chars: int = 0   # OCR text length (grounding only, not facts)
 
 
 @dataclass
@@ -52,7 +53,7 @@ class CoverageReport:
 
     def summary(self) -> list[dict]:
         groups: dict[str, dict] = defaultdict(lambda: {"files": 0, "parsed": 0, "deferred": 0, "error": 0,
-                                                       "rows": 0, "scopes": 0, "skipped": 0})
+                                                       "grounding": 0, "rows": 0, "scopes": 0, "skipped": 0})
         for f in self.files:
             g = groups[f.fmt]
             g["files"] += 1
@@ -63,11 +64,11 @@ class CoverageReport:
         return [{"format": fmt, **vals} for fmt, vals in sorted(groups.items())]
 
     def render(self) -> str:
-        lines = ["| Format | Files | Parsed | Deferred | Errors | Rows | Scopes | Skipped |",
-                 "| --- | --- | --- | --- | --- | --- | --- | --- |"]
+        lines = ["| Format | Files | Parsed | Grounding | Deferred | Errors | Rows | Scopes | Skipped |",
+                 "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
         for g in self.summary():
-            lines.append(f"| {g['format']} | {g['files']} | {g['parsed']} | {g['deferred']} | {g['error']} | "
-                         f"{g['rows']} | {g['scopes']} | {g['skipped']} |")
+            lines.append(f"| {g['format']} | {g['files']} | {g['parsed']} | {g['grounding']} | {g['deferred']} | "
+                         f"{g['error']} | {g['rows']} | {g['scopes']} | {g['skipped']} |")
         reasons: dict[str, int] = defaultdict(int)
         for f in self.files:
             for reason, n in f.skipped.items():
@@ -75,14 +76,19 @@ class CoverageReport:
         for reason, n in sorted(reasons.items()):
             lines.append(f"- skipped {n}: {reason}")
         for f in self.files:
+            if f.status == GROUNDING:
+                lines.append(f"- grounding {f.file_id} {f.path}: {f.grounding_chars} OCR chars")
+        for f in self.files:
             if f.status == ERROR:
                 lines.append(f"- ERROR {f.file_id} {f.path}: {f.error}")
         return "\n".join(lines)
 
 
 def main() -> int:
+    # Run as a script this file is ``__main__``; facts.py raises the class of the imported module.
     from facts import FactStore
     from loaders import load_dataset
+    from parse_coverage import CoverageError
 
     store = FactStore.build(load_dataset())
     print(store.coverage.render())

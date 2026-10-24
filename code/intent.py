@@ -130,11 +130,15 @@ _RE_STATEMENT_OTHER = re.compile(r"\binformation request\b|\bnot a request to\b"
 
 # Decision 5: text that tries to instruct the auditor is never trusted as a plain request.
 _RE_INSTRUCTION = re.compile(
-    r"(?:^|\n|[\[<(])\s*(?:system|assistant|developer|admin)\s*[:\]>]"
-    r"|\b(?:mark|set|report|flag|record)\b[^.\n]{0,30}\bas\s+(?:complete|completed|not_applicable)\b"
-    r"|\bignore\b[^.\n]{0,40}\b(?:instructions?|rules?|polic(?:y|ies)|evidence|prompt|above|previous)\b"
-    r"|\b(?:deletion_status|steps_json)\b"
-    r"|\byou are (?:an? )?(?:ai|assistant|agent|model|auditor)\b",
+    # role markers that address the system: "SYSTEM:", "[assistant]", "<developer>"
+    r"(?:^|\n|[\[<(])\s*(?:system|assistant|developer)\s*[:\]>)]"
+    # "ignore previous / above / prior instructions"
+    r"|\bignore\s+(?:all\s+|any\s+)?(?:the\s+)?(?:previous|above|prior|earlier)\b"
+    # "mark this case as complete", "mark the deletion complete"
+    r"|\bmark\s+(?:this|the)\s+(?:case|request|deletion|audit)\s+(?:as\s+)?(?:complete|completed)\b"
+    # "set status", "set the deletion status", output field names
+    r"|\bset\s+(?:the\s+)?(?:deletion[\s_]+)?status\b"
+    r"|\b(?:deletion_status|steps_json)\b",
     re.I,
 )
 

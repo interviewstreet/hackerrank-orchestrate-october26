@@ -3,6 +3,7 @@
 * FINDING: one per proven violation, citing its evidence.
 * REMEDIATION: one per violation with an action, evidence ``""``.
 * VERIFICATION: one per target. COMPLETE cites the proof; INCOMPLETE uses ``""``.
+* A stale target (links only before ``requested_at``) gets steps only as a proven violation.
 * Canonical sort and step numbers come from ``schema.step_sort_key``.
 * Every planned remediation passes ``policy.check_safety``.
 """
@@ -73,7 +74,7 @@ def _safety(item: Item) -> None:
 
 
 def plan(items: list[Item]) -> tuple[str, list[dict]]:
-    items = [i for i in items if i.decision.outcome != NOT_TARGET]
+    items = [i for i in items if i.decision.outcome != NOT_TARGET and (i.violation or not i.target.stale)]
     status = decide_status(items)
     steps: list[dict] = []
     for item in items:

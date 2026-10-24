@@ -10,6 +10,10 @@ Edges (only those with time <= audit_at count):
   has no strong target in that system yet (a fallback for systems where no file names the
   subject). Measured on the samples before use (config ``JOB_LINK_ENABLED``).
 
+A target whose every edge predates ``requested_at`` is ``stale``: the link describes the
+subject's data before the request. The planner reports it only as a proven violation (a
+stale record that still exists is a finding; an old link alone is not a deletion target).
+
 Names, numeric suffixes and row positions never link. A resource whose identifiers belong
 only to another user is never a target (safety invariant).
 """
@@ -46,6 +50,7 @@ class Target:
     edges: list[Edge] = field(default_factory=list)
     shared_with: set[str] = field(default_factory=set)   # other users also linked to this record
     exclusive: bool = False                              # a catalog says it belongs only to the subject
+    stale: bool = False                                  # every edge predates requested_at
 
     @property
     def key(self) -> tuple[str, str]:
@@ -140,6 +145,12 @@ class LinkIndex:
                 del found[key]
             elif others:
                 tgt.shared_with = others
+        for tgt in found.values():
+            if req.requested_at is not None and all(e.at < req.requested_at for e in tgt.edges):
+                tgt.stale = True
+                flags.append(f"stale_link:{tgt.resource_id}")
+            if all(e.kind == "job_burst" for e in tgt.edges):
+                flags.append(f"M:job_burst:{tgt.resource_id}")
         return found
 
     def _job_burst(self, req: Request, run_requests: list[Request]):

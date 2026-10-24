@@ -261,3 +261,126 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-24T14:39:44Z] Phase 3: log + PDF extraction, ownership graph, newest-wins dominance
+
+User Prompt (verbatim, secrets redacted):
+Good work. Keep the commit — the gap is named and the validator was not weakened. Phase 3 fixes it.
+
+
+
+Decisions on your findings:
+
+1. Dominance: tier-first is wrong in principle. A newer direct observation of the same physical copy supersedes an
+
+   older one, because state changes over time (a deletion after a snapshot is the common case). New rule:
+
+   among observations (never claims, D4) of one physical copy, the newest state_observed_at <= audit_at wins;
+
+   tier breaks ties only for the same timestamp. Same timestamp + different states + same tier -> CONFLICT.
+
+   Implement it as one swappable function. Score tier-first vs the new rule on the samples and report both.
+
+   Add a metamorphic test: adding an older contradicting observation must not change the result.
+
+2. Job-burst edge: keep it as a MEDIUM edge with your "no strong target in that system" limit. Flag it in the trace.
+
+   The 8/8 precision comes from the samples, so on the full 518-case run report how many edges it adds, and how many
+
+   cases get a target only because of it. If that count is large, say so; do not tune it further.
+
+3. Rename now: code/trace.py -> code/audit_trace.py, code/coverage.py -> code/parse_coverage.py.
+
+4. Instruction screen: tighten it. Match only directive patterns aimed at the system or the auditor (role markers
+
+   like "SYSTEM:" / "assistant:", "ignore previous/above", "mark (this|the) (case|request|deletion) (as )?complete",
+
+   "set status"). "mark my order as complete" must not match. Add tests for both directions.
+
+5. tombstone_17: find out why it is a target that gold does not have (what it is, where it appears, which rule chose it).
+
+   Fix it only if the fix is a general rule, not a case exception.
+
+
+
+Phase 3 scope (plan milestone 3, section 8 evidence/extract_log.py; section 5 log formats):
+
+a) evidence/extract_log.py — format dispatcher per line (key="value", JSON payload, syslog, bracketed, pipe, and any
+
+   other shape you find). Emit typed Observations or typed activity-style claims; a log line saying a delete
+
+   succeeded is a claim, not proof. Unknown line shapes go to parse_coverage as errors; never skip them silently.
+
+b) evidence/extract_text.py — add PDF text via pypdf (4 PDFs). These rows are deterministic and count as facts.
+
+   Also run Tesseract on the 11 PNGs and save the raw OCR text per file in the fact store as GROUNDING TEXT ONLY
+
+   (not facts). Phase 4 vision rows will be checked against it. Report OCR text length per PNG.
+
+c) links.py — ownership graph with typed, time-stamped edges: strong (identifier / user_id match, as of audit_at),
+
+   medium (job burst; any other medium edge must be justified in a code comment and listed in the report).
+
+   Absence stays scope-limited (D9).
+
+d) Re-run everything. Targets: strict validation passes on the 32-sample run (no INCOMPLETE with zero steps).
+
+   Cases 03, 12, 15, 18, 19, 20 should get their targets from logs. Do not hand-tune for single cases.
+
+
+
+Time box: 4 h. If log formats eat the time, cut medium edges other than job burst.
+
+
+
+Checks before commit: full suite passes; validate.py strict passes on the sample run; validate.py strict on the
+
+518-row run — report the error count (it may be non-zero, list the rules); parse_coverage shows 0 unknown shapes for
+
+sql/json/txt/log/pdf.
+
+
+
+Commit as "feat: log + pdf extraction, ownership graph, newest-wins dominance". Then STOP.
+
+
+
+Reply format:
+
+1. Commit hash
+
+2. Test result line + validate.py results (samples strict, 518 strict)
+
+3. Scorer table on 32 samples, for BOTH dominance rules (status acc, step P/R/F1, field acc, sequence acc)
+
+4. Exact-match case list; for each non-exact case, one line: the cause (missing target / extra target / wrong op /
+
+   wrong citation / wrong status)
+
+5. Coverage per file type, including the log formats found and their line counts
+
+6. Job-burst stats on the 518-case run
+
+7. tombstone_17 finding
+
+8. Status distribution on the 518-case run (COMPLETE / INCOMPLETE / NOT_APPLICABLE) vs reported_status
+
+9. Surprises / contradictions with plan.md
+
+Agent Response Summary:
+Added a six-shape log parser and an event-typing table (claims never set state; unknown shapes or events are coverage errors), PDF facts via pypdf with catalog aliases, and Tesseract OCR stored as grounding text only. Dominance is now newest-wins per physical copy, with tier_first kept as a swappable rule; both score the same on the samples and give identical output on all 518 cases. Violations are now cited from every violating copy. A general stale-link rule (all links before requested_at -> steps only for a proven violation) removed the tombstone_17 and account_6523 extras. Samples: status 32/32, 15/32 exact, step precision 1.000; strict validation passes on the samples; the 518 run has 1 strict error (case_61, PNG-only evidence).
+
+Actions:
+* code/evidence/log_lines.py, code/evidence/extract_log.py (new); code/evidence/extract_text.py (PDF + OCR)
+* code/facts.py, code/parse_coverage.py (renamed from coverage.py), code/audit_trace.py (renamed from trace.py)
+* code/resolver.py, code/citation.py, code/policy.py, code/planner.py, code/links.py, code/intent.py, code/main.py, code/DESIGN.md, .gitignore
+* code/tests/test_logs_pdf.py (new), code/tests/test_intent.py, code/tests/test_policy_resolver.py
+* Ran main.py on samples and 518, validate.py strict, evaluation/main.py for both dominance rules, parse_coverage.py, full pytest suite (111 passed)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none

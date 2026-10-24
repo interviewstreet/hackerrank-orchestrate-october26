@@ -7,9 +7,11 @@ Rules:
 * a file's scope proves ABSENT for a copy only when the scope applies to the subject
   (full snapshot, or a subject-scoped listing that names one of the subject's identifiers)
   and the file has no row for the resource in that copy;
-* per copy and per attribute, plan 9.4 dominance: in-scope row / read-back > scoped absence >
-  activity read-back; the newest statement wins inside a tier (``DOMINANCE = "tier_first"``).
-  ``"newest_first"`` (time first, tier breaks ties) is kept as a measured alternative;
+* per copy and per attribute, one swappable dominance rule (``DOMINANCE``):
+  ``newest_wins`` (default): the newest ``state_observed_at`` wins, because state changes over
+  time (a deletion after a snapshot is the common case); the tier (row / read-back > scoped
+  absence > activity read-back) breaks ties only at the same timestamp.
+  ``tier_first`` (plan 9.4 as first written) is kept so both can be scored;
 * equal key and different values give CONFLICT; no statement gives UNKNOWN.
 """
 
@@ -25,7 +27,7 @@ from links import Target
 UNKNOWN, CONFLICT = "UNKNOWN", "CONFLICT"
 SCOPED_ABSENCE = "scoped_absence"
 RANK = {SNAPSHOT_ROW: 3, STATE_READBACK: 3, SCOPED_ABSENCE: 2, ACTIVITY_READBACK: 1}
-DOMINANCE = "tier_first"
+DOMINANCE = "newest_wins"
 ATTRIBUTES = ("exists", "treatment", "flow_state", "restore_state", "exposed_ids")
 
 
@@ -120,8 +122,19 @@ def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff) -> Reso
     return state
 
 
+def newest_wins(st: Statement) -> tuple:
+    return (st.at, st.rank)
+
+
+def tier_first(st: Statement) -> tuple:
+    return (st.rank, st.at)
+
+
+DOMINANCE_RULES = {"newest_wins": newest_wins, "tier_first": tier_first}
+
+
 def _dominance(st: Statement) -> tuple:
-    return (st.rank, st.at) if DOMINANCE == "tier_first" else (st.at, st.rank)
+    return DOMINANCE_RULES[DOMINANCE](st)
 
 
 def _fingerprint(value):

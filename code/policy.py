@@ -81,6 +81,7 @@ class Decision:
     verification: Op | None = None
     check: str = ""                # effective rule check (see RULES)
     copy: str = ""                 # the copy that violates (citation) or proves compliance
+    bad_copies: list[str] = field(default_factory=list)   # every copy in the violating state
     attribute: str = ""            # the resolved attribute the outcome rests on
     hypothesis: list[str] = field(default_factory=list)
     reason: str = ""
@@ -160,6 +161,7 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
     if check == "exists":
         if exists == PRESENT:
             d.outcome, d.copy, d.attribute = VIOLATION, _present_copies(state)[0].copy, "exists"
+            d.bad_copies = [cs.copy for cs in _present_copies(state)]
         elif exists == ABSENT:
             d.outcome, d.attribute = COMPLIANT, "exists"
         return d
@@ -176,6 +178,7 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
         bad = [cs for cs, e in exposures if e == IDENTIFIABLE]
         if bad:
             d.outcome, d.copy, d.attribute = VIOLATION, bad[0].copy, "exposure"
+            d.bad_copies = [cs.copy for cs in bad]
         elif present and all(e == "clean" for _, e in exposures):
             d.outcome, d.copy, d.attribute = COMPLIANT, present[0].copy, "exposure"
         if category == "SUPPORT_MESSAGE":
@@ -188,6 +191,7 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
     bad = [name for name, v in values.items() if v == bad_value]
     if bad:
         d.outcome, d.copy, d.attribute = VIOLATION, bad[0], attr
+        d.bad_copies = bad
     elif values and all(v == good_value for v in values.values() if v not in (UNKNOWN,)) \
             and any(v == good_value for v in values.values()):
         d.outcome, d.copy, d.attribute = COMPLIANT, next(n for n, v in values.items() if v == good_value), attr

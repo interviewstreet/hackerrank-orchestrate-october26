@@ -103,12 +103,41 @@ class ResolverTest(unittest.TestCase):
         self.assertEqual(state.copies["primary"].get("flow_state"), "CONFLICT")
         self.assertEqual(d.outcome, UNPROVEN)
 
-    def test_row_beats_activity_readback(self):
+    def test_newest_observation_wins(self):
         row = obs("integration_service", "data_flow_1", at=T0, exists=PRESENT, flow_state="DISABLED")
         check = obs("integration_service", "data_flow_1", at=T0 + timedelta(hours=1), assertion=ACTIVITY_READBACK,
                     flow_state=ACTIVE)
         state, _, _ = run([row, check], system="integration_service", rid="data_flow_1")
+        self.assertEqual(state.copies["primary"].get("flow_state"), ACTIVE)
+
+    def test_newer_scoped_absence_supersedes_older_row(self):
+        # A deletion after a snapshot: the later full snapshot no longer lists the row.
+        row = obs("account_service", "account_1", at=T0, file_id="evidence_1", exists=PRESENT)
+        later = scope("account_service", "evidence_2", at=T0 + timedelta(days=1))
+        state, d, item = run([row], [later])
+        self.assertEqual(state.copies["primary"].get("exists"), ABSENT)
+        self.assertEqual((d.outcome, item.evidence_id), (COMPLIANT, "evidence_2"))
+
+    def test_tier_breaks_ties_only_at_same_time(self):
+        row = obs("integration_service", "data_flow_1", at=T0, exists=PRESENT, flow_state="DISABLED")
+        check = obs("integration_service", "data_flow_1", at=T0, assertion=ACTIVITY_READBACK, flow_state=ACTIVE)
+        state, _, _ = run([row, check], system="integration_service", rid="data_flow_1")
         self.assertEqual(state.copies["primary"].get("flow_state"), "DISABLED")
+
+    def test_older_contradicting_observation_changes_nothing(self):
+        # Metamorphic: adding an older statement with the opposite state must not change the result.
+        base = [obs("search_service", "search_1", at=T0 + timedelta(days=2), file_id="evidence_5", exists=PRESENT)]
+        scopes = [scope("search_service", "evidence_4", at=T0 + timedelta(days=1))]
+        before = run(base, scopes, system="search_service", rid="search_1")
+        older = [obs("search_service", "search_1", at=T0 - timedelta(days=5), assertion=STATE_READBACK,
+                     file_id="evidence_3", exists=ABSENT)]
+        older_scope = [scope("search_service", "evidence_2", at=T0 - timedelta(days=9))]
+        after = run(base + older, scopes + older_scope, system="search_service", rid="search_1")
+        for (s1, d1, i1), (s2, d2, i2) in [(before, after)]:
+            self.assertEqual({c: v.values for c, v in s1.copies.items()}, {c: v.values for c, v in s2.copies.items()})
+            self.assertEqual((d1.outcome, d1.copy, i1.evidence_id), (d2.outcome, d2.copy, i2.evidence_id))
+            self.assertEqual(planner.plan([i1]), planner.plan([i2]))
+        self.assertEqual(before[1].outcome, VIOLATION)
 
 
 class PolicyRowTest(unittest.TestCase):
