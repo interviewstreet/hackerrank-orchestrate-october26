@@ -56,8 +56,10 @@ _CLOSE = r"close|cerrar|encerrar|fermer|cl[oô]turer|schlie(?:ss|ß)en|chiudere"
 _ACCOUNT = r"account|profile|cuenta|conta|compte|konto|profil|perfil|アカウント|계정"
 
 _RE_DEL_BASE = re.compile(rf"\b(?:{_DEL_BASE})\b|{_CJK_DEL}", re.I)
-_RE_DEL_ANY = re.compile(rf"\b(?:{_DEL_BASE}|{_DEL_PAST}|{_CLOSE}|deleting|removing|erasing|closing)\b|{_CJK_DEL}", re.I)
-_RE_CLOSE_ACCOUNT = re.compile(rf"\b(?:{_CLOSE})\b.{{0,40}}(?:\b(?:{_ACCOUNT})\b|アカウント|계정)|\bclose (?:it|this)\b", re.I)
+_RE_DEL_ANY = re.compile(
+    rf"\b(?:{_DEL_BASE}|{_DEL_PAST}|{_CLOSE}|deleting|removing|erasing|closing)\b|{_CJK_DEL}", re.I)
+_RE_CLOSE_ACCOUNT = re.compile(
+    rf"\b(?:{_CLOSE})\b.{{0,40}}(?:\b(?:{_ACCOUNT})\b|アカウント|계정)|\bclose (?:it|this)\b", re.I)
 _RE_PROGRESSIVE = re.compile(r"\b(?:i'?m|i am|we are|we're)\s+(?:deleting|closing|removing|erasing)\b", re.I)
 # "would like it permanently deleted", "have its data deleted", "to be erased", "like it closed"
 _RE_FRAME_PAST = re.compile(
@@ -95,7 +97,8 @@ _RE_NEGATOR = re.compile(
     r"|n['’]t\b",
     re.I,
 )
-_RE_CJK_NEG = re.compile(r"(?:削除|삭제|删除|刪除)\S{0,6}(?:しないで|しない|不要|하지\s*마|하지\s*않|원하지\s*않)|不要删除|不要刪除")
+_RE_CJK_NEG = re.compile(
+    r"(?:削除|삭제|删除|刪除)\S{0,6}(?:しないで|しない|不要|하지\s*마|하지\s*않|원하지\s*않)|不要删除|不要刪除")
 
 _RE_KEEP = re.compile(
     rf"\b(?:keep|leave|retain|maintain)\s+(?:the|my|this)\s+(?:{_ACCOUNT})\b(?!\s+reference)"
@@ -221,9 +224,9 @@ def clause_signals(clause: str) -> list[str]:
 
     if _RE_KEEP.search(clause):
         signals.append("keep")
-    if _RE_STATEMENT_OTHER.search(clause) or (_RE_OTHER.search(clause) and _RE_REQUEST_FRAME.search(clause)):
-        if "delete" not in signals and "verify" not in signals:
-            signals.append("other")
+    other = _RE_STATEMENT_OTHER.search(clause) or (_RE_OTHER.search(clause) and _RE_REQUEST_FRAME.search(clause))
+    if other and "delete" not in signals and "verify" not in signals:
+        signals.append("other")
     return signals
 
 

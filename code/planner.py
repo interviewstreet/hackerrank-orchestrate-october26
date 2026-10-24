@@ -3,7 +3,7 @@
 * FINDING: one per proven violation, citing its evidence.
 * REMEDIATION: one per violation with an action, evidence ``""``.
 * VERIFICATION: one per target. COMPLETE cites the proof; INCOMPLETE uses ``""``.
-* A stale target (links only before ``requested_at``) gets steps only as a proven violation.
+* A stale target (links only before ``requested_at``) gets no step, even when it is PRESENT.
 * Canonical sort and step numbers come from ``schema.step_sort_key``.
 * Every planned remediation passes ``policy.check_safety``.
 """
@@ -60,7 +60,9 @@ def decide_status(items: list[Item]) -> str:
     return Status.INCOMPLETE.value
 
 
-def _step(op: Operation, item: Item, evidence_id: str) -> dict:
+def _step(op: Operation | None, item: Item, evidence_id: str) -> dict:
+    if op is None:   # a policy row without this phase (a retained record has no finding / remediation)
+        raise ValueError(f"no operation for {item.decision.category} in this phase")
     return {"step_no": 0, "phase": str(OP_PHASE[op]), "system_id": item.target.system_id,
             "resource_id": item.target.resource_id, "operation": op.value, "state": str(OP_STATE[op]),
             "evidence_id": evidence_id}
@@ -74,7 +76,8 @@ def _safety(item: Item) -> None:
 
 
 def plan(items: list[Item]) -> tuple[str, list[dict]]:
-    items = [i for i in items if i.decision.outcome != NOT_TARGET and (i.violation or not i.target.stale)]
+    # A stale target (every link predates requested_at) is not part of this request (links.py).
+    items = [i for i in items if i.decision.outcome != NOT_TARGET and not i.target.stale]
     status = decide_status(items)
     steps: list[dict] = []
     for item in items:

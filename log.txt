@@ -558,3 +558,153 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-24T19:39:06Z] Phase 5 Part 1: stale-link exclusion, content category, eval suite, reports
+
+User Prompt (verbatim, secrets redacted):
+Good phase. One correction from me first: my "object_storage is out of rules" decision was likely wrong.
+case_61 and sample case_07 are the same user (user_07, priya.raman). object_19's only link (activity_4007, evidence_46)
+is 2026-02-13. That is OLDER than case_07's requested_at (2026-08-31), so it is a stale link there, and NEWER than
+case_61's requested_at (2026-02-11), so it is a real target there. The stale rule, not the category, explains gold case_07.
+
+This message has two parts: PART 1 = Phase 5 work; PART 2 = an independent Codex review after Phase 5 is committed.
+
+=== PART 1: Phase 5 (time box 3 h). Freeze the evaluation cases (step B) BEFORE any tuning (steps C-E). ===
+
+A) Stale links + category:
+   1. Change the stale rule: a target whose links are ALL older than requested_at is excluded entirely, even if
+      evidence shows it PRESENT. Trace flag stays stale_link:<id>.
+   2. Category from content (D10): derive object_19's category from its evidence/activity text ("Attachment catalog"
+      -> SUPPORT_ATTACHMENT). Make it a general mapping, not an id exception. object_storage is no longer out of rules.
+   3. Measure: samples must stay 32/32 status and case_07 must stay exact. Report case_61's new row and how many
+      targets the new stale rule removes on the 518 run (before/after).
+   4. Keep the strict validator rule. Strict validation on 518 must then be 0 errors. If some case still has no target,
+      report it rather than relaxing the validator.
+
+B) Evaluation suite (freeze first, commit separately as "test: frozen evaluation cases"):
+   - At least 6 custom cases in code/evaluation/custom_cases/ (inputs + expected output, written from the rules, not
+     from our output): 1 NOT_APPLICABLE (negated request), 1 VERIFY_DELETE, 1 injection in request text, 1 retained
+     record that must get VERIFY_RECORD_PRESENT, 1 restore/data-flow risk, 1 case where a resource is UNKNOWN to
+     the rules and only groundable through evidence text, so the agent must run (and its proposal is checked).
+   - Metamorphic tests: shuffle input row order; uppercase/whitespace in email; add an older contradicting observation;
+     move audit_at 1 second before a key observation (that observation must drop out).
+   - evaluation/main.py prints and writes: status accuracy, step P/R/F1, field-level accuracy, sequence accuracy,
+     a confusion matrix, per-custom-case pass/fail, metamorphic pass/fail, agent stats.
+
+C) evidence_42 and evidence_46 returned 0 vision rows. Look at the OCR text and the image. If they clearly contain
+   resource rows, find out why (prompt, layout, schema). Fix it only with a general prompt change
+   (prompts/vision_extract_v2.md, bump the prompt version so the cache key changes). Report rows before and after.
+
+D) Activity-only accounts experiment (cases 18, 20, 22, 23, 29-32). My check on the samples: worker DELETE_RECORD rows
+   on account_service inside [requested_at, reported_at], excluding accounts named in any evidence file, contain the
+   gold account in 10 of 13 such cases, but with 3-7 candidates per case. Try a GLOBAL one-to-one assignment over all
+   cases (samples + 518): each candidate account goes to at most one case, cost = time distance to reported_at,
+   accounts with a strong link to another user are excluded. Add it as a MEDIUM edge "window_assignment".
+   Keep it only if, on the samples, precision of the assigned accounts >= 0.9 AND no exact row is lost. Report
+   precision/recall on the samples and how many cases it changes on the 518 run. It is tuned on the samples; say so.
+
+E) Code quality for the code judge: run ruff (fix all) and mypy on code/ (fix errors in core modules; list the rest).
+   Split functions over ~60 lines where it is cheap.
+
+F) Draft code/evaluation/evaluation_report.md (all required sections: case-level status accuracy; step-level and
+   field-level accuracy; sequence accuracy; the custom cases; failures found and improvements made, phase by phase
+   with numbers; the agent ablation and its honest limits; NOT_STARTED -> COMPLETE examples with evidence) and
+   code/evaluation/usage_report.md (from the Phase 4 cold run; per purpose and overall; model id incl. the contributor
+   tier and why: the base id gave HTTP 403; prices; per-request averages). Final numbers come in Phase 6.
+
+Gate before commit: full suite passes; strict validation 0 errors on samples and 518; the replay hash equals the live
+run; ruff clean. Commit as "feat: stale-link exclusion, content category, evaluation suite, reports draft".
+If the vision prompt changed (C), the live run makes new vision calls; that is fine, keep the cache.
+
+If a gate fails, do NOT start Part 2. Report and stop.
+
+=== PART 2: Codex review (only after the Part 1 commit) ===
+
+I want an independent review by a different model family. Start ONE Codex subagent:
+- Use the t3-code MCP tool delegate_task (not the native Agent tool). Call orchestrator_capabilities once to get the
+  Codex provider instance id, the exact model id for gpt-5.6-sol, and its option names.
+- target: Codex provider, model gpt-5.6-sol, options {"reasoningEffort":"high"}. Do not translate "high" into another
+  value. If the model or option does not exist, STOP and tell me what is available.
+- isolation: "worktree" (starts from the Phase 5 commit). mode: async. clientRequestId: "codex-review-r1".
+- Check that the returned providerInstanceId, model and options match. Keep the taskId. Wait for the completion
+  notification; if you check task_status, do it rarely, never in a tight loop.
+
+Pass this brief to the subagent verbatim:
+---
+You are a senior reviewer for a HackerRank Orchestrate submission: "Ghost Data Still Exists", a deletion-audit agent.
+READ-ONLY review: do not edit, create or delete files, do not commit, do not write log.txt or any log.
+Do not make live model calls: run everything with ZENMUX_OFFLINE=1 (snapshot replay). No .env exists in your
+worktree; never look for or print secrets.
+
+Read: problem_statement.md, AGENTS.md (section 6 and the rules on hardcoding), code/DESIGN.md,
+C:\Users\sanka\Downloads\plan.md (design brief, decisions D1-D22), code/evaluation/evaluation_report.md,
+code/evaluation/usage_report.md.
+You may run: the pytest suite, python code/main.py (offline), python code/validate.py, python code/evaluation/main.py.
+
+Architecture rule: the model (meta/muse-spark-1.3-contributor via ZenMux) reads and proposes; deterministic code
+decides status and steps. Output is graded row by row against hidden answers for 518 cases; only 32 labeled samples
+exist. Judging: code ZIP 30% (agent architecture, prompt/tool craft, robustness, rigor; only observable code counts),
+output 30% (+ a safety score), AI interview 30%, transcript 10%.
+
+Review focus, in priority order:
+1. Output correctness against problem_statement.md: statuses, phase/operation/state pairs, canonical sort, numeric
+   case order, evidence_id rules, inclusive audit_at cutoff, scope-limited absence, retention rules.
+2. Generalization to the hidden cases: rules tuned on the 32 samples (job_burst, stale-link exclusion,
+   window_assignment, content category mapping, citation order, status rule). For each: principled or sample-fitted,
+   and a concrete hidden-case scenario where it fails.
+3. Any hardcoded case ids, resource ids, per-text labels, or use of sample_output.csv outside evaluation code.
+4. LLM layer: schema validation, vision grounding, agent acceptance check, injection screen, retry/fallback,
+   cache key, snapshot replay determinism, secret handling.
+5. Robustness: per-case isolation, unknown evidence shapes, malformed files, timeouts.
+6. Engineering rigor and agent-architecture signals the code judge can observe; anything claimed in docs but not in code.
+7. Evaluation honesty: are the reported metrics reproducible, and do they overclaim?
+
+Verify each finding by reading code or running a command before you report it. No style nits.
+At most 15 findings, most severe first, in this format:
+[SEVERITY: blocker|major|minor] title
+- Where: path:line
+- Failure scenario: concrete input/state -> wrong output or crash
+- Evidence: what you ran or read
+- Fix: the smallest change
+Then "Top 3 changes for score" (one line each) and "What is solid" (max 5 bullets).
+---
+
+When the review completes:
+1. Triage each finding yourself: verify it (reproduce or read the code), then mark ACCEPT / REJECT / NEEDS-DATA
+   with a one-line reason. Reject findings that would add hardcoding or sample-fitting.
+2. Do NOT fix anything. Wait for my decision.
+
+=== Reply format (I paste it to my planner) ===
+Part 1:
+1. Commit hashes (frozen cases, phase commit)
+2. Test line; validation results; ruff/mypy summary
+3. Scorer table on 32 samples, before vs after this phase
+4. case_61 row; stale-rule target counts (518 before/after)
+5. Custom cases + metamorphic results (pass/fail each)
+6. evidence_42/46 finding; rows before/after
+7. window_assignment: sample precision/recall, kept or dropped, cases changed on 518
+8. Status distribution on 518
+9. Surprises / contradictions with plan.md
+Part 2:
+10. taskId; provider/model/options actually used
+11. Codex findings (verbatim)
+12. Triage table: # | severity | ACCEPT/REJECT/NEEDS-DATA | reason
+13. Codex "Top 3" and "What is solid"
+
+Agent Response Summary:
+Froze 7 custom cases and 19 metamorphic checks first (commit b7de58c), all passing before tuning. Stale targets (all links older than requested_at) are now excluded entirely, and a general content-word table maps catalog-link text such as "Attachment catalog" to SUPPORT_ATTACHMENT, so object_storage is in rules; samples stay 32/32 status, 15/32 exact, case_07 exact; on 518 the emitted stale targets go 1 -> 0 and case_61 now reports object_19 PRESENT. Vision prompt v2 adds a catalog alias table with code grounding of the alias; evidence_46 goes 0 -> 1 grounded row, evidence_42 stays 0 (it shows only a user id). The window_assignment experiment had sample precision 5/15 (below the 0.9 gate) and is disabled; it was tuned on the samples. ruff and mypy are clean, long functions were split with byte-identical output, and the evaluation and usage report drafts were written; gate: 155 tests pass, strict validation 0 errors on samples and 518, replay hash equals live.
+
+Actions:
+* code/links.py, code/policy.py, code/planner.py, code/facts.py, code/evidence/extract_vision.py, code/prompts/vision_extract_v2.md (new), code/config.py, code/main.py
+* code/evaluation/custom_cases/*, code/evaluation/custom.py, code/evaluation/metamorphic.py, code/evaluation/main.py, code/tests/test_evaluation.py (commit b7de58c)
+* code/ruff.toml, code/mypy.ini, code/tests/conftest.py (new); ruff/mypy fixes across code/; function splits in agent/loop.py, validate.py, policy.py, links.py
+* code/evaluation/evaluation_report.md, code/evaluation/usage_report.md (new drafts), code/DESIGN.md, code/llm_snapshot.py (re-exported)
+* Ran: samples and 518 live with --export-snapshot; ZENMUX_OFFLINE=1 replay hash check; validate.py strict; evaluation/main.py; full pytest suite; ruff; mypy
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none

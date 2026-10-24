@@ -17,10 +17,22 @@ Rules:
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 
-from evidence.common import (ABSENT, ACTIVITY_READBACK, AGENT_READBACK, PRESENT, SNAPSHOT_ROW, STATE_READBACK,
-                             VISION_ROW, Identifiers, Observation, Scope)
+from evidence.common import (
+    ABSENT,
+    ACTIVITY_READBACK,
+    AGENT_READBACK,
+    PRESENT,
+    SNAPSHOT_ROW,
+    STATE_READBACK,
+    VISION_ROW,
+    Identifiers,
+    Observation,
+    Scope,
+)
 from facts import FactStore
 from links import Target
 
@@ -37,7 +49,7 @@ ATTRIBUTES = ("exists", "treatment", "flow_state", "restore_state", "exposed_ids
 class Statement:
     """One admissible statement about a copy. ``obs`` is None for a scoped absence."""
     copy: str
-    at: object
+    at: datetime
     rank: int
     evidence_id: str
     values: dict
@@ -75,7 +87,7 @@ def _scope_applies(scope: Scope, keys: Identifiers) -> bool:
 
 
 def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
-                   extra: list[Observation] = ()) -> tuple[list[Statement], list]:
+                   extra: Sequence[Observation] = ()) -> tuple[list[Statement], list]:
     """``extra``: case-local observations (accepted agent STATE proposals), same cutoff rules."""
     out: list[Statement] = []
     observations = store.for_resource(target.resource_id, cutoff)
@@ -89,7 +101,8 @@ def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
         out.append(Statement(obs.physical_copy, obs.state_observed_at, RANK[obs.assertion], obs.file_id,
                              values, obs=obs))
     for scope in store.scopes_for(target.system_id, cutoff):
-        if not _scope_applies(scope, keys) or store.file_has_row(scope.file_id, target.resource_id, scope.physical_copy):
+        if (not _scope_applies(scope, keys)
+                or store.file_has_row(scope.file_id, target.resource_id, scope.physical_copy)):
             continue
         out.append(Statement(scope.physical_copy, scope.observed_at, RANK[SCOPED_ABSENCE], scope.file_id,
                              {"exists": ABSENT}, scope=scope))
@@ -97,7 +110,7 @@ def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
 
 
 def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff,
-            extra: list[Observation] = ()) -> ResourceState:
+            extra: Sequence[Observation] = ()) -> ResourceState:
     statements, observations = statements_for(store, target, keys, cutoff, extra)
     state = ResourceState(target)
     for obs in observations:

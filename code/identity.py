@@ -106,9 +106,9 @@ class IdentityIndex:
             flags.append("snapshot_updated_after_as_of")
 
         emails = views["email"].known
-        emails = [emails[0]] + sorted(emails[1:]) if emails else []
+        emails = [emails[0], *sorted(emails[1:])] if emails else []
         phones = views["phone"].known
-        phones = [phones[0]] + sorted(phones[1:]) if phones else []
+        phones = [phones[0], *sorted(phones[1:])] if phones else []
         hashes: list[str] = []
         for value in views["email_hash"].known + [email_hash(e) for e in emails]:
             if value and value not in hashes:

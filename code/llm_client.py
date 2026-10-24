@@ -19,6 +19,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
+from typing import Protocol
 
 from pydantic import BaseModel, ValidationError
 
@@ -34,9 +35,15 @@ class TransportError(RuntimeError):
     pass
 
 
+class Transport(Protocol):
+    def complete(self, body: dict) -> tuple[dict, int]: ...
+
+
 class ZenMuxTransport:
     def __init__(self, base_url: str = config.BASE_URL, timeout: float = config.TIMEOUT_S,
                  max_retries: int = config.MAX_RETRIES, sleep=time.sleep):
+        if not base_url.startswith("https://"):
+            raise ValueError("ZENMUX_BASE_URL must use https")
         self.url = base_url.rstrip("/") + "/chat/completions"
         self.timeout, self.max_retries, self.sleep = timeout, max_retries, sleep
 
@@ -47,10 +54,10 @@ class ZenMuxTransport:
         for attempt in range(self.max_retries + 1):
             if attempt:
                 self.sleep(2 ** attempt)
-            request = urllib.request.Request(self.url, data=data, headers={
+            request = urllib.request.Request(self.url, data=data, headers={  # noqa: S310 - https checked in __init__
                 "Authorization": "Bearer " + config.api_key(), "Content-Type": "application/json"})
             try:
-                with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                with urllib.request.urlopen(request, timeout=self.timeout) as response:  # noqa: S310
                     return json.load(response), attempt
             except urllib.error.HTTPError as exc:
                 last = f"HTTP {exc.code}"
@@ -135,7 +142,7 @@ def _tokens(response: dict) -> tuple[int, int]:
 
 @dataclass
 class LLMClient:
-    transport: object | None = None
+    transport: Transport | None = None
     cache: LLMCache = field(default_factory=LLMCache)
     mode: str = LIVE
     model: str = config.MODEL_ID
@@ -143,7 +150,7 @@ class LLMClient:
     calls: list[dict] = field(default_factory=list)   # per-call trace rows (no message content)
 
     @classmethod
-    def from_config(cls, offline: bool | None = None) -> "LLMClient":
+    def from_config(cls, offline: bool | None = None) -> LLMClient:
         replay = config.offline() if offline is None else offline
         if replay or not config.has_api_key():
             return cls(transport=None, mode=REPLAY)
@@ -196,7 +203,8 @@ class LLMClient:
                 value = model_cls.model_validate_json(content, context=context)
             except ValidationError as exc:
                 error = "; ".join(f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in exc.errors()[:8])
-                body = dict(body, messages=list(messages) + [
+                body = dict(body, messages=[
+                    *messages,
                     {"role": "assistant", "content": content[:4000]},
                     {"role": "user", "content": "Your JSON failed validation: " + error[:1500]
                      + ". Return the corrected JSON object only."}])

@@ -18,8 +18,18 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from evidence.common import (PRESENT, RE_EMAIL, RE_RESOURCE_ID, STATE_READBACK, Extraction, Identifiers,
-                             Observation, ShapeError, lookup_identifiers, result_state)
+from evidence.common import (
+    PRESENT,
+    RE_EMAIL,
+    RE_RESOURCE_ID,
+    STATE_READBACK,
+    Extraction,
+    Identifiers,
+    Observation,
+    ShapeError,
+    lookup_identifiers,
+    result_state,
+)
 from loaders import EvidenceFile, normalize_email, normalize_phone, parse_ts
 
 RE_TITLE = re.compile(r"^[A-Z][A-Z0-9 \-]+$")
@@ -163,11 +173,11 @@ def ocr_text(path: Path, cache_dir: Path | None = None) -> str | None:
     exe = next((p for p in TESSERACT_PATHS if shutil.which(p) or Path(p).exists()), None)
     if exe is None:
         return None
-    result = subprocess.run([exe, str(path), "-", "--psm", "6"], capture_output=True, text=True,
+    result = subprocess.run([exe, str(path), "-", "--psm", "6"], capture_output=True, text=True,  # noqa: S603 - fixed exe, no shell
                             encoding="utf-8", check=False)
     if result.returncode != 0:
         raise ShapeError(f"tesseract failed on {path.name}: {result.stderr.strip()[:80]}")
     if cached is not None:
-        cache_dir.mkdir(parents=True, exist_ok=True)
+        cached.parent.mkdir(parents=True, exist_ok=True)
         cached.write_text(result.stdout, encoding="utf-8")
     return result.stdout

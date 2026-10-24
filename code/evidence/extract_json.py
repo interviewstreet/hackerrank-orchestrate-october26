@@ -16,12 +16,27 @@ Any other shape raises ``ShapeError``.
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
-from evidence.common import (ABSENT, PRIMARY, PRESENT, SNAPSHOT_ROW, STATE_READBACK, Extraction,
-                             Identifiers, Observation, Scope, ShapeError, lookup_identifiers,
-                             record_state, resource_refs, result_state, scan_identifiers)
-from loaders import EvidenceFile, parse_ts
+from evidence.common import (
+    ABSENT,
+    PRESENT,
+    PRIMARY,
+    SNAPSHOT_ROW,
+    STATE_READBACK,
+    Extraction,
+    Identifiers,
+    Observation,
+    Scope,
+    ShapeError,
+    lookup_identifiers,
+    record_state,
+    resource_refs,
+    result_state,
+    scan_identifiers,
+)
+from loaders import EvidenceFile, parse_ts, require_ts
 
 # Collection name -> logical system, for dumps that do not name the system.
 COLLECTION_SYSTEMS = {
@@ -69,7 +84,8 @@ class _Builder:
         obs = Observation(
             obs_id=f"{self.ev.file_id}#{self.n}", file_id=self.ev.file_id, source_kind="json",
             family=self.out.family, available_at=self.ev.captured_at,
-            state_observed_at=parse_ts(observed_at) if isinstance(observed_at, str) else observed_at,
+            state_observed_at=(parse_ts(observed_at) if isinstance(observed_at, str) else observed_at)
+            or self.ev.captured_at,
             system_id=system, resource_id=resource_id, assertion=assertion, collection=collection,
             record_type=record_type, record_updated_at=parse_ts(updated) if updated else None,
             link_ids=link_ids if link_ids is not None else Identifiers(),
@@ -96,12 +112,12 @@ class _Builder:
 
 def _bundle(ev, data) -> Extraction:
     b = _Builder(ev, "json_snapshot_bundle")
-    stores: list[tuple[str, str, object]] = []
+    stores: list[tuple[str, str, datetime]] = []
     for i, snap in enumerate(data["snapshots"]):
         for key in ("captured_at", "data_store", "collection", "records"):
             if key not in snap:
                 raise ShapeError(f"{ev.file_id}: snapshot {i} lacks {key}")
-        at = parse_ts(snap["captured_at"])
+        at = require_ts(snap["captured_at"])
         if snap["collection"] == "operational_record_history":
             for j, rec in enumerate(snap["records"]):
                 b.readback(rec, rec.get("recorded_at") or snap["captured_at"], rec.get("lookup_value"),
@@ -187,7 +203,7 @@ def _collection(ev, data) -> Extraction:
     collection = data["collection"]
     if collection not in COLLECTION_SYSTEMS:
         raise ShapeError(f"{ev.file_id}: unknown collection {collection!r}")
-    system, at = COLLECTION_SYSTEMS[collection], parse_ts(data["captured_at"])
+    system, at = COLLECTION_SYSTEMS[collection], require_ts(data["captured_at"])
     for j, rec in enumerate(data["records"]):
         b.row(system, rec, at, collection, f"records[{j}]")
     subjects = Identifiers()

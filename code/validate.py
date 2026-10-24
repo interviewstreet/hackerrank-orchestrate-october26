@@ -13,10 +13,11 @@ import argparse
 import csv
 import json
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
-from loaders import DATASET_DIR, REPO_ROOT, case_number, load_requests, parse_ts, read_csv
+from loaders import DATASET_DIR, REPO_ROOT, case_number, load_requests, read_csv, require_ts
 from schema import HEADER, OP_PHASE, OP_RANK, OP_STATE, PHASE_ORDER, STEP_KEYS, Phase, Status, step_sort_key
 
 STATUSES = tuple(s.value for s in Status)
@@ -27,12 +28,77 @@ def evidence_times(dataset_dir: Path = DATASET_DIR) -> dict[str, datetime]:
     """Availability time of every citable id: file_id, activity_id, audit_id."""
     times: dict[str, datetime] = {}
     for row in read_csv(dataset_dir / "evidence_files.csv"):
-        times[row["file_id"].strip()] = parse_ts(row["captured_at"])
+        times[row["file_id"].strip()] = require_ts(row["captured_at"])
     for row in read_csv(dataset_dir / "system_activity.csv"):
-        times[row["activity_id"].strip()] = parse_ts(row["event_time"])
+        times[row["activity_id"].strip()] = require_ts(row["event_time"])
     for row in read_csv(dataset_dir / "user_audit_log.csv"):
-        times[row["audit_id"].strip()] = parse_ts(row["event_time"])
+        times[row["audit_id"].strip()] = require_ts(row["event_time"])
     return times
+
+
+def _check_step(i: int, step, status: str, err, audit_at: datetime | None,
+                ev_times: dict[str, datetime] | None) -> bool:
+    """Check one step; False when it is too malformed for the sequence checks."""
+    well_formed = True
+    where = f"step {i}"
+    if not isinstance(step, dict):
+        err(f"{where}: not a JSON object")
+        return False
+    keys = set(step)
+    if keys != STEP_KEYS:
+        missing, extra = sorted(STEP_KEYS - keys), sorted(keys - STEP_KEYS)
+        err(f"{where}: keys mismatch (missing={missing}, extra={extra})")
+        return False
+    if type(step["step_no"]) is not int or step["step_no"] != i:
+        err(f"{where}: step_no must be {i}, got {step['step_no']!r}")
+    bad_types = [k for k in sorted(STEP_KEYS - {"step_no"}) if not isinstance(step[k], str)]
+    if bad_types:
+        err(f"{where}: must be strings: {bad_types}")
+        return False
+    if not step["system_id"] or not step["resource_id"]:
+        err(f"{where}: empty system_id or resource_id")
+    if step["phase"] not in PHASES:
+        err(f"{where}: bad phase {step['phase']!r}")
+        return False
+    op = step["operation"]
+    if op not in OP_RANK:
+        err(f"{where}: bad operation {op!r}")
+        return False
+    if OP_PHASE[op] != step["phase"]:
+        err(f"{where}: operation {op} is not allowed in phase {step['phase']}")
+        well_formed = False
+    if OP_STATE[op] != step["state"]:
+        err(f"{where}: operation {op} needs state {OP_STATE[op]}, got {step['state']!r}")
+
+    ev = step["evidence_id"]
+    if status == Status.COMPLETE:
+        if step["phase"] != Phase.VERIFICATION:
+            err(f"{where}: COMPLETE allows only VERIFICATION steps")
+        if not ev:
+            err(f"{where}: COMPLETE verification must cite evidence")
+    elif status == Status.INCOMPLETE:
+        if step["phase"] == Phase.FINDING and not ev:
+            err(f"{where}: FINDING must cite evidence")
+        if step["phase"] in (Phase.REMEDIATION, Phase.VERIFICATION) and ev:
+            err(f"{where}: INCOMPLETE {step['phase']} must have evidence_id \"\"")
+    if ev and ev_times is not None:
+        if ev not in ev_times:
+            err(f"{where}: unknown evidence_id {ev!r}")
+        elif audit_at is not None and ev_times[ev] > audit_at:
+            err(f"{where}: evidence {ev} is after audit_at")
+    return well_formed
+
+
+def _check_sequence(steps: list[dict], status: str, err) -> None:
+    order = [step_sort_key(s) for s in steps]
+    if order != sorted(order):
+        err("steps are not in canonical order (phase, operation, system_id, resource_id)")
+    targets = [(s["operation"], s["system_id"], s["resource_id"]) for s in steps]
+    if len(set(targets)) != len(targets):
+        err("duplicate step for the same operation and target")
+    if status == Status.INCOMPLETE and not any(s["phase"] in (Phase.REMEDIATION, Phase.VERIFICATION)
+                                               for s in steps):
+        err("INCOMPLETE needs remediation or verification steps")
 
 
 def validate_steps(case_id: str, status: str, steps_json: str, *, phase1: bool = False,
@@ -64,68 +130,9 @@ def validate_steps(case_id: str, status: str, steps_json: str, *, phase1: bool =
 
     well_formed = True
     for i, step in enumerate(steps, start=1):
-        where = f"step {i}"
-        if not isinstance(step, dict):
-            err(f"{where}: not a JSON object")
-            well_formed = False
-            continue
-        keys = set(step)
-        if keys != STEP_KEYS:
-            missing, extra = sorted(STEP_KEYS - keys), sorted(keys - STEP_KEYS)
-            err(f"{where}: keys mismatch (missing={missing}, extra={extra})")
-            well_formed = False
-            continue
-        if type(step["step_no"]) is not int or step["step_no"] != i:
-            err(f"{where}: step_no must be {i}, got {step['step_no']!r}")
-        bad_types = [k for k in sorted(STEP_KEYS - {"step_no"}) if not isinstance(step[k], str)]
-        if bad_types:
-            err(f"{where}: must be strings: {bad_types}")
-            well_formed = False
-            continue
-        if not step["system_id"] or not step["resource_id"]:
-            err(f"{where}: empty system_id or resource_id")
-        if step["phase"] not in PHASES:
-            err(f"{where}: bad phase {step['phase']!r}")
-            well_formed = False
-            continue
-        op = step["operation"]
-        if op not in OP_RANK:
-            err(f"{where}: bad operation {op!r}")
-            well_formed = False
-            continue
-        if OP_PHASE[op] != step["phase"]:
-            err(f"{where}: operation {op} is not allowed in phase {step['phase']}")
-            well_formed = False
-        if OP_STATE[op] != step["state"]:
-            err(f"{where}: operation {op} needs state {OP_STATE[op]}, got {step['state']!r}")
-
-        ev = step["evidence_id"]
-        if status == Status.COMPLETE:
-            if step["phase"] != Phase.VERIFICATION:
-                err(f"{where}: COMPLETE allows only VERIFICATION steps")
-            if not ev:
-                err(f"{where}: COMPLETE verification must cite evidence")
-        elif status == Status.INCOMPLETE:
-            if step["phase"] == Phase.FINDING and not ev:
-                err(f"{where}: FINDING must cite evidence")
-            if step["phase"] in (Phase.REMEDIATION, Phase.VERIFICATION) and ev:
-                err(f"{where}: INCOMPLETE {step['phase']} must have evidence_id \"\"")
-        if ev and ev_times is not None:
-            if ev not in ev_times:
-                err(f"{where}: unknown evidence_id {ev!r}")
-            elif audit_at is not None and ev_times[ev] > audit_at:
-                err(f"{where}: evidence {ev} is after audit_at")
-
+        well_formed = _check_step(i, step, status, err, audit_at, ev_times) and well_formed
     if well_formed:
-        keys = [step_sort_key(s) for s in steps]
-        if keys != sorted(keys):
-            err("steps are not in canonical order (phase, operation, system_id, resource_id)")
-        targets = [(s["operation"], s["system_id"], s["resource_id"]) for s in steps]
-        if len(set(targets)) != len(targets):
-            err("duplicate step for the same operation and target")
-        if status == Status.INCOMPLETE and not any(s["phase"] in (Phase.REMEDIATION, Phase.VERIFICATION)
-                                                   for s in steps):
-            err("INCOMPLETE needs remediation or verification steps")
+        _check_sequence(steps, status, err)
     return errors
 
 
@@ -156,8 +163,7 @@ def validate_file(output_path: Path, requests_path: Path, *, phase1: bool = Fals
 
     if len(body) != len(expected_ids):
         errors.append(f"expected {len(expected_ids)} data rows, got {len(body)}")
-    seen = set()
-    dupes = sorted({i for i in ids if i in seen or seen.add(i)})
+    dupes = sorted(i for i, n in Counter(ids).items() if n > 1)
     if dupes:
         errors.append(f"duplicate case_id: {dupes[:10]}")
     missing = sorted(set(expected_ids) - set(ids), key=case_number)

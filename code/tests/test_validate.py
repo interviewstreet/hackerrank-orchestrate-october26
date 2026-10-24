@@ -166,11 +166,11 @@ class FileRulesTest(unittest.TestCase):
         self.assertFileError(self.good_rows()[:2], "missing case_id")
 
     def test_one_row_per_case_extra(self):
-        self.assertFileError(self.good_rows() + [["case_500", "NOT_APPLICABLE", "[]"]], "unknown case_id")
+        self.assertFileError([*self.good_rows(), ["case_500", "NOT_APPLICABLE", "[]"]], "unknown case_id")
 
     def test_duplicate_case(self):
         rows = self.good_rows()
-        self.assertFileError(rows + [rows[0]], "duplicate case_id")
+        self.assertFileError([*rows, rows[0]], "duplicate case_id")
 
     def test_numeric_sort(self):
         rows = sorted(self.good_rows())  # lexicographic: case_100, case_33, case_9

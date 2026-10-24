@@ -58,7 +58,7 @@ def predict(requests_path: Path, use_llm: bool = True):
     return {r.case_id: (r.status, json.loads(pipeline.serialize_steps(r.steps))) for r in results}, ctx
 
 
-def _ratio(num: int, den: int) -> float:
+def _ratio(num: float, den: float) -> float:
     return num / den if den else 0.0
 
 
@@ -66,9 +66,9 @@ def score(gold: dict[str, tuple[str, list[dict]]], pred: dict[str, tuple[str, li
     n = len(gold)
     status_ok = seq_ok = row_ok = 0
     tp = n_gold_steps = n_pred_steps = 0
-    field_hits = Counter()
+    field_hits: Counter[str] = Counter()
     field_den = 0
-    confusion = Counter()
+    confusion: Counter[tuple[str, str]] = Counter()
     per_case = []
     for case_id, (g_status, g_steps) in gold.items():
         p_status, p_steps = pred.get(case_id, ("MISSING", []))
@@ -116,8 +116,8 @@ def render(report: dict, details: bool = False) -> str:
 
     st = report["steps"]
     lines = [
-        f"| Metric | Value |",
-        f"| --- | --- |",
+        "| Metric | Value |",
+        "| --- | --- |",
         f"| Cases | {report['cases']} |",
         f"| Status accuracy | {frac(report['status_accuracy'])} |",
         f"| Sequence accuracy (exact steps) | {frac(report['sequence_accuracy'])} |",

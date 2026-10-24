@@ -17,11 +17,22 @@ import re
 import sqlite3
 from pathlib import Path
 
-from evidence.common import (PRIMARY, SNAPSHOT_ROW, Extraction, Identifiers, Observation, Scope,
-                             ShapeError, record_state, resource_refs, scan_identifiers)
-from loaders import EvidenceFile, parse_ts
+from evidence.common import (
+    PRIMARY,
+    SNAPSHOT_ROW,
+    Extraction,
+    Identifiers,
+    Observation,
+    Scope,
+    ShapeError,
+    record_state,
+    resource_refs,
+    scan_identifiers,
+)
+from loaders import EvidenceFile, parse_ts, require_ts
 
-RE_COPY = re.compile(r"^(?P<base>.+?)_(?P<copy>primary|failover_replica|read_replica|reporting_replica|replica_[a-z_]+)$")
+RE_COPY = re.compile(
+    r"^(?P<base>.+?)_(?P<copy>primary|failover_replica|read_replica|reporting_replica|replica_[a-z_]+)$")
 
 # Inventory / replica tables whose rows are not record_json documents.
 TABLE_SYSTEMS = {
@@ -42,7 +53,7 @@ UPDATED_KEYS = ("updated_at", "indexed_at")
 def _rows(con: sqlite3.Connection, table: str) -> list[dict]:
     cur = con.execute(f'SELECT * FROM "{table}"')
     cols = [c[0] for c in cur.description]
-    return [dict(zip(cols, row)) for row in cur.fetchall()]
+    return [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]
 
 
 def extract(ev: EvidenceFile, path: Path) -> Extraction:
@@ -117,7 +128,7 @@ def _replicas(ev: EvidenceFile, con, tables) -> Extraction:
 def _inventory(ev: EvidenceFile, con, tables) -> Extraction:
     out = Extraction(family="sql_inventory")
     scope_rows = _rows(con, "snapshot_scope")
-    scope_at = {r["origin_system"]: parse_ts(r["captured_at"]) for r in scope_rows}
+    scope_at = {r["origin_system"]: require_ts(r["captured_at"]) for r in scope_rows}
     if not scope_at:
         raise ShapeError(f"{ev.file_id}: empty snapshot_scope")
     subjects = Identifiers()

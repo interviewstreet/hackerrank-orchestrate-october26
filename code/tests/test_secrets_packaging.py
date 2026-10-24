@@ -6,8 +6,8 @@ import unittest
 import zipfile
 from pathlib import Path
 
-import helpers  # noqa: F401
 import config
+import helpers  # noqa: F401
 import package
 
 TEXT_SUFFIXES = {".py", ".md", ".txt", ".json", ".toml", ".cfg", ".ini", ".yaml", ".yml", ".example"}
@@ -38,7 +38,7 @@ class SecretScanTest(unittest.TestCase):
         key = config.api_key()
         if not key:
             self.skipTest("no key configured")
-        files = list(_text_files(config.CODE_DIR)) + [config.REPO_ROOT / "log.txt", config.REPO_ROOT / ".env.example"]
+        files = [*_text_files(config.CODE_DIR), config.REPO_ROOT / "log.txt", config.REPO_ROOT / ".env.example"]
         leaked = [str(p.relative_to(config.REPO_ROOT)) for p in files
                   if p.is_file() and key in p.read_text(encoding="utf-8", errors="replace")]
         self.assertEqual(leaked, [])   # the value itself is never printed

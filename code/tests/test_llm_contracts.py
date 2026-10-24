@@ -4,7 +4,9 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from datetime import UTC
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic import ValidationError
 
@@ -45,9 +47,8 @@ class ContractTest(unittest.TestCase):
                                  (VisionExtraction, {"file_id": "evidence_99", "rows": [], "steps": []}, VCTX),
                                  (AgentProposal, proposal(status="COMPLETE"), ACTX),
                                  (IntentBatch, {"items": [], "status": "x"}, {"texts": {}})):
-            with self.subTest(model.__name__):
-                with self.assertRaises(ValidationError):
-                    model.model_validate(data, context=ctx)
+            with self.subTest(model.__name__), self.assertRaises(ValidationError):
+                model.model_validate(data, context=ctx)
 
     def test_unknown_system_rejected(self):
         with self.assertRaises(ValidationError):
@@ -55,9 +56,8 @@ class ContractTest(unittest.TestCase):
 
     def test_unknown_category_and_bad_resource_id_rejected(self):
         for bad in ({"category": "PAYROLL"}, {"resource_id": "ORD-2026-1"}, {"resource_id": "user 17"}):
-            with self.subTest(bad):
-                with self.assertRaises(ValidationError):
-                    VisionRow.model_validate(dict(ROW, **bad), context=VCTX)
+            with self.subTest(bad), self.assertRaises(ValidationError):
+                VisionRow.model_validate(dict(ROW, **bad), context=VCTX)
 
     def test_validation_needs_context(self):
         with self.assertRaises(ValidationError):
@@ -111,8 +111,8 @@ class ContractTest(unittest.TestCase):
 
 
 class ClientTest(unittest.TestCase):
-    MESSAGES = [{"role": "user", "content": "x"}]
-    GOOD = {"file_id": "evidence_99", "rows": [ROW]}
+    MESSAGES: ClassVar[list[dict]] = [{"role": "user", "content": "x"}]
+    GOOD: ClassVar[dict] = {"file_id": "evidence_99", "rows": [ROW]}
 
     def call(self, client):
         return client.structured("vision", "evidence_99", self.MESSAGES, VisionExtraction, VCTX, "v1")
@@ -172,20 +172,21 @@ class ModelPathTest(unittest.TestCase):
         self.assertEqual((labels[ids[1]].label, labels[ids[1]].flag), (None, "model_low"))
 
     def test_agent_state_accepted_from_quoted_raw_text(self):
-        from datetime import datetime, timezone
+        from datetime import datetime
         from types import SimpleNamespace
+
         from agent.loop import accept
         from evidence.common import Identifiers
         p = AgentProposal.model_validate(proposal(), context=ACTX)
         corpus = SimpleNamespace(visible=lambda e, c: True, store=SimpleNamespace(for_resource=lambda r, c: []))
         ok, why = accept(p, item_key=("account_service", "account_901"), category="USER_PROFILE",
                          keys=Identifiers(), opened=dict(ACTX["evidence_text"]), corpus=corpus,
-                         cutoff=datetime(2026, 1, 1, tzinfo=timezone.utc), known_systems={"account_service"})
+                         cutoff=datetime(2026, 1, 1, tzinfo=UTC), known_systems={"account_service"})
         self.assertEqual((ok, why), (True, ""))
         wrong = AgentProposal.model_validate(proposal(proposed_state="FOUND"), context=ACTX)
         ok, why = accept(wrong, item_key=("account_service", "account_901"), category="USER_PROFILE",
                          keys=Identifiers(), opened=dict(ACTX["evidence_text"]), corpus=corpus,
-                         cutoff=datetime(2026, 1, 1, tzinfo=timezone.utc), known_systems={"account_service"})
+                         cutoff=datetime(2026, 1, 1, tzinfo=UTC), known_systems={"account_service"})
         self.assertEqual((ok, why), (False, "state_mismatch"))   # "NOT_FOUND" is not FOUND
 
 

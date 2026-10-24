@@ -7,12 +7,11 @@ prompts (JSON schema) and every LLM-output check import from this module only.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import (BaseModel, ConfigDict, Field, StrictInt, ValidationInfo, field_validator,
-                      model_validator)
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, ValidationInfo, field_validator, model_validator
 
 HEADER = ("case_id", "deletion_status", "steps_json")
 
@@ -118,7 +117,7 @@ class Step(BaseModel):
     evidence_id: str
 
     @model_validator(mode="after")
-    def _allowed_pair(self) -> "Step":
+    def _allowed_pair(self) -> Step:
         if OP_PHASE[self.operation] != self.phase:
             raise ValueError(f"operation {self.operation} is not allowed in phase {self.phase}")
         if OP_STATE[self.operation] != self.state:
@@ -139,7 +138,7 @@ class OutputRow(BaseModel):
     steps: tuple[Step, ...] = ()
 
     @model_validator(mode="after")
-    def _row_rules(self) -> "OutputRow":
+    def _row_rules(self) -> OutputRow:
         steps = self.steps
         if self.deletion_status == Status.NOT_APPLICABLE and steps:
             raise ValueError("NOT_APPLICABLE must have no steps")
@@ -227,7 +226,7 @@ class VisionRow(BaseModel):
     def _utc(cls, value: datetime | None) -> datetime | None:
         if value is None:
             return None
-        return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+        return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
 
 class VisionExtraction(BaseModel):
@@ -256,7 +255,7 @@ class IntentItem(BaseModel):
     quote: str = Field(min_length=1, max_length=160)
 
     @model_validator(mode="after")
-    def _quote_in_text(self, info: ValidationInfo) -> "IntentItem":
+    def _quote_in_text(self, info: ValidationInfo) -> IntentItem:
         texts = _context(info, "texts")
         if self.text_id not in texts:
             raise ValueError(f"text_id {self.text_id} was not sent")
@@ -271,7 +270,7 @@ class IntentBatch(BaseModel):
     items: list[IntentItem]
 
     @model_validator(mode="after")
-    def _covers_batch(self, info: ValidationInfo) -> "IntentBatch":
+    def _covers_batch(self, info: ValidationInfo) -> IntentBatch:
         sent = set(_context(info, "texts"))
         got = [i.text_id for i in self.items]
         if len(got) != len(set(got)):
@@ -303,7 +302,7 @@ class AgentProposal(BaseModel):
         return value
 
     @model_validator(mode="after")
-    def _typed_and_quoted(self, info: ValidationInfo) -> "AgentProposal":
+    def _typed_and_quoted(self, info: ValidationInfo) -> AgentProposal:
         if self.case_id != _context(info, "case_id"):
             raise ValueError("case_id is not the case under investigation")
         if self.kind == "LINK" and not self.user_identifier:
@@ -341,7 +340,7 @@ class AgentAction(BaseModel):
     proposal: AgentProposal | None = None                       # submit_proposal
 
     @model_validator(mode="after")
-    def _arguments(self) -> "AgentAction":
+    def _arguments(self) -> AgentAction:
         need = {"search_evidence": "query", "query_facts": "query", "read_evidence": "file_id",
                 "submit_proposal": "proposal"}.get(self.tool)
         if need and getattr(self, need) in (None, ""):

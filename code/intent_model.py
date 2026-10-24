@@ -57,7 +57,7 @@ def label_texts(texts: list[str], client: LLMClient) -> dict[str, ModelLabel]:
         batch = {tid: pending[tid] for tid in ids[start:start + config.INTENT_BATCH_SIZE]}
         ref = text_id("".join(sorted(batch)))
         result = client.structured("intent", ref, _messages(batch), IntentBatch, {"texts": batch}, PROMPT)
-        if result.value is None:
+        if not isinstance(result.value, IntentBatch):
             for tid in batch:
                 out[tid] = ModelLabel(None, f"fallback:{result.flag}")
             continue

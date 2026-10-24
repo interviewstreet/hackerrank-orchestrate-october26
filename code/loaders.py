@@ -10,7 +10,7 @@ import csv
 import hashlib
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -30,8 +30,16 @@ def parse_ts(value: str | None) -> datetime | None:
         text = text[:-1] + "+00:00"
     dt = datetime.fromisoformat(text)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
+    return dt.astimezone(UTC)
+
+
+def require_ts(value: str | None) -> datetime:
+    """``parse_ts`` for a required field: a missing value is a data error, not a silent None."""
+    dt = parse_ts(value)
+    if dt is None:
+        raise ValueError("missing required timestamp")
+    return dt
 
 
 def normalize_email(value: str | None) -> str:
@@ -144,10 +152,10 @@ def load_requests(path: Path) -> list[Request]:
         out.append(Request(
             case_id=row["case_id"].strip(),
             email=normalize_email(row["email"]),
-            requested_at=parse_ts(row["requested_at"]),
+            requested_at=require_ts(row["requested_at"]),
             reported_status=row["reported_status"].strip(),
             reported_at=parse_ts(row.get("reported_at")),
-            audit_at=parse_ts(row["audit_at"]),
+            audit_at=require_ts(row["audit_at"]),
             request_text=row["request_text"],
         ))
     return out
@@ -160,7 +168,7 @@ def load_identities(path: Path) -> list[Identity]:
         email=normalize_email(row["email"]),
         phone=row["phone"].strip(),
         email_hash=row["email_hash"].strip().lower(),
-        updated_at=parse_ts(row["updated_at"]),
+        updated_at=require_ts(row["updated_at"]),
     ) for row in read_csv(path)]
 
 
@@ -174,14 +182,14 @@ def load_audit_log(path: Path) -> list[AuditEntry]:
         elif field_name == "email_hash":
             old, new = old.lower(), new.lower()
         out.append(AuditEntry(row["audit_id"].strip(), row["user_id"].strip(),
-                              parse_ts(row["event_time"]), field_name, old, new))
+                              require_ts(row["event_time"]), field_name, old, new))
     return out
 
 
 def load_activity(path: Path) -> list[Activity]:
     return [Activity(
         activity_id=row["activity_id"].strip(),
-        event_time=parse_ts(row["event_time"]),
+        event_time=require_ts(row["event_time"]),
         event_type=row["event_type"].strip(),
         source_system=row["source_system"].strip(),
         target_system=row["target_system"].strip(),
@@ -199,7 +207,7 @@ def load_rules(path: Path) -> list[Rule]:
 
 def load_evidence_files(path: Path) -> list[EvidenceFile]:
     return [EvidenceFile(row["file_id"].strip(), row["file_path"].strip(),
-                         row["origin"].strip(), parse_ts(row["captured_at"]))
+                         row["origin"].strip(), require_ts(row["captured_at"]))
             for row in read_csv(path)]
 
 

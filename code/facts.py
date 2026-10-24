@@ -14,10 +14,10 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-from parse_coverage import DEFERRED, ERROR, GROUNDING, PARSED, CoverageReport, FileCoverage
 from evidence import extract_activity, extract_json, extract_log, extract_sql, extract_text
 from evidence.common import Identifiers, Observation, Scope, ShapeError
 from loaders import DATASET_DIR, REPO_ROOT, Dataset
+from parse_coverage import DEFERRED, ERROR, GROUNDING, PARSED, CoverageReport, FileCoverage
 
 EXTRACTORS = {"sql": extract_sql.extract, "json": extract_json.extract, "txt": extract_text.extract,
               "log": extract_log.extract}
@@ -28,17 +28,24 @@ RE_ALIAS = re.compile(r"\b(?:linked|confirmed) ([a-z]+(?:_[a-z]+)*_\d+) \(([^)]+
 RE_USER = re.compile(r"^user_\d+$")
 
 
-def catalog_aliases(data: Dataset) -> dict[str, tuple[str, str]]:
-    """alias -> (system_id, resource_id) from LINK_RESOURCE_IDENTITY rows (aliases that are ids are skipped)."""
-    aliases = {}
+def catalog_alias_rows(data: Dataset) -> list[tuple[str, str, str, datetime]]:
+    """(alias, system_id, resource_id, catalog time) from LINK_RESOURCE_IDENTITY rows.
+
+    Aliases that are ids (``user_17``) or shorter than 6 characters are skipped."""
+    rows = []
     for a in data.activity:
         if a.event_type != "LINK_RESOURCE_IDENTITY":
             continue
         for rid, alias in RE_ALIAS.findall(a.details):
             alias = alias.strip()
             if rid == a.resource_id and alias != rid and not RE_USER.match(alias) and len(alias) >= 6:
-                aliases[alias] = (a.target_system, rid)
-    return aliases
+                rows.append((alias, a.target_system, rid, a.event_time))
+    return rows
+
+
+def catalog_aliases(data: Dataset) -> dict[str, tuple[str, str]]:
+    """alias -> (system_id, resource_id)."""
+    return {alias: (system, rid) for alias, system, rid, _ in catalog_alias_rows(data)}
 
 
 def _iso(dt: datetime) -> str:
@@ -67,7 +74,7 @@ class FactStore:
     # ------------------------------------------------------------ build
 
     @classmethod
-    def build(cls, data: Dataset, dataset_dir: Path = DATASET_DIR, ocr_cache: Path | None = OCR_CACHE) -> "FactStore":
+    def build(cls, data: Dataset, dataset_dir: Path = DATASET_DIR, ocr_cache: Path | None = OCR_CACHE) -> FactStore:
         store = cls()
         aliases = catalog_aliases(data)
         extractors = dict(EXTRACTORS, pdf=lambda ev, path: extract_text.extract_pdf(ev, path, aliases))

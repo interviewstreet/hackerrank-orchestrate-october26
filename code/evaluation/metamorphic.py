@@ -17,7 +17,7 @@ import csv
 import json
 import random
 import tempfile
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import custom
@@ -32,7 +32,7 @@ def _ts(value: str) -> datetime:
 
 
 def _iso(value: datetime) -> str:
-    return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return value.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _ledger_cases(cases: list[dict]) -> list[dict]:
@@ -51,7 +51,7 @@ def _sample_rows(requests_path: Path, ctx) -> dict:
 def _rewrite_requests(src: Path, dst: Path, change) -> None:
     with open(src, encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
-        rows, header = [change(dict(r)) for r in reader], reader.fieldnames
+        rows, header = [change(dict(r)) for r in reader], list(reader.fieldnames or [])
     with open(dst, "w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=header)
         writer.writeheader()
@@ -72,7 +72,7 @@ def sample_checks(ctx=None) -> list[dict]:
             lines = handle.read().splitlines(keepends=True)
         body = lines[1:]
         rng.shuffle(body)
-        shuffled.write_text("".join([lines[0]] + body), encoding="utf-8")
+        shuffled.write_text("".join([lines[0], *body]), encoding="utf-8")
         out.append(_result("shuffle_rows:samples", _sample_rows(shuffled, ctx) == base))
         spaced = Path(tmp) / "spaced.csv"
         _rewrite_requests(src, spaced, lambda r: dict(r, email=f"  {r['email'].upper()} "))

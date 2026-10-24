@@ -24,6 +24,28 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                                                             'darwish.omar@icloud.com',
                                                                                                                                              'system_id': 'analytics_platform'}],
                                                                                                                                    'unreadable': False}},
+ '133f4fe82a3c361f281edcbc6bd842ee1e551d99e10e12776264173cab1f6e7d:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '133f4fe82a3c361f281edcbc6bd842ee1e551d99e10e12776264173cab1f6e7d:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_28',
+                                                                                                                        'result': {'file_id': 'evidence_28',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'SUPPORT_MESSAGE',
+                                                                                                                                             'identifier': 'kagyeman8947@fastmail.com',
+                                                                                                                                             'observed_at': None,
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'support_1034',
+                                                                                                                                             'source_text': 'support_1034 '
+                                                                                                                                                            '· '
+                                                                                                                                                            'Kofi '
+                                                                                                                                                            'Agyeman '
+                                                                                                                                                            '· '
+                                                                                                                                                            'Normal '
+                                                                                                                                                            'priority',
+                                                                                                                                             'system_id': 'support_platform'}],
+                                                                                                                                   'unreadable': False}},
  '13ff54f712bea31a63a00d2bf34e8e18d24553bacc0ba134ccc7ed62c8a26973:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': '13ff54f712bea31a63a00d2bf34e8e18d24553bacc0ba134ccc7ed62c8a26973:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v1',
@@ -60,6 +82,29 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                           'proposal': None,
                                                                                                                           'query': None,
                                                                                                                           'tool': 'read_evidence'}},
+ '1f733b1bbd30a40c3eb06e687f8895c5930fad57e7f89e7b7cd9c9c78fc4dd7b:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '1f733b1bbd30a40c3eb06e687f8895c5930fad57e7f89e7b7cd9c9c78fc4dd7b:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_46',
+                                                                                                                        'result': {'file_id': 'evidence_46',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': None,
+                                                                                                                                             'identifier': None,
+                                                                                                                                             'observed_at': '2026-02-12T18:42:00Z',
+                                                                                                                                             'observed_state': 'FOUND',
+                                                                                                                                             'resource_id': 'object_19',
+                                                                                                                                             'source_text': 'delivery_confirmation_19.pdf  '
+                                                                                                                                                            '684 '
+                                                                                                                                                            'KB  '
+                                                                                                                                                            '12 '
+                                                                                                                                                            'Feb '
+                                                                                                                                                            '18:42  '
+                                                                                                                                                            'Standard  '
+                                                                                                                                                            'v3',
+                                                                                                                                             'system_id': 'object_storage'}],
+                                                                                                                                   'unreadable': False}},
  '3179ea5360c2a63443c5bd868a0bdd81d5c3733c016b08bba8274178c9a1a96b:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': '3179ea5360c2a63443c5bd868a0bdd81d5c3733c016b08bba8274178c9a1a96b:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v1',
@@ -170,6 +215,71 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                                                             'UTC',
                                                                                                                                              'system_id': 'search_service'}],
                                                                                                                                    'unreadable': False}},
+ '3b61425947902652aeed3e10e481340dcfba5fa4241c1781c56eaf75b59ec1ee:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '3b61425947902652aeed3e10e481340dcfba5fa4241c1781c56eaf75b59ec1ee:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_23',
+                                                                                                                        'result': {'file_id': 'evidence_23',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'USER_EXPORT',
+                                                                                                                                             'identifier': 'marcus.lee@northstar.shop',
+                                                                                                                                             'observed_at': '2026-06-20T14:18:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'export_1261',
+                                                                                                                                             'source_text': 'export_1261 '
+                                                                                                                                                            'customer_export_1261.zip '
+                                                                                                                                                            'marcus.lee@northstar.shop '
+                                                                                                                                                            'Collecting '
+                                                                                                                                                            '20 '
+                                                                                                                                                            'Jun '
+                                                                                                                                                            '14:18 '
+                                                                                                                                                            'UTC',
+                                                                                                                                             'system_id': 'export_service'},
+                                                                                                                                            {'category': 'USER_EXPORT',
+                                                                                                                                             'identifier': 'ingrid.dahl@outlook.com',
+                                                                                                                                             'observed_at': '2026-06-18T06:42:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'export_1260',
+                                                                                                                                             'source_text': 'export_1260 '
+                                                                                                                                                            'customer_export_1260.zip '
+                                                                                                                                                            'ingrid.dahl@outlook.com '
+                                                                                                                                                            'Ready '
+                                                                                                                                                            '18 '
+                                                                                                                                                            'Jun '
+                                                                                                                                                            '06:42 '
+                                                                                                                                                            'UTC',
+                                                                                                                                             'system_id': 'export_service'},
+                                                                                                                                            {'category': 'USER_EXPORT',
+                                                                                                                                             'identifier': 'sara.kim@northstar.shop',
+                                                                                                                                             'observed_at': '2026-06-17T11:03:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'export_1259',
+                                                                                                                                             'source_text': 'export_1259 '
+                                                                                                                                                            'customer_export_1259.zip '
+                                                                                                                                                            'sara.kim@northstar.shop '
+                                                                                                                                                            'Packaging '
+                                                                                                                                                            '17 '
+                                                                                                                                                            'Jun '
+                                                                                                                                                            '11:03 '
+                                                                                                                                                            'UTC',
+                                                                                                                                             'system_id': 'export_service'},
+                                                                                                                                            {'category': 'USER_EXPORT',
+                                                                                                                                             'identifier': 'daniel.park@northstar.shop',
+                                                                                                                                             'observed_at': '2026-06-16T09:27:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'export_1258',
+                                                                                                                                             'source_text': 'export_1258 '
+                                                                                                                                                            'customer_export_1258.zip '
+                                                                                                                                                            'daniel.park@northstar.shop '
+                                                                                                                                                            'Ready '
+                                                                                                                                                            '16 '
+                                                                                                                                                            'Jun '
+                                                                                                                                                            '09:27 '
+                                                                                                                                                            'UTC',
+                                                                                                                                             'system_id': 'export_service'}],
+                                                                                                                                   'unreadable': False}},
  '422117957b2379b33f4fe1148f26e98f6170d8528932bcee6f4511667de5d3ad:agent_v1:meta/muse-spark-1.3-contributor': {'key': '422117957b2379b33f4fe1148f26e98f6170d8528932bcee6f4511667de5d3ad:agent_v1:meta/muse-spark-1.3-contributor',
                                                                                                                'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                'prompt_version': 'agent_v1',
@@ -179,6 +289,16 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                           'proposal': None,
                                                                                                                           'query': None,
                                                                                                                           'tool': 'read_evidence'}},
+ '48ec0b470794243273f424e4be5693b74580ee7b99a791a205f723c5e3b1a103:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '48ec0b470794243273f424e4be5693b74580ee7b99a791a205f723c5e3b1a103:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_42',
+                                                                                                                        'result': {'file_id': 'evidence_42',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [],
+                                                                                                                                   'unreadable': False}},
  '516e78eae4aa027a0ff56561a4554aabc3ee372be8a4d063f0258ea049f2e22e:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': '516e78eae4aa027a0ff56561a4554aabc3ee372be8a4d063f0258ea049f2e22e:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v1',
@@ -378,6 +498,15 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                           'proposal': None,
                                                                                                                           'query': 'tombstone',
                                                                                                                           'tool': 'search_evidence'}},
+ '7785e20685bbb8e78998860fe69d09e7538516317c16f81257ce5699ed45da34:agent_v1:meta/muse-spark-1.3-contributor': {'key': '7785e20685bbb8e78998860fe69d09e7538516317c16f81257ce5699ed45da34:agent_v1:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v1',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_39',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': None,
+                                                                                                                          'query': 'integration_service',
+                                                                                                                          'tool': 'search_evidence'}},
  '7985a245b70cc8ce6667bc9765728c54ebd29ac7f8013e46d67cea1dc1262cf9:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': '7985a245b70cc8ce6667bc9765728c54ebd29ac7f8013e46d67cea1dc1262cf9:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v1',
@@ -387,6 +516,266 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                                    'injection_suspected': False,
                                                                                                                                    'notes': '',
                                                                                                                                    'rows': [],
+                                                                                                                                   'unreadable': False}},
+ '937c422be887489161d882b153723015300aed6dec872290fdea501fd37371a3:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '937c422be887489161d882b153723015300aed6dec872290fdea501fd37371a3:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_60',
+                                                                                                                        'result': {'file_id': 'evidence_60',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'MARKETING_PROFILE',
+                                                                                                                                             'identifier': 'sj.park@naver.com',
+                                                                                                                                             'observed_at': '2026-09-15T23:40:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'marketing_001',
+                                                                                                                                             'source_text': 'Soo-jin '
+                                                                                                                                                            'Park '
+                                                                                                                                                            'marketing_001 '
+                                                                                                                                                            'sj.park@naver.com '
+                                                                                                                                                            '+82 '
+                                                                                                                                                            '10-5837-9451 '
+                                                                                                                                                            'Live',
+                                                                                                                                             'system_id': 'marketing_platform'}],
+                                                                                                                                   'unreadable': False}},
+ '97a106787c2ec835c0ae7785eaf6b3a4d0d0335d80511d17d072a9792679045a:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '97a106787c2ec835c0ae7785eaf6b3a4d0d0335d80511d17d072a9792679045a:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_37',
+                                                                                                                        'result': {'file_id': 'evidence_37',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'SECURITY_AUDIT_LOG',
+                                                                                                                                             'identifier': 'user_03',
+                                                                                                                                             'observed_at': '2026-08-25T04:03:00Z',
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'audit_record_003',
+                                                                                                                                             'source_text': '25 '
+                                                                                                                                                            'Aug '
+                                                                                                                                                            '04:03 '
+                                                                                                                                                            'Account '
+                                                                                                                                                            'closure '
+                                                                                                                                                            'recorded '
+                                                                                                                                                            'Account '
+                                                                                                                                                            'lifecycle '
+                                                                                                                                                            'user_03 '
+                                                                                                                                                            'Automated '
+                                                                                                                                                            'workflow '
+                                                                                                                                                            'Valid '
+                                                                                                                                                            'audit_record_003',
+                                                                                                                                             'system_id': 'security_service'},
+                                                                                                                                            {'category': 'SECURITY_AUDIT_LOG',
+                                                                                                                                             'identifier': 'user_03',
+                                                                                                                                             'observed_at': '2026-08-25T03:21:00Z',
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'audit_record_002',
+                                                                                                                                             'source_text': '25 '
+                                                                                                                                                            'Aug '
+                                                                                                                                                            '03:21 '
+                                                                                                                                                            'Session '
+                                                                                                                                                            'revoked '
+                                                                                                                                                            'Session '
+                                                                                                                                                            'management '
+                                                                                                                                                            'user_03 '
+                                                                                                                                                            'Security '
+                                                                                                                                                            'system '
+                                                                                                                                                            'Valid '
+                                                                                                                                                            'audit_record_002',
+                                                                                                                                             'system_id': 'security_service'},
+                                                                                                                                            {'category': 'SECURITY_AUDIT_LOG',
+                                                                                                                                             'identifier': 'user_03',
+                                                                                                                                             'observed_at': '2026-08-24T16:14:00Z',
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'audit_record_001',
+                                                                                                                                             'source_text': '24 '
+                                                                                                                                                            'Aug '
+                                                                                                                                                            '16:14 '
+                                                                                                                                                            'Recovery '
+                                                                                                                                                            'challenge '
+                                                                                                                                                            'completed '
+                                                                                                                                                            'Authentication '
+                                                                                                                                                            'user_03 '
+                                                                                                                                                            'User '
+                                                                                                                                                            '(self) '
+                                                                                                                                                            'Valid '
+                                                                                                                                                            'audit_record_001',
+                                                                                                                                             'system_id': 'security_service'},
+                                                                                                                                            {'category': 'SECURITY_AUDIT_LOG',
+                                                                                                                                             'identifier': 'user_03',
+                                                                                                                                             'observed_at': '2026-08-22T11:27:00Z',
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'audit_record_006',
+                                                                                                                                             'source_text': '22 '
+                                                                                                                                                            'Aug '
+                                                                                                                                                            '11:27 '
+                                                                                                                                                            'Email '
+                                                                                                                                                            'change '
+                                                                                                                                                            'confirmed '
+                                                                                                                                                            'Profile '
+                                                                                                                                                            'update '
+                                                                                                                                                            'user_03 '
+                                                                                                                                                            'User '
+                                                                                                                                                            '(self) '
+                                                                                                                                                            'Valid '
+                                                                                                                                                            'audit_record_006',
+                                                                                                                                             'system_id': 'security_service'},
+                                                                                                                                            {'category': 'SECURITY_AUDIT_LOG',
+                                                                                                                                             'identifier': 'user_03',
+                                                                                                                                             'observed_at': '2026-08-20T09:42:00Z',
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'audit_record_005',
+                                                                                                                                             'source_text': '20 '
+                                                                                                                                                            'Aug '
+                                                                                                                                                            '09:42 '
+                                                                                                                                                            'Login '
+                                                                                                                                                            'from '
+                                                                                                                                                            'new '
+                                                                                                                                                            'device '
+                                                                                                                                                            'Authentication '
+                                                                                                                                                            'user_03 '
+                                                                                                                                                            'User '
+                                                                                                                                                            '(self) '
+                                                                                                                                                            'Valid '
+                                                                                                                                                            'audit_record_005',
+                                                                                                                                             'system_id': 'security_service'},
+                                                                                                                                            {'category': 'SECURITY_AUDIT_LOG',
+                                                                                                                                             'identifier': 'user_03',
+                                                                                                                                             'observed_at': '2026-08-18T14:05:00Z',
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'audit_record_004',
+                                                                                                                                             'source_text': '18 '
+                                                                                                                                                            'Aug '
+                                                                                                                                                            '14:05 '
+                                                                                                                                                            'Password '
+                                                                                                                                                            'changed '
+                                                                                                                                                            'Authentication '
+                                                                                                                                                            'user_03 '
+                                                                                                                                                            'User '
+                                                                                                                                                            '(self) '
+                                                                                                                                                            'Valid '
+                                                                                                                                                            'audit_record_004',
+                                                                                                                                             'system_id': 'security_service'}],
+                                                                                                                                   'unreadable': False}},
+ '9cf8e843a188111e13490b5e59952c415fd41cb1fbfef699d641e0f8cfdb4de8:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': '9cf8e843a188111e13490b5e59952c415fd41cb1fbfef699d641e0f8cfdb4de8:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_14',
+                                                                                                                        'result': {'file_id': 'evidence_14',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'DATA_FLOW',
+                                                                                                                                             'identifier': 'jain.aditi@gmail.com',
+                                                                                                                                             'observed_at': '2026-08-07T07:59:42Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'data_flow_1121',
+                                                                                                                                             'source_text': 'data_flow_1121 '
+                                                                                                                                                            'customer_analytics_warehouse '
+                                                                                                                                                            'jain.aditi@gmail.com '
+                                                                                                                                                            'Continuous '
+                                                                                                                                                            '1,284 '
+                                                                                                                                                            '07:59:42',
+                                                                                                                                             'system_id': 'integration_service'},
+                                                                                                                                            {'category': 'DATA_FLOW',
+                                                                                                                                             'identifier': 'lucia-torres@gmail.com',
+                                                                                                                                             'observed_at': '2026-08-07T07:59:36Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'data_flow_9846',
+                                                                                                                                             'source_text': 'data_flow_9846 '
+                                                                                                                                                            'customer_analytics_warehouse '
+                                                                                                                                                            'lucia-torres@gmail.com '
+                                                                                                                                                            'Continuous '
+                                                                                                                                                            '842 '
+                                                                                                                                                            '07:59:36',
+                                                                                                                                             'system_id': 'integration_service'}],
+                                                                                                                                   'unreadable': False}},
+ 'a37dad0ee079df91a002f87e766707c72d0bceb6711d08285ce60cf5e8b62c26:agent_v1:meta/muse-spark-1.3-contributor': {'key': 'a37dad0ee079df91a002f87e766707c72d0bceb6711d08285ce60cf5e8b62c26:agent_v1:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v1',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_55',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': None,
+                                                                                                                          'query': 'backup_9287',
+                                                                                                                          'tool': 'search_evidence'}},
+ 'b31a804f43d231322c489fcefc376c62bf5149240f352ef47e7a70c7af74b5a9:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': 'b31a804f43d231322c489fcefc376c62bf5149240f352ef47e7a70c7af74b5a9:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_32',
+                                                                                                                        'result': {'file_id': 'evidence_32',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'BACKUP_ARCHIVE',
+                                                                                                                                             'identifier': 'bluepeakco@outlook.com',
+                                                                                                                                             'observed_at': '2026-04-26T02:00:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'backup_9291',
+                                                                                                                                             'source_text': '1 '
+                                                                                                                                                            'backup_9291 '
+                                                                                                                                                            'bluepeakco@outlook.com '
+                                                                                                                                                            'ap-southeast-1 '
+                                                                                                                                                            '26 '
+                                                                                                                                                            'Apr '
+                                                                                                                                                            '02:00 '
+                                                                                                                                                            '102.3 '
+                                                                                                                                                            'GB '
+                                                                                                                                                            'AES-256 '
+                                                                                                                                                            'Archive',
+                                                                                                                                             'system_id': 'backup_service'},
+                                                                                                                                            {'category': 'BACKUP_ARCHIVE',
+                                                                                                                                             'identifier': 'miller.logistics@company.com',
+                                                                                                                                             'observed_at': '2026-04-26T02:00:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'backup_9288',
+                                                                                                                                             'source_text': '2 '
+                                                                                                                                                            'backup_9288 '
+                                                                                                                                                            'miller.logistics@company.com '
+                                                                                                                                                            'us-west-2 '
+                                                                                                                                                            '26 '
+                                                                                                                                                            'Apr '
+                                                                                                                                                            '02:00 '
+                                                                                                                                                            '67.1 '
+                                                                                                                                                            'GB '
+                                                                                                                                                            'AES-256 '
+                                                                                                                                                            'Archive',
+                                                                                                                                             'system_id': 'backup_service'},
+                                                                                                                                            {'category': 'BACKUP_ARCHIVE',
+                                                                                                                                             'identifier': 'areed1433@gmail.com',
+                                                                                                                                             'observed_at': '2026-04-26T02:00:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'backup_9287',
+                                                                                                                                             'source_text': '3 '
+                                                                                                                                                            'backup_9287 '
+                                                                                                                                                            'areed1433@gmail.com '
+                                                                                                                                                            'eu-west-1 '
+                                                                                                                                                            '26 '
+                                                                                                                                                            'Apr '
+                                                                                                                                                            '02:00 '
+                                                                                                                                                            '84.7 '
+                                                                                                                                                            'GB '
+                                                                                                                                                            'AES-256 '
+                                                                                                                                                            'Archive',
+                                                                                                                                             'system_id': 'backup_service'},
+                                                                                                                                            {'category': 'BACKUP_ARCHIVE',
+                                                                                                                                             'identifier': 'summit-retail@company.com',
+                                                                                                                                             'observed_at': '2026-04-26T02:00:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'backup_9286',
+                                                                                                                                             'source_text': '4 '
+                                                                                                                                                            'backup_9286 '
+                                                                                                                                                            'summit-retail@company.com '
+                                                                                                                                                            'us-east-1 '
+                                                                                                                                                            '26 '
+                                                                                                                                                            'Apr '
+                                                                                                                                                            '02:00 '
+                                                                                                                                                            '91.4 '
+                                                                                                                                                            'GB '
+                                                                                                                                                            'AES-256 '
+                                                                                                                                                            'Archive',
+                                                                                                                                             'system_id': 'backup_service'}],
                                                                                                                                    'unreadable': False}},
  'b664c8cd18e8c1e455c50c7205e905ae083df39e0dcc6d70405c9ed2eea7e6d3:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': 'b664c8cd18e8c1e455c50c7205e905ae083df39e0dcc6d70405c9ed2eea7e6d3:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
@@ -547,6 +936,119 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                                        'user_identifier': None},
                                                                                                                           'query': None,
                                                                                                                           'tool': 'submit_proposal'}},
+ 'c41e3680a6325514add0a6c650d0c3b1dcaa3f5f175007d13e4bada8cb6a37dc:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': 'c41e3680a6325514add0a6c650d0c3b1dcaa3f5f175007d13e4bada8cb6a37dc:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_04',
+                                                                                                                        'result': {'file_id': 'evidence_04',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': None,
+                                                                                                                                             'identifier': 'user_11',
+                                                                                                                                             'observed_at': '2026-09-24T00:14:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'account_5762',
+                                                                                                                                             'source_text': 'user_11 '
+                                                                                                                                                            '· '
+                                                                                                                                                            'account_5762',
+                                                                                                                                             'system_id': 'account_service'},
+                                                                                                                                            {'category': None,
+                                                                                                                                             'identifier': None,
+                                                                                                                                             'observed_at': None,
+                                                                                                                                             'observed_state': 'PRESENT',
+                                                                                                                                             'resource_id': 'support_9538',
+                                                                                                                                             'source_text': 'CS-8538 '
+                                                                                                                                                            '· '
+                                                                                                                                                            'support_9538',
+                                                                                                                                             'system_id': 'support_platform'}],
+                                                                                                                                   'unreadable': False}},
+ 'cacce8459f85b6d20152a39140b9b0d6d0fde7d5f31d082509d8fe0fa71fffb6:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': 'cacce8459f85b6d20152a39140b9b0d6d0fde7d5f31d082509d8fe0fa71fffb6:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_09',
+                                                                                                                        'result': {'file_id': 'evidence_09',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'SEARCH_INDEX_ENTRY',
+                                                                                                                                             'identifier': 'g.silva76@gmail.com',
+                                                                                                                                             'observed_at': '2026-09-01T05:58:21Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'search_428',
+                                                                                                                                             'source_text': 'search_428  '
+                                                                                                                                                            'Gabriel '
+                                                                                                                                                            'Silva  '
+                                                                                                                                                            'g.silva76@gmail.com  '
+                                                                                                                                                            'user_13  '
+                                                                                                                                                            '9.84  '
+                                                                                                                                                            '05:58:21 '
+                                                                                                                                                            'UTC',
+                                                                                                                                             'system_id': 'search_service'},
+                                                                                                                                            {'category': 'SEARCH_INDEX_ENTRY',
+                                                                                                                                             'identifier': 'g.silva76.jr@gmail.com',
+                                                                                                                                             'observed_at': '2026-09-01T05:55:03Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'search_1874',
+                                                                                                                                             'source_text': 'search_1874  '
+                                                                                                                                                            '—  '
+                                                                                                                                                            'g.silva76.jr@gmail.com  '
+                                                                                                                                                            '—  '
+                                                                                                                                                            '4.12  '
+                                                                                                                                                            '05:55:03 '
+                                                                                                                                                            'UTC',
+                                                                                                                                             'system_id': 'search_service'}],
+                                                                                                                                   'unreadable': False}},
+ 'cecee6b7af2fb0f66b9fcfa40d8b136acea70fb6043901d3334c1259e7ad58c9:agent_v1:meta/muse-spark-1.3-contributor': {'key': 'cecee6b7af2fb0f66b9fcfa40d8b136acea70fb6043901d3334c1259e7ad58c9:agent_v1:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v1',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_55',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': {'case_id': 'case_55',
+                                                                                                                                       'evidence_ids': ['evidence_32'],
+                                                                                                                                       'kind': 'STATE',
+                                                                                                                                       'proposed_state': 'PRESENT',
+                                                                                                                                       'quotes': ['3) '
+                                                                                                                                                  'backup_9287 '
+                                                                                                                                                  'areed1433@gmall.com '
+                                                                                                                                                  'eu-west-1 '
+                                                                                                                                                  '26 '
+                                                                                                                                                  'Apr '
+                                                                                                                                                  '02:00 '
+                                                                                                                                                  '847.68 '
+                                                                                                                                                  'ABS-256 '
+                                                                                                                                                  'Archive',
+                                                                                                                                                  'D) '
+                                                                                                                                                  'Reports '
+                                                                                                                                                  'Archives '
+                                                                                                                                                  'Updated '
+                                                                                                                                                  'moments '
+                                                                                                                                                  'ago '
+                                                                                                                                                  '4 '
+                                                                                                                                                  'records '
+                                                                                                                                                  'backup_9287'],
+                                                                                                                                       'reason': 'evidence_32 '
+                                                                                                                                                 'vision '
+                                                                                                                                                 'row '
+                                                                                                                                                 'shows '
+                                                                                                                                                 'backup_9287 '
+                                                                                                                                                 'present '
+                                                                                                                                                 'in '
+                                                                                                                                                 'archive '
+                                                                                                                                                 'with '
+                                                                                                                                                 'subject '
+                                                                                                                                                 'email, '
+                                                                                                                                                 'observed '
+                                                                                                                                                 '2026-04-29 '
+                                                                                                                                                 'before '
+                                                                                                                                                 'audit '
+                                                                                                                                                 'time',
+                                                                                                                                       'resource_id': 'backup_9287',
+                                                                                                                                       'system_id': 'backup_service',
+                                                                                                                                       'user_identifier': None},
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'submit_proposal'}},
  'd1ecd3d6360cf17d5b842e1c9142d5996c1e534f611468bbe68bee5bd98d8752:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': 'd1ecd3d6360cf17d5b842e1c9142d5996c1e534f611468bbe68bee5bd98d8752:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v1',
@@ -570,6 +1072,42 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                                                             '10-5837-9451',
                                                                                                                                              'system_id': 'marketing_platform'}],
                                                                                                                                    'unreadable': False}},
+ 'd47f7f4d8dfaa89108e393dcf008b65cec5dea81a5b3fa4a01466ea84a473c0d:agent_v1:meta/muse-spark-1.3-contributor': {'key': 'd47f7f4d8dfaa89108e393dcf008b65cec5dea81a5b3fa4a01466ea84a473c0d:agent_v1:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v1',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_39',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': {'case_id': 'case_39',
+                                                                                                                                       'evidence_ids': ['evidence_14'],
+                                                                                                                                       'kind': 'STATE',
+                                                                                                                                       'proposed_state': 'PRESENT',
+                                                                                                                                       'quotes': ['CO '
+                                                                                                                                                  'settings '
+                                                                                                                                                  'Topology '
+                                                                                                                                                  'Updated '
+                                                                                                                                                  'moments '
+                                                                                                                                                  'ago '
+                                                                                                                                                  '4 '
+                                                                                                                                                  'records '
+                                                                                                                                                  'data_flow_1121'],
+                                                                                                                                       'reason': 'evidence_14 '
+                                                                                                                                                 'lists '
+                                                                                                                                                 'data_flow_1121 '
+                                                                                                                                                 'in '
+                                                                                                                                                 'active '
+                                                                                                                                                 'topology '
+                                                                                                                                                 'at '
+                                                                                                                                                 'audit '
+                                                                                                                                                 'time '
+                                                                                                                                                 'window, '
+                                                                                                                                                 'indicating '
+                                                                                                                                                 'present',
+                                                                                                                                       'resource_id': 'data_flow_1121',
+                                                                                                                                       'system_id': 'integration_service',
+                                                                                                                                       'user_identifier': None},
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'submit_proposal'}},
  'd73782de1e419236887db27eaad7159d38299ad8370e0a2d3c4cef2cfc63b6c8:agent_v1:meta/muse-spark-1.3-contributor': {'key': 'd73782de1e419236887db27eaad7159d38299ad8370e0a2d3c4cef2cfc63b6c8:agent_v1:meta/muse-spark-1.3-contributor',
                                                                                                                'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                'prompt_version': 'agent_v1',
@@ -579,6 +1117,28 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                           'proposal': None,
                                                                                                                           'query': 'backup_9287',
                                                                                                                           'tool': 'search_evidence'}},
+ 'dcc28d45c4ad7887e3dd6061a4d884c421f71132cac862df8c64e1c7060acf9d:vision_extract_v2:meta/muse-spark-1.3-contributor': {'key': 'dcc28d45c4ad7887e3dd6061a4d884c421f71132cac862df8c64e1c7060acf9d:vision_extract_v2:meta/muse-spark-1.3-contributor',
+                                                                                                                        'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                                        'prompt_version': 'vision_extract_v2',
+                                                                                                                        'purpose': 'vision',
+                                                                                                                        'ref_id': 'evidence_19',
+                                                                                                                        'result': {'file_id': 'evidence_19',
+                                                                                                                                   'injection_suspected': False,
+                                                                                                                                   'notes': '',
+                                                                                                                                   'rows': [{'category': 'ANALYTICS_PROFILE',
+                                                                                                                                             'identifier': 'user_20',
+                                                                                                                                             'observed_at': '2026-07-13T14:22:00Z',
+                                                                                                                                             'observed_state': 'IDENTIFIABLE',
+                                                                                                                                             'resource_id': 'analytics_7438',
+                                                                                                                                             'source_text': 'Omar '
+                                                                                                                                                            'Darwish '
+                                                                                                                                                            'user_20 '
+                                                                                                                                                            '· '
+                                                                                                                                                            'analytics_7438 '
+                                                                                                                                                            '· '
+                                                                                                                                                            'darwish.omar@icloud.com',
+                                                                                                                                             'system_id': 'analytics_platform'}],
+                                                                                                                                   'unreadable': False}},
  'e55d2f8d95be04e9392293457113e3ed5bbc34c59fd83cade27d840432789a7c:vision_extract_v1:meta/muse-spark-1.3-contributor': {'key': 'e55d2f8d95be04e9392293457113e3ed5bbc34c59fd83cade27d840432789a7c:vision_extract_v1:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v1',
@@ -650,4 +1210,13 @@ SNAPSHOT = {'09abc2d7466171ef330295032c4880145fd8f4a59a2827defee9b0b360ebe034:vi
                                                                                                                                        'system_id': 'backup_service',
                                                                                                                                        'user_identifier': None},
                                                                                                                           'query': None,
-                                                                                                                          'tool': 'submit_proposal'}}}
+                                                                                                                          'tool': 'submit_proposal'}},
+ 'f900b96d612112c71fc8bde2e6591593acfe6e5f83e76fbb64a50e2f67ad8561:agent_v1:meta/muse-spark-1.3-contributor': {'key': 'f900b96d612112c71fc8bde2e6591593acfe6e5f83e76fbb64a50e2f67ad8561:agent_v1:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v1',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_55',
+                                                                                                               'result': {'file_id': 'evidence_32',
+                                                                                                                          'proposal': None,
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'read_evidence'}}}

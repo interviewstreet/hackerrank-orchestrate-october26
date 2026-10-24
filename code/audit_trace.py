@@ -64,7 +64,7 @@ class TraceWriter:
         self._handle = None
         if path is not None:
             path.parent.mkdir(parents=True, exist_ok=True)
-            self._handle = open(path, "w", encoding="utf-8", newline="\n")
+            self._handle = open(path, "w", encoding="utf-8", newline="\n")  # noqa: SIM115 - kept open for the run; closed in close()
 
     def write(self, record: dict) -> None:
         if self._handle is not None:

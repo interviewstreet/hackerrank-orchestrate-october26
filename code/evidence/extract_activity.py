@@ -13,8 +13,19 @@ from __future__ import annotations
 
 import re
 
-from evidence.common import (ACTIVE, ACTIVITY_READBACK, DISABLED, OPEN, OPERATION_CLAIM, OWNERSHIP_LINK,
-                             BLOCKED, Extraction, Observation, scan_identifiers)
+from evidence.common import (
+    ACTIVE,
+    ACTIVITY_READBACK,
+    BLOCKED,
+    DISABLED,
+    OPEN,
+    OPERATION_CLAIM,
+    OWNERSHIP_LINK,
+    Extraction,
+    Identifiers,
+    Observation,
+    scan_identifiers,
+)
 from loaders import Activity
 
 SYNC_FACT = "sync_fact"
@@ -30,7 +41,7 @@ def extract(rows: list[Activity]) -> Extraction:
     out = Extraction(family="activity")
     for a in rows:
         state: dict = {}
-        fields = {"event_type": a.event_type, "source_system": a.source_system,
+        fields: dict[str, object] = {"event_type": a.event_type, "source_system": a.source_system,
                   "reported_result": a.reported_result, "details": a.details}
         if a.event_type == "LINK_RESOURCE_IDENTITY":
             assertion = OWNERSHIP_LINK
@@ -51,6 +62,6 @@ def extract(rows: list[Activity]) -> Extraction:
             obs_id=a.activity_id, file_id=a.activity_id, source_kind="activity", family="activity",
             available_at=a.event_time, state_observed_at=a.event_time, system_id=a.target_system,
             resource_id=a.resource_id, assertion=assertion, fields=fields, detail=a.event_type,
-            **({"link_ids": ids} if ids is not None else {}), **state))
+            link_ids=ids if ids is not None else Identifiers(), **state))
         out.rows_parsed += 1
     return out

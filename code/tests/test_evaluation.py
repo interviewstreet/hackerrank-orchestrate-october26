@@ -3,13 +3,14 @@
 import sys
 import unittest
 
-import helpers  # noqa: F401
 import config
+import helpers  # noqa: F401
 from schema import OutputRow
 
-sys.path.insert(0, str(config.CODE_DIR / "evaluation"))
-import custom  # noqa: E402
-import metamorphic  # noqa: E402
+if str(config.CODE_DIR / "evaluation") not in sys.path:
+    sys.path.append(str(config.CODE_DIR / "evaluation"))  # after code/: never shadow main
+import custom
+import metamorphic
 
 REQUIRED = {"name", "purpose", "rule", "request", "identities", "audit_log", "activity", "evidence",
             "agent_replies", "expected"}

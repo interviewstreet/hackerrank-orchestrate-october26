@@ -36,7 +36,9 @@ def _supports(st: Statement, decision: Decision, violating: bool) -> bool:
             return False
         treatment = st.values.get("treatment")
         if treatment is not None:
-            return (treatment == IDENTIFIABLE) == violating if treatment in (IDENTIFIABLE, ANONYMIZED, REDACTED) else False
+            if treatment not in (IDENTIFIABLE, ANONYMIZED, REDACTED):
+                return False
+            return (treatment == IDENTIFIABLE) == violating
         ids = st.values.get("exposed_ids")
         if isinstance(ids, Identifiers):
             hit = ids.direct() if decision.check == "direct" else ids.any()

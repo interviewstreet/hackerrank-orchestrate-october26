@@ -1,20 +1,43 @@
 """Synthetic tests for resolver, policy rows, citation, status rule and safety invariants."""
 
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import helpers  # noqa: F401  (puts code/ on sys.path)
 import planner
-from evidence.common import (ABSENT, ACTIVE, ACTIVITY_READBACK, BLOCKED, IDENTIFIABLE, OPEN, OPERATION_CLAIM, PRESENT,
-                             SNAPSHOT_ROW, STATE_READBACK, Identifiers, Observation, Scope)
+from evidence.common import (
+    ABSENT,
+    ACTIVE,
+    ACTIVITY_READBACK,
+    BLOCKED,
+    IDENTIFIABLE,
+    OPEN,
+    OPERATION_CLAIM,
+    PRESENT,
+    SNAPSHOT_ROW,
+    STATE_READBACK,
+    Identifiers,
+    Observation,
+    Scope,
+)
 from facts import FactStore
 from links import Edge, Target
-from policy import (COMPLIANT, MISSING_RETAINED, NOT_TARGET, UNPROVEN, VIOLATION, Decision, SafetyViolation,
-                    check_safety, evaluate)
+from policy import (
+    COMPLIANT,
+    MISSING_RETAINED,
+    NOT_TARGET,
+    UNPROVEN,
+    VIOLATION,
+    Decision,
+    SafetyViolation,
+    check_safety,
+    evaluate,
+)
 from resolver import UNKNOWN, exists_rollup, resolve
-from schema import Operation as Op, Status
+from schema import Operation as Op
+from schema import Status
 
-T0 = datetime(2026, 9, 1, 12, 0, tzinfo=timezone.utc)
+T0 = datetime(2026, 9, 1, 12, 0, tzinfo=UTC)
 AUDIT = T0 + timedelta(days=10)
 SUBJECT = Identifiers(emails={"ana@example.com"}, user_ids={"user_1"})
 _n = 0
@@ -221,9 +244,9 @@ class StatusAndSafetyTest(unittest.TestCase):
         self.assertEqual(planner.decide_status([bad, good]), Status.INCOMPLETE.value)
         self.assertEqual(planner.decide_status([good, unknown]), Status.COMPLETE.value)
         self.assertEqual(planner.decide_status([unknown]), Status.INCOMPLETE.value)
-        status, steps = planner.plan([good, unknown])
+        _, steps = planner.plan([good, unknown])
         self.assertEqual([s["resource_id"] for s in steps], ["account_1"])  # unproven targets are left out
-        status, steps = planner.plan([unknown])
+        _, steps = planner.plan([unknown])
         self.assertEqual([(s["operation"], s["evidence_id"]) for s in steps], [("VERIFY_RECORD_ABSENT", "")])
 
     def test_never_delete_or_anonymize_retained(self):

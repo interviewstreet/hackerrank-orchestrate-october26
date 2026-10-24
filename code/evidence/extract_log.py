@@ -20,9 +20,28 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from evidence.common import (ABSENT, ACTIVE, BLOCKED, DISABLED, IDENTIFIABLE, OPEN, OPERATION_CLAIM, PRESENT,
-                             PRIMARY, REDACTED, RE_EMAIL, RE_HASH, RE_RESOURCE_ID, RE_USER_ID, STATE_READBACK,
-                             Extraction, Identifiers, Observation, ShapeError, result_state)
+from evidence.common import (
+    ABSENT,
+    ACTIVE,
+    BLOCKED,
+    DISABLED,
+    IDENTIFIABLE,
+    OPEN,
+    OPERATION_CLAIM,
+    PRESENT,
+    PRIMARY,
+    RE_EMAIL,
+    RE_HASH,
+    RE_RESOURCE_ID,
+    RE_USER_ID,
+    REDACTED,
+    STATE_READBACK,
+    Extraction,
+    Identifiers,
+    Observation,
+    ShapeError,
+    result_state,
+)
 from evidence.log_lines import LogLine, parse_line
 from loaders import EvidenceFile, normalize_email, normalize_phone, parse_ts
 

@@ -70,7 +70,7 @@ AGENT_MAX_ITERATIONS = 4
 AGENT_TOKEN_BUDGET = 40_000   # per case, input + output
 INTENT_BATCH_SIZE = 20
 
-PROMPT_VERSIONS = {"vision": "vision_extract_v1", "intent": "intent_v1", "agent": "agent_v1"}
+PROMPT_VERSIONS = {"vision": "vision_extract_v2", "intent": "intent_v1", "agent": "agent_v1"}
 PROMPTS_DIR = CODE_DIR / "prompts"
 CACHE_DIR = REPO_ROOT / ".cache" / "llm"
 SNAPSHOT_FILE = CODE_DIR / "llm_snapshot.py"

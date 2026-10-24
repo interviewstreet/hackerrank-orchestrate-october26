@@ -13,8 +13,12 @@ Edges (only those with time <= audit_at count):
   subject). Measured on the samples before use (config ``JOB_LINK_ENABLED``).
 
 A target whose every edge predates ``requested_at`` is ``stale``: the link describes the
-subject's data before the request. The planner reports it only as a proven violation (a
-stale record that still exists is a finding; an old link alone is not a deletion target).
+subject's data before the request, so the record is not a target of this request. The
+planner excludes it entirely, even when evidence shows it PRESENT (trace flag
+``stale_link:<id>``).
+
+Each target keeps the free-text descriptions of its catalog links (``descriptions``); the
+policy derives a category from them when the record states none (D10).
 
 Names, numeric suffixes and row positions never link. A resource whose identifiers belong
 only to another user is never a target (safety invariant).
@@ -22,10 +26,19 @@ only to another user is never a target (safety invariant).
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
-from evidence.common import OPERATION_CLAIM, OWNERSHIP_LINK, SNAPSHOT_ROW, STATE_READBACK, VISION_ROW, Identifiers
+from evidence.common import (
+    OPERATION_CLAIM,
+    OWNERSHIP_LINK,
+    SNAPSHOT_ROW,
+    STATE_READBACK,
+    VISION_ROW,
+    Identifiers,
+    Observation,
+)
 from facts import FactStore
 from identity import IdentityIndex, SubjectIdentity
 from loaders import Dataset, Request, email_hash, normalize_phone
@@ -34,6 +47,8 @@ STRONG, MEDIUM = "strong", "medium"
 JOB_LINK_ENABLED = True
 JOB_WINDOW = timedelta(minutes=10)
 JOB_SOURCE = "deletion_worker"
+WINDOW_ASSIGNMENT_ENABLED = False  # Phase 5 experiment: sample precision 5/15, below the 0.9 gate
+WINDOW_SYSTEM = "account_service"
 LINKING_ASSERTIONS = (SNAPSHOT_ROW, STATE_READBACK, OWNERSHIP_LINK, VISION_ROW)
 
 
@@ -53,6 +68,7 @@ class Target:
     shared_with: set[str] = field(default_factory=set)   # other users also linked to this record
     exclusive: bool = False                              # a catalog says it belongs only to the subject
     stale: bool = False                                  # every edge predates requested_at
+    descriptions: list[str] = field(default_factory=list)  # catalog-link text about the record
 
     @property
     def key(self) -> tuple[str, str]:
@@ -105,16 +121,20 @@ class LinkIndex:
     # ------------------------------------------------------------ targets
 
     def targets(self, subject: SubjectIdentity, req: Request, run_requests: list[Request],
-                flags: list[str], extra_edges: list[tuple] = ()) -> dict[tuple[str, str], Target]:
-        """``extra_edges``: accepted agent LINK proposals as (system, resource, source_id, at), medium."""
+                flags: list[str], extra_edges: Sequence[tuple] = (),
+                window: Observation | None = None) -> dict[tuple[str, str], Target]:
+        """``extra_edges``: accepted agent LINK proposals as (system, resource, source_id, at), medium.
+        ``window``: the worker claim ``assign_windows`` gave this case, medium."""
         cutoff = req.audit_at
         keys = subject_keys(subject)
         found: dict[tuple[str, str], Target] = {}
 
-        def edge(system_id, resource_id, kind, tier, source_id, at, exclusive=False):
+        def edge(system_id, resource_id, kind, tier, source_id, at, exclusive=False, description=""):
             tgt = found.setdefault((system_id, resource_id), Target(system_id, resource_id))
             tgt.edges.append(Edge(kind, tier, source_id, at))
             tgt.exclusive = tgt.exclusive or exclusive
+            if description:
+                tgt.descriptions.append(description)
 
         for obs in self.store.linked(keys, cutoff):
             if obs.assertion not in LINKING_ASSERTIONS:
@@ -125,7 +145,8 @@ class LinkIndex:
                 continue
             kind = "catalog_link" if obs.assertion == OWNERSHIP_LINK else "identifier"
             edge(obs.system_id, obs.resource_id, kind, STRONG, obs.obs_id, obs.state_observed_at,
-                 exclusive=bool(obs.fields.get("exclusive")))
+                 exclusive=bool(obs.fields.get("exclusive")),
+                 description=str(obs.fields.get("details") or "") if kind == "catalog_link" else "")
 
         for tgt in list(found.values()):
             for obs in self.store.referencing(tgt.resource_id, cutoff):
@@ -134,6 +155,9 @@ class LinkIndex:
 
         for system_id, resource_id, source_id, at in extra_edges:
             edge(system_id, resource_id, "agent_link", MEDIUM, source_id, at)
+        if window is not None and not any(t.system_id == WINDOW_SYSTEM for t in found.values()):
+            edge(window.system_id, window.resource_id, "window_assignment", MEDIUM, window.obs_id,
+                 window.state_observed_at)
 
         if JOB_LINK_ENABLED and req.reported_at is not None:
             strong_systems = {t.system_id for t in found.values() if t.tier == STRONG}
@@ -142,7 +166,13 @@ class LinkIndex:
                     continue
                 edge(obs.system_id, obs.resource_id, "job_burst", MEDIUM, obs.obs_id, obs.state_observed_at)
 
-        # Ownership check over every admissible observation of each candidate.
+        self._check_ownership(found, subject, cutoff, flags)
+        _flag_links(found, req, flags)
+        return found
+
+    def _check_ownership(self, found: dict[tuple[str, str], Target], subject: SubjectIdentity, cutoff,
+                         flags: list[str]) -> None:
+        """Every admissible observation of each candidate: drop a record owned only by another user."""
         for key, tgt in list(found.items()):
             owners: set[str] = set()
             for obs in self.store.for_resource(tgt.resource_id, cutoff):
@@ -155,22 +185,72 @@ class LinkIndex:
                 del found[key]
             elif others:
                 tgt.shared_with = others
-        for tgt in found.values():
-            if req.requested_at is not None and all(e.at < req.requested_at for e in tgt.edges):
-                tgt.stale = True
-                flags.append(f"stale_link:{tgt.resource_id}")
-            if all(e.kind == "job_burst" for e in tgt.edges):
-                flags.append(f"M:job_burst:{tgt.resource_id}")
-        return found
+
+    # ------------------------------------------------------------ window assignment (experiment)
+
+    def window_candidates(self, req: Request, subject_id: str) -> list[tuple[float, Observation]]:
+        """Worker DELETE_RECORD claims on ``WINDOW_SYSTEM`` inside [requested_at, reported_at] for a
+        subject with no record there. Excluded: accounts named by any evidence file at ``audit_at``
+        (their owner is readable there) and accounts linked to another user."""
+        if req.requested_at is None or req.reported_at is None:
+            return []
+        hi = min(req.reported_at, req.audit_at)
+        out = []
+        for obs in self.store.activity_between(req.requested_at, hi):
+            if (obs.system_id != WINDOW_SYSTEM or obs.fields.get("event_type") != "DELETE_RECORD"
+                    or obs.fields.get("source_system") != JOB_SOURCE):
+                continue
+            seen = self.store.for_resource(obs.resource_id, req.audit_at)
+            if any(o.source_kind != "activity" for o in seen):
+                continue
+            owners: set[str] = set()
+            for o in seen:
+                if o.assertion in LINKING_ASSERTIONS:
+                    owners |= self.owners(o.link_ids)
+            if owners - {subject_id}:
+                continue
+            out.append((abs((req.reported_at - obs.state_observed_at).total_seconds()), obs))
+        return out
+
 
     def _job_burst(self, req: Request, run_requests: list[Request]):
+        if req.reported_at is None:
+            return
         lo, hi = req.reported_at - JOB_WINDOW, req.reported_at + JOB_WINDOW
-        rivals = [r for r in run_requests if r.case_id != req.case_id and r.reported_at is not None]
+        rivals = [r.reported_at for r in run_requests if r.case_id != req.case_id and r.reported_at is not None]
         for obs in self.store.activity_between(lo, hi):
             if obs.fields.get("source_system") != JOB_SOURCE or obs.assertion != OPERATION_CLAIM:
                 continue
             if obs.available_at > req.audit_at:
                 continue
-            if any(abs(r.reported_at - obs.state_observed_at) <= JOB_WINDOW for r in rivals):
+            if any(abs(at - obs.state_observed_at) <= JOB_WINDOW for at in rivals):
                 continue  # another request reported in the same window: not unique
             yield obs
+
+
+def assign_windows(candidates: dict[str, list[tuple[float, Observation]]],
+                   order: dict[str, int]) -> dict[str, Observation]:
+    """Global one-to-one assignment, nearest first: every (case, account) pair sorted by time distance
+    to the case's ``reported_at``; a pair is taken when neither side is taken yet. Deterministic."""
+    pairs = sorted((cost, order[case_id], obs.resource_id, case_id, obs)
+                   for case_id, cands in candidates.items() for cost, obs in cands)
+    taken_cases: dict[str, Observation] = {}
+    taken_accounts: set[str] = set()
+    for _, _, rid, case_id, obs in pairs:
+        if case_id in taken_cases or rid in taken_accounts:
+            continue
+        taken_cases[case_id] = obs
+        taken_accounts.add(rid)
+    return taken_cases
+
+
+def _flag_links(found: dict[tuple[str, str], Target], req: Request, flags: list[str]) -> None:
+    """A target whose links all predate ``requested_at`` is stale (the planner drops it, D-stale);
+    a target linked only by a medium heuristic is flagged ``M:<kind>``."""
+    for tgt in found.values():
+        if req.requested_at is not None and all(e.at < req.requested_at for e in tgt.edges):
+            tgt.stale = True
+            flags.append(f"stale_link:{tgt.resource_id}")
+        for kind in ("job_burst", "window_assignment"):
+            if all(e.kind == kind for e in tgt.edges):
+                flags.append(f"M:{kind}:{tgt.resource_id}")

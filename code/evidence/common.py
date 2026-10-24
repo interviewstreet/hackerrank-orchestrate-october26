@@ -60,7 +60,7 @@ class Identifiers:
     def any(self) -> bool:
         return self.direct() or bool(self.user_ids)
 
-    def update(self, other: "Identifiers") -> None:
+    def update(self, other: Identifiers) -> None:
         for name in ("emails", "user_ids", "phones", "hashes", "names"):
             getattr(self, name).update(getattr(other, name))
 

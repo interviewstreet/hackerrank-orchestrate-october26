@@ -58,8 +58,10 @@ Phase 4 rules:
   `captured_at`, and a medium edge `vision_identifier`.
 - An accepted agent STATE proposal is a case-local observation (`agent_readback`, rank 1).
   An accepted LINK proposal is a case-local medium edge `agent_link`.
-- Records in systems that `deletion_rules.csv` does not cover (for example `object_storage`)
-  are not targets. A case whose only linked records are out of rules has no step to emit.
+- Category order (`policy.category_of`): stated `record_type` -> collection name -> content
+  (`policy.CONTENT_CATEGORY` on the catalog-link text, for example "Attachment catalog" ->
+  `SUPPORT_ATTACHMENT`) -> system default. A record with no category from any source is not
+  a target. The content table is a general word mapping, never a per-id exception.
 
 ## 4. Investigator agent loop (`agent/`, D19)
 
@@ -102,7 +104,8 @@ Acceptance check (code, per proposal):
 | `safety.py` | Injection screen and delimiting | 4 |
 | `agent/` | Investigator loop and tools | 4 |
 | `audit_trace.py` | Per-case JSONL decision trace | 2-5 |
-| `evaluation/main.py` | Scorer, metamorphic and adversarial tests | 1-5 |
+| `evaluation/main.py` | Scorer, confusion matrix, suite runner | 1-5 |
+| `evaluation/custom.py`, `evaluation/metamorphic.py` | Custom-case materializer and metamorphic checks | 5 |
 
 Phase 3 rules:
 
@@ -110,7 +113,12 @@ Phase 3 rules:
 - Logs: six line shapes (`evidence/log_lines.py`), events typed by table (`evidence/extract_log.py`). A "delete completed" line is an operation claim. An unknown shape or event is a coverage error.
 - PDF text (pypdf) gives facts. PNG OCR text (Tesseract) is grounding text only, stored in `FactStore.grounding`.
 - Medium edge `job_burst` only; it is flagged `M:job_burst:<id>` in the trace.
-- A target whose links all predate `requested_at` is stale. It gets steps only as a proven violation (flag `stale_link:<id>`).
+
+Phase 5 rules:
+
+- Stale link: a target whose links all predate `requested_at` is excluded entirely, even when evidence shows it `PRESENT` (flag `stale_link:<id>` in the trace).
+- Vision prompt `vision_extract_v2`: the model gets the catalog alias table (file name / statement number -> resource id, `facts.catalog_alias_rows`). A row may use a mapped id only when the exact alias is visible; grounding checks the alias in the OCR text, and the row is available no earlier than the alias.
+- `window_assignment` (global one-to-one account assignment by time distance to `reported_at`) is implemented behind `links.WINDOW_ASSIGNMENT_ENABLED = False`: sample precision 5/15, below the 0.9 gate.
 
 ## 6. Failure modes and guards
 
@@ -125,13 +133,16 @@ Phase 3 rules:
 
 ## 7. Evaluation plan
 
-- `python code/evaluation/main.py`: status accuracy, step P/R/F1, field accuracy, sequence accuracy.
+- `python code/evaluation/main.py`: status accuracy, step P/R/F1, field accuracy, sequence
+  accuracy, confusion matrix, custom-case and metamorphic pass/fail, agent stats
+  (writes `code/evaluation/results.md` and `.json`).
 - Samples are a development set (they shaped the design); report this honestly.
-- Custom cases (frozen before tuning): negated deletion, non-English non-deletion,
-  verify-only, historical email chain, same email with two `audit_at`, two replicas,
-  late evidence, expired retention, injection text.
-- Metamorphic tests: shuffle rows, change email case, add late evidence, add a decoy,
-  add an out-of-scope empty table, add a surviving replica.
+- Custom cases (`evaluation/custom_cases/`, frozen in commit b7de58c before Phase 5 tuning):
+  negated request, verify-only, injection in request text, retained record, flow + restore
+  risk, scripted agent run with acceptance check, historical email.
+- Metamorphic tests (`evaluation/metamorphic.py`): shuffled rows and global tables, email
+  case and spaces, an older contradicting read-back, `audit_at` 1 s before the key file
+  (it must drop out), `audit_at` exactly at it (inclusive cutoff).
 - Ablation: agent off vs on; keep it only if F1 does not drop.
 - Clean-room run: unzip `code.zip`, add `dataset/`, no key, compare the output hash.
 

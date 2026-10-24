@@ -2,7 +2,7 @@
 
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import helpers  # noqa: F401
@@ -12,7 +12,7 @@ from evidence.common import ABSENT, OPERATION_CLAIM, PRESENT, STATE_READBACK, Sh
 from evidence.log_lines import parse_line
 from loaders import DATASET_DIR, EvidenceFile, load_requests
 
-AT = datetime(2026, 3, 1, 10, 0, tzinfo=timezone.utc)
+AT = datetime(2026, 3, 1, 10, 0, tzinfo=UTC)
 
 SHAPES = {
     "bracket": '2026-03-01T10:00:00Z [INFO] [account_service] [tr-1] profile_lookup_completed: '
@@ -50,9 +50,8 @@ class LogLineTest(unittest.TestCase):
     def test_unknown_shape_raises(self):
         for line in ("no timestamp here", "2026-03-01T10:00:00Z free text without pairs",
                      "2026-03-01T10:00:00Z | INFO | only | three"):
-            with self.subTest(line):
-                with self.assertRaises(ShapeError):
-                    parse_line(line)
+            with self.subTest(line), self.assertRaises(ShapeError):
+                parse_line(line)
 
     def test_unknown_event_is_a_coverage_error(self):
         with self.assertRaises(ShapeError):
@@ -111,7 +110,7 @@ class DatasetEvidenceTest(unittest.TestCase):
 
     def test_pdf_alias_names_the_resource(self):
         # evidence_18 prints a statement number; the catalog maps it to export_1842.
-        obs = [o for o in self.store.for_resource("export_1842", datetime.max.replace(tzinfo=timezone.utc))
+        obs = [o for o in self.store.for_resource("export_1842", datetime.max.replace(tzinfo=UTC))
                if o.file_id == "evidence_18"]
         self.assertEqual(len(obs), 1)
         self.assertEqual((obs[0].source_kind, obs[0].exists), ("pdf", PRESENT))

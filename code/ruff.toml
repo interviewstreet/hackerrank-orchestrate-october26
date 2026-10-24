@@ -1,0 +1,22 @@
+# Lint configuration for the submission (python -m ruff check code).
+target-version = "py311"
+line-length = 120
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PLE", "S", "BLE"]
+ignore = [
+    "S101",    # assert is used in tests
+    "S311",    # random is used only for deterministic test shuffles
+    "S608",    # SQL is built from table names found in the snapshot file itself, never from user text
+    "RUF001",  # confusable characters are test data for the injection screen
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["S", "BLE"]
+"llm_snapshot.py" = ["E501"]   # generated
+
+[lint.isort]
+known-first-party = ["agent", "evidence", "audit_trace", "citation", "config", "facts", "identity", "intent",
+                     "intent_model", "links", "llm_cache", "llm_client", "llm_snapshot", "loaders", "main",
+                     "package", "parse_coverage", "planner", "policy", "resolver", "safety", "schema", "validate",
+                     "helpers", "custom", "metamorphic"]

@@ -1,0 +1,239 @@
+{
+ "agent": {
+  "accepted": 0,
+  "proposals": 0,
+  "rejected": {},
+  "runs": 0
+ },
+ "cases": 32,
+ "confusion": {
+  "COMPLETE->COMPLETE": 10,
+  "INCOMPLETE->INCOMPLETE": 22
+ },
+ "custom_cases": [
+  {
+   "agent": {
+    "accepted": 0,
+    "proposals": 0,
+    "rejected": {},
+    "runs": 0
+   },
+   "name": "cc01_negated_request",
+   "passed": true,
+   "problems": []
+  },
+  {
+   "agent": {
+    "accepted": 0,
+    "proposals": 0,
+    "rejected": {},
+    "runs": 0
+   },
+   "name": "cc02_verify_delete",
+   "passed": true,
+   "problems": []
+  },
+  {
+   "agent": {
+    "accepted": 0,
+    "proposals": 0,
+    "rejected": {},
+    "runs": 0
+   },
+   "name": "cc03_injection_request",
+   "passed": true,
+   "problems": []
+  },
+  {
+   "agent": {
+    "accepted": 0,
+    "proposals": 0,
+    "rejected": {},
+    "runs": 0
+   },
+   "name": "cc04_retained_audit_record",
+   "passed": true,
+   "problems": []
+  },
+  {
+   "agent": {
+    "accepted": 0,
+    "proposals": 0,
+    "rejected": {},
+    "runs": 0
+   },
+   "name": "cc05_flow_and_restore_risk",
+   "passed": true,
+   "problems": []
+  },
+  {
+   "agent": {
+    "accepted": 1,
+    "proposals": 1,
+    "rejected": {},
+    "runs": 1
+   },
+   "name": "cc06_agent_text_only_state",
+   "passed": true,
+   "problems": []
+  },
+  {
+   "agent": {
+    "accepted": 0,
+    "proposals": 0,
+    "rejected": {},
+    "runs": 0
+   },
+   "name": "cc07_historical_email",
+   "passed": true,
+   "problems": []
+  }
+ ],
+ "field_accuracy": {
+  "evidence_id": [
+   164,
+   193
+  ],
+  "operation": [
+   133,
+   193
+  ],
+  "phase": [
+   165,
+   193
+  ],
+  "resource_id": [
+   126,
+   193
+  ],
+  "state": [
+   133,
+   193
+  ],
+  "step_no": [
+   165,
+   193
+  ],
+  "system_id": [
+   126,
+   193
+  ]
+ },
+ "metamorphic": [
+  {
+   "detail": "",
+   "name": "shuffle_rows:samples",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "email_case_space:samples",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "shuffle_rows:custom",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "email_case_space:custom",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "older_contradiction:cc02_verify_delete",
+   "passed": true
+  },
+  {
+   "detail": "INCOMPLETE cites []",
+   "name": "audit_before_key:cc02_verify_delete",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "audit_at_key:cc02_verify_delete",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "older_contradiction:cc03_injection_request",
+   "passed": true
+  },
+  {
+   "detail": "INCOMPLETE cites []",
+   "name": "audit_before_key:cc03_injection_request",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "audit_at_key:cc03_injection_request",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "older_contradiction:cc04_retained_audit_record",
+   "passed": true
+  },
+  {
+   "detail": "INCOMPLETE cites []",
+   "name": "audit_before_key:cc04_retained_audit_record",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "audit_at_key:cc04_retained_audit_record",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "older_contradiction:cc05_flow_and_restore_risk",
+   "passed": true
+  },
+  {
+   "detail": "INCOMPLETE cites []",
+   "name": "audit_before_key:cc05_flow_and_restore_risk",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "audit_at_key:cc05_flow_and_restore_risk",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "older_contradiction:cc07_historical_email",
+   "passed": true
+  },
+  {
+   "detail": "INCOMPLETE cites []",
+   "name": "audit_before_key:cc07_historical_email",
+   "passed": true
+  },
+  {
+   "detail": "",
+   "name": "audit_at_key:cc07_historical_email",
+   "passed": true
+  }
+ ],
+ "row_accuracy": [
+  15,
+  32
+ ],
+ "sequence_accuracy": [
+  15,
+  32
+ ],
+ "status_accuracy": [
+  32,
+  32
+ ],
+ "steps": {
+  "f1": 0.9217877094972068,
+  "gold": 193,
+  "matched": 165,
+  "precision": 1.0,
+  "pred": 165,
+  "recall": 0.8549222797927462
+ }
+}

@@ -27,18 +27,19 @@ from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import audit_trace
 import config
 import intent
 import intent_model
+import links
 import planner
-import audit_trace
 from agent.loop import AgentStats, investigate
 from agent.tools import Corpus
 from evidence import extract_vision
 from evidence.extract_text import pdf_text
-from facts import FactStore
-from identity import IdentityIndex, SubjectIdentity
-from links import LinkIndex, subject_keys
+from facts import FactStore, catalog_alias_rows
+from identity import FutureDataError, IdentityIndex, SubjectIdentity
+from links import LinkIndex, assign_windows, subject_keys
 from llm_client import LLMClient
 from loaders import DATASET_DIR, REPO_ROOT, Dataset, Request, case_number, load_dataset, load_requests
 from policy import RULES, SYSTEM_CATEGORY, UNPROVEN, evaluate
@@ -62,6 +63,7 @@ class Context:
     known_systems: set[str] = field(default_factory=set)
     vision_reports: list = field(default_factory=list)
     intent_labels: dict = field(default_factory=dict)
+    windows: dict = field(default_factory=dict)   # case_id -> worker claim (links.assign_windows)
 
 
 @dataclass
@@ -94,11 +96,14 @@ def _raw_text(data: Dataset, store: FactStore, dataset_dir: Path) -> dict[str, s
 
 def add_vision(ctx: Context, dataset_dir: Path) -> None:
     """Model-read PNG rows, grounded in OCR text, become ``vision_row`` observations."""
+    aliases = [extract_vision.Alias(*row) for row in catalog_alias_rows(ctx.data)]
     for ev in ctx.data.evidence_files:
         if not ev.file_path.endswith(".png"):
             continue
+        assert ctx.client is not None   # add_vision runs only with a client
         rows, report = extract_vision.extract(ev, ev.abs_path(dataset_dir), ctx.store.grounding.get(ev.file_id),
-                                              ctx.client, ctx.known_systems, set(RULES), SYSTEM_CATEGORY)
+                                              ctx.client, ctx.known_systems, set(RULES), SYSTEM_CATEGORY,
+                                              aliases)
         ctx.store.add(rows, [])
         ctx.vision_reports.append(report)
     ctx.store.db.commit()
@@ -118,9 +123,33 @@ def build_context(dataset_dir: Path = DATASET_DIR, client: LLMClient | None = No
                          | {a.target_system for a in data.activity}) - {""}
     if vision and client is not None:
         add_vision(ctx, dataset_dir)
+    if links.WINDOW_ASSIGNMENT_ENABLED:
+        ctx.windows = window_assignment(ctx)
     if ctx.agent_enabled:
         ctx.corpus = Corpus(data, store, _raw_text(data, store, dataset_dir))
     return ctx
+
+
+def window_assignment(ctx: Context) -> dict:
+    """Assign worker DELETE_RECORD claims to deletion requests whose subject has no account record,
+    one-to-one over every known request (links.assign_windows). Experiment: medium edges only."""
+    candidates, order = {}, {}
+    for req in ctx.all_requests:
+        if not intent.treat_as_deletion(intent.classify(req.request_text)):
+            continue
+        try:
+            subject = ctx.identities.resolve(req.email, req.audit_at)
+        except FutureDataError:   # reported by run_case for that case, not here
+            continue
+        if subject is None:
+            continue
+        found = ctx.links.targets(subject, req, ctx.all_requests, [])
+        if any(sys_id == links.WINDOW_SYSTEM for sys_id, _ in found):
+            continue
+        cands = ctx.links.window_candidates(req, subject.user_id)
+        if cands:
+            candidates[req.case_id], order[req.case_id] = cands, case_number(req.case_id)
+    return assign_windows(candidates, order)
 
 
 def label_ambiguous(requests: list[Request], ctx: Context) -> None:
@@ -135,7 +164,8 @@ def label_ambiguous(requests: list[Request], ctx: Context) -> None:
 def _items(ctx: Context, subject, req: Request, flags: list[str], edges=(), extra=()) -> list:
     keys = subject_keys(subject)
     items = []
-    targets = ctx.links.targets(subject, req, ctx.all_requests, flags, extra_edges=list(edges))
+    targets = ctx.links.targets(subject, req, ctx.all_requests, flags, extra_edges=list(edges),
+                                window=ctx.windows.get(req.case_id))
     for _, target in sorted(targets.items()):
         state = resolve(ctx.store, target, keys, req.audit_at, extra=list(extra))
         decision = evaluate(state, req.audit_at)
@@ -151,6 +181,7 @@ def _undecided(item) -> bool:
 def _run_agent(req: Request, ctx: Context, subject, result: CaseResult) -> None:
     keys = subject_keys(subject)
     ids = sorted(keys.emails | keys.user_ids | keys.phones)
+    assert ctx.client is not None and ctx.corpus is not None   # the agent runs only with both
     budget = [config.AGENT_TOKEN_BUDGET]
     edges, extra = [], []
     for item in [i for i in result.items if _undecided(i)]:
@@ -175,7 +206,7 @@ def run_case(req: Request, ctx: Context) -> CaseResult:
             result.intent = model.label
             result.flags.append(f"intent_model:{model.label}")
             decision = intent.IntentResult(model.label, model.label in intent.DELETION_CLASSES, False,
-                                           decision.reasons + ["model_label"], decision.clauses)
+                                           [*decision.reasons, "model_label"], decision.clauses)
         else:
             result.flags.append("intent_ambiguous" + (f":{model.flag}" if model else ""))
     if "instruction_pattern" in decision.reasons:
@@ -207,9 +238,10 @@ def run_cases(requests: list[Request], ctx: Context, tracer: audit_trace.TraceWr
         try:
             result = run_case(req, ctx)
             # Contract guard: a row that breaks schema.OutputRow is never written.
-            OutputRow(case_id=result.case_id, deletion_status=result.status, steps=result.steps)
+            OutputRow.model_validate({"case_id": result.case_id, "deletion_status": result.status,
+                                      "steps": result.steps})
             results.append(result)
-        except Exception as exc:  # per-case isolation: never lose a row
+        except Exception as exc:  # noqa: BLE001 - per-case isolation: never lose a row
             print(f"[error] {req.case_id}: {exc!r}", file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
             # Safe fallback: never claim COMPLETE for a case we could not process.
@@ -290,11 +322,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"wrote {len(results)} rows -> {args.out}")
     print("status:", dict(sorted(statuses.items())))
     print("intent:", dict(sorted(intents.items())))
-    print(f"errors: {errors}, ambiguous intent: {sum(any(f.startswith('intent_ambiguous') for f in r.flags) for r in results)}, "
+    ambiguous = sum(any(f.startswith("intent_ambiguous") for f in r.flags) for r in results)
+    print(f"errors: {errors}, ambiguous intent: {ambiguous}, "
           f"unresolved identity: {sum('identity_unresolved' in r.flags for r in results)}")
     if client is not None:
         summary = usage_summary(ctx, len(results))
-        print(f"model: {summary['mode']} {summary['model']} calls={sum(t['calls'] for t in summary['per_purpose'].values())} "
+        calls = sum(t["calls"] for t in summary["per_purpose"].values())
+        print(f"model: {summary['mode']} {summary['model']} calls={calls} "
               f"tokens in/out={summary['input_tokens']}/{summary['output_tokens']} flags={summary['flags']}")
         if args.usage:
             Path(args.usage).write_text(json.dumps(summary, indent=1, sort_keys=True, default=str), encoding="utf-8")

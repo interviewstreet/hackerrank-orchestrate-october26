@@ -19,13 +19,31 @@ A PDF without a text layer cannot be grounded, so it is not sent (listed in the 
 from __future__ import annotations
 
 import base64
+import json
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 
 import config
 import safety
-from evidence.common import (ABSENT, ACTIVE, ANONYMIZED, BLOCKED, DISABLED, IDENTIFIABLE, OPEN, PRESENT, REDACTED,
-                             RE_EMAIL, RE_HASH, RE_USER_ID, VISION_ROW, Identifiers, Observation)
+from evidence.common import (
+    ABSENT,
+    ACTIVE,
+    ANONYMIZED,
+    BLOCKED,
+    DISABLED,
+    IDENTIFIABLE,
+    OPEN,
+    PRESENT,
+    RE_EMAIL,
+    RE_HASH,
+    RE_USER_ID,
+    REDACTED,
+    VISION_ROW,
+    Identifiers,
+    Observation,
+)
 from llm_client import LLMClient, render_prompt
 from loaders import EvidenceFile, normalize_email, normalize_phone
 from schema import RawState, VisionExtraction, VisionRow
@@ -33,6 +51,15 @@ from schema import RawState, VisionExtraction, VisionRow
 PROMPT = config.PROMPT_VERSIONS["vision"]
 SEP = r"[_\-\s.,]?"
 CONFUSABLE = str.maketrans({"o": "0", "l": "1", "i": "1", "|": "1", "!": "1"})
+
+
+@dataclass(frozen=True)
+class Alias:
+    """A catalog display name (file name, statement number) for one resource id (``facts.catalog_alias_rows``)."""
+    name: str
+    system_id: str
+    resource_id: str
+    at: datetime
 
 
 @dataclass
@@ -114,7 +141,10 @@ def state_fields(s: RawState, category: str) -> dict | None:
     return {"exists": PRESENT}   # an "active" / "disabled" account or a blocked user is still present
 
 
-def to_observation(ev: EvidenceFile, row: VisionRow, n: int, category: str) -> Observation | None:
+def to_observation(ev: EvidenceFile, row: VisionRow, n: int, category: str,
+                   available_at: datetime | None = None) -> Observation | None:
+    """``available_at``: later than ``captured_at`` when the row was read through a catalog alias
+    published after the capture (the reading cannot exist before its alias)."""
     fields = state_fields(row.observed_state, category)
     if fields is None:
         return None
@@ -127,26 +157,45 @@ def to_observation(ev: EvidenceFile, row: VisionRow, n: int, category: str) -> O
     shown_at = row.observed_at.isoformat() if row.observed_at else ""
     return Observation(
         obs_id=f"{ev.file_id}#v{n}", file_id=ev.file_id, source_kind="vision", family="vision_png",
-        available_at=ev.captured_at, state_observed_at=ev.captured_at, system_id=row.system_id,
+        available_at=max(ev.captured_at, available_at or ev.captured_at), state_observed_at=ev.captured_at,
+        system_id=row.system_id,
         resource_id=row.resource_id, assertion=VISION_ROW, record_type=row.category or "",
         link_ids=link, exposed_ids=exposed, fields={"source_text": row.source_text, "row_time": shown_at,
                                                     "observed_state": row.observed_state.value},
         detail="vision row", **fields)
 
 
-def _messages(ev: EvidenceFile, image: bytes, known_systems, known_categories) -> list[dict]:
+def _alias_table(aliases: list[Alias]) -> str:
+    lines = sorted({f"- `{a.name}` -> system `{a.system_id}`, resource `{a.resource_id}`" for a in aliases})
+    return "\n".join(lines) or "(empty)"
+
+
+def _messages(ev: EvidenceFile, image: bytes, known_systems, known_categories, aliases: list[Alias]) -> list[dict]:
     system, user = render_prompt(
         PROMPT, FILE_ID=ev.file_id, ORIGIN=ev.origin, CAPTURED_AT=ev.captured_at.strftime("%Y-%m-%dT%H:%M:%S"),
-        SCHEMA=__import__("json").dumps(VisionExtraction.model_json_schema(), sort_keys=True),
-        KNOWN_SYSTEMS=", ".join(sorted(known_systems)), KNOWN_CATEGORIES=", ".join(sorted(known_categories)))
+        SCHEMA=json.dumps(VisionExtraction.model_json_schema(), sort_keys=True),
+        KNOWN_SYSTEMS=", ".join(sorted(known_systems)), KNOWN_CATEGORIES=", ".join(sorted(known_categories)),
+        ALIASES=_alias_table(aliases))
     data_url = "data:image/png;base64," + base64.b64encode(image).decode("ascii")
     return [{"role": "system", "content": system},
             {"role": "user", "content": [{"type": "text", "text": user},
                                          {"type": "image_url", "image_url": {"url": data_url}}]}]
 
 
+def _grounding_time(row: VisionRow, text: str, aliases: list[Alias]) -> tuple[bool, datetime | None]:
+    """(grounded, alias time): the id itself is in the OCR text, or a catalog alias of it is."""
+    if grounded(row.resource_id, text):
+        return True, None
+    times = [a.at for a in aliases if (a.system_id, a.resource_id) == (row.system_id, row.resource_id)
+             and grounded(a.name, text)]
+    return (True, min(times)) if times else (False, None)
+
+
 def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, known_systems: set[str],
-            known_categories: set[str], system_category: dict[str, str]) -> tuple[list[Observation], FileReport]:
+            known_categories: set[str], system_category: dict[str, str],
+            aliases: Sequence[Alias] = ()) -> tuple[list[Observation], FileReport]:
+    """``aliases``: catalog display names (file names, statement numbers) for resource ids."""
+    aliases = list(aliases)
     report = FileReport(ev.file_id, ev.file_path)
     if not local_text or not local_text.strip():
         report.status = "no_text_layer"   # nothing to ground against: not sent
@@ -157,12 +206,12 @@ def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, k
         return [], report
     context = {"file_id": ev.file_id, "known_systems": known_systems, "known_categories": known_categories}
     result = client.structured("vision", ev.file_id, _messages(ev, path.read_bytes(), known_systems,
-                                                                 known_categories),
+                                                                 known_categories, aliases),
                                VisionExtraction, context, PROMPT)
-    if result.value is None:
+    if not isinstance(result.value, VisionExtraction):
         report.status = f"fallback:{result.flag}"
         return [], report
-    extraction: VisionExtraction = result.value
+    extraction = result.value
     report.injection_suspected = extraction.injection_suspected
     report.returned = len(extraction.rows)
     if extraction.unreadable:
@@ -171,7 +220,8 @@ def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, k
     out: list[Observation] = []
     for n, row in enumerate(extraction.rows, start=1):
         reason = ""
-        if not grounded(row.resource_id, local_text):
+        ok, alias_at = _grounding_time(row, local_text, aliases)
+        if not ok:
             reason = "resource_id not in OCR text"
         elif row.identifier and not grounded(row.identifier, local_text):
             reason = "identifier not in OCR text"
@@ -179,10 +229,10 @@ def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, k
             reason = "injection pattern in source_text"
         obs = None
         if not reason:
-            obs = to_observation(ev, row, n, row.category or system_category.get(row.system_id, ""))
+            obs = to_observation(ev, row, n, row.category or system_category.get(row.system_id, ""), alias_at)
             if obs is None:
                 reason = "unreadable state"
-        if reason:
+        if reason or obs is None:
             report.dropped.append({"resource_id": row.resource_id, "identifier": row.identifier, "reason": reason})
             continue
         out.append(obs)

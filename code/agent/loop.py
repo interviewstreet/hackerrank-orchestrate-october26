@@ -22,6 +22,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
+from collections.abc import Set as AbstractSet
 from dataclasses import dataclass, field
 
 import config
@@ -83,8 +84,8 @@ def _is_subject_identifier(value: str, keys: Identifiers) -> bool:
 
 
 def _state_matches(p: AgentProposal, category: str, parsed: list[Observation], quotes: list[str]) -> bool:
-    want = state_fields(p.proposed_state, category)
-    if want is None:
+    want = state_fields(p.proposed_state, category) if p.proposed_state is not None else None
+    if want is None or p.proposed_state is None:
         return False
     stating = [o for o in parsed if all(getattr(o, k) is not None for k in want)]
     if stating:   # parsed rows that state every claimed attribute decide (newest first)
@@ -102,7 +103,8 @@ def _state_matches(p: AgentProposal, category: str, parsed: list[Observation], q
 
 
 def accept(p: AgentProposal, *, item_key: tuple[str, str], category: str, keys: Identifiers, opened: dict[str, str],
-           corpus: Corpus, cutoff, known_systems: set[str], linked: set = frozenset()) -> tuple[bool, str]:
+           corpus: Corpus, cutoff, known_systems: set[str],
+           linked: AbstractSet[tuple[str, str]] = frozenset()) -> tuple[bool, str]:
     for eid in p.evidence_ids:
         if eid not in opened:
             return False, "cited_not_opened"
@@ -139,9 +141,38 @@ def _facts_block(item) -> str:
     return safety.wrap("facts", "\n".join(rows) or "no statements")
 
 
+def _record_accepted(out: Outcome, p: AgentProposal, case_id: str, category: str, corpus: Corpus) -> None:
+    """An accepted LINK becomes a MEDIUM edge; an accepted STATE becomes an agent read-back observation."""
+    eid = p.evidence_ids[0]
+    at = corpus.available[eid]
+    if p.kind == "LINK":
+        out.edges.append((p.system_id, p.resource_id, f"agent:{eid}", at))
+        return
+    fields = state_fields(p.proposed_state, category) if p.proposed_state else None
+    assert fields is not None   # accept() checked the proposed state
+    out.observations.append(Observation(
+        obs_id=f"agent:{case_id}:{eid}:{p.resource_id}", file_id=eid, source_kind="agent",
+        family="agent", available_at=at, state_observed_at=at, system_id=p.system_id,
+        resource_id=p.resource_id, assertion=AGENT_READBACK, fields={"quotes": p.quotes},
+        detail="accepted agent proposal", **fields))
+
+
+def _run_tool(action: AgentAction, corpus: Corpus, cutoff, opened: dict[str, str]) -> dict | list[dict]:
+    """Read-only tools; a file read with ``read_evidence`` becomes citable (``opened``)."""
+    if action.tool == "search_evidence":
+        return corpus.search_evidence(action.query or "", cutoff)
+    if action.tool == "query_facts":
+        return corpus.query_facts(action.query or "", cutoff)
+    file_id = action.file_id or ""
+    payload = corpus.read_evidence(file_id, cutoff)
+    if "error" not in payload:
+        opened[file_id] = corpus.text.get(file_id, "")
+    return payload
+
+
 def investigate(case_id: str, item, *, keys: Identifiers, subject_ids: list[str], cutoff, client: LLMClient,
                 corpus: Corpus, known_systems: set[str], stats: AgentStats, budget: list[int],
-                linked: set = frozenset()) -> Outcome:
+                linked: AbstractSet[tuple[str, str]] = frozenset()) -> Outcome:
     """``linked``: (system, resource) pairs already targets of this case (a LINK to them adds nothing)."""
     out = Outcome()
     stats.runs += 1
@@ -166,11 +197,11 @@ def investigate(case_id: str, item, *, keys: Identifiers, subject_ids: list[str]
         stats.turns += 1
         if result.usage is not None:
             budget[0] -= result.usage.input_tokens + result.usage.output_tokens
-        if result.value is None:
+        if not isinstance(result.value, AgentAction):
             stats.fallbacks[result.flag] += 1
             out.log.append({"turn": turn, "event": "fallback", "flag": result.flag, "error": result.error[:200]})
             break
-        action: AgentAction = result.value
+        action = result.value
         messages.append({"role": "assistant", "content": action.model_dump_json(exclude_none=True)})
         if action.tool == "stop":
             stats.stopped += 1
@@ -178,6 +209,8 @@ def investigate(case_id: str, item, *, keys: Identifiers, subject_ids: list[str]
             break
         if action.tool == "submit_proposal":
             p = action.proposal
+            if p is None:   # the AgentAction schema requires a proposal here
+                break
             stats.proposals += 1
             ok, why = accept(p, item_key=target.key, category=decision.category, keys=keys, opened=opened,
                              corpus=corpus, cutoff=cutoff, known_systems=known_systems, linked=linked)
@@ -190,26 +223,9 @@ def investigate(case_id: str, item, *, keys: Identifiers, subject_ids: list[str]
                 stats.rejected[why] += 1
                 break
             stats.accepted += 1
-            eid = p.evidence_ids[0]
-            at = corpus.available[eid]
-            if p.kind == "LINK":
-                out.edges.append((p.system_id, p.resource_id, f"agent:{eid}", at))
-            else:
-                fields = state_fields(p.proposed_state, decision.category)
-                out.observations.append(Observation(
-                    obs_id=f"agent:{case_id}:{eid}:{p.resource_id}", file_id=eid, source_kind="agent",
-                    family="agent", available_at=at, state_observed_at=at, system_id=p.system_id,
-                    resource_id=p.resource_id, assertion=AGENT_READBACK, fields={"quotes": p.quotes},
-                    detail="accepted agent proposal", **fields))
+            _record_accepted(out, p, case_id, decision.category, corpus)
             break
-        if action.tool == "search_evidence":
-            payload = corpus.search_evidence(action.query, cutoff)
-        elif action.tool == "query_facts":
-            payload = corpus.query_facts(action.query, cutoff)
-        else:
-            payload = corpus.read_evidence(action.file_id, cutoff)
-            if "error" not in payload:
-                opened[action.file_id] = corpus.text.get(action.file_id, "")
+        payload = _run_tool(action, corpus, cutoff, opened)
         out.log.append({"turn": turn, "event": action.tool, "arg": action.query or action.file_id})
         left = config.AGENT_MAX_ITERATIONS - turn
         messages.append({"role": "user", "content": safety.wrap(f"tool_result:{action.tool}", json.dumps(

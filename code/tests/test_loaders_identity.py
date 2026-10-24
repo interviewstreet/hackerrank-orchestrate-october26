@@ -1,11 +1,22 @@
 import hashlib
 import unittest
-from datetime import timezone
+from datetime import UTC
 
 import helpers  # noqa: F401  (sets sys.path)
 from identity import FutureDataError, IdentityIndex
-from loaders import (AuditEntry, Dataset, Identity, email_hash, email_hash_match_report, load_dataset,
-                     load_requests, DATASET_DIR, normalize_email, normalize_phone, parse_ts)
+from loaders import (
+    DATASET_DIR,
+    AuditEntry,
+    Dataset,
+    Identity,
+    email_hash,
+    email_hash_match_report,
+    load_dataset,
+    load_requests,
+    normalize_email,
+    normalize_phone,
+    parse_ts,
+)
 
 
 class EmailHashTest(unittest.TestCase):
@@ -29,7 +40,7 @@ class EmailHashTest(unittest.TestCase):
 class TimeTest(unittest.TestCase):
     def test_parse_ts_is_aware_utc(self):
         dt = parse_ts("2026-09-03T11:30:00Z")
-        self.assertIs(dt.tzinfo, timezone.utc)
+        self.assertIs(dt.tzinfo, UTC)
         self.assertEqual(parse_ts("2026-09-03T13:30:00+02:00"), dt)
         self.assertEqual(parse_ts("2026-09-03T11:30:00"), dt)  # naive input is UTC
         self.assertIsNone(parse_ts(""))

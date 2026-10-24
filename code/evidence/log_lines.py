@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from evidence.common import ShapeError
-from loaders import parse_ts
+from loaders import require_ts
 
 RE_KV = re.compile(r'(\w+)=("(?:[^"\\]|\\.)*"|\S+)')
 RE_TS = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z)\s+(.*)$")
@@ -72,7 +72,7 @@ def parse_line(line: str) -> LogLine:
     m = RE_TS.match(line.strip())
     if not m:
         raise ShapeError(f"no leading timestamp: {line[:60]!r}")
-    at, rest = parse_ts(m.group(1)), m.group(2)
+    at, rest = require_ts(m.group(1)), m.group(2)
 
     if rest.startswith("{"):
         try:
