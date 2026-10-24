@@ -46,19 +46,42 @@ NULLS = {None, "", "null", "none", "n/a", "-"}
 
 
 def _identifiers(identity: dict) -> list[str]:
+    cached = identity.get("_match_identifiers")
+    if cached is not None:
+        return cached
     values = [identity.get("user_id", "")]
     for key in ("all_emails", "all_phones", "all_email_hashes"):
         values.extend(identity.get(key, []))
-    return list(dict.fromkeys(str(value) for value in values if value))
+    identifiers = list(dict.fromkeys(str(value) for value in values if value))
+    identity["_match_identifiers"] = identifiers
+    return identifiers
+
+
+def _is_identifier_character(character: str) -> bool:
+    return character.isalnum() or character in "_@.+-"
+
+
+def _contains_folded(haystack: str, needle: str) -> bool:
+    """Fast token match without the user_1/user_10 substring bug."""
+    start = haystack.find(needle)
+    while start >= 0:
+        end = start + len(needle)
+        before_ok = start == 0 or not _is_identifier_character(haystack[start - 1])
+        after_ok = end == len(haystack) or not _is_identifier_character(haystack[end])
+        if before_ok and after_ok:
+            return True
+        start = haystack.find(needle, start + 1)
+    return False
 
 
 def _contains(haystack: str, needle: str) -> bool:
-    """Match identifiers without the user_1/user_10 substring bug."""
-    return re.search(rf"(?<![\w@.+-]){re.escape(needle)}(?![\w@.+-])", haystack, re.I) is not None
+    return _contains_folded(haystack.casefold(), needle.casefold())
 
 
 def _matches(blob: str, identity: dict) -> list[str]:
-    return [identifier for identifier in _identifiers(identity) if _contains(blob, identifier)]
+    folded = blob.casefold()
+    return [identifier for identifier in _identifiers(identity)
+            if _contains_folded(folded, identifier.casefold())]
 
 
 def _category(system: str, source: str, record: dict) -> str:
@@ -247,14 +270,23 @@ def _load_json(path: str):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+@lru_cache(maxsize=128)
+def _load_json_records(path: str):
+    data = _load_json(path)
+    return tuple(
+        (record, system, source, json.dumps(record, ensure_ascii=False, default=str))
+        for record, system, source in _json_records(data)
+    )
+
+
 def parse_json_evidence(path, user_identity):
     try:
-        data = _load_json(str(Path(path).resolve()))
+        records = _load_json_records(str(Path(path).resolve()))
     except (OSError, json.JSONDecodeError):
         return []
     hits = []
-    for record, system, source in _json_records(data):
-        found = _matches(json.dumps(record, ensure_ascii=False, default=str), user_identity)
+    for record, system, source, blob in records:
+        found = _matches(blob, user_identity)
         if found:
             hit = _hit(record, source, system)
             hit["identifiers_found"] = found
@@ -394,6 +426,7 @@ def parse_image_evidence(path, user_identity):
     return _parse_extracted(text, path, user_identity)
 
 
+@lru_cache(maxsize=256)
 def _safe_evidence_path(dataset: Path, manifest_path: str) -> Path:
     dataset = dataset.resolve()
     candidate = (dataset / manifest_path).resolve()
