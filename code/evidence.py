@@ -123,7 +123,11 @@ def _state(record: dict, category: str) -> str:
     if explicit in {"ACTIVE", "PRESENT", "ABSENT", "TOMBSTONE", "REDACTED",
                     "ANONYMIZED", "DISABLED", "BLOCKED"}:
         return explicit
-    if str(record.get("http_status", "")) == "404" or str(record.get("rows", "")) == "0":
+    if (str(record.get("http_status", "")) == "404"
+            or str(record.get("status_code", "")) == "404"
+            or str(record.get("rows", "")) == "0"):
+        return "ABSENT"
+    if "profile" in record and record.get("profile") is None:
         return "ABSENT"
     if category == "DATA_FLOW":
         return "DISABLED" if str(record.get("enabled", "")).casefold() in {"false", "0", "no"} else "ACTIVE"
@@ -279,9 +283,24 @@ def _load_json_records(path: str):
     )
 
 
+def _has_empty_account_snapshot(value, system=""):
+    """Identify an explicit complete-but-empty account collection snapshot."""
+    if isinstance(value, dict):
+        local_system = str(value.get("data_store") or value.get("system_id") or system)
+        collection = str(value.get("collection") or value.get("collection_name") or "")
+        if (local_system == "account_service" and collection == "customer_profiles"
+                and value.get("records") == []):
+            return True
+        return any(_has_empty_account_snapshot(child, local_system) for child in value.values())
+    if isinstance(value, list):
+        return any(_has_empty_account_snapshot(child, system) for child in value)
+    return False
+
+
 def parse_json_evidence(path, user_identity):
+    resolved = str(Path(path).resolve())
     try:
-        records = _load_json_records(str(Path(path).resolve()))
+        records = _load_json_records(resolved)
     except (OSError, json.JSONDecodeError):
         return []
     hits = []
@@ -290,6 +309,16 @@ def parse_json_evidence(path, user_identity):
         if found:
             hit = _hit(record, source, system)
             hit["identifiers_found"] = found
+            hits.append(hit)
+    # A full account snapshot with an explicitly empty customer_profiles collection
+    # proves absence for account IDs independently grounded by workflow lineage.
+    if hits and _has_empty_account_snapshot(_load_json(resolved)):
+        for resource_id in user_identity.get("lineage_resource_ids", []):
+            if not str(resource_id).casefold().startswith("account_"):
+                continue
+            hit = _hit({"resource_id": resource_id, "status": "NOT_FOUND"},
+                       "customer_profiles", "account_service")
+            hit["identifiers_found"] = [resource_id]
             hits.append(hit)
     return _dedupe(hits)
 

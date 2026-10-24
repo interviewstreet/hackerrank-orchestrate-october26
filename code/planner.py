@@ -42,7 +42,8 @@ def plan_steps(decision_result, user_identity, evidence_index):
     else:
         # Current compliant resources still need post-remediation verification, but future
         # checks do not cite the evidence that established today's state.
-        for resource in decision_result.get("compliant_resources", []):
+        for resource in [*decision_result.get("compliant_resources", []),
+                         *decision_result.get("verification_resources", [])]:
             steps.append(_step("VERIFICATION", resource.get("system_id"), resource.get("resource_id"),
                                VERIFY[resource["required_action"]]))
         for finding in decision_result.get("findings", []):

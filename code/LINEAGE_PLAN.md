@@ -10,7 +10,7 @@
 
 Acceptance: all existing tests plus lineage tests pass; no extra sample steps; status accuracy remains 100%.
 
-## Phase 2 — Workflow and Negative-Evidence Correlation
+## Phase 2 — Workflow and Negative-Evidence Correlation (Complete)
 
 - Build request-scoped resource-lineage graphs from catalog links, pre-deletion resource IDs, workflow action dependencies, and trace IDs.
 - Correlate account lookup misses with the account resource acted on by the subject's workflow.
@@ -18,7 +18,7 @@ Acceptance: all existing tests plus lineage tests pass; no extra sample steps; s
 - Link retained security records through stable subject references and catalog/workflow edges.
 - Require participant-visible evidence at or before `audit_at` for every recovered verification.
 
-Target: recover the 28 missing sample verification steps with zero extra steps and without case-specific golden mappings.
+Result: recovered all 21 account and analytics verification gaps with zero extra sample steps and no case-specific resource mappings. The remaining seven retained-security resource IDs occur only in artifacts captured after the applicable `audit_at`; Phase 2 deliberately does not use them. Public metrics are now 100.0% status, 90.7% positional steps, 92.6% fields, and 78.1% complete sequences.
 
 ## Phase 3 — Full Regression and Release
 
