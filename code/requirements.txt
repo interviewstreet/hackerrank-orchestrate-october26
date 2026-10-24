@@ -1,0 +1,2 @@
+# Phase 1 uses the Python standard library only (Python 3.10+).
+# Later phases list their third-party dependencies here.
