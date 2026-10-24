@@ -53,6 +53,8 @@ def case_record(result, items) -> dict:
         "flags": result.flags, "error": result.error,
         "targets": [item_record(i) for i in items],
         "steps": result.steps,
+        "agent": getattr(result, "agent_log", []),
+        "model_calls": getattr(result, "model_calls", []),   # usage rows only, never message content
     })
 
 

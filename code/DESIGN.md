@@ -29,17 +29,37 @@ operation table, `step_sort_key`, and the Pydantic models `Step` and `OutputRow`
 
 ## 3. Model-vs-code boundary
 
-| Task | Model (`meta/muse-spark-1.3`, ZenMux) | Code |
+| Task | Model (`meta/muse-spark-1.3-contributor`, ZenMux) | Code |
 | --- | --- | --- |
 | PNG/PDF reading | Transcribe rows to a JSON schema | Schema + id-pattern check; grounding vs OCR / PDF text layer |
 | Intent | Label AMBIGUOUS texts only (enum) | Clause rules decide first; enum check |
 | Unlinked / conflicting items | Investigator proposes link or state | Acceptance check (section 4); resolver and policy decide |
 | Status, steps, citations, order | Never | Always |
 
-- Key only from env `ZENMUX_API_KEY`. Base URL and model id live in `config.py`.
+- Key only from env `ZENMUX_API_KEY` or the uncommitted repo-root `.env` (a real env var wins).
+  Base URL, model id and prices live in `config.py`. `.env.example` holds placeholders.
+- Model: `meta/muse-spark-1.3-contributor`. The key gets HTTP 403 for `meta/muse-spark-1.3`.
 - Cache key = SHA-256(input bytes) + prompt version + model id.
-- No key: replay the committed `llm_snapshot.py`. No network is needed.
-- Model output that fails validation falls back to the deterministic result.
+- No key or `ZENMUX_OFFLINE=1`: replay the committed `llm_snapshot.py`. No network is needed.
+  A snapshot miss gives the deterministic result and the flag `snapshot_miss`.
+- Model output goes through the `schema.py` LLM contracts (`extra="forbid"`): parse, one retry
+  with the validation error, then the deterministic fallback with a flag. Grounding and
+  acceptance run after schema validation.
+- Vision and intent use `json_schema` output. The agent uses `json_object` output, because
+  constrained decoding dropped optional tool arguments. The client keeps the longest JSON
+  object in the reply and discards prose.
+
+Phase 4 rules:
+
+- Vision grounding: every accepted row's resource id and identifier must occur in the OCR or
+  PDF text. The match allows only OCR noise: case, `_`/`-`/`.`/`,`/space between id tokens,
+  `o`/`0`, and `l`/`i`/`|`/`!`/`1`. Ids need a boundary on both sides. Phones compare digits.
+- An accepted vision row is an observation (assertion `vision_row`, rank 2) at the file's
+  `captured_at`, and a medium edge `vision_identifier`.
+- An accepted agent STATE proposal is a case-local observation (`agent_readback`, rank 1).
+  An accepted LINK proposal is a case-local medium edge `agent_link`.
+- Records in systems that `deletion_rules.csv` does not cover (for example `object_storage`)
+  are not targets. A case whose only linked records are out of rules has no step to emit.
 
 ## 4. Investigator agent loop (`agent/`, D19)
 
@@ -49,7 +69,8 @@ Tools (narrow, read-only except the last):
 1. `search_evidence(query)` - exact-id grep, then BM25 over raw text and facts.
 2. `read_evidence(file_id)` - parsed rows of one file (vision rows for PNG/PDF).
 3. `query_facts(resource_id | identifier)` - fact-store rows and ownership edges.
-4. `submit_proposal(kind, resource_id, claim, cited_ids)` - typed: link / state / intent.
+4. `submit_proposal(proposal)` - a typed `AgentProposal`: `LINK` or `STATE`. There is no
+   intent proposal: both request files have 0 AMBIGUOUS texts (cut per the Phase 4 order).
 
 Caps: 4 tool iterations per item, 2 retries for invalid output, timeout per call,
 token budget per case. Over budget means the item stays `UNKNOWN`.

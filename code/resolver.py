@@ -19,14 +19,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from evidence.common import (ABSENT, ACTIVITY_READBACK, PRESENT, SNAPSHOT_ROW, STATE_READBACK, Identifiers,
-                             Observation, Scope)
+from evidence.common import (ABSENT, ACTIVITY_READBACK, AGENT_READBACK, PRESENT, SNAPSHOT_ROW, STATE_READBACK,
+                             VISION_ROW, Identifiers, Observation, Scope)
 from facts import FactStore
 from links import Target
 
 UNKNOWN, CONFLICT = "UNKNOWN", "CONFLICT"
 SCOPED_ABSENCE = "scoped_absence"
-RANK = {SNAPSHOT_ROW: 3, STATE_READBACK: 3, SCOPED_ABSENCE: 2, ACTIVITY_READBACK: 1}
+# Tier "vision" (model-read, grounded) sits below parsed text rows; agent read-backs are lowest.
+RANK = {SNAPSHOT_ROW: 3, STATE_READBACK: 3, SCOPED_ABSENCE: 2, VISION_ROW: 2, ACTIVITY_READBACK: 1,
+        AGENT_READBACK: 1}
 DOMINANCE = "newest_wins"
 ATTRIBUTES = ("exists", "treatment", "flow_state", "restore_state", "exposed_ids")
 
@@ -72,9 +74,12 @@ def _scope_applies(scope: Scope, keys: Identifiers) -> bool:
     return any(getattr(scope.subjects, k) & getattr(keys, k) for k in ("emails", "user_ids", "phones", "hashes"))
 
 
-def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff) -> tuple[list[Statement], list]:
+def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
+                   extra: list[Observation] = ()) -> tuple[list[Statement], list]:
+    """``extra``: case-local observations (accepted agent STATE proposals), same cutoff rules."""
     out: list[Statement] = []
     observations = store.for_resource(target.resource_id, cutoff)
+    observations += [o for o in extra if o.resource_id == target.resource_id and store.admissible(o, cutoff)]
     for obs in observations:
         if obs.system_id != target.system_id or obs.assertion not in RANK:
             continue
@@ -91,8 +96,9 @@ def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff) 
     return out, observations
 
 
-def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff) -> ResourceState:
-    statements, observations = statements_for(store, target, keys, cutoff)
+def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff,
+            extra: list[Observation] = ()) -> ResourceState:
+    statements, observations = statements_for(store, target, keys, cutoff, extra)
     state = ResourceState(target)
     for obs in observations:
         if obs.system_id == target.system_id:

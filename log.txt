@@ -384,3 +384,177 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-24T15:28:56Z] Phase 4: ZenMux vision + intent + bounded investigator agent, snapshot replay
+
+User Prompt (verbatim, secrets redacted):
+Strong phase. Decisions on your findings first:
+- Unrecoverable ids (audit_record_6645, audit_record_5569: I checked, they appear in no participant file and in no
+  PNG OCR text): accept the loss. Never fabricate ids.
+- Stale-link rule: accepted, it is general. NOT_STARTED -> COMPLETE (28 cases): accepted, evidence beats claims;
+  list 3 examples with the cited evidence in the evaluation report later.
+- Activity-only accounts (cases 18, 20, 22, 23, 29-32): NOT in this phase. I will give you a measured experiment for
+  Phase 5.
+- object_storage: out of rules, so object_19 is not a target (same as gold case_07). Check what case_61 then outputs,
+  pick the behavior consistent with the status rule and the samples, and report it.
+
+Phase 4 scope (plan 7.3, 7.4, D18-D22). ZENMUX_API_KEY is now set in the environment. Never print, log or write it.
+
+a) Model check: list the ZenMux models (OpenAI-compatible API; base URL in code/config.py). Use meta/muse-spark-1.3
+   if listed, else meta/muse-spark-1.3-contributor. Put model id, base URL and per-1M-token prices (from the ZenMux
+   model page) in config.py. Make one PNG smoke call; report the id and token usage.
+b) code/llm_client.py: one client for all calls. Timeout per call, max 2 retries with backoff, temperature 0,
+   JSON-mode / schema output where supported. Per-call usage record: purpose (vision | intent | agent), case or file id,
+   input/output tokens, latency, retries, cache hit.
+c) code/llm_cache.py: key = SHA-256(content) + prompt version + model id. Export validated results to
+   code/llm_snapshot.py. If there is no key (or --offline), replay the snapshot; on a snapshot miss, use the
+   deterministic fallback and flag it, never crash.
+d) evidence/extract_vision.py + prompts/vision_extract_v1.md: send each of the 11 PNGs (and any PDF page with no text
+   layer) to the model. Output schema from schema.py (Pydantic): system_id, resource_id, category, state, identifier,
+   observed_at. GROUNDING (decision from Phase 2): accept a row only if its resource_id and identifier appear in the
+   Tesseract/pypdf text for that file (allow _/- and O/0, l/1 OCR noise). Drop ungrounded rows and list them. Accepted rows
+   become Observations with tier "vision".
+e) Intent: send only the AMBIGUOUS texts, batched, prompt prompts/intent_v1.md, enum answer DELETE | VERIFY_DELETE |
+   NOT_DELETION. Rules still win when they are confident.
+f) code/agent/: the investigator loop (plan 7.4). Tools: search_evidence (BM25 + exact-id grep), read_evidence,
+   query_facts, submit_proposal. It runs only on UNKNOWN/CONFLICT items and AMBIGUOUS intent. Caps: 4 tool iterations,
+   per-case token budget, 2 retries. Code acceptance check: every cited id was opened in this loop, and the cited row
+   contains the resource id plus a user identifier or typed link. Rejected proposals are logged with the reason.
+   The agent never sets status or steps.
+g) Safety (D20): screen request texts and all OCR/PDF/vision text for injection before any model call. Wrap data in
+   clear delimiters; the system prompt says the data is untrusted. Add an adversarial test file: injected request
+   text, an injected OCR string, malformed model JSON, a model row that names another user's resource, and a model
+   that returns status words. Each one must fall back safely.
+h) Tests use a fake LLM client (no network in the test suite).
+
+Runs:
+1. Ablation on the 32 samples: agent off vs on (vision on in both). Report both scorer tables + the agent acceptance rate.
+2. Full 518 run from a COLD cache (this run's usage is the one for usage_report.md). Then export the snapshot.
+3. Replay run with no key (unset ZENMUX_API_KEY for that process only). The output.csv SHA-256 must equal run 2's.
+
+Time box 4 h. Cut order if late: agent on intent first, then vision without the agent.
+
+Checks before commit: full suite passes; strict validation passes on samples and on 518 (0 errors); replay hash equals.
+Commit as "feat: zenmux vision + intent + bounded investigator agent, snapshot replay". Then STOP.
+
+Reply format:
+1. Commit hash; model id used; smoke-call usage
+2. Test line + validation results
+3. Ablation tables (agent off / on) + agent stats (runs, proposals, accepted, rejected by reason)
+4. Vision: rows returned / grounded / dropped per PNG; any injection-like text found in images or PDFs
+5. Intent: AMBIGUOUS count, model labels, and any disagreement with the rules
+6. Cold-run usage: calls per purpose, input/output tokens, estimated cost; replay hash match yes/no
+7. case_61 behavior and status distribution on the 518 run
+8. Surprises / contradictions with plan.md
+
+Agent Response Summary:
+Added the ZenMux client (timeout, 2 transport retries with backoff, temperature 0, schema output, per-call usage), a content-hash cache with export to llm_snapshot.py and offline replay, PNG vision extraction grounded against Tesseract OCR, an AMBIGUOUS-only intent labeller, and a 4-turn investigator agent whose proposals code accepts or rejects; the model never sets status or steps. Cold 518 run: 22 calls (11 vision, 11 agent), 65,360 in / 13,787 out tokens, about $0.0093; offline replay gives the same output.csv SHA-256. Vision changes 7 of 518 rows; the agent ran 3 times, 1 proposal accepted, 2 rejected (state_mismatch), 0 row changes. Sample ablation agent off vs on is identical (status 32/32, F1 0.922; the agent has no undecided sample item). case_61 stays INCOMPLETE with no steps because object_19 is out of rules; it is the one strict-validation error on 518 and is reported, the validator is unchanged.
+
+Actions:
+* code/config.py, code/llm_client.py, code/llm_cache.py, code/llm_snapshot.py, code/safety.py, code/intent_model.py, code/package.py (new)
+* code/agent/__init__.py, code/agent/tools.py, code/agent/loop.py, code/evidence/extract_vision.py, code/prompts/*.md (new)
+* code/schema.py, code/main.py, code/links.py, code/resolver.py, code/evidence/common.py, code/audit_trace.py, code/DESIGN.md
+* code/tests/test_llm_contracts.py, code/tests/test_adversarial.py, code/tests/test_secrets_packaging.py (new), .env.example (new)
+* Ran: ZenMux model list + PNG smoke call; cold 518 run with --export-snapshot; 518 --no-agent; sample ablation; ZENMUX_OFFLINE=1 replay; validate.py strict; parse_coverage.py; full pytest suite
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+## [2026-10-24T15:28:56Z] Phase 4 steering: .env key loading, Muse model, schema.py LLM contracts
+
+User Prompt (verbatim, secrets redacted):
+Apply this to the work in progress; do not restart the phase.
+
+1. API key source: the key is in the repo-root .env file (already in .gitignore), not in the system environment.
+   - Load .env with a small stdlib parser in code/config.py (or python-dotenv, added to requirements.txt).
+     A real environment variable overrides .env.
+   - Commit a .env.example with placeholder values only:
+       ZENMUX_API_KEY=
+       ZENMUX_BASE_URL=https://zenmux.ai/api/v1
+       ZENMUX_MODEL=meta/muse-spark-1.3
+   - Never print, log, trace or cache the key. Add a test that scans code/ for key-like strings, and a packaging check
+     that .env can never go into code.zip.
+   - For the replay check, run with ZENMUX_OFFLINE=1 (forces snapshot replay) instead of unsetting the env var.
+
+2. Model: meta/muse-spark-1.3 only. I chose Muse Spark for its multimodal input. Confirm the exact id from the ZenMux
+   model list. If that exact id is not listed, STOP and report the Muse ids that are listed; do not switch models yourself.
+
+3. LLM contracts. Add these to code/schema.py (Pydantic v2) and use them for prompt JSON instructions, response
+   validation and the snapshot. Every model uses extra="forbid", so the model cannot add fields such as a status or steps.
+
+   RawState = StrEnum: FOUND, NOT_FOUND, PRESENT, ABSENT, IDENTIFIABLE, REDACTED, ANONYMIZED,
+              ACTIVE, DISABLED, BLOCKED, UNREADABLE
+   (the model reports what the evidence shows; code maps RawState -> internal resolver state)
+
+   class VisionRow(BaseModel):
+       system_id: str            # must be in KNOWN_SYSTEMS (built from the dataset), else reject
+       resource_id: str          # pattern ^[a-z][a-z_]*_\d+$
+       category: str | None      # must be in KNOWN_CATEGORIES or None
+       observed_state: RawState
+       identifier: str | None    # email / phone / user_id / hash exactly as shown; None for "no direct identifier"
+       observed_at: datetime | None   # UTC; None if not shown
+       source_text: str          # max 200 chars: the exact line as read; used for grounding
+
+   class VisionExtraction(BaseModel):
+       file_id: str              # must equal the file sent
+       rows: list[VisionRow]     # max 200
+       unreadable: bool = False
+       injection_suspected: bool = False   # set if the image contains instructions aimed at the reader
+       notes: str = ""           # max 300
+
+   class IntentItem(BaseModel):
+       text_id: str              # sha256 prefix of the request text, never the case_id
+       label: Literal["DELETE", "VERIFY_DELETE", "NOT_DELETION"]
+       confidence: Literal["high", "low"]
+       quote: str                # max 160, must be an exact substring of the text (code checks this)
+   class IntentBatch(BaseModel):
+       items: list[IntentItem]   # must cover exactly the text_ids sent
+
+   class AgentProposal(BaseModel):
+       kind: Literal["LINK", "STATE"]
+       case_id: str
+       system_id: str
+       resource_id: str
+       user_identifier: str | None       # required for LINK
+       proposed_state: RawState | None   # required for STATE
+       evidence_ids: list[str]           # 1..5; each must have been opened in this loop
+       quotes: list[str]                 # 1..5, each max 200, exact substrings of the cited rows (code checks)
+       reason: str                       # max 300
+
+   class LLMUsage(BaseModel):
+       purpose: Literal["vision", "intent", "agent"]
+       ref_id: str                # file_id, text_id or case_id
+       model: str
+       input_tokens: int
+       output_tokens: int
+       latency_ms: int
+       retries: int
+       cache_hit: bool
+
+   Validation flow: parse -> on schema failure, one retry that includes the validation error -> on a second failure,
+   use the deterministic fallback and flag it. The grounding and acceptance checks run after schema validation, never instead of it.
+   Add tests: extra field rejected; quote not a substring -> rejected; IntentBatch missing a text_id -> rejected;
+   VisionRow with an unknown system_id -> rejected.
+
+Report these changes in your Phase 4 reply, in a short section "Steering applied".
+
+Agent Response Summary:
+Applied the steering to the work in progress. config.py loads the key from the uncommitted repo-root .env with a stdlib parser (a real env var wins) and never prints it; .env.example holds placeholders; ZENMUX_OFFLINE=1 forces snapshot replay. meta/muse-spark-1.3 is listed but the key gets HTTP 403 for it; I asked the user, who chose meta/muse-spark-1.3-contributor. The LLM contracts (RawState, VisionRow, VisionExtraction, IntentItem, IntentBatch, AgentProposal, LLMUsage, plus AgentAction) are Pydantic v2 extra=forbid models in schema.py with parse -> one retry with the error -> deterministic fallback + flag; a test scans code/ for key-like strings and package.py refuses .env in code.zip.
+
+Actions:
+* code/config.py, .env.example, code/schema.py, code/package.py
+* code/tests/test_secrets_packaging.py, code/tests/test_llm_contracts.py
+* AskUserQuestion: model choice after the 403 (answer: Use -contributor)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none

@@ -26,6 +26,8 @@ STATE_READBACK = "state_readback"    # an explicit FOUND / NOT_FOUND / ACTIVE ..
 ACTIVITY_READBACK = "activity_readback"
 OWNERSHIP_LINK = "ownership_link"    # links a resource to identifiers, says nothing about state
 OPERATION_CLAIM = "operation_claim"  # "worker reported success": never proof of state
+VISION_ROW = "vision_row"            # a model-read screenshot row, grounded in the file's OCR text
+AGENT_READBACK = "agent_readback"    # an accepted investigator STATE proposal (quoted raw text)
 
 PRIMARY = "primary"
 

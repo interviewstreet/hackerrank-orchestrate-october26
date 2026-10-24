@@ -5,6 +5,8 @@ Edges (only those with time <= audit_at count):
 * strong ``identifier``  - an observation row carries a subject email, user_id, phone or hash;
 * strong ``catalog_link`` - a LINK_RESOURCE_IDENTITY activity names the subject;
 * strong ``derived_from`` - a record names a linked resource as its source (``source_resource_id``);
+* medium ``vision_identifier`` - a grounded vision row (``extract_vision``) carries a subject identifier;
+* medium ``agent_link``  - an investigator LINK proposal that passed the code acceptance check;
 * medium ``job_burst``   - the deletion worker touched the resource within ``JOB_WINDOW`` of this
   case's ``reported_at``, no other known request reported inside that window, and the subject
   has no strong target in that system yet (a fallback for systems where no file names the
@@ -23,7 +25,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
-from evidence.common import OPERATION_CLAIM, OWNERSHIP_LINK, SNAPSHOT_ROW, STATE_READBACK, Identifiers
+from evidence.common import OPERATION_CLAIM, OWNERSHIP_LINK, SNAPSHOT_ROW, STATE_READBACK, VISION_ROW, Identifiers
 from facts import FactStore
 from identity import IdentityIndex, SubjectIdentity
 from loaders import Dataset, Request, email_hash, normalize_phone
@@ -32,7 +34,7 @@ STRONG, MEDIUM = "strong", "medium"
 JOB_LINK_ENABLED = True
 JOB_WINDOW = timedelta(minutes=10)
 JOB_SOURCE = "deletion_worker"
-LINKING_ASSERTIONS = (SNAPSHOT_ROW, STATE_READBACK, OWNERSHIP_LINK)
+LINKING_ASSERTIONS = (SNAPSHOT_ROW, STATE_READBACK, OWNERSHIP_LINK, VISION_ROW)
 
 
 @dataclass(frozen=True)
@@ -103,7 +105,8 @@ class LinkIndex:
     # ------------------------------------------------------------ targets
 
     def targets(self, subject: SubjectIdentity, req: Request, run_requests: list[Request],
-                flags: list[str]) -> dict[tuple[str, str], Target]:
+                flags: list[str], extra_edges: list[tuple] = ()) -> dict[tuple[str, str], Target]:
+        """``extra_edges``: accepted agent LINK proposals as (system, resource, source_id, at), medium."""
         cutoff = req.audit_at
         keys = subject_keys(subject)
         found: dict[tuple[str, str], Target] = {}
@@ -116,6 +119,10 @@ class LinkIndex:
         for obs in self.store.linked(keys, cutoff):
             if obs.assertion not in LINKING_ASSERTIONS:
                 continue
+            if obs.assertion == VISION_ROW:
+                # Model-read and grounded in OCR text, but still a reading: medium (plan 8.2).
+                edge(obs.system_id, obs.resource_id, "vision_identifier", MEDIUM, obs.obs_id, obs.state_observed_at)
+                continue
             kind = "catalog_link" if obs.assertion == OWNERSHIP_LINK else "identifier"
             edge(obs.system_id, obs.resource_id, kind, STRONG, obs.obs_id, obs.state_observed_at,
                  exclusive=bool(obs.fields.get("exclusive")))
@@ -125,8 +132,11 @@ class LinkIndex:
                 if obs.assertion in LINKING_ASSERTIONS and not (self.owners(obs.link_ids) - {subject.user_id}):
                     edge(obs.system_id, obs.resource_id, "derived_from", STRONG, obs.obs_id, obs.state_observed_at)
 
+        for system_id, resource_id, source_id, at in extra_edges:
+            edge(system_id, resource_id, "agent_link", MEDIUM, source_id, at)
+
         if JOB_LINK_ENABLED and req.reported_at is not None:
-            strong_systems = {t.system_id for t in found.values()}
+            strong_systems = {t.system_id for t in found.values() if t.tier == STRONG}
             for obs in self._job_burst(req, run_requests):
                 if obs.system_id in strong_systems:
                     continue
