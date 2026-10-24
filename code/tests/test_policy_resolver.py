@@ -205,6 +205,22 @@ class PolicyRowTest(unittest.TestCase):
         self.assertEqual((d.rule_id, d.outcome, d.finding, d.remediation, d.verification),
                          ("rule_12", COMPLIANT, None, None, Op.VERIFY_RECORD_PRESENT))
 
+    def test_rule_13_legal_hold_needs_an_active_hold(self):
+        def hold(**fields):
+            return self._one("legal_service", "legal_hold_1", exists=PRESENT, fields=fields)
+
+        active = hold(retained_until="2033-12-31T23:59:59Z")   # the dataset's form: an end date, no status
+        self.assertEqual((active.outcome, active.verification), (COMPLIANT, Op.VERIFY_RECORD_PRESENT))
+        self.assertEqual(hold(hold_status="ACTIVE").outcome, COMPLIANT)
+        for status in ("INACTIVE", "released"):
+            gone = hold(hold_status=status, retained_until="2033-12-31T23:59:59Z")
+            self.assertEqual((gone.outcome, gone.remediation), (VIOLATION, Op.DELETE_RECORD))
+        missing = hold()
+        self.assertEqual((missing.outcome, missing.reason, missing.verification),
+                         (UNPROVEN, "legal hold status missing", Op.VERIFY_RECORD_PRESENT))
+        ended = hold(retained_until="2026-01-01T00:00:00Z")
+        self.assertEqual((ended.outcome, ended.remediation), (VIOLATION, Op.DELETE_RECORD))
+
     def test_rule_12_missing_retained_record(self):
         _, d, item = run([], [scope("security_service", "evidence_3", subjects=SUBJECT)],
                          system="security_service", rid="audit_record_1")

@@ -19,6 +19,7 @@ from evidence.common import (
     DISABLED,
     IDENTIFIABLE,
     OPEN,
+    OPERATION_CLAIM,
     PRESENT,
     REDACTED,
     Identifiers,
@@ -101,7 +102,11 @@ CONTENT_CATEGORY: tuple[tuple[re.Pattern, str], ...] = tuple((re.compile(p, re.I
 ))
 AMBIGUOUS_CATEGORY = "?ambiguous"   # category_of: the catalog words name two or more categories
 NOT_WORDS = re.compile(r"\S+@\S+|\S*\d\S*|\([^)]*\)")
-RETENTION_KEYS = ("retention_until", "retain_until", "retention_expires_at")
+RETENTION_KEYS = ("retention_until", "retain_until", "retained_until", "retention_expires_at")
+# rule_13 retains a legal hold record only while "a supplied legal hold is active". The hold
+# status is an explicit status field, else the hold's retention end date (``retained_until``).
+HOLD_STATUS_KEYS = ("hold_status", "legal_hold_status", "status")
+HOLD_RELEASED = frozenset({"INACTIVE", "RELEASED"})
 
 
 @dataclass
@@ -182,6 +187,19 @@ def _retention_expired(state: ResourceState, cutoff) -> bool | None:
     return None
 
 
+def _hold_status(state: ResourceState) -> str:
+    """Explicit status of a legal hold (newest statement first), upper case, or ``""``.
+    A workflow operation claim is not a status."""
+    stated = [st for cs in state.copies.values() for st in cs.statements
+              if st.obs is not None and st.obs.assertion != OPERATION_CLAIM]
+    for st in sorted(stated, key=lambda s: (s.obs.state_observed_at, s.obs.obs_id), reverse=True):
+        for key in HOLD_STATUS_KEYS:
+            value = st.obs.fields.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip().upper()
+    return ""
+
+
 def _exposure_decision(d: Decision, state: ResourceState, check: str, exists: str) -> Decision:
     """REDACT / ANONYMIZE rules: the record stays; the exposure of each present copy decides."""
     if exists == ABSENT:
@@ -232,6 +250,15 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
 
     if check == "retain":
         expired = _retention_expired(state, cutoff)
+        if category == "LEGAL_HOLD_RECORD":
+            status = _hold_status(state)
+            if status in HOLD_RELEASED:   # an explicit released hold is not retained
+                expired = True
+                d.hypothesis.append(f"legal_hold_{status.lower()}")
+            elif not status and expired is None:   # no status and no end date: active is not proven
+                d.finding = d.remediation = None
+                d.reason = "legal hold status missing"
+                return d
         if expired:
             d.hypothesis.append("retention_expired_delete")
             d.finding, d.remediation, d.verification = (Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD,
