@@ -1,0 +1,26 @@
+{
+  "name": "ghost-data-still-exists",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "scripts": {
+    "dev": "node src/main.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.json",
+    "evaluate:samples": "python3 evaluation/evaluate_samples.py",
+    "evaluate:custom": "node --experimental-strip-types evaluation/custom_cases.ts",
+    "validate:output": "python3 evaluation/validate_output.py",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@tesseract.js-data/eng": "^1.0.0",
+    "csv-parse": "^6.1.0",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0"
+  }
+}

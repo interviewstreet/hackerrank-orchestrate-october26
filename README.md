@@ -23,7 +23,7 @@ cd hackerrank-orchestrate-october26
 
 Start your AI coding tool from the **repository root** so it automatically reads [`AGENTS.md`](./AGENTS.md) and logs your session turns to `log.txt` in the root directory.
 
-Build your solution in `code/main.py`, or use another language and document its setup and run command clearly in your README.
+The solution in this checkout uses TypeScript. Its entry point is `code/src/main.ts`.
 
 Your solution must:
 
@@ -31,11 +31,17 @@ Your solution must:
 - Generate one prediction row for every request in `dataset/deletion_requests.csv`
 - Write the final predictions to `output.csv` in the repository root
 
-Run the starter Python entry point with:
+From the repository root, install dependencies and run the TypeScript loader:
 
 ```bash
-python3 code/main.py
+npm --prefix code install
+npm --prefix code run typecheck
+npm --prefix code run dev
 ```
+
+The development command requires Node.js 24.12 or newer. The build command compiles the TypeScript source to JavaScript for the final run.
+
+The current agent validates the request, identity, history, activity, policy, and evidence-manifest CSVs. It indexes JSON, logs, text, SQL, PDFs, and images; links observations to current and historical identity aliases using both manifest capture time and each record's own timestamp against `audit_at`; applies the supplied deletion rules; and writes `output.csv` at the repository root. PDF extraction uses Poppler's `pdftotext` command, which must be available on `PATH`. Image OCR uses Tesseract.js and the local English model included through the npm dependencies, so it does not require network access at run time. Evaluation reports and a full review of generated predictions remain part of the submission work.
 
 The blank template at `dataset/output.csv` is provided as a reference. Your final generated file for submission must be the root-level `output.csv`.
 
