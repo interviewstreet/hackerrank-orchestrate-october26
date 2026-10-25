@@ -323,3 +323,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:34:00Z] Interview help: how the test-set output was checked
+
+User Prompt (verbatim, secrets redacted):
+"Thanks for being straightforward about that. Time is short, so one last check on correctness: beyond the 32 samples and your 7 custom cases, how did you check the test-set output, and roughly how many cases did you inspect by hand?"
+
+Agent Response Summary:
+Listed the actual checks: contract validator over all 518 rows (caught and fixed case_218), the independent NOT_APPLICABLE cross-check against CLASSIFY_REQUEST activities, a byte-identical rerun, agent hand review of about 31 scenario cases (case_33 to case_63, where the case_63 marketing conflict was found), and the status distribution. Stated the gap honestly: the other ~470 rows were only checked structurally and the user did not review rows personally. No code changes.
+
+Actions:
+* None beyond this log entry
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
