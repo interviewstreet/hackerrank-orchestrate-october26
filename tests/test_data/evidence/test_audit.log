@@ -1,0 +1,2 @@
+2026-01-10T10:00:00Z AUDIT security_service RETENTION audit_test_01 user_id=test_user_06 email=user6@example.com name=User Six phone=+1-555-0006 email_hash=f6789012345678901234567890abcdef1234567890abcdef1234567890ab action=RETAIN_RECORD reason=within_retention_period
+2026-01-10T10:00:00Z AUDIT security_service RETENTION audit_test_02 user_id=test_user_07 email=user7@example.com name=User Seven phone=+1-555-0007 email_hash=g789012345678901234567890abcdef1234567890abcdef1234567890abc action=RETAIN_RECORD reason=within_retention_period

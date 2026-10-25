@@ -1,0 +1,25 @@
+{
+  "search_index": [
+    {
+      "resource_id": "search_test_01",
+      "user_id": "test_user_01",
+      "email": "user1@example.com",
+      "name": "User One",
+      "deleted": false
+    },
+    {
+      "resource_id": "search_test_02",
+      "user_id": "test_user_02",
+      "email": "user2@example.com",
+      "name": "User Two",
+      "deleted": false
+    },
+    {
+      "resource_id": "search_test_03",
+      "user_id": "test_user_03",
+      "email": "user3@example.com",
+      "name": "User Three",
+      "deleted": true
+    }
+  ]
+}

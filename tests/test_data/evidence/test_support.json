@@ -1,0 +1,16 @@
+{
+  "support_cases": [
+    {
+      "resource_id": "support_test_01",
+      "user_id": "test_user_07",
+      "email": "user7@example.com",
+      "name": "User Seven",
+      "subject": "Delivery issue",
+      "messages": [
+        {"from": "user7@example.com", "text": "My delivery is late"},
+        {"from": "agent@example.com", "text": "We are looking into it"}
+      ],
+      "attachments": []
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+activity_id,event_time,event_type,source_system,target_system,resource_id,reported_result,details
+act_test_01,2026-01-10T10:00:00Z,SYNC_RECORD,account_service,analytics_platform,analytics_test_01,SUCCESS,Customer profile synchronization processed analytics_test_01 for user1@example.com
+act_test_02,2026-01-10T10:00:00Z,INDEX_RECORD,account_service,search_service,search_test_01,SUCCESS,Customer search-index refresh processed search_test_01 for user1@example.com
+act_test_03,2026-01-10T10:00:00Z,BACKUP,account_service,backup_service,backup_test_01,SUCCESS,Backup created backup_test_01 for user1@example.com
+act_test_04,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,account_service,account_test_01,SUCCESS,Deletion worker submitted primary profile account_test_01 to account_service for user1@example.com
+act_test_05,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,analytics_platform,analytics_test_01,SUCCESS,Policy action completed for analytics_test_01 for user1@example.com
+act_test_06,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,search_service,search_test_01,SUCCESS,Policy action completed for search_test_01 for user1@example.com
+act_test_07,2026-01-10T10:00:00Z,SYNC_RECORD,account_service,analytics_platform,analytics_test_02,SUCCESS,Customer profile synchronization processed analytics_test_02 for user2@example.com
+act_test_08,2026-01-10T10:00:00Z,INDEX_RECORD,account_service,search_service,search_test_02,SUCCESS,Customer search-index refresh processed search_test_02 for user2@example.com
+act_test_09,2026-01-10T10:00:00Z,BACKUP,account_service,backup_service,backup_test_02,SUCCESS,Backup created backup_test_02 for user2@example.com
+act_test_10,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,account_service,account_test_02,FAILED,Deletion worker failed to submit primary profile account_test_02 for user2@example.com
+act_test_11,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,analytics_platform,analytics_test_02,FAILED,Policy action failed for analytics_test_02 for user2@example.com
+act_test_12,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,search_service,search_test_02,FAILED,Policy action failed for search_test_02 for user2@example.com
+act_test_13,2026-01-10T10:00:00Z,SYNC_RECORD,account_service,analytics_platform,analytics_test_03,SUCCESS,Customer profile synchronization processed analytics_test_03 for user3@example.com
+act_test_14,2026-01-10T10:00:00Z,INDEX_RECORD,account_service,search_service,search_test_03,SUCCESS,Customer search-index refresh processed search_test_03 for user3@example.com
+act_test_15,2026-01-10T10:00:00Z,BACKUP,account_service,backup_service,backup_test_03,SUCCESS,Backup created backup_test_03 for user3@example.com
+act_test_16,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,account_service,account_test_03,SUCCESS,Deletion worker submitted primary profile account_test_03 to account_service for user3@example.com
+act_test_17,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,analytics_platform,analytics_test_03,SUCCESS,Policy action completed for analytics_test_03 for user3@example.com
+act_test_18,2026-01-10T10:00:00Z,DELETE_RECORD,deletion_worker,search_service,search_test_03,SUCCESS,Policy action completed for search_test_03 for user3@example.com
+act_test_19,2026-01-10T10:00:00Z,RESTORE,backup_service,account_service,backup_test_01,FAILED,Restore attempted for backup_test_01
+act_test_20,2026-01-10T10:00:00Z,EXPORT,account_service,export_service,export_test_01,SUCCESS,Export created export_test_01 for user4@example.com
+act_test_21,2026-01-10T10:00:00Z,SEND_EMAIL,notification_service,email_delivery_service,email_test_01,SUCCESS,Email sent to user5@example.com
+act_test_22,2026-01-10T10:00:00Z,RETAIN_RECORD,security_service,archive_service,audit_test_01,SUCCESS,Security audit record retained for user6@example.com
+act_test_23,2026-01-10T10:00:00Z,UPDATE_RECORD,support_platform,search_service,support_test_01,SUCCESS,Support case updated for user7@example.com
+act_test_24,2026-01-10T10:00:00Z,UPDATE_RECORD,profile_service,account_service,account_test_11,SUCCESS,Profile updated for user11_old@example.com

@@ -1,0 +1,29 @@
+{
+  "scale": "small",
+  "config": {
+    "users": 1000,
+    "requests": 1000,
+    "activities": 5000,
+    "evidence": 20
+  },
+  "benchmark_results": {
+    "avg_total": 8.337380170822144,
+    "avg_load": 0.15663838386535645,
+    "avg_process": 8.180741786956787,
+    "runs": [
+      {
+        "total": 8.337380170822144,
+        "load": 0.15663838386535645,
+        "process": 8.180741786956787
+      }
+    ]
+  },
+  "estimation_50m": {
+    "estimated_load_time_seconds": 6507.518239987649,
+    "estimated_process_time_seconds": 2045185446.7391968,
+    "estimated_total_time_seconds": 2045191954.2574368,
+    "estimated_total_time_hours": 568108.8761826213,
+    "load_scale_factor": 41544.85049833887,
+    "process_scale_factor": 250000000.0
+  }
+}

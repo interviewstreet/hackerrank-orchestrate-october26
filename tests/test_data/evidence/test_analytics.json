@@ -1,0 +1,34 @@
+{
+  "analytics_profiles": [
+    {
+      "resource_id": "analytics_test_01",
+      "user_id": "test_user_01",
+      "email": "user1@example.com",
+      "name": "User One",
+      "phone": "+1-555-0001",
+      "email_hash": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+      "anonymized": false,
+      "data": {"purchases": 10, "total_spent": 500.00}
+    },
+    {
+      "resource_id": "analytics_test_02",
+      "user_id": "test_user_02",
+      "email": "user2@example.com",
+      "name": "User Two",
+      "phone": "+1-555-0002",
+      "email_hash": "b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567",
+      "anonymized": false,
+      "data": {"purchases": 5, "total_spent": 250.00}
+    },
+    {
+      "resource_id": "analytics_test_03",
+      "user_id": "test_user_03",
+      "email": "user3@example.com",
+      "name": "User Three",
+      "phone": "+1-555-0003",
+      "email_hash": "c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345678",
+      "anonymized": true,
+      "data": {"purchases": 8, "total_spent": 400.00}
+    }
+  ]
+}

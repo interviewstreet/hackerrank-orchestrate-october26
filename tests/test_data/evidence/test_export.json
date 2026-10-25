@@ -1,0 +1,14 @@
+{
+  "exports": [
+    {
+      "resource_id": "export_test_01",
+      "user_id": "test_user_04",
+      "email": "user4@example.com",
+      "name": "User Four",
+      "phone": "+1-555-0004",
+      "email_hash": "d4e5f6789012345678901234567890abcdef1234567890abcdef123456789",
+      "exported_at": "2026-01-10T10:00:00Z",
+      "status": "available"
+    }
+  ]
+}
