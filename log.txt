@@ -208,3 +208,23 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:23:00Z] Interview help: the template-frequency threshold of five
+
+User Prompt (verbatim, secrets redacted):
+"Good, that's a solid independent check. Before we move on, I want to understand one more design choice: for the free-form intent step, you used a template-frequency rule for 517 texts. Where does that threshold of five come from, and why did you pick it?
+"
+
+Agent Response Summary:
+Drafted a spoken answer: the standard openings each occur 12 to 54 times and every other opening exactly once, so any threshold from 2 to 12 gives the same split (517 by rule, 33 to Claude); 5 was picked as a margin, not tuned. Also suggested volunteering the weakness that only the first sentence is checked, with the fix (require the whole text to be template sentences, or classify all 550 for about $2). No code changes.
+
+Actions:
+* None beyond this log entry
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
