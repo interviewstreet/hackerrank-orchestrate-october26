@@ -119,6 +119,14 @@ Phase 5 rules:
 - Stale link: a target whose links all predate `requested_at` is excluded entirely, even when evidence shows it `PRESENT` (flag `stale_link:<id>` in the trace).
 - Vision prompt `vision_extract_v2`: the model gets the catalog alias table (file name / statement number -> resource id, `facts.catalog_alias_rows`). A row may use a mapped id only when the exact alias is visible; grounding checks the alias in the OCR text, and the row is available no earlier than the alias.
 - `window_assignment` (global one-to-one account assignment by time distance to `reported_at`) is implemented behind `links.WINDOW_ASSIGNMENT_ENABLED = False`: sample precision 5/15, below the 0.9 gate.
+- Vision grounding (#9): a row is accepted only when one OCR block holds the resource id (or a visible catalog alias) and its state cue, and the identifier is in that block or, on a page that names no other record, anywhere on the page. Blocks are the Tesseract `--psm 3` TSV blocks plus each `--psm 6` line. In a block that lists other records (a table), the cue must be on the record's own line, so a state is never taken from another row. OCR readings are shipped in `ocr_snapshot.json` for reproducible replay.
+
+### Policy readings where the evidence does not state the condition
+
+| Rule | Rule text (`deletion_rules.csv`) | Reading in code | Why |
+| --- | --- | --- | --- |
+| rule_06 (#7) | `SUPPORT_ATTACHMENT`, "Attachment belongs only to the deletion subject", `DELETE` | Exclusive when a catalog link says so, or when a strong `identifier` edge links the attachment to the subject and no other user is linked (`policy.attachment_exclusive`). Otherwise `UNPROVEN`: no finding, no remediation, case not `COMPLETE`. | No evidence file states "exclusive". A catalog-only reading removes gold-correct attachment steps in samples case_07 and case_13. |
+| rule_13 (#8) | `LEGAL_HOLD_RECORD`, "A supplied legal hold is active", `RETAIN` | Not active (delete path) when the newest non-claim state has status INACTIVE or RELEASED, or a retention end date (`retention_until`, `retained_until`, ...) at or before `audit_at`. Retained when a status or an end date exists and neither of these holds. No status and no end date: `UNPROVEN` ("legal hold status missing"). | No evidence file states a hold status; the legal-hold register (a PDF) gives "Retain until" dates, so the end date is the only stated condition. |
 
 ## 6. Failure modes and guards
 
@@ -128,7 +136,7 @@ Phase 5 rules:
 | 2 | Model invents an id or a state | Schema + id patterns; grounding against OCR/PDF text; acceptance check; model never writes steps |
 | 3 | Missing primary row hides a surviving replica | Resolve each physical copy separately; absence only inside a file's declared scope. A subject-scoped listing covers only the subjects of that system's (and collection's) own rows, never a sibling system's in the same file (#6) |
 | 4 | Unlinked record makes a case look COMPLETE | `UNKNOWN` targets go to the agent, then the trace and report; never a silent COMPLETE |
-| 5 | One bad case or no network kills the run | Per-case try/except: fallback `INCOMPLETE` with empty-evidence verification for the known targets; no known target stops the run (`CaseFailure`); `OutputRow` guard; strict `validate.py` before success; one failing OCR image is a coverage error; snapshot replay with no key |
+| 5 | One bad case or no network kills the run | Per-case try/except: fallback `INCOMPLETE` with empty-evidence verification for the known targets (`INCOMPLETE,[]` when none); the batch never stops, every row is written, failed cases go to `<out>_failures.csv` and the exit code is 1; `OutputRow` guard; strict `validate.py` before success; one failing OCR image is a coverage error; snapshot replay with no key |
 | 6 | Row order or serialization drift | Numeric `case_id` sort; `schema.step_sort_key`; `validate.py` on every run; byte-hash regression check |
 
 ## 7. Evaluation plan
