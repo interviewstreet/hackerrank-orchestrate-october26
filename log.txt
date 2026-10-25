@@ -947,3 +947,42 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T03:05:58Z] Final phase report; Codex review r2 failed on the usage limit
+
+User Prompt (verbatim, secrets redacted):
+Delegated task node:delegated-task:command%3Amcp%3A16142add-976c-4639-9f66-623cbb39165d%3Adelegate-task%3Acodex-review-r2 (Codex review r2: deletion-audit agent) [failed]: <Codex usage limit; try again at 8:29 AM>
+
+Agent Response Summary:
+Sent the 8-item final-phase report (commits, gate, vision rows, generalization audit and ablation, final run usage and hash cause, scores, code.zip and clean-room result). The Codex round-2 review stopped on the Codex usage limit, so no findings or verdict existed. Asked the user whether to retry the same round after the reset.
+
+Actions:
+* No file changes; reported results from the committed release (fe27024, 108c9be)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+## [2026-10-25T03:05:58Z] Codex review r2 result and triage (no fixes)
+
+User Prompt (verbatim, secrets redacted):
+Delegated task node:delegated-task:limit-resume%3A...codex-review-r2... (Codex review r2: deletion-audit agent) [completed]: <11 findings and the release verdict SHIP WITH FIXES; full text in the chat reply>
+
+Agent Response Summary:
+Received the Codex round-2 review (codex / gpt-5.6-sol / reasoningEffort high; resumed after the usage limit). Verified each finding by code reading and offline monkeypatch probes with the agent off. Measured: the strict unknown-copy rule breaks 3 gold samples (the unknown copies are ABSENT replicas) but a present-copy-only guard changes 0 rows; collection-scoped absence and status-first legal hold change 0 rows; catalog-only exclusivity and no system default lower sample scores; deletion-worker claims carry no email, user id or hash. Triage: 3 ACCEPT, 7 REJECT, 1 NEEDS-DATA. No code was changed; the fixes wait for the user's decision.
+
+Actions:
+* Read: code/policy.py, code/resolver.py, code/links.py, code/citation.py, code/main.py, code/evidence/common.py (Scope)
+* Ran: temp probe_r2.py (6 variants, offline, agent off) and probe_r2_copies.py; cmp.py against the base run (base hash equals output.csv); a key scan of deletion_worker rows in dataset/system_activity.csv
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
