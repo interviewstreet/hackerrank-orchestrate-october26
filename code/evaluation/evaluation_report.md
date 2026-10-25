@@ -5,7 +5,7 @@ Every number here is reproducible with the commands below.
 ```text
 python code/evaluation/main.py            # samples scorer + custom cases + metamorphic checks (snapshot replay)
 python code/validate.py output.csv        # strict contract check on the 518 rows
-python -m pytest code/tests               # 180 tests
+python -m pytest code/tests               # 182 tests
 ```
 
 `code/evaluation/main.py` writes `code/evaluation/results.md` and `results.json`.
@@ -326,6 +326,26 @@ hold's end date (`retained_until`) as the status when no status field exists. `l
 subject only by a worker claim in `system_activity.csv` get no step (section 12, first
 table). We accept it rather than guess an owner.
 
+**Category source coverage (round-2 finding #8).** Most targets get their category from the
+system default, not from structured metadata. Counted with `policy.category_source` over
+the non-stale targets of the final offline run:
+
+| Source | Samples (83 targets) | 518 (1,249 targets) |
+| --- | --- | --- |
+| Structured (`record_type` / `data_category` in a row) | 18 | 240 |
+| Collection name | 0 | 7 |
+| Catalog words (`CONTENT_CATEGORY`) | 0 | 0 |
+| Two named categories (UNPROVEN) | 0 | 0 |
+| System default (`SYSTEM_CATEGORY`) | 65 | 1,002 |
+
+On the 518 the system defaults are: security_service 253, search_service 240,
+integration_service 129, account_service 121, support_platform 103 (as SUPPORT_MESSAGE),
+analytics_platform 61, backup_service 53, export_service 28, identity_service 9,
+legal_service 5. The risk is on `support_platform`: an attachment that states no type and no
+`ticket_attachments` collection gets the SUPPORT_MESSAGE rule (redact) instead of the
+attachment rule (delete). Removing the default is not a fix: it drops the samples to status
+22/32 and exact F1 0.281 and changes 453 of the 518 rows. No behavior change was made.
+
 ## 13. Generalization audit
 
 The 32 samples are regression checks. The 518 hidden cases are graded. Each data-driven rule
@@ -352,3 +372,28 @@ Rules that rest on 1-2 samples or none: the stale window (2 samples, but backed 
 catalog rows), the `job_burst` link (7 sample links), the citation order (1 sample) and the
 legal-hold reading (0 samples, rule text only). No decision code holds a case id, resource id
 or request text (`test_generalization.py`).
+
+## 14. Round 2 review
+
+A second independent review (Codex, `gpt-5.6-sol`, reasoning effort high) read the release
+commit. Its verdict: ship with fixes. Each finding was checked against the code and measured
+with an offline replay (agent off) that patches in the proposed fix. The base of each probe
+equals the final output byte for byte.
+
+| # | Finding | Verdict | Measured reason |
+| --- | --- | --- | --- |
+| 1 | One DISABLED / BLOCKED copy hides a copy with an unknown process state | Accepted, narrow form (2d35ddf) | The strict form (every copy DISABLED / BLOCKED) breaks 3 gold samples (case_26-28: status 32 -> 29) and changes 31 rows: their unknown copies are ABSENT replicas. Narrow form: a copy that is not ABSENT must be DISABLED / BLOCKED. 0 rows change |
+| 2 | A subject-scoped listing of one collection proves absence in another | Accepted (a45698c) | `Scope.collection` was not checked. Now a collection listing covers only a target of the same, known collection. 0 rows change |
+| 3 | A subject identifier does not prove attachment exclusivity | Rejected | The catalog-only reading lowers the samples (exact F1 0.704 -> 0.653, sequence 15 -> 13) and changes 11 rows. Round-1 #7 reading kept; an attachment linked to another known user is already excluded |
+| 4 | An active legal hold with an old end date is deleted | Accepted (2bbdc71) | The end date was read before the status. Now an explicit status governs and a contradiction is UNPROVEN, never a delete. 0 rows change |
+| 5 | The stale-link window is sample-fitted | Rejected | Kept as in section 11 (the 12 catalog link rows; window off: exact F1 0.661). **Disagreement stays open:** the samples support the cutoff, but the rule text does not state it |
+| 6 | `job_burst` gives ownership from timing | Rejected | No grounded key exists: the 1,466 `deletion_worker` rows carry 0 emails, 0 user ids and 0 hashes. Burst off: samples status 32 -> 29. The links stay medium tier, flagged, with the guards |
+| 7 | The activity-only recall loss is material | Rejected (accepted loss) | Same data fact as #6: no key for a grounded join. Agent target discovery would be a new, unvalidated feature at release |
+| 8 | Category inference is brittle on unseen wording | No behavior change; count added | Structured metadata already comes first. No system default: status 22/32, exact F1 0.281, 453 rows. Coverage count in section 12 |
+| 9 | Citation order can cite older proof | Kept (tier, then newest) | Newest-first changes 2 evidence ids on the 518 and 0 samples. No labeled case decides the order |
+| 10 | OCR grounding drops image-supported rows | Rejected | Known limit (section 12). A looser digit match can name another user's record |
+| 11 | The fallback row `INCOMPLETE,[]` is contract-invalid | Rejected | The batch never stops (fix #10): the run exits 1 and lists the case. The final run has 0 failures |
+
+After the three fixes the offline output is unchanged: `output.csv` SHA-256
+`1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`, samples
+`d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`.

@@ -112,7 +112,7 @@ SHA-256 `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`.
 ```text
 python code/evaluation/main.py            # sample scores, 7 custom cases, 19 metamorphic checks
 python code/validate.py output.csv        # strict contract check
-python -m pytest code/tests               # 180 tests (they always replay; no network)
+python -m pytest code/tests               # 182 tests (they always replay; no network)
 python code/package.py                    # builds code.zip with a secret scan
 ```
 

@@ -154,22 +154,30 @@ class Decision:
 
 
 def category_of(state: ResourceState) -> str:
+    return category_source(state)[0]
+
+
+def category_source(state: ResourceState) -> tuple[str, str]:
+    """(category, source). Source: ``structured`` (a stated record type or data category),
+    ``collection``, ``content`` (catalog words), ``ambiguous`` or ``system_default``."""
     for cs in state.copies.values():
         for st in cs.statements:
             if st.obs is None:
                 continue
             for value in (st.obs.record_type, st.obs.fields.get("record_type"), st.obs.fields.get("data_category")):
                 if isinstance(value, str) and value in RULES:
-                    return value
+                    return value, "structured"
     if state.record_type in RULES:
-        return state.record_type
+        return state.record_type, "structured"
     system = state.target.system_id
     if (system, state.collection) in COLLECTION_CATEGORY:
-        return COLLECTION_CATEGORY[(system, state.collection)]
+        return COLLECTION_CATEGORY[(system, state.collection)], "collection"
     named = content_categories(state.target.descriptions)
     if len(named) > 1:   # the words name two categories: no category, the record stays unproven
-        return AMBIGUOUS_CATEGORY
-    return named.pop() if named else SYSTEM_CATEGORY.get(system, "")
+        return AMBIGUOUS_CATEGORY, "ambiguous"
+    if named:
+        return named.pop(), "content"
+    return SYSTEM_CATEGORY.get(system, ""), "system_default"
 
 
 def content_categories(texts) -> set[str]:
