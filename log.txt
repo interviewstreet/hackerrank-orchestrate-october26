@@ -228,3 +228,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:26:00Z] Interview help: a real case where snapshot coverage changed the result
+
+User Prompt (verbatim, secrets redacted):
+I want to explore what makes your approach innovative. Your absence proof uses snapshot coverage instead of just not finding a record. Can you name one real case where that changed the result compared with a simpler approach?
+
+Agent Response Summary:
+Ablated the coverage rule on the samples: statuses stay 32/32, but exact rows drop from 28/32 to 25/32 and step F1 from 0.987 to 0.971; cases 01, 02 and 31 would cite the worker's own SUCCESS activity instead of the snapshot the reference cites, and 68 test rows change. Drafted an answer using case_01 (account_001 proven absent by evidence_54, the failover replica dump, instead of activity_3342). No code changes.
+
+Actions:
+* Ran an in-memory ablation of fill_absence_evidence against sample_output.csv
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
