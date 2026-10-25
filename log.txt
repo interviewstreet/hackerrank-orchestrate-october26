@@ -1290,3 +1290,22 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T04:01:55Z] Prompt for the round-3 fixes and the current baseline metrics (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+give me a promt to tell it to fix these and also give me the new metrics for this
+
+Agent Response Summary:
+Wrote a ready-to-paste prompt for the session that ran round 3. It applies the doc fix (#10 plus the intent.py:266 docstring) and the two 0-row hardenings (#3 newest retention date, a contradiction left UNPROVEN; #4 conflicting structured categories to UNPROVEN), each in its own commit with a test that fails first. It also asks for a round-3 report section with the rule_12 disagreement, the same hash gate and stop rule, a code.zip rebuild, a clean-room test, and a metrics table in the reply. Gave the current baseline metrics so the new numbers can be compared. No code was changed.
+
+Actions:
+* No file changes; prompt and baseline metrics given in the chat reply
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
