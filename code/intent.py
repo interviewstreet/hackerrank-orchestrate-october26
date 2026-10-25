@@ -263,5 +263,9 @@ def classify(text: str) -> IntentResult:
 
 
 def treat_as_deletion(result: IntentResult) -> bool:
-    """Phase 1 policy: AMBIGUOUS counts as deletion (flagged). Phase 4 replaces this with the LLM."""
+    """A deletion label counts, and so does AMBIGUOUS (flagged).
+
+    ``main.run_case`` first replaces AMBIGUOUS with an accepted model label. A screened,
+    low-confidence or missing label stays AMBIGUOUS and counts as deletion, so an injected or
+    unclear text cannot suppress a real request; the evidence still decides the status."""
     return result.is_deletion or result.label == AMBIGUOUS

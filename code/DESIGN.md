@@ -65,17 +65,18 @@ Phase 4 rules:
 
 ## 4. Investigator agent loop (`agent/`, D19)
 
-Runs only for items the deterministic pass leaves `UNKNOWN`/`CONFLICT` or AMBIGUOUS.
+Runs only for items the deterministic pass leaves unproven (`UNKNOWN`/`CONFLICT`); never for intent.
 
-Tools (narrow, read-only except the last):
+Tools (narrow, read-only except `submit_proposal`):
 1. `search_evidence(query)` - exact-id grep, then BM25 over raw text and facts.
 2. `read_evidence(file_id)` - parsed rows of one file (vision rows for PNG/PDF).
 3. `query_facts(resource_id | identifier)` - fact-store rows and ownership edges.
 4. `submit_proposal(proposal)` - a typed `AgentProposal`: `LINK` or `STATE`. There is no
    intent proposal: both request files have 0 AMBIGUOUS texts (cut per the Phase 4 order).
+5. `stop` - end the loop with no proposal.
 
-Caps: 4 tool iterations per item, 2 retries for invalid output, timeout per call,
-token budget per case. Over budget means the item stays `UNKNOWN`.
+Caps: 4 tool iterations per item, 1 schema retry (with the validation error) + 2 transport
+retries, timeout per call, token budget per case. Over budget means the item stays `UNKNOWN`.
 
 Acceptance check (code, per proposal):
 - Every cited id was opened in this loop and has availability time `<= audit_at`.
@@ -117,7 +118,7 @@ Phase 3 rules:
 Phase 5 rules:
 
 - Stale link: a target whose links all predate `requested_at` is excluded entirely, even when evidence shows it `PRESENT` (flag `stale_link:<id>` in the trace).
-- Vision prompt `vision_extract_v2`: the model gets the catalog alias table (file name / statement number -> resource id, `facts.catalog_alias_rows`). A row may use a mapped id only when the exact alias is visible; grounding checks the alias in the OCR text, and the row is available no earlier than the alias.
+- Vision prompt `vision_extract_v3`: the model gets the catalog alias table (file name / statement number -> resource id, `facts.catalog_alias_rows`). A row may use a mapped id only when the exact alias is visible; grounding checks the alias in the OCR text, and the row is available no earlier than the alias.
 - `window_assignment` (global one-to-one account assignment by time distance to `reported_at`) is implemented behind `links.WINDOW_ASSIGNMENT_ENABLED = False`: sample precision 5/15, below the 0.9 gate.
 - Vision grounding (#9): a row is accepted only when one OCR block holds the resource id (or a visible catalog alias) and its state cue, and the identifier is in that block or, on a page that names no other record, anywhere on the page. Blocks are the Tesseract `--psm 3` TSV blocks plus each `--psm 6` line. In a block that lists other records (a table), the cue must be on the record's own line, so a state is never taken from another row. OCR readings are shipped in `ocr_snapshot.json` for reproducible replay.
 
