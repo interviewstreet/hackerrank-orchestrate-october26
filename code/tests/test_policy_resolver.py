@@ -16,6 +16,7 @@ from evidence.common import (
     PRESENT,
     SNAPSHOT_ROW,
     STATE_READBACK,
+    VISION_ROW,
     Identifiers,
     Observation,
     Scope,
@@ -96,6 +97,22 @@ class ResolverTest(unittest.TestCase):
         self.assertEqual(d.outcome, UNPROVEN)
         state, d, item = run([], [scope("account_service", "evidence_7", subjects=SUBJECT)])
         self.assertEqual((d.outcome, item.evidence_id), (COMPLIANT, "evidence_7"))
+
+    def test_screen_row_region_with_a_subject_identifier_is_an_exposure(self):
+        # r5-#1: a present screen row with no parsed identifier. The subject's email in the row's
+        # region is an exposure; a name alone, or another user's email, is not.
+        def screen(region):
+            o = obs("support_platform", "support_1", assertion=VISION_ROW, file_id="evidence_28", exposed=None,
+                    record_type="SUPPORT_MESSAGE", exists=PRESENT)
+            o.fields = {"source_text": "support_1 Ana Silva", "id_region": region}
+            return run([o], system="support_platform", rid="support_1")
+
+        _, d, item = screen("support_1 Ana Silva\nEmail ana@example.com")
+        self.assertEqual((d.outcome, d.finding, item.evidence_id),
+                         (VIOLATION, Op.REPORT_EXPOSED_PII, "evidence_28"))
+        for region in ("support_1 Ana Silva", "support_1 Ana Silva\nEmail bob@example.com"):
+            _, d, item = screen(region)
+            self.assertEqual((d.outcome, item.evidence_id), (UNPROVEN, ""))
 
     def test_collection_scope_covers_only_its_own_collection(self):
         # r2-#2: a later attachment listing says nothing about a message in another collection.

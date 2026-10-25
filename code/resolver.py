@@ -33,6 +33,7 @@ from evidence.common import (
     Observation,
     Scope,
 )
+from evidence.extract_vision import grounded
 from facts import FactStore
 from links import Target
 
@@ -87,9 +88,23 @@ def _scope_applies(scope: Scope, keys: Identifiers) -> bool:
     return any(getattr(scope.subjects, k) & getattr(keys, k) for k in ("emails", "user_ids", "phones", "hashes"))
 
 
+def shown_identifiers(obs: Observation, keys: Identifiers) -> Identifiers | None:
+    """r5-#1: a present screen row that names no identifier of its own. The subject's strong
+    identifiers (email, phone, email hash) in the row's OCR region (``extract_vision.row_region``)
+    are identifiers the record shows. A name alone does not count. ``None``: none shown."""
+    if obs.assertion != VISION_ROW or obs.exists != PRESENT or obs.exposed_ids is not None:
+        return None
+    region = str(obs.fields.get("id_region") or "")
+    shown = Identifiers(emails={e for e in keys.emails if grounded(e, region)},
+                        phones={p for p in keys.phones if grounded(p, region)},
+                        hashes={h for h in keys.hashes if grounded(h, region)})
+    return shown if shown.direct() else None
+
+
 def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
                    extra: Sequence[Observation] = ()) -> tuple[list[Statement], list]:
-    """``extra``: case-local observations (accepted agent STATE proposals), same cutoff rules."""
+    """``extra``: case-local observations (accepted agent STATE proposals), same cutoff rules.
+    Only targets that are already linked reach this point: an exposure never creates a target."""
     out: list[Statement] = []
     observations = store.for_resource(target.resource_id, cutoff)
     observations += [o for o in extra if o.resource_id == target.resource_id and store.admissible(o, cutoff)]
@@ -97,6 +112,9 @@ def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
         if obs.system_id != target.system_id or obs.assertion not in RANK:
             continue
         values = {a: getattr(obs, a) for a in ATTRIBUTES if getattr(obs, a) is not None}
+        shown = shown_identifiers(obs, keys)
+        if shown is not None:
+            values["exposed_ids"] = shown
         if obs.exists == ABSENT:
             values.pop("exposed_ids", None)
         out.append(Statement(obs.physical_copy, obs.state_observed_at, RANK[obs.assertion], obs.file_id,

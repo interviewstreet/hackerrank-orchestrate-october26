@@ -164,9 +164,10 @@ def state_fields(s: RawState, category: str) -> dict | None:
 
 
 def to_observation(ev: EvidenceFile, row: VisionRow, n: int, category: str,
-                   available_at: datetime | None = None) -> Observation | None:
+                   available_at: datetime | None = None, region: str = "") -> Observation | None:
     """``available_at``: later than ``captured_at`` when the row was read through a catalog alias
-    published after the capture (the reading cannot exist before its alias)."""
+    published after the capture (the reading cannot exist before its alias). ``region``: the OCR
+    text where the row's identifiers count (``row_region``); the resolver reads it (r5-#1)."""
     fields = state_fields(row.observed_state, category)
     if fields is None:
         return None
@@ -183,7 +184,8 @@ def to_observation(ev: EvidenceFile, row: VisionRow, n: int, category: str,
         system_id=row.system_id,
         resource_id=row.resource_id, assertion=VISION_ROW, record_type=row.category or "",
         link_ids=link, exposed_ids=exposed, fields={"source_text": row.source_text, "row_time": shown_at,
-                                                    "observed_state": row.observed_state.value},
+                                                    "observed_state": row.observed_state.value,
+                                                    "id_region": region},
         detail="vision row", **fields)
 
 
@@ -264,7 +266,15 @@ def _cue(row: VisionRow, scope: str, region: str) -> bool:
 
 
 def row_block(row: VisionRow, text: str, layout: str | None, aliases: list[Alias]) -> str | None:
-    """The OCR block that grounds the row, or None.
+    """The OCR block that grounds the row, or None (see ``row_region``)."""
+    found = row_region(row, text, layout, aliases)
+    return found[0] if found else None
+
+
+def row_region(row: VisionRow, text: str, layout: str | None,
+               aliases: list[Alias]) -> tuple[str, str] | None:
+    """(block, region) for the row, or None. The region is where the row's identifiers count:
+    the block, or the whole page when the page names no other record (r5-#1).
 
     Candidate blocks: every ``--psm 3`` layout block, and every ``--psm 6`` text line as a block of
     its own (two segmentations of the same image). A block grounds the row when:
@@ -293,7 +303,7 @@ def row_block(row: VisionRow, text: str, layout: str | None, aliases: list[Alias
             continue
         for line in lines:
             if any(grounded(n, line) for n in names) and _cue(row, line if listing else block, region):
-                return block
+                return block, region
     return None
 
 
@@ -328,17 +338,19 @@ def extract(ev: EvidenceFile, path, local_text: str | None, client: LLMClient, k
     for n, row in enumerate(extraction.rows, start=1):
         reason = ""
         ok, alias_at = _grounding_time(row, local_text, aliases)
+        found = row_region(row, local_text, layout, aliases) if ok else None
         if not ok:
             reason = "resource_id not in OCR text"
         elif row.identifier and not grounded(row.identifier, local_text):
             reason = "identifier not in OCR text"
-        elif row_block(row, local_text, layout, aliases) is None:
+        elif found is None:
             reason = "no OCR block holds the id with its state cue, identifier and source_text"
         elif safety.screen(row.source_text):
             reason = "injection pattern in source_text"
         obs = None
-        if not reason:
-            obs = to_observation(ev, row, n, row.category or system_category.get(row.system_id, ""), alias_at)
+        if not reason and found is not None:
+            obs = to_observation(ev, row, n, row.category or system_category.get(row.system_id, ""), alias_at,
+                                 region=found[1])
             if obs is None:
                 reason = "unreadable state"
         if reason or obs is None:

@@ -222,6 +222,22 @@ class AdversarialTest(unittest.TestCase):
         listing = text + "\nsupport_78 Closed"
         self.assertIsNone(extract_vision.row_block(r, listing, layout, []))
 
+    def test_row_region_is_the_page_only_on_a_single_record_page(self):
+        # r5-#1: identifiers count for a row inside its grounding block, or on a page that shows no
+        # other record (the identifier rule of row_block). A listing gives the block only.
+        layout = tsv([(1, 1, "support_77 Normal priority"), (2, 1, "Email ana.test@example.org")])
+        text = "support_77 Normal priority\nEmail ana.test@example.org"
+        r = vrow(row(system_id="support_platform", resource_id="support_77", observed_state="PRESENT",
+                     identifier=None, source_text="support_77 Normal priority"))
+        self.assertEqual(extract_vision.row_region(r, text, layout, []), ("support_77 Normal priority", text))
+        listing = text + "\nsupport_78 Closed"
+        _, region = extract_vision.row_region(r, listing, layout, [])
+        self.assertNotIn("ana.test", region)
+        obs = extract_vision.to_observation(EvidenceFile("evidence_99", "images/x.png", "support_platform", AT),
+                                            r, 1, "SUPPORT_MESSAGE", region=text)
+        self.assertIsNone(obs.exposed_ids)   # the row names no identifier: the resolver decides (r5-#1)
+        self.assertEqual(obs.fields["id_region"], text)
+
     def test_model_row_naming_another_users_resource_is_rejected(self):
         keys = Identifiers(emails={"ana.test@example.org"}, user_ids={"user_5"})
         corpus = SimpleNamespace(visible=lambda e, c: True, store=SimpleNamespace(for_resource=lambda r, c: []))
