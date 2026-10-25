@@ -31,7 +31,12 @@ def _context(hit):
         "within_retention_period": _boolean(record.get("within_retention_period")),
         "legal_hold_active": _boolean(record.get("legal_hold_active")),
         "restore_can_be_blocked": _boolean(record.get("restore_can_be_blocked")),
-        "only_stable_id_needed": state in {"REDACTED", "TOMBSTONE", "ANONYMIZED"},
+        # A tombstone's stable internal reference is the reason for retaining it; the
+        # presence of direct PII determines compliance, not whether retention applies.
+        "only_stable_id_needed": bool(
+            record.get("user_id") or record.get("subject_reference")
+            or record.get("customer_reference") or state in {"REDACTED", "TOMBSTONE"}
+        ),
         "attachment_belongs_only_to_subject": _boolean(record.get("attachment_belongs_only_to_subject")),
         "record_still_attributable": state not in {"ANONYMIZED", "ABSENT"},
         "log_contains_email": bool(record.get("email") or hit.get("identifiers_found")),
@@ -75,6 +80,13 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
                 findings.append({**resource, "type": "restore_risk"})
         else:
             action = get_required_action(category, _context(hit), deletion_rules)
+            # When conditional anonymization/redaction has already succeeded, preserve
+            # that evidence-backed treatment in verification rather than weakening the
+            # check to generic presence merely because the trigger is now false.
+            if state == "ANONYMIZED" and category in {"ANALYTICS_PROFILE", "PRODUCT_TELEMETRY"}:
+                action = "ANONYMIZE"
+            elif state == "REDACTED" and category == "ACCOUNT_TOMBSTONE":
+                action = "REDACT"
             resource["required_action"] = action
             if state in EXPECTED[action]:
                 compliant.append(resource)

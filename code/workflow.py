@@ -65,16 +65,30 @@ def _account_from_anchors(case, activity, evidence_index):
         if event.get("target_system") != "account_service"
         and _time(event["event_time"]) <= _time(case["audit_at"])
     ]
+    # Prefer the account connected to the greatest number of independently evidenced
+    # resources.  A single coincidental cadence match must not outrank a chain with
+    # support, analytics, connector, and backup anchors.
     scored = []
     for account in accounts:
+        matches = []
+        seen_resources = set()
         for anchor in anchors:
             score = _dependency_score(account, anchor)
-            if score is not None:
-                scored.append((score, account))
+            resource_id = anchor.get("resource_id", "")
+            if score is not None and resource_id not in seen_resources:
+                matches.append(score)
+                seen_resources.add(resource_id)
+        if matches:
+            scored.append(((-len(matches), sum(item[0] for item in matches),
+                            max(item[1] for item in matches)), account))
     if not scored:
         return None
-    scored.sort(key=lambda item: (item[0], item[1].get("activity_id", "")))
-    best_score = scored[0][0]
+    # Without an explicit workflow ID, two different account candidates connected to
+    # disjoint anchors are ambiguous even when one happens to have more cadence hits.
+    # Do not turn a heuristic score into cross-user lineage.
+    if len({item[1].get("resource_id", "") for item in scored}) != 1:
+        return None
+    best_score = min(item[0] for item in scored)
     best = {item[1].get("resource_id", ""): item[1]
             for item in scored if item[0] == best_score}
     return next(iter(best.values())) if len(best) == 1 else None
@@ -97,7 +111,7 @@ def _analytics_for_account(account, activity, audit_at):
     return min(candidates, key=lambda item: item[0])[1] if candidates else None
 
 
-def _unique_report_anchor(case, activity):
+def _unique_report_anchor(case, activity, peer_requests):
     """Return one destructive worker action temporally tied to the case report.
 
     This is an identity link only.  The action's reported result is deliberately ignored;
@@ -122,6 +136,17 @@ def _unique_report_anchor(case, activity):
     if len(candidates) != 1:
         return None
     event = candidates[0]
+    event_time = _time(event["event_time"])
+    # Overlapping request windows with the same report-time proximity make a global
+    # worker event ambiguous.  Reject it instead of assigning one shared event to
+    # several users by rank or input order.
+    compatible_peers = [
+        peer for peer in peer_requests
+        if _time(peer["requested_at"]) <= event_time <= _time(peer["audit_at"])
+        and abs((event_time - _time(peer["reported_at"])).total_seconds()) <= 15 * 60
+    ]
+    if len(compatible_peers) != 1:
+        return None
     return {**event, "required_action": actions[event["event_type"].upper()]}
 
 
@@ -131,7 +156,6 @@ def correlate_workflow_lineage(case, identity, evidence_index, activity, peer_re
     The returned event claims only that the workflow acted on the resource.  Callers
     must not treat ``reported_result`` as final-state evidence.
     """
-    del peer_requests
     if identity is None:
         return []
     known = set(evidence_index)
@@ -148,7 +172,7 @@ def correlate_workflow_lineage(case, identity, evidence_index, activity, peer_re
             break
     if account is None:
         account = _account_from_anchors(case, activity, evidence_index)
-    report_anchor = _unique_report_anchor(case, activity)
+    report_anchor = _unique_report_anchor(case, activity, peer_requests)
     if account is None and report_anchor is not None:
         if report_anchor.get("target_system") == "account_service":
             account = report_anchor

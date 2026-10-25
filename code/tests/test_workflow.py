@@ -30,7 +30,7 @@ class WorkflowLineageTests(unittest.TestCase):
         self.assertEqual([item["resource_id"] for item in resources],
                          ["account_1", "analytics_1"])
 
-    def test_claim_outcome_must_match_reported_status(self):
+    def test_reported_outcomes_do_not_break_ambiguous_lineage(self):
         activity = [
             {"event_time": "2026-09-01T09:00:00Z", "event_type": "DELETE_RECORD",
              "target_system": "account_service", "resource_id": "wrong",
@@ -46,7 +46,7 @@ class WorkflowLineageTests(unittest.TestCase):
             self.case(), {"user_id": "user_1"}, {"support_1": [{}]}, activity,
             [self.case()],
         )
-        self.assertEqual(resources[0]["resource_id"], "account_1")
+        self.assertEqual(resources, [])
 
     def test_unique_near_report_action_is_identity_anchor_not_state_proof(self):
         activity = [
@@ -60,6 +60,18 @@ class WorkflowLineageTests(unittest.TestCase):
         )
         self.assertEqual(resources[0]["resource_id"], "analytics_1")
         self.assertEqual(resources[0]["required_action"], "ANONYMIZE")
+
+    def test_one_report_event_shared_by_overlapping_requests_is_rejected(self):
+        activity = [
+            {"activity_id": "a1", "event_time": "2026-09-01T11:55:00Z",
+             "event_type": "ANONYMIZE_RECORD", "source_system": "deletion_worker",
+             "target_system": "analytics_platform", "resource_id": "analytics_1",
+             "reported_result": "SUCCESS"},
+        ]
+        peer = {**self.case(), "case_id": "case_y"}
+        self.assertEqual(correlate_workflow_lineage(
+            self.case(), {"user_id": "user_1"}, {}, activity, [self.case(), peer]
+        ), [])
 
     def test_ambiguous_unanchored_batch_is_rejected(self):
         activity = [
