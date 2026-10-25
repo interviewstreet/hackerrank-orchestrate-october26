@@ -5,7 +5,7 @@ Every number here is reproducible with the commands below.
 ```text
 python code/evaluation/main.py            # samples scorer + custom cases + metamorphic checks (snapshot replay)
 python code/validate.py output.csv        # strict contract check on the 518 rows
-python -m pytest code/tests               # 186 tests
+python -m pytest code/tests               # 190 tests
 ```
 
 `code/evaluation/main.py` writes `code/evaluation/results.md` and `results.json`.
@@ -256,12 +256,11 @@ records are not linked by any strong edge, so they have no account step. The tra
 - `python code/validate.py output.csv`: VALID, 518 rows, 0 errors (strict mode).
   `main.py` runs the same strict check before it reports success.
 - Samples: VALID, 32 rows, 0 errors.
-- Status counts: COMPLETE 152, INCOMPLETE 356, NOT_APPLICABLE 10.
+- Status counts: COMPLETE 153, INCOMPLETE 355, NOT_APPLICABLE 10.
 - 0 failed cases (no `output_failures.csv`), exit code 0.
 - Replay: `ZENMUX_OFFLINE=1 python code/main.py` gives the same SHA-256 as the final run
-  (518: `4a1d1c3f...a132`; samples: `d59f689e...5e45`). The agent-off run gives the same hashes.
-- 4 INCOMPLETE rows have only verification steps (case_46, case_53, case_55, case_390): each
-  has a target whose state no admissible evidence proves (section 16).
+  (518: `c40d985c...9bff`; samples: `d59f689e...5e45`). The agent-off run gives the same hashes.
+- 0 INCOMPLETE rows without a FINDING (round 4 had 4; section 17).
 - Clean room: `code.zip` unpacked into a new directory with a new virtual environment gives
   the same SHA-256 offline (see `code/README.md`).
 
@@ -319,9 +318,10 @@ grounded: 3 OCR misreads and `data_flow_9846`, whose "Continuous" had no ACTIVE 
 state in two calls (`support_1034`: IDENTIFIABLE with the email, then PRESENT with no
 identifier). The replay snapshot fixes the final run's output; a new live run can differ.
 
-**Legal hold status (fix #8).** No evidence file states a hold status. The rule uses the
+**Legal hold status (fix #8, r5-#4).** No evidence file states a hold status. The rule uses the
 hold's end date (`retained_until`) as the status when no status field exists. `legal_hold_8049`
-(case_390) has neither, so it is UNPROVEN.
+(case_390) has neither. Since round 5 it counts as an active supplied hold (rule_13 text), so it
+is retained; before, it was UNPROVEN (section 17).
 
 **Activity-only recall gap (finding #5).** The largest loss stays: records linked to the
 subject only by a worker claim in `system_activity.csv` get no step (section 12, first
@@ -361,13 +361,13 @@ runs; the agent-off base equals the final output byte for byte).
 | Burst guards: no link when another request reports in the same window, or when the burst names 2+ records in one system | Logic: a claim that two requests can explain names no owner | 0 samples (samples unchanged with the guard off) | Uniqueness guard off: 518: 36 rows. 19 hidden cases also hit the 2+ records guard | Precision guard: it can only remove a link, never add a wrong one | Same as above |
 | Category from catalog words (`policy.CONTENT_CATEGORY`), UNPROVEN when the words name 2 categories | Rule text: the categories of `deletion_rules.csv` | 0 rows today | 0 rows (samples and 518): today every target has a category from its record, collection, system or the vision row | Low | Catalog texts with new wording |
 | Citation order: strongest tier, then newest | Plan 9.7: a direct read-back outranks an activity claim; gold case_01 at Phase 3 | **1 sample (case_01, Phase 3)**; it no longer discriminates (samples unchanged with newest-first) | 518: 2 rows, evidence id only (case_34, case_45) | The cited `evidence_id` can differ from gold on ties between tiers; the status does not | Labeled cases where tiers disagree |
-| Status: COMPLETE only when every target is proven compliant | Rule text (problem statement 6.5): "every relevant copy has the required treatment" | Rule text; 0 sample rows change | 518: 2 rows (case_46, case_390 INCOMPLETE -> COMPLETE with the old rule) | A gold-COMPLETE case with one unprovable target becomes INCOMPLETE | - |
+| Status: COMPLETE only when every target is proven compliant | Rule text (problem statement 6.5): "every relevant copy has the required treatment" | Rule text; 0 sample rows change | 518: 0 rows since round 5 (r5-#3 and r5-#4 decide the two targets that it changed before) | A gold-COMPLETE case with one unprovable target becomes INCOMPLETE | - |
 | Attachment exclusivity (rule_06) | Rule text: "Attachment belongs only to the deletion subject" | 13 attachment targets, all proven exclusive | 0 rows | Low on this data | Attachments shared between users |
-| Legal hold active (rule_13): a status, else the retention end date; neither gives UNPROVEN | Rule text: "A supplied legal hold is active"; the hold register gives "Retain until" dates | **0 samples** | 518: 1 row (case_390 INCOMPLETE -> COMPLETE if a hold without status counts as active) | If the graders treat any listed hold as active, case_390 is wrong | Evidence that states a hold status |
+| Legal hold active (rule_13): a status, else the retention end date; neither: active (r5-#4) | Rule text: "A supplied legal hold is active"; the hold register gives "Retain until" dates | **0 samples** | 518: 1 row (case_390 INCOMPLETE -> COMPLETE) | If the graders need a stated status, case_390 is wrong | Evidence that states a hold status |
 | Vision block grounding | Safety principle: never take a state from another row; Tesseract layout | **0 samples**; 11 screenshots | Block rule off: 0 rows. Vision off: 7 rows (case_35, 50, 52, 53 INCOMPLETE -> COMPLETE; case_45, 61, 63 change steps) | OCR misreads drop rows that the image supports (3 today), which can hide a violation | Better OCR, or labeled screenshot rows |
 | Agent | Code acceptance check | cc06 custom case | 0 rows | - | - |
 
-**518 status distribution (final run):** COMPLETE 152, INCOMPLETE 356, NOT_APPLICABLE 10.
+**518 status distribution (final run):** COMPLETE 153, INCOMPLETE 355, NOT_APPLICABLE 10.
 
 Rules that rest on 1-2 samples or none: the stale window (2 samples, but backed by the 12
 catalog rows), the `job_burst` link (7 sample links), the citation order (1 sample) and the
@@ -494,4 +494,49 @@ evidence; `support_1034` and `backup_9287`: present, treatment or restore state 
 `legal_hold_8049`: no status and no end date). A finding needs evidence that proves the
 violation, and COMPLETE needs proof of the compliant state, so neither is written. A
 validator that requires a FINDING in every INCOMPLETE row rejects these 4 rows; the sample
-gold has no such row to decide the reading.
+gold has no such row to decide the reading. Round 5 decides all 4 targets (section 17).
+
+## 17. Round 5 review: the INCOMPLETE rows with verification steps only
+
+Four general rules, one commit each, each with a regression test that failed before the fix.
+No case id, resource id or text label is in decision code; `test_generalization.py` passes.
+Each rule was first measured as a temporary patch on the 518 and the samples.
+
+| Fix | Commit | Rule | Rests on | 518 rows changed |
+| --- | --- | --- | --- | --- |
+| r5-#1 | 39e0462 | A present vision row that names no identifier keeps its OCR region: the grounding block, or the whole page when the page names no other record (the identifier rule of `row_block`, round-3 #9). The subject's email, phone or email hash in that region is an exposed identifier. A name alone does not count (3 of 850 users share a name). It only marks a target that is already linked. | rule_05 / rule_11 / rule_15 REDACT and rule_07 / rule_08 ANONYMIZE: the record must not show the subject's direct identifiers | case_53: + `REPORT_EXPOSED_PII support_1034` (`evidence_28`), + `REDACT_RECORD` |
+| r5-#2 | 093b7fd | No copy of a backup has a restore state, and a present copy holds the subject's email, phone or email hash: `REPORT_RESTORE_RISK`, cited from the statement that shows those identifiers. A BLOCKED, OPEN or conflicting state keeps the old rule. | Operation definition: REPORT_RESTORE_RISK = "A backup or restore path can bring deleted data back"; rule_14 RETAIN "Restore access can be blocked" | case_55: + `REPORT_RESTORE_RISK backup_9287` (`evidence_32`), + `BLOCK_RESTORE` |
+| r5-#3 | 73d2d55 | A REDACT category whose rule keeps "only a stable internal user_id" (read from `deletion_rules.csv`: `ACCOUNT_TOMBSTONE`). A `data_catalog` LINK_RESOURCE_IDENTITY at or after `requested_at` binds the record to the subject's email, phone or email hash. No statement at or after the link states the record's identifiers or treatment. Then the record exposes direct identifiers; the finding cites the `activity_id`. | rule_15 text. A catalog identity link is an assertion about the record's identifiers, not an operation claim, so D4 (a claim is never proof) holds | case_46: + `REPORT_EXPOSED_PII tombstone_17` (`activity_4011`), + `REDACT_RECORD` |
+| r5-#4 | 6be8f09 | A legal hold in admissible evidence is active unless evidence ends it: an explicit status first, then a past end date (r2-#4). No status and no end date: active, retained, `VERIFY_RECORD_PRESENT` cited from the record. Contradictions stay UNPROVEN. This reverses the no-status case of fix #8 (section 7). | rule_13 text: "A supplied legal hold is active" -> RETAIN | case_390: INCOMPLETE -> COMPLETE; the 6 verification steps now cite `evidence_36` |
+
+**Effect.** 4 rows change on the 518, each only by its own fix. Every fix alone and all four
+together leave the samples identical (`d59f689e...5e45`): status 32/32, exact P/R/F1
+0.764 / 0.653 / 0.704, content P/R/F1 1.000 / 0.855 / 0.922, sequence 15/32. Custom 7/7,
+metamorphic 19/19. Tests: 190. INCOMPLETE rows without a FINDING: 4 -> 0.
+
+**Final run.** No prompt changed. The agent no longer runs: the 4 items it investigated in
+round 4 are now decided in code. The run used a new cache seeded from `llm_snapshot.py`:
+11 calls (vision), 11 cache hits, 0 live calls (`usage_report.md`). `output.csv` SHA-256
+`c40d985c1b510d5e8f891ce00ef3e71fecce0b7db9b62a1fa54840a477df9bff`; samples
+`d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`. Offline replay gives the
+same hashes. Status counts: COMPLETE 153, INCOMPLETE 355, NOT_APPLICABLE 10.
+
+**Limits (honest).**
+
+- No sample covers any of the four rules. In the 32 samples, the only target that was not
+  decided is `tombstone_17` in case_17, and it is stale. Every gold `REPORT_EXPOSED_PII` and
+  `REPORT_RESTORE_RISK` cites a text, JSON, SQL or log file with a stated state; no gold finding
+  cites a screenshot or a catalog link. The samples do not contradict the rules and do not
+  confirm them.
+- r5-#3 and r5-#4 rest on rule text only. r5-#3 reads a catalog link as a statement about the
+  record's identifiers. If the graders accept only a read-back of the record, the case_46
+  finding is an extra step. r5-#4 reads a hold with no status as active. If the graders need a
+  stated status, case_390 is wrong.
+- r5-#1: on `evidence_28` the email is in a separate card, not in the block of `support_1034`.
+  The page names no other record, so the existing region rule accepts it. A rule that needs
+  the same layout block would change 0 rows.
+- r5-#2 proves that the backup holds the subject's data and that no block is shown. It does not
+  prove that a restore was started.
+- Later evidence agrees with r5-#1 and r5-#2, but it is after `audit_at` and is not used:
+  `activity_3669` (redaction of `support_1034` failed, 2026-09-05) and `activity_3387` (restore
+  of `backup_9287`, 2026-08-22).

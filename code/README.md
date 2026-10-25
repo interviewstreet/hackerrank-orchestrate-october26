@@ -35,6 +35,8 @@ See `DESIGN.md` for the module list, the policy readings and the failure-mode gu
 ## The investigator agent loop
 
 It runs only for an item that code leaves undecided (no admissible statement, or a conflict).
+In the final run (round 5) code decides every item, so the agent makes 0 calls; the loop stays
+for data where code cannot decide.
 
 - Tools: `search_evidence` (BM25 over evidence visible at `audit_at`), `read_evidence`,
   `query_facts`, `submit_proposal`, `stop`. One tool call per turn.
@@ -105,15 +107,15 @@ ZENMUX_OFFLINE=1 python code/main.py      (PowerShell: $env:ZENMUX_OFFLINE="1"; 
 ```
 
 Replay makes no network call. It reads `code/llm_snapshot.py` (34 validated results; the final
-run uses 26 of them) and `code/ocr_snapshot.json`, and gives the same `output.csv` as the final run:
-SHA-256 `4a1d1c3f23303ab9f0891fd5ddd15d40ba7861b5f037538130f17187a4aaa132`.
+run uses 11 of them) and `code/ocr_snapshot.json`, and gives the same `output.csv` as the final run:
+SHA-256 `c40d985c1b510d5e8f891ce00ef3e71fecce0b7db9b62a1fa54840a477df9bff`.
 
 ## Evaluation
 
 ```text
 python code/evaluation/main.py            # sample scores, 7 custom cases, 19 metamorphic checks
 python code/validate.py output.csv        # strict contract check
-python -m pytest code/tests               # 186 tests (they always replay; no network)
+python -m pytest code/tests               # 190 tests (they always replay; no network)
 python code/package.py                    # builds code.zip with a secret scan
 ```
 
@@ -124,7 +126,9 @@ Reports: `evaluation/evaluation_report.md` and `evaluation/usage_report.md`.
 - Records linked to the subject only by a worker claim in `system_activity.csv` get no step
   (the main recall loss on the samples: 28 of 193 gold steps).
 - OCR misreads drop some vision rows that the image supports (3 in the final run).
-- A legal hold with no stated status and no end date is UNPROVEN, so its case is INCOMPLETE.
+- A legal hold with no stated status and no end date counts as active (rule_13 text: "A supplied
+  legal hold is active"), and a catalog link of a tombstone to an email counts as an exposure
+  (rule_15). No sample tests these two readings (evaluation report, section 17).
 - A new live run can give different model output (seen once on a screenshot); the snapshot
   fixes the submitted output.
 - Rules that rest on few samples are listed in the evaluation report, section 13.
