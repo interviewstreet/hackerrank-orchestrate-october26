@@ -1588,6 +1588,7 @@ parent_agent=none
 
 User Prompt (verbatim, secrets redacted):
 give me a promt to be given in new chant to fix all these issues
+or is it already fixed?
 
 Agent Response Summary:
 Reported the status: the OCR change and case_39 are fixed; the friend's two misses are not defects (only a time heuristic could link them). Open: 4 INCOMPLETE rows with only verification steps (case_46, case_53, case_55, case_390) and the stale interview prep sheet. Wrote a prompt for a new chat that investigates the 4 rows, measures general candidate rules on the samples, and waits for approval before code changes.
