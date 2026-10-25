@@ -639,3 +639,21 @@ Actions:
 - Created design.md (not committed).
 Context:
 tool=Claude Code, model=claude-fable-5-1, branch=main, repo_root=/Users/zucky/Developer/code/orchestrate_hackerrank/hackerrank-orchestrate-october26, worktree=main, parent_agent=none
+
+## [2026-10-25T17:10:00Z] Implemented the full pipeline, milestones M0-M7
+User Prompt (verbatim, secrets redacted):
+lets begin than
+Agent Response Summary:
+Built the solution milestone by milestone on a new `solution` branch, scoring against the 32 labeled samples after each change. M0 scaffold + scorer; M1 identities/activities/files tables with fingerprinted SQLite cache; M2 parsers for SQL, JSON, ledger text and six log formats; M3 per-case steps (multilingual intent rules, discovery, state at audit_at, policy, ordering); M4 global window assignment of worker deletions to requests; M5 PDFs/screenshots (pypdf, tesseract OCR, vision path with cache), data-catalog identity links and restore edges from activity text; M6 full-run triage; M7 evaluation and usage reports, 4 custom cases, README, code.zip. Final samples: case accuracy 100%, step precision 98.9%, recall 94.3%, F1 96.6%, sequence 65.6%; full run 518 rows, 0 contract violations, deterministic. No OPENAI_API_KEY is configured, so the final run made 0 model calls. git push to origin failed: the credential in use (TestZucky) lacks access to the ZuckyNeeraj fork.
+Actions:
+* Created code/ghost/** (config, errors, logging, models, identifiers, dataset_io, run, tables/*, parsers/*, llm/*, pipeline/*), code/main.py, code/evaluation/main.py, custom_cases, evaluation_report.md, usage_report.md
+* Updated design.md progress log, README.md setup section, .gitignore; moved requirements.txt and .env.example into code/
+* Created .venv (pypdf, openai); ran scorer and full pipeline repeatedly; built code.zip; wrote output.csv
+* 8 local commits on branch solution; git push -u origin solution failed (403)
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=solution
+repo_root=/Users/zucky/Developer/code/orchestrate_hackerrank/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
