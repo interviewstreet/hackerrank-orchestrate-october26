@@ -88,7 +88,12 @@ def bind_rules(rules: list[Rule]) -> dict[str, tuple[str, str, Op | None, Op | N
     return bound
 
 
-RULES = bind_rules(load_rules(DATASET_DIR / "deletion_rules.csv"))
+RULE_ROWS = load_rules(DATASET_DIR / "deletion_rules.csv")
+RULES = bind_rules(RULE_ROWS)
+# r5-#3: REDACT categories whose rule keeps only a stable internal user_id (rule text).
+RE_ID_ONLY = re.compile(r"\bonly a stable internal user_id\b", re.I)
+ID_ONLY = frozenset(r.data_category for r in RULE_ROWS
+                    if r.required_action == "REDACT" and re.search(RE_ID_ONLY, r.condition))
 
 # Fallback category when the record states none: (system_id, collection) then system_id.
 COLLECTION_CATEGORY = {
@@ -151,6 +156,7 @@ class Decision:
     attribute: str = ""            # the resolved attribute the outcome rests on
     hypothesis: list[str] = field(default_factory=list)
     reason: str = ""
+    cite_id: str = ""              # evidence that is not a state statement (r5-#3: a catalog link)
 
 
 def category_of(state: ResourceState) -> str:
@@ -272,9 +278,28 @@ def _exposure_decision(d: Decision, state: ResourceState, check: str, exists: st
         d.bad_copies = [cs.copy for cs in bad]
     elif present and all(e == "clean" for _, e in exposures):
         d.outcome, d.copy, d.attribute = COMPLIANT, present[0].copy, "exposure"
+    if d.outcome == UNPROVEN and d.category in ID_ONLY and exists != ABSENT:
+        _catalog_exposure(d, state)
     if d.category == "SUPPORT_MESSAGE":
         d.hypothesis.append("support_shared_context_assumed")
     return d
+
+
+def _catalog_exposure(d: Decision, state: ResourceState) -> None:
+    """r5-#3: the rule keeps only a stable internal user_id. A catalog link inside the request
+    window that binds the record to the subject's direct identifier asserts that the record
+    still carries it, unless a statement at or after the link states its exposure or treatment."""
+    links = sorted((e for e in state.target.edges if e.kind == "catalog_link" and e.binds_direct),
+                   key=lambda e: (e.at, e.source_id))
+    if not links:
+        return
+    newest = links[-1]
+    stated = [st for cs in state.copies.values() for st in cs.statements
+              if st.at >= newest.at and ("treatment" in st.values or "exposed_ids" in st.values)]
+    if stated:
+        return
+    d.outcome, d.attribute, d.cite_id = VIOLATION, "catalog_link", newest.source_id.split("#")[0]
+    d.hypothesis.append("catalog_link_exposure")
 
 
 def holds_subject(ids, keys: Identifiers) -> bool:

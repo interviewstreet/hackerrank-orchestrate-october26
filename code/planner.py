@@ -41,7 +41,9 @@ class Item:
 
 def build_item(target: Target, state: ResourceState, decision: Decision) -> Item:
     item = Item(target, state, decision)
-    if decision.outcome in (VIOLATION, COMPLIANT):
+    if decision.cite_id:   # r5-#3: a catalog link, not a state statement
+        item.evidence_id = decision.cite_id
+    elif decision.outcome in (VIOLATION, COMPLIANT):
         item.evidence_id, item.support = cite(state, decision, violating=decision.outcome == VIOLATION)
     return item
 

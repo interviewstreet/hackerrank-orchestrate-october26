@@ -336,6 +336,28 @@ class PolicyRowTest(unittest.TestCase):
         d = run([held, blocked], system="backup_service", rid="backup_1")[1]
         self.assertNotEqual(d.outcome, VIOLATION)
 
+    def test_catalog_link_to_a_direct_identifier_is_a_tombstone_exposure(self):
+        # r5-#3: rule_15 keeps only a stable internal user_id. A catalog link inside the request
+        # window that binds the tombstone to the subject's email is cited as the exposure.
+        def decide(binds, observations=()):
+            store = FactStore()
+            store.add(list(observations), [])
+            link = Edge("catalog_link", "strong", "activity_7", T0, binds)
+            target = Target("identity_service", "tombstone_1", [link])
+            state = resolve(store, target, SUBJECT, AUDIT)
+            decision = evaluate(state, AUDIT)
+            return decision, planner.build_item(target, state, decision)
+
+        d, item = decide(True)
+        self.assertEqual((d.outcome, d.finding, d.remediation, item.evidence_id),
+                         (VIOLATION, Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, "activity_7"))
+        self.assertEqual(decide(False)[0].outcome, UNPROVEN)   # a user_id-only or pre-request link
+        # A statement at or after the link about the identifiers decides instead.
+        clean = obs("identity_service", "tombstone_1", at=T0 + timedelta(hours=1), exists=PRESENT,
+                    ids=Identifiers(user_ids={"user_1"}))
+        d, item = decide(True, [clean])
+        self.assertEqual((d.outcome, item.evidence_id), (COMPLIANT, clean.file_id))
+
     def test_rule_15_tombstone(self):
         clean = obs("identity_service", "tombstone_1", exists=PRESENT, ids=Identifiers(user_ids={"user_1"}))
         d = run([clean], system="identity_service", rid="tombstone_1")[1]

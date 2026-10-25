@@ -60,6 +60,9 @@ class Edge:
     tier: str
     source_id: str      # obs_id / activity_id that proves the link
     at: datetime
+    # r5-#3: a catalog link at or after requested_at that binds the record to a direct identifier
+    # (email, phone, email hash) of the subject: an assertion about the record's identifiers.
+    binds_direct: bool = False
 
 
 @dataclass
@@ -131,9 +134,10 @@ class LinkIndex:
         keys = subject_keys(subject)
         found: dict[tuple[str, str], Target] = {}
 
-        def edge(system_id, resource_id, kind, tier, source_id, at, exclusive=False, description=""):
+        def edge(system_id, resource_id, kind, tier, source_id, at, exclusive=False, description="",
+                 binds_direct=False):
             tgt = found.setdefault((system_id, resource_id), Target(system_id, resource_id))
-            tgt.edges.append(Edge(kind, tier, source_id, at))
+            tgt.edges.append(Edge(kind, tier, source_id, at, binds_direct))
             tgt.exclusive = tgt.exclusive or exclusive
             if description:
                 tgt.descriptions.append(description)
@@ -146,9 +150,13 @@ class LinkIndex:
                 edge(obs.system_id, obs.resource_id, "vision_identifier", MEDIUM, obs.obs_id, obs.state_observed_at)
                 continue
             kind = "catalog_link" if obs.assertion == OWNERSHIP_LINK else "identifier"
+            binds = (kind == "catalog_link"
+                     and (req.requested_at is None or obs.state_observed_at >= req.requested_at)
+                     and any(getattr(obs.link_ids, k) & getattr(keys, k) for k in ("emails", "phones", "hashes")))
             edge(obs.system_id, obs.resource_id, kind, STRONG, obs.obs_id, obs.state_observed_at,
                  exclusive=bool(obs.fields.get("exclusive")),
-                 description=str(obs.fields.get("details") or "") if kind == "catalog_link" else "")
+                 description=str(obs.fields.get("details") or "") if kind == "catalog_link" else "",
+                 binds_direct=binds)
 
         for tgt in list(found.values()):
             for obs in self.store.referencing(tgt.resource_id, cutoff):
