@@ -1,0 +1,5 @@
+pandas>=2.0
+pillow>=10.0
+pytesseract>=0.3.10
+pdfplumber>=0.11
+pypdf>=4.0
