@@ -986,3 +986,76 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T03:17:08Z] Round-2 review fixes #1 #2 #4, #8 coverage count, release, interview prep sheet
+
+User Prompt (verbatim, secrets redacted):
+Good triage; I agree with every verdict. Decisions:
+- ACCEPT and apply: #1 (narrow form: a copy that is not ABSENT must be DISABLED/BLOCKED; UNKNOWN/CONFLICT
+  non-absent copies -> UNPROVEN), #2 (collection-scoped absence), #4 (explicit hold status first; an end date is used
+  only when status is absent; a contradiction -> UNPROVEN, never delete).
+- REJECT stays: #3 (round-1 #7 reading), #5 (12 catalog-link rows support the window), #6 (worker claims carry 0
+  subject keys), #7 (accepted loss), #10 (digit safety over recall), #11 (never stop the batch; exit 1 + failure list).
+- #8: no behavior change. Add a coverage count: how many targets got their category from the system default
+  vs structured metadata vs content. Put the count in evaluation_report.md under limits.
+- #9: keep tier-then-newest; no labeled case decides it. Already documented.
+- Rule for these fixes, as before: general rules only, no case- or id-specific logic, no tuning to the samples.
+
+PART 1: apply the fixes
+1. One commit per fix ("fix(r2-#N): ..."), each with a regression test that fails before the fix.
+2. Re-run offline (ZENMUX_OFFLINE=1). Expected: output.csv hash stays
+   1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b and samples stay d59f689e...5e45.
+   If any hash changes, STOP and list the changed rows with the cause. Do not "fix" it toward the old hash.
+3. Add a short "Round 2 review" section to evaluation_report.md: the 11 findings, verdict per finding, and the
+   measured reason (as in your triage table). Keep the disagreement on #5 visible: the samples support the
+   cutoff, but the rule text does not state it.
+4. Rebuild code.zip with package.py. Repeat the clean-room test (new temp dir, new venv, offline): the hash must be equal.
+   Secret scan on code.zip and log.txt.
+Gate: full suite; strict validation 0 errors (518 + samples); ruff + mypy clean; hashes equal; secret scan clean.
+Commit as "release: round-2 review fixes".
+
+PART 2: interview prep sheet (only after the Part 1 gate passes)
+Write C:\Users\sanka\Downloads\interview_prep.md. Do NOT put it in the repo or the zip. Use only facts from the code,
+reports and git history, with numbers. Sections:
+1. 60-second pitch: problem -> approach -> result.
+2. Constants sheet: 518 rows; status distribution; sample scores (status, exact 7-field P/R/F1, content 6-field P/R/F1,
+   sequence); custom cases and metamorphic counts; model id and why the contributor tier; calls per purpose,
+   tokens and cost of the final run; agent caps (iterations, retries, budget); test count.
+3. Architecture walkthrough in 6 steps, each with file:function: where the model is called, what it sees, and what
+   code validates.
+4. Model-vs-code boundary: why code owns status and steps (graded row by row; temperature 0 is not deterministic,
+   see case_53).
+5. Safety: injection screen, schema with extra="forbid", grounding, acceptance check, retained-record invariants.
+6. The 5 hardest decisions, each with the alternative I rejected and the data that decided it (stale-link window
+   from the 12 catalog rows; strict vs block vision grounding; job_burst + uniqueness guard; status rule; Codex
+   findings rejected with measurements).
+7. Evaluation method and what failures taught us, phase by phase.
+8. Limits, said honestly: activity-only recall gap (missing sample steps), ids that appear in no file, rules
+   resting on 1-2 samples, the 3 dropped vision rows, the citation order.
+9. "With one more week": 3 items.
+10. 12 likely interviewer questions with 2-3 line answers (direct answer -> one concrete detail -> stop).
+
+Reply format:
+1. Commits (hash + title)
+2. Gate results incl. all hashes and the clean-room result
+3. Row changes (expected none) and the #8 category-source counts
+4. Path of interview_prep.md and its section list
+5. Final submission checklist: output.csv (rows, hash), code.zip (size, path), log.txt (path, entry count),
+   with each item checked yes/no
+
+Agent Response Summary:
+Applied the three accepted round-2 fixes, one commit each with a regression test that failed first: a process copy that is not ABSENT must be DISABLED/BLOCKED (r2-#1), a collection-scoped listing proves absence only for a target of the same known collection (r2-#2), and an explicit legal hold status governs with a status/end-date contradiction left UNPROVEN, never deleted (r2-#4). Added policy.category_source (no behavior change) and the #8 coverage count to the evaluation report (518: 1,002 system default, 240 structured, 7 collection, 0 content), plus a Round 2 review section that keeps the #5 disagreement visible. The offline output hash and the samples hash are unchanged, so no row changed. Gate: 182 tests pass, strict validation 0 errors on 518 and samples, ruff and mypy clean, code.zip rebuilt (75 files), clean-room hash equal, secret scan clean. Wrote the interview prep sheet outside the repo.
+
+Actions:
+* code/policy.py, code/resolver.py, code/tests/test_policy_resolver.py, code/DESIGN.md (commits 2d35ddf, a45698c, 2bbdc71)
+* code/policy.py (category_source), code/evaluation/evaluation_report.md, code/README.md (commit a52b29c)
+* Ran: temp probe for the strict collection scope, temp category_sources.py, offline 518 and sample runs with hash compare, full pytest suite, ruff, mypy, validate.py, evaluation/main.py, package.py, clean-room script in a new temp dir and venv, zip + log secret scan
+* Wrote C:\Users\sanka\Downloads\interview_prep.md (not in the repo or code.zip)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
