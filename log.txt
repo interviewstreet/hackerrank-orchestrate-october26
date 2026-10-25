@@ -168,3 +168,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:19:00Z] Question: why timing links deleted accounts, and where it breaks
+
+User Prompt (verbatim, secrets redacted):
+Let's dig into the technical architecture of your agent. Your activity linker assigns deleted accounts to cases using a 30 second timing phase, and case_23 got linked to the wrong account. Why did you choose timing as the signal, and what would make it break on a different dataset?
+
+Agent Response Summary:
+Corrected the premise: accounts are matched by a time window before reported_at plus reported-status/result agreement and an observed-absent preference, while the 30-second phase is used only for anonymized/redacted policy targets. Explained why timing was the only signal (deleted accounts carry no identifiers) and showed the case_23 batch: three NOT_STARTED cases reported at 2026-09-05T12:00 and three FAILED account deletions, so the assignment is a coin flip. Listed what would break it on other data and what a sturdier design would use.
+
+Actions:
+* Inspected system_activity.csv and request files for the 2026-09-05 batch
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
