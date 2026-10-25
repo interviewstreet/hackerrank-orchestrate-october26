@@ -266,3 +266,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:29:00Z] Interview help: what breaks first with a new log format
+
+User Prompt (verbatim, secrets redacted):
+"Thanks, that's a clear fix. Let's talk about real-world viability and impact. Your pipeline is tuned to a dataset with specific log and field names. If Northstar handed you evidence from a new system with a different log format tomorrow, what would break first and how would you notice?"
+
+Agent Response Summary:
+Drafted a spoken answer: the log parser's event-name-to-state rules would fail first and silently (identifiers still extracted, but no states, so records go unlinked and a case could wrongly be COMPLETE); resource-id prefixes are also a fixed list. Admitted there is no automatic detection today (only unknown file types are reported) and proposed per-file "identifiers but no state" errors, routing unknown formats through the existing Claude extraction schema, and blocking COMPLETE when an in-window file is unparsed. No code changes.
+
+Actions:
+* None beyond this log entry
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
