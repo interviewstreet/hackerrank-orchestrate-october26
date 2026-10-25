@@ -130,3 +130,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:15:00Z] Question: sync jobs that target a person via hash or old email
+
+User Prompt (verbatim, secrets redacted):
+Thanks, that's clearer. So linking depends on an identifier appearing in the evidence. What happens when a sync job targets the person indirectly, for example through a hashed email or an old email from before a change, and nothing in the window carries the current one?
+
+Agent Response Summary:
+Explained that the identity set includes every historical email from user_audit_log, the sha256 hash of each (current and old) email, recorded hashes, normalized phones and the user_id, so any of them links a flow. Measured on the dataset: of 185 data-flow links, 110 come from the current email, 42 from the user_id and 33 from an old email; none needed a hash, though hash matching is supported. Noted limits: other hash schemes, partial or masked emails, and an old email later reused by someone else are not handled. No code changes.
+
+Actions:
+* Read code/audit/data.py; counted data-flow link reasons with a local script
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
