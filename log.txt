@@ -1328,3 +1328,79 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T05:35:04Z] Round-3 fixes applied: r3-#10 docs, r3-#3 retention order, r3-#4 categories
+
+User Prompt (verbatim, secrets redacted):
+Good triage; I agree with every verdict in your merged table. Decisions:
+- ACCEPT and apply: #10 (doc fix), #3 (retention date newest-first), #4 (conflicting structured
+  categories -> UNPROVEN).
+- Also fix the stale docstring at code/intent.py:266 ("Phase 4 replaces this with the LLM" is no longer
+  true; describe what the code does now). Put it in the #10 commit.
+- REJECT stays: #1, #2, #5, #6, #7, #8, #9, #11.
+- Rule for these fixes, as before: general rules only, no case- or id-specific logic, no tuning to the
+  samples. When the samples and the rule text disagree, say so; do not silently fit.
+
+PART 1: apply the fixes
+1. One commit per fix ("fix(r3-#N): ..."), each with a regression test that fails before the fix
+   (run it once before the fix and keep the failure).
+   - #10: DESIGN.md:77 -> "1 schema retry (with the validation error) + 2 transport retries";
+     DESIGN.md:120 -> vision_extract_v3. Plus the intent.py:266 docstring. Doc-only: no test needed,
+     but grep DESIGN.md and README.md for any other number or prompt version that no longer matches
+     config.py, and list what you find.
+   - #3: _retention_expired uses the newest stating statement (time, then tier, then evidence_id), the
+     same order as _hold_status. Two statements with equal dominance and different dates are a
+     contradiction: UNPROVEN with a reason, never a delete. Test: the same facts in both copy orders
+     give the same decision, and an older expired date never beats a newer future date.
+   - #4: category_source looks at every admissible structured category (record_type / data_category),
+     not the first one. Two different values -> AMBIGUOUS_CATEGORY -> UNPROVEN (the existing path).
+     Test: USER_PROFILE + SECURITY_AUDIT_LOG on one resource gives UNPROVEN and no DELETE_RECORD.
+2. Re-run offline (ZENMUX_OFFLINE=1), samples and 518. Expected: output.csv stays
+   1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b and samples stay
+   d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45.
+   If any hash changes, STOP and list the changed rows with the cause. Do not "fix" it toward the
+   old hash.
+3. Run python code/evaluation/main.py and check that results.md / results.json do not change.
+4. Add a short "Round 3 review" section to code/evaluation/evaluation_report.md: both reviewers
+   (model ids as sent and as returned), the 11 merged findings, the verdict per finding and the
+   measured reason, as in your table. Keep this disagreement visible: rule_12 says "within the
+   supplied retention period", but gold (case_31, audit_record_6909, evidence_51 has no retention
+   field) treats a record with no date as retained; 53 COMPLETE rows on the 518 rest on that reading.
+   Update the test count in the report and README.
+5. Rebuild code.zip with python code/package.py. Repeat the clean-room test (new temp dir, new venv,
+   offline): the hash must be equal. Secret scan on code.zip and log.txt.
+Gate: full suite (python ~/.claude/bin/full_suite.py -- python -m pytest code/tests); strict
+validation 0 errors (518 + samples); ruff + mypy clean (mypy from code/); hashes equal; secret scan
+clean. Commit as "release: round-3 review fixes". Do not commit AGENTS.md, output.csv, plan.md,
+code.zip or .env. Log this turn in log.txt and commit it.
+
+Reply format:
+1. Commits (hash + title)
+2. Gate results incl. all hashes and the clean-room result
+3. Row changes (expected none); if any, each row with its cause
+4. Metrics table, before -> after, for:
+   - samples: status accuracy (and the confusion matrix), exact 7-field P/R/F1 with matched /
+     predicted / gold counts, content 6-field P/R/F1, field-level accuracy for all 7 fields,
+     sequence accuracy, row accuracy, custom cases, metamorphic checks
+   - 518: status distribution, strict validation errors, output.csv SHA-256
+   - test count; final-run usage (calls, tokens, cost), which must be unchanged
+5. Other doc mismatches found by the grep in #10, and what you changed
+6. code.zip size and file count; log.txt entry count
+
+Agent Response Summary:
+Applied the three accepted round-3 fixes, one commit each: r3-#10 doc fix (DESIGN.md retry count, vision_extract_v3, agent trigger and the stop tool; intent.treat_as_deletion docstring), r3-#3 (newest retention date decides by time, tier, evidence_id; equal statements with two dates give UNPROVEN, never a delete) and r3-#4 (every admissible structured category counts; two values take the ambiguous-category UNPROVEN path). Both regression tests failed before their fix (DELETE_RECORD on a retained or two-category record) and pass after. The offline output.csv and sample hashes are unchanged, results.md/json are unchanged, and the clean-room code.zip run reproduces both hashes. Added evaluation_report.md section 15 (round-3 reviewers, 11 findings, verdicts, and the rule_12 vs gold disagreement) and updated the test count to 184.
+
+Actions:
+* Edited code/DESIGN.md, code/intent.py (commit 16118f1)
+* Edited code/policy.py, code/tests/test_policy_resolver.py (commit bcf53dc)
+* Edited code/policy.py, code/resolver.py, code/tests/test_policy_resolver.py (commit a55454c)
+* Edited code/evaluation/evaluation_report.md, code/README.md (commit 3ff43f7)
+* Ran: each new test before its fix (failure logs kept in a temp dir), offline 518 and sample runs with hash compare after each fix, validate.py (518 + samples), evaluation/main.py with results hash compare, full pytest suite (184 passed), ruff, mypy, package.py, clean-room unzip + new venv + offline run + tests, secret scan of code.zip and log.txt
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
