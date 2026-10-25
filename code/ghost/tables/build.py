@@ -9,13 +9,9 @@ from .activities import build_activities
 from .context import Context
 from .files import build_files
 from .identities import build_identity_rows
+from .observations import build_observations
 
 log = logging.getLogger(__name__)
-
-
-def build_observations(files):
-    """Placeholder until milestone M2 adds the evidence parsers."""
-    return [], {}
 
 
 def load_or_build(use_cache: bool = True) -> Context:
@@ -23,14 +19,14 @@ def load_or_build(use_cache: bool = True) -> Context:
         fp = cache.fingerprint()
         cached = cache.load(fp) if use_cache else None
         if cached is not None:
-            files, scopes, identities, activities, observations = cached
+            files, scopes, identities, activities, observations, failures = cached
         else:
             files = build_files()
             identities = build_identity_rows()
             activities = build_activities()
-            observations, scopes = build_observations(files)
-            cache.save(files, scopes, identities, activities, observations, fp)
-        ctx = Context.build(files, scopes, identities, activities, observations)
+            observations, scopes, failures = build_observations(files)
+            cache.save(files, scopes, identities, activities, observations, failures, fp)
+        ctx = Context.build(files, scopes, identities, activities, observations, failures)
         log.info("context: %d identifiers, %d activities, %d observations",
                  len(ctx.user_by_identifier), len(ctx.activities), len(ctx.observations))
         return ctx

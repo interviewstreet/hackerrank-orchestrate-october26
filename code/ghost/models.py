@@ -31,7 +31,8 @@ class Observation:
     """One record seen in one evidence file. The common row every parser emits."""
 
     evidence_id: str
-    captured_at: str
+    captured_at: str          # manifest capture time of the file: decides citation eligibility
+    observed_at: str          # moment this record was observed inside the file: orders observations
     system_id: str
     resource_id: str
     category: str

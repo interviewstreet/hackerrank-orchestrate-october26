@@ -17,21 +17,22 @@ from .identities import IdentityRow
 @dataclass
 class Context:
     files: dict[str, EvidenceFile]
-    scopes: dict[str, frozenset[str]]                 # evidence_id -> systems the file covers
+    scopes: dict[str, tuple[tuple[str, str], ...]]    # evidence_id -> (system, observed_at) covered
     user_by_identifier: dict[str, str]
     identifiers_by_user: dict[str, frozenset[str]]
     activities: list[Activity]                        # sorted by event_time
     acts_by_resource: dict[str, list[Activity]]
     observations: list[Observation]
     obs_by_subject: dict[str, list[Observation]]
-    obs_by_resource: dict[str, list[Observation]]     # each list sorted by captured_at
+    obs_by_resource: dict[str, list[Observation]]     # each list sorted by observed_at
+    parse_failures: list[dict]
     _worker: list[Activity] = field(default_factory=list, repr=False)
     _worker_times: list[str] = field(default_factory=list, repr=False)
 
     @classmethod
-    def build(cls, files: list[EvidenceFile], scopes: dict[str, list[str]],
+    def build(cls, files: list[EvidenceFile], scopes: dict[str, list],
               identities: list[IdentityRow], activities: list[Activity],
-              observations: list[Observation]) -> "Context":
+              observations: list[Observation], parse_failures: list[dict]) -> "Context":
         ids_by_user: dict[str, set[str]] = defaultdict(set)
         for r in identities:
             ids_by_user[r.user_id].add(r.identifier)
@@ -47,12 +48,12 @@ class Context:
             for s in o.subjects:
                 obs_by_subject[s].append(o)
         for lst in obs_by_resource.values():
-            lst.sort(key=lambda o: (o.captured_at, o.evidence_id))
+            lst.sort(key=lambda o: (o.observed_at, o.evidence_id))
 
         worker = [a for a in activities if a.source_system == "deletion_worker"]
         return cls(
             files={f.evidence_id: f for f in files},
-            scopes={k: frozenset(v) for k, v in scopes.items()},
+            scopes={k: tuple(tuple(x) for x in v) for k, v in scopes.items()},
             user_by_identifier={r.identifier: r.user_id for r in identities},
             identifiers_by_user={u: frozenset(v) for u, v in ids_by_user.items()},
             activities=activities,
@@ -60,6 +61,7 @@ class Context:
             observations=observations,
             obs_by_subject=dict(obs_by_subject),
             obs_by_resource=dict(obs_by_resource),
+            parse_failures=parse_failures,
             _worker=worker,
             _worker_times=[a.event_time for a in worker],
         )

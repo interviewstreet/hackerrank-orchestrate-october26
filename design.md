@@ -177,6 +177,19 @@ reports last but started from M6's numbers.
   binary-search worker window). Checks: 518/518 and 32/32 request emails resolve; case_40 →
   user_38 with 6 identifiers; case_21 window returns its 6 accounts. Cold build 0.07 s, warm 0.02 s.
 
+- **M2 done (2026-10-25).** Parsers for every text family: `sql_snapshot.py` (inventory tables with
+  `snapshot_scope`, record-JSON replicas, one-off primary/failover tables), `json_records.py`
+  (service exports, snapshot bundles incl. embedded ledger rows, ledgers, single collections),
+  `handover_txt.py` (pipe ledger lines, reusable for PDFs), `service_logs.py` (six line formats,
+  trace grouping so `lookup_key` on a started line links the person to a 404 on the completed
+  line, explicit event table). `parsers/base.py` holds the result enum (NOT_FOUND, IDENTIFIABLE,
+  REFERENCED, REDACTED, ANONYMIZED, ACTIVE, DISABLED, RESTORE_ALLOWED, RESTORE_BLOCKED), record
+  classification and same-moment merge (worst state wins). Observations now carry both
+  `captured_at` (manifest, citation eligibility) and `observed_at` (inner time, ordering); scope is
+  (system, observed_at). Result: 79/79 text files parse, 2,516 observations; 15 png/pdf deferred to
+  M5. Checks: case_30 yields its 4 remnants in evidence_92; evidence_54 scope = account_service.
+  Bug found and fixed: 64-hex `integrity_seal` was read as an email hash.
+
 ## 8. Open questions carried into code
 
 1. Tie-break for crowded windows (17 of 22 realistic samples have 2-5 candidates).
