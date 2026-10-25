@@ -5,7 +5,8 @@ import re
 
 RESOURCE_PATTERN = re.compile(
     r"\b(?:account|search|support|analytics|export|backup|data_flow|audit_record|"
-    r"tombstone|cache|marketing|email_delivery|object)_[A-Za-z0-9.-]+\b",
+    r"tombstone|cache|marketing|email_delivery|object|telemetry|legal)_"
+    r"[A-Za-z0-9.-]*\d[A-Za-z0-9.-]*\b",
     re.IGNORECASE,
 )
 

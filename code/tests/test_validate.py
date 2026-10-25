@@ -15,6 +15,8 @@ class ValidateTests(unittest.TestCase):
   steps=[BASE,{**BASE,'step_no':2,'phase':'VERIFICATION','operation':'VERIFY_RECORD_ABSENT','state':'ABSENT'}]
   self.assertError(row(steps),'future VERIFICATION')
  def test_complete_findings_rejected(self):self.assertError(row([BASE],'COMPLETE'),'verification steps only')
+ def test_empty_complete_rejected(self):self.assertError(row([],'COMPLETE'),'at least one evidence-backed verification')
+ def test_resource_id_format_rejected(self):self.assertError(row([{**BASE,'resource_id':'account_service'}]),'invalid resource_id format')
  def test_row_count_duplicates(self):
   self.assertTrue(any('duplicate case_id' in e for e in validate_row_count([{'case_id':'c'},{'case_id':'c'}],expected=2)))
  def test_case_coverage(self):

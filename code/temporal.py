@@ -8,7 +8,7 @@ def filter_events(activity_list: list[dict], user_identity: dict, audit_at: str)
     if not user_identity:
         return []
     identifiers = [user_identity.get("user_id", "")]
-    for key in ("all_emails", "all_phones", "all_email_hashes"):
+    for key in ("all_emails", "all_phones", "all_email_hashes", "lineage_resource_ids"):
         identifiers.extend(user_identity.get(key, []))
     needles = [str(v).casefold() for v in identifiers if v]
     result = []

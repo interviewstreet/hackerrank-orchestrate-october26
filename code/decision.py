@@ -5,20 +5,34 @@ from code.policy import get_required_action
 
 EXPECTED = {
     "DELETE": {"ABSENT"}, "REDACT": {"REDACTED"},
-    "ANONYMIZE": {"ANONYMIZED"}, "RETAIN": {"PRESENT", "ACTIVE", "TOMBSTONE"},
+    "ANONYMIZE": {"ANONYMIZED"},
+    "RETAIN": {"PRESENT", "ACTIVE", "TOMBSTONE", "REDACTED", "ANONYMIZED"},
 }
+
+
+def _boolean(value, default=True):
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    folded = str(value).strip().casefold()
+    if folded in {"true", "1", "yes", "active", "enabled"}:
+        return True
+    if folded in {"false", "0", "no", "inactive", "disabled"}:
+        return False
+    return default
 
 
 def _context(hit):
     record = hit.get("record", {})
     state = hit.get("state", "").upper()
     return {
-        "has_shared_context": bool(record.get("shared_context", True)),
-        "within_retention_period": bool(record.get("within_retention_period", True)),
-        "legal_hold_active": bool(record.get("legal_hold_active", True)),
-        "restore_can_be_blocked": bool(record.get("restore_can_be_blocked", True)),
+        "has_shared_context": _boolean(record.get("shared_context")),
+        "within_retention_period": _boolean(record.get("within_retention_period")),
+        "legal_hold_active": _boolean(record.get("legal_hold_active")),
+        "restore_can_be_blocked": _boolean(record.get("restore_can_be_blocked")),
         "only_stable_id_needed": state in {"REDACTED", "TOMBSTONE", "ANONYMIZED"},
-        "attachment_belongs_only_to_subject": bool(record.get("attachment_belongs_only_to_subject", True)),
+        "attachment_belongs_only_to_subject": _boolean(record.get("attachment_belongs_only_to_subject")),
         "record_still_attributable": state not in {"ANONYMIZED", "ABSENT"},
         "log_contains_email": bool(record.get("email") or hit.get("identifiers_found")),
     }
@@ -33,9 +47,11 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
     if intent == "NOT_APPLICABLE":
         return {"status": "NOT_APPLICABLE", "findings": [], "resources": [], "compliant_resources": []}
     if user_identity is None:
-        return {"status": "INCOMPLETE", "findings": [{"type": "identity_unresolved",
-                "system_id": "identity_service", "resource_id": case.get("email", ""),
-                "evidence_id": ""}], "resources": [], "compliant_resources": []}
+        raise ValueError(f"{case['case_id']}: identity could not be resolved")
+    if not evidence_index:
+        raise ValueError(
+            f"{case['case_id']}: no eligible evidence proves deletion state at audit_at"
+        )
 
     findings, compliant, resources = [], [], []
     for resource_id, hits in evidence_index.items():
@@ -67,15 +83,24 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
         resources.append(resource)
 
     # Activity is useful for recreation risks only when identity resolution grounded it.
-    deletion_times = [event.get("event_time", "") for event in system_activity_events
-                      if event.get("event_type", "").upper() == "DELETE_RECORD"]
-    after = max(deletion_times) if deletion_times else ""
+    deletion_by_resource = {}
+    for event in system_activity_events:
+        if event.get("event_type", "").upper() == "DELETE_RECORD":
+            resource_id = event.get("resource_id", "")
+            deletion_by_resource[resource_id] = max(
+                deletion_by_resource.get(resource_id, ""), event.get("event_time", "")
+            )
     seen = {(finding.get("type"), finding.get("resource_id")) for finding in findings}
     for event in system_activity_events:
         kind = event.get("event_type", "").upper()
         if kind not in {"SYNC_RECORD", "INDEX_RECORD", "CREATE_EXPORT", "RESTORE_BACKUP"}:
             continue
-        if event.get("event_time", "") <= after or event.get("reported_result", "").upper() in {"DISABLED", "FAILED", "BLOCKED"}:
+        resource_id = event.get("resource_id", "")
+        if event.get("event_time", "") < case.get("requested_at", ""):
+            continue
+        if event.get("event_time", "") <= deletion_by_resource.get(resource_id, ""):
+            continue
+        if event.get("reported_result", "").upper() in {"DISABLED", "FAILED", "BLOCKED"}:
             continue
         finding_type = "restore_risk" if kind == "RESTORE_BACKUP" else "active_data_flow"
         key = (finding_type, event.get("resource_id", ""))

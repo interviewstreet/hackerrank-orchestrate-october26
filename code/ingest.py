@@ -46,11 +46,13 @@ def load_evidence_index(repo_root: str | Path) -> dict[str, dict[str, str]]:
     return _index_unique(rows, "file_id", "evidence_files.csv")
 
 
-def load_all(repo_root: str | Path) -> dict:
+def load_all(repo_root: str | Path, include_sample_output=True) -> dict:
     dataset = Path(repo_root).resolve() / "dataset"
     requests = _rows(dataset / "deletion_requests.csv")
     samples = _rows(dataset / "sample_deletion_requests.csv")
-    sample_output_rows = _rows(dataset / "sample_output.csv")
+    sample_output_rows = (
+        _rows(dataset / "sample_output.csv") if include_sample_output else []
+    )
     identities = _rows(dataset / "user_identities.csv")
     audits = _rows(dataset / "user_audit_log.csv")
     activity = sorted(_rows(dataset / "system_activity.csv"), key=lambda row: row["event_time"])

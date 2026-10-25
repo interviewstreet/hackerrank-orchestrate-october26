@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 from code.planner import OPERATION_STATE
 
@@ -10,6 +11,12 @@ PHASES = {"FINDING": 0, "REMEDIATION": 1, "VERIFICATION": 2}
 STEP_FIELDS = {
     "step_no", "phase", "system_id", "resource_id", "operation", "state", "evidence_id"
 }
+RESOURCE_ID_RE = re.compile(
+    r"^(?:account|search|support|analytics|export|backup|data_flow|audit_record|"
+    r"tombstone|cache|marketing|email_delivery|object|telemetry|legal)_"
+    r"[A-Za-z0-9.-]*\d[A-Za-z0-9.-]*$",
+    re.IGNORECASE,
+)
 
 
 def validate_output(rows: list) -> list[str]:
@@ -37,6 +44,8 @@ def validate_output(rows: list) -> list[str]:
             continue
         if status == "NOT_APPLICABLE" and steps:
             errors.append(f"{prefix} NOT_APPLICABLE steps_json must be []")
+        if status == "COMPLETE" and not steps:
+            errors.append(f"{prefix} COMPLETE requires at least one evidence-backed verification")
         if status == "COMPLETE" and any(
             step.get("phase") != "VERIFICATION" for step in steps if isinstance(step, dict)
         ):
@@ -70,6 +79,9 @@ def validate_output(rows: list) -> list[str]:
             for field in ("system_id", "resource_id"):
                 if not isinstance(step.get(field), str) or not step.get(field):
                     errors.append(f"{prefix} {field} required at step {position}")
+            resource_id = step.get("resource_id", "")
+            if isinstance(resource_id, str) and resource_id and not RESOURCE_ID_RE.fullmatch(resource_id):
+                errors.append(f"{prefix} invalid resource_id format at step {position}")
             evidence = step.get("evidence_id")
             if not isinstance(evidence, str):
                 errors.append(f"{prefix} evidence_id must be a string at step {position}")
