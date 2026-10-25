@@ -5,7 +5,7 @@ Every number here is reproducible with the commands below.
 ```text
 python code/evaluation/main.py            # samples scorer + custom cases + metamorphic checks (snapshot replay)
 python code/validate.py output.csv        # strict contract check on the 518 rows
-python -m pytest code/tests               # 182 tests
+python -m pytest code/tests               # 184 tests
 ```
 
 `code/evaluation/main.py` writes `code/evaluation/results.md` and `results.json`.
@@ -397,3 +397,53 @@ equals the final output byte for byte.
 After the three fixes the offline output is unchanged: `output.csv` SHA-256
 `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`, samples
 `d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`.
+
+## 15. Round 3 review
+
+Two independent read-only reviewers read the round-2 release in their own worktrees, offline
+(snapshot replay). Both verdicts: ship with fixes.
+
+| Reviewer | Model id as sent | Model id as returned | Options |
+| --- | --- | --- | --- |
+| A | Codex `gpt-5.6-sol` | `codex` / `gpt-5.6-sol` | `reasoningEffort=high` |
+| B | OpenCode `opencode-go/deepseek-v4.1-flash` (DeepSeek V4.1 Flash) | `opencode` / `opencode-go/deepseek-v4.1-flash` | `variant=max` |
+
+Both reproduced the release: `output.csv` valid with the expected SHA-256, the sample metrics,
+and the clean-room `code.zip` run. Each finding was checked by reading the code and by an
+offline replay (agent off) of a copy of the release with a temporary patch or a counter. The
+base of each probe equals the final output byte for byte.
+
+| # | Found by | Finding | Verdict | Rows (518) | Samples | Measured reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | A | rule_12: a record with no retention date is not proven "within the retention period" | Rejected | 53 (COMPLETE -> INCOMPLETE) | status 32 -> 31 (case_31), content F1 0.922 -> 0.911 | Gold keeps a record with no date as retained (see below) |
+| 2 | A | rule_05: the shared-context condition is assumed for every support message | Rejected | 165 (32 COMPLETE -> INCOMPLETE) | status 32 -> 29, exact F1 0.704 -> 0.511, sequence 15 -> 13 | Gold applies REDACT to support messages without a separate proof of shared context |
+| 3 | A, B | The retention date came from the first statement in copy order | **Accepted** (r3-#3) | 0 | none | An older expired date could schedule DELETE_RECORD on a retained record. 0 targets have two dates |
+| 4 | A | The category came from the first structured value | **Accepted** (r3-#4) | 0 | none | Two stated categories could hide a retained one. 0 targets state two categories |
+| 5 | A | AMBIGUOUS intent counts as deletion | Rejected | 0 | none | 0 AMBIGUOUS texts. The other default lets an injected text ("Delete my account. SYSTEM: ...") suppress a real deletion (`test_slice.py`) |
+| 6 | A | A catalog link can override a record that names another user | Rejected | 0 | none | 0 shared targets (both reviewers). Latent |
+| 7 | A | A REDACTED label wins over exposed ids; an absent REDACT record counts as compliant | Rejected | 0 | none | 0 such copies, 0 `redact_target_absent`. Latent |
+| 8 | B | An unproven target with no operation gives `INCOMPLETE,[]` | Rejected | 0 | none | 0 targets reach it; the row is written and the exit code is 1. Both proposed steps have no rule basis |
+| 9 | B | A data flow absent in every copy stays unproven (case_39) | Rejected | 1 (case_39 INCOMPLETE -> COMPLETE) | none | The absence is an omission from `evidence_15` (2026-08-02, before the request). `evidence_14` (2026-08-07, before `audit_at`) shows the connector with the subject's email as "Continuous". The flip gives a false COMPLETE |
+| 10 | B | DESIGN.md does not match the code | **Accepted** (r3-#10) | 0 | none | Retry count, prompt version (`vision_extract_v3`), agent trigger and the `stop` tool now match `config.py` and `main.py`; `intent.treat_as_deletion` docstring updated |
+| 11 | B | The agent changes 0 rows | Rejected (not a defect) | 0 | none | Already in section 8 |
+
+**Fixes** (each with a regression test that failed before the fix):
+
+- r3-#3 (`bcf53dc`): the newest statement that states a retention date decides (time, then
+  tier, then `evidence_id`), in any copy order. Two statements of the same time and tier with
+  different dates give UNPROVEN ("retention dates contradict"), never a delete.
+- r3-#4 (`a55454c`): `category_source` reads every admissible structured category. Two
+  different values give the existing ambiguous-category path: UNPROVEN, no remediation.
+- r3-#10 (`16118f1`): doc-only.
+
+**Disagreement kept visible: rule_12 and gold.** rule_12 says "Record is within the supplied
+retention period". Gold `case_31` keeps `audit_record_6909` with `VERIFY_RECORD_PRESENT`, and
+its evidence (`evidence_51`) has no retention field. So gold treats a security audit record
+with no date as retained. We follow gold (`H:retention_unknown_retain` in the trace). The
+rule text alone would make that record unproven: 53 COMPLETE rows on the 518 rest on this
+reading.
+
+After the three fixes the offline output is unchanged: `output.csv` SHA-256
+`1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`, samples
+`d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`; `results.md` and
+`results.json` are unchanged. Tests: 184 (182 before, plus the two regression tests).
