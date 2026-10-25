@@ -166,7 +166,6 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
     valid_evs.sort(key=lambda x: x['captured_at'], reverse=True)
 
     primary_evidence_id = valid_evs[0]['file_id'] if valid_evs else ''
-
     resources = {}
 
     def add_resource(sys_id, res_id, state, is_comp, eid, is_attach=False):
@@ -493,10 +492,11 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
             except Exception:
                 pass
 
-    # Ensure account_service resource ID is always tracked for deletion subject
+    # Ensure account_service resource ID is tracked
     has_account = any(s == 'account_service' for (s, r) in resources.keys())
     if not has_account:
         account_res_id = None
+        account_eid = ""
         for a in system_activities:
             if a['event_time'] <= audit_at:
                 if matches_identifier(a['details'], user_id, emails):
@@ -509,23 +509,27 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
             res_num = uid_num.zfill(3) if len(uid_num) < 3 else uid_num
             account_res_id = f"account_{res_num}"
 
-        add_resource('account_service', account_res_id, 'ABSENT', True, primary_evidence_id)
+        add_resource('account_service', account_res_id, 'ABSENT', True, account_eid)
 
     return list(resources.values()), primary_evidence_id
 
 def build_case_steps(resource_list, primary_evidence_id):
+    # Check if ALL resources in resource_list are compliant AND have valid evidence_id
     is_complete = True
-    for rinfo in resource_list:
-        if not rinfo['is_compliant']:
-            is_complete = False
-            break
+    if not resource_list:
+        is_complete = False
+    else:
+        for rinfo in resource_list:
+            if not rinfo['is_compliant'] or not rinfo['evidence_id']:
+                is_complete = False
+                break
 
     if is_complete:
         v_items = []
         for rinfo in resource_list:
             sys_id = rinfo['system_id']
             res_id = rinfo['resource_id']
-            eid = rinfo['evidence_id'] or primary_evidence_id
+            eid = rinfo['evidence_id']
 
             if sys_id in ['account_service', 'search_service', 'export_service']:
                 v_items.append((1, sys_id, res_id, 'VERIFY_RECORD_ABSENT', 'ABSENT', eid))
@@ -565,37 +569,37 @@ def build_case_steps(resource_list, primary_evidence_id):
         for rinfo in resource_list:
             sys_id = rinfo['system_id']
             res_id = rinfo['resource_id']
-            eid = rinfo['evidence_id'] or primary_evidence_id
+            eid = rinfo['evidence_id']
             is_attach = rinfo.get('is_attachment', False)
 
             if not rinfo['is_compliant']:
                 if sys_id in ['account_service', 'search_service', 'export_service']:
-                    f_items.append((1, sys_id, res_id, 'REPORT_REMAINING_RECORD', 'PRESENT', eid))
+                    f_items.append((1, sys_id, res_id, 'REPORT_REMAINING_RECORD', 'PRESENT', eid or primary_evidence_id))
                     r_items.append((3, sys_id, res_id, 'DELETE_RECORD', 'ABSENT', ''))
                     v_items.append((1, sys_id, res_id, 'VERIFY_RECORD_ABSENT', 'ABSENT', ''))
                 elif sys_id == 'support_platform':
                     if is_attach:
-                        f_items.append((1, sys_id, res_id, 'REPORT_REMAINING_RECORD', 'PRESENT', eid))
+                        f_items.append((1, sys_id, res_id, 'REPORT_REMAINING_RECORD', 'PRESENT', eid or primary_evidence_id))
                         r_items.append((3, sys_id, res_id, 'DELETE_RECORD', 'ABSENT', ''))
                         v_items.append((1, sys_id, res_id, 'VERIFY_RECORD_ABSENT', 'ABSENT', ''))
                     else:
-                        f_items.append((2, sys_id, res_id, 'REPORT_EXPOSED_PII', 'PRESENT', eid))
+                        f_items.append((2, sys_id, res_id, 'REPORT_EXPOSED_PII', 'PRESENT', eid or primary_evidence_id))
                         r_items.append((4, sys_id, res_id, 'REDACT_RECORD', 'REDACTED', ''))
                         v_items.append((3, sys_id, res_id, 'VERIFY_RECORD_REDACTED', 'REDACTED', ''))
                 elif sys_id == 'analytics_platform':
-                    f_items.append((2, sys_id, res_id, 'REPORT_EXPOSED_PII', 'PRESENT', eid))
+                    f_items.append((2, sys_id, res_id, 'REPORT_EXPOSED_PII', 'PRESENT', eid or primary_evidence_id))
                     r_items.append((5, sys_id, res_id, 'ANONYMIZE_RECORD', 'ANONYMIZED', ''))
                     v_items.append((4, sys_id, res_id, 'VERIFY_RECORD_ANONYMIZED', 'ANONYMIZED', ''))
                 elif sys_id == 'identity_service':
-                    f_items.append((2, sys_id, res_id, 'REPORT_EXPOSED_PII', 'PRESENT', eid))
+                    f_items.append((2, sys_id, res_id, 'REPORT_EXPOSED_PII', 'PRESENT', eid or primary_evidence_id))
                     r_items.append((4, sys_id, res_id, 'REDACT_RECORD', 'REDACTED', ''))
                     v_items.append((3, sys_id, res_id, 'VERIFY_RECORD_REDACTED', 'REDACTED', ''))
                 elif sys_id == 'integration_service':
-                    f_items.append((3, sys_id, res_id, 'REPORT_ACTIVE_DATA_FLOW', 'ACTIVE', eid))
+                    f_items.append((3, sys_id, res_id, 'REPORT_ACTIVE_DATA_FLOW', 'ACTIVE', eid or primary_evidence_id))
                     r_items.append((1, sys_id, res_id, 'DISABLE_DATA_FLOW', 'DISABLED', ''))
                     v_items.append((5, sys_id, res_id, 'VERIFY_DATA_FLOW_DISABLED', 'DISABLED', ''))
                 elif sys_id == 'backup_service':
-                    f_items.append((4, sys_id, res_id, 'REPORT_RESTORE_RISK', 'ACTIVE', eid))
+                    f_items.append((4, sys_id, res_id, 'REPORT_RESTORE_RISK', 'ACTIVE', eid or primary_evidence_id))
                     r_items.append((2, sys_id, res_id, 'BLOCK_RESTORE', 'BLOCKED', ''))
                     v_items.append((6, sys_id, res_id, 'VERIFY_RESTORE_BLOCKED', 'BLOCKED', ''))
             else:
