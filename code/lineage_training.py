@@ -236,8 +236,16 @@ def _add_workflow_edges(dataset: Path, tokens, positives, activity):
                     scored.append((score, account, anchor))
         if not scored:
             continue
-        _, account, anchor = min(
-            scored, key=lambda item: (item[0], item[1].get("activity_id", ""))
+        candidate_accounts = {
+            item[1].get("resource_id", ""): item[1] for item in scored
+        }
+        if len(candidate_accounts) != 1:
+            # Training labels must not choose a neighboring user's account by score.
+            continue
+        account = next(iter(candidate_accounts.values()))
+        account_edges = [item for item in scored if item[1] is account]
+        _, _account, anchor = min(
+            account_edges, key=lambda item: (item[0], item[2].get("activity_id", ""))
         )
         edges = [(account, "DELETE")]
         analytics = _analytics_for_account(account, activity, audit_at)
@@ -385,7 +393,7 @@ def render_training_report(summary: dict) -> str:
     lines.extend([
         "", "## Stage 2 Gate", "",
         "The examples are suitable for deterministic Stage 3 weight training only.",
-        "Candidate generation remains bounded by the Stage 1 93.7% observability gate;",
-        "training cannot recover seven exact security IDs absent before their cutoffs.", "",
+        "Candidate generation remains bounded by the separate observability gate;",
+        "training cannot recover canonical IDs absent before their audit cutoffs.", "",
     ])
     return "\n".join(lines)

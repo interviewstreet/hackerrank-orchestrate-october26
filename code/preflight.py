@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib.util
 import json
 import re
 import sys
@@ -34,6 +35,7 @@ REPORT_SECTIONS = {
     ),
 }
 FORBIDDEN_ARCHIVE_PARTS = {"dataset", "__pycache__", ".venv", "venv", "node_modules", ".git"}
+REQUIRED_MODULES = ("pdfminer", "pypdf", "PIL", "pytesseract", "rapidocr", "onnxruntime")
 SECRET_PATTERNS = (
     re.compile(r"AIza[0-9A-Za-z_-]{20,}"),
     re.compile(r"(?i)(?:api[_-]?key|password|secret)\s*=\s*['\"][^'\"]+['\"]"),
@@ -103,8 +105,11 @@ def _check_reports(root: Path) -> list[str]:
 
 def _check_source_secrets(root: Path) -> list[str]:
     errors = []
-    paths = [root / "README.md", *sorted((root / "code").rglob("*.py")),
-             *sorted((root / "code").rglob("*.md")), *sorted((root / "code").rglob("*.sh"))]
+    paths = [root / "README.md", root / "log.txt",
+             *sorted((root / "code").rglob("*.py")),
+             *sorted((root / "code").rglob("*.md")),
+             *sorted((root / "code").rglob("*.sh"))]
+    paths.extend(path for path in (root / ".env", root / ".env.local") if path.exists())
     for path in paths:
         text = path.read_text(encoding="utf-8", errors="replace")
         for pattern in SECRET_PATTERNS:
@@ -125,6 +130,14 @@ def _check_archive(root: Path, required: bool) -> list[str]:
             if bad:
                 errors.append(f"code.zip has a corrupt member: {bad}")
             names = archive.namelist()
+            for info in archive.infolist():
+                if info.file_size > 5 * 1024 * 1024:
+                    errors.append(f"oversized code.zip member: {info.filename}")
+                    continue
+                if Path(info.filename).suffix.casefold() in {".py", ".md", ".sh", ".txt"}:
+                    text = archive.read(info).decode("utf-8", errors="replace")
+                    if any(pattern.search(text) for pattern in SECRET_PATTERNS):
+                        errors.append(f"possible hardcoded secret in code.zip: {info.filename}")
     except zipfile.BadZipFile:
         return ["code.zip is not a valid ZIP archive"]
     for name in names:
@@ -148,6 +161,12 @@ def run_preflight(root: str | Path, require_package=False) -> list[str]:
     errors = []
     if sys.version_info < (3, 10):
         errors.append("Python 3.10 or newer is required (submission target is Python 3.12)")
+    missing_modules = [name for name in REQUIRED_MODULES
+                       if importlib.util.find_spec(name) is None]
+    if missing_modules:
+        errors.append(
+            "required evidence dependencies are unavailable: " + ", ".join(missing_modules)
+        )
     try:
         data = load_all(root)
     except (OSError, ValueError) as exc:

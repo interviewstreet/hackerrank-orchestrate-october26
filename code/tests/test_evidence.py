@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from code.evidence import (
+    EvidenceExtractionError,
     _contains,
     build_evidence_index,
     parse_image_evidence,
@@ -107,6 +108,17 @@ class EvidenceParserTests(unittest.TestCase):
             hits = parse_image_evidence(Path("screen.png"), identity)
         self.assertEqual(hits[0]["resource_id"], "search_1")
         self.assertEqual(hits[0]["system_id"], "search_service")
+
+    def test_unextractable_image_fails_closed(self):
+        identity = {
+            "user_id": "user_1", "all_emails": ["a@example.test"],
+            "all_phones": [], "all_email_hashes": [],
+        }
+        with patch("code.evidence._extract_image_text", return_value=""), patch(
+            "code.evidence._gemini_vision_text", return_value=""
+        ):
+            with self.assertRaises(EvidenceExtractionError):
+                parse_image_evidence(Path("screen.png"), identity)
 
     def test_handover_support_attachment_keeps_resource_id_and_category(self):
         hits = parse_text_evidence(

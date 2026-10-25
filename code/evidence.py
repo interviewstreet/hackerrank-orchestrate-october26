@@ -16,6 +16,15 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
 
+
+class EvidenceExtractionError(RuntimeError):
+    """An eligible artifact could not be examined completely and safely."""
+
+
+MAX_SQL_BYTES = 10 * 1024 * 1024
+MAX_SQL_VM_STEPS = 2_000_000
+MAX_SQL_ROWS = 100_000
+
 SYSTEM_CATEGORY = {
     "account_service": "USER_PROFILE",
     "identity_service": "ACCOUNT_TOMBSTONE",
@@ -219,28 +228,44 @@ def _dedupe(hits: Iterable[dict]) -> list[dict]:
 
 @lru_cache(maxsize=128)
 def _load_sql_records(path: str):
-    """Execute each immutable snapshot once, then reuse its normalized rows."""
+    """Execute a bounded immutable snapshot once, then reuse normalized rows."""
+    source = Path(path)
+    if source.stat().st_size > MAX_SQL_BYTES:
+        raise EvidenceExtractionError("SQL evidence exceeds the configured size limit")
     conn = sqlite3.connect(":memory:")
     conn.row_factory = sqlite3.Row
     conn.enable_load_extension(False)
+    progress_calls = 0
+
+    def progress():
+        nonlocal progress_calls
+        progress_calls += 1
+        return int(progress_calls * 1_000 > MAX_SQL_VM_STEPS)
 
     def authorize(action, arg1, arg2, database, trigger):
-        del arg1, database, trigger
-        if action in {sqlite3.SQLITE_ATTACH, sqlite3.SQLITE_DETACH}:
+        del database, trigger
+        denied = {sqlite3.SQLITE_ATTACH, sqlite3.SQLITE_DETACH}
+        pragma = getattr(sqlite3, "SQLITE_PRAGMA", -1)
+        if action in denied:
+            return sqlite3.SQLITE_DENY
+        if action == pragma and str(arg1 or "").casefold() != "foreign_keys":
             return sqlite3.SQLITE_DENY
         if action == sqlite3.SQLITE_FUNCTION and str(arg2 or "").casefold() == "load_extension":
             return sqlite3.SQLITE_DENY
         return sqlite3.SQLITE_OK
 
     conn.set_authorizer(authorize)
+    conn.set_progress_handler(progress, 1_000)
     try:
-        conn.executescript(Path(path).read_text(encoding="utf-8"))
+        conn.executescript(source.read_text(encoding="utf-8"))
         tables = tuple(row[0] for row in conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"))
         records = []
         for table in tables:
             quoted = table.replace('"', '""')
             for raw in conn.execute(f'SELECT * FROM "{quoted}"'):
+                if len(records) >= MAX_SQL_ROWS:
+                    raise EvidenceExtractionError("SQL evidence exceeds the configured row limit")
                 record = dict(raw)
                 if record.get("record_json"):
                     try:
@@ -334,8 +359,8 @@ def parse_json_evidence(path, user_identity):
     resolved = str(Path(path).resolve())
     try:
         records = _load_json_records(resolved)
-    except (OSError, json.JSONDecodeError):
-        return []
+    except (OSError, json.JSONDecodeError) as exc:
+        raise EvidenceExtractionError("JSON evidence could not be parsed") from exc
     hits = []
     for record, system, source, blob in records:
         found = _matches(blob, user_identity)
@@ -392,8 +417,11 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
         pipe = [part.strip() for part in candidate.split("|")]
         valid_categories = set(SYSTEM_CATEGORY.values()) | {"SUPPORT_ATTACHMENT", "SECONDARY_IDENTIFIER"}
         if len(pipe) >= 6 and pipe[3].strip().upper() in valid_categories:
+            category = pipe[3].strip().upper()
             record.update({"system_id": pipe[1], "resource_id": pipe[2],
-                           "data_category": pipe[3], "state": pipe[4]})
+                           "data_category": category, "state": pipe[4]})
+            if category == "SUPPORT_ATTACHMENT" and len(found) == 1:
+                record["attachment_belongs_only_to_subject"] = True
         resource_matches = [value for value in RESOURCE_FIELD_RE.findall(candidate)
                             if _valid_resource_id(value)]
         if not record.get("resource_id") and resource_matches:
@@ -452,7 +480,11 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
                         ])):
                     record["state"] = "REDACTED"
                 if "attachment" in source.casefold() or "attachment" in text.casefold():
-                    record.update({"system_id": "support_platform", "data_category": "SUPPORT_ATTACHMENT"})
+                    record.update({
+                        "system_id": "support_platform",
+                        "data_category": "SUPPORT_ATTACHMENT",
+                        "attachment_belongs_only_to_subject": bool(found),
+                    })
                 hit = _hit(record, source)
                 hit["identifiers_found"] = found
                 hits.append(hit)
@@ -487,12 +519,21 @@ def _extract_pdf_text(path: str) -> str:
 
 
 def parse_pdf_evidence(path, user_identity):
-    return _parse_extracted(_extract_pdf_text(str(Path(path).resolve())), path, user_identity)
+    text = _extract_pdf_text(str(Path(path).resolve()))
+    if not text.strip():
+        raise EvidenceExtractionError("PDF evidence produced no extractable text")
+    return _parse_extracted(text, path, user_identity)
+
+
+def _external_ai_enabled() -> bool:
+    return os.environ.get("ALLOW_EXTERNAL_AI", "").strip().casefold() in {
+        "1", "true", "yes"
+    }
 
 
 def _gemini_vision_text(path, user_identity):
-    """Use Gemini Pro only when local OCR cannot ground the subject."""
-    if not os.environ.get("GOOGLE_API_KEY"):
+    """Use Gemini Pro only after an explicit external-processing opt-in."""
+    if not (_external_ai_enabled() and os.environ.get("GOOGLE_API_KEY")):
         return ""
     from code import cache
     image_bytes = Path(path).read_bytes()
@@ -572,6 +613,10 @@ def parse_image_evidence(path, user_identity):
     text = _extract_image_text(str(Path(path).resolve()))
     if len(text.strip()) < 20 or not _matches(text, user_identity):
         text = _gemini_vision_text(path, user_identity) or text
+    if not text.strip():
+        raise EvidenceExtractionError(
+            "image evidence could not be extracted locally and external AI is disabled"
+        )
     return _parse_extracted(text, path, user_identity)
 
 
@@ -606,9 +651,12 @@ def build_evidence_index(repo_root, manifest, user_identity, audit_at):
             continue
         try:
             hits = parser(path, user_identity)
-        except (OSError, ValueError, sqlite3.Error, ImportError):
-            # Optional OCR/PDF dependencies may be absent in a lightweight test run.
-            continue
+        except EvidenceExtractionError:
+            raise
+        except (OSError, ValueError, sqlite3.Error, ImportError) as exc:
+            raise EvidenceExtractionError(
+                f"eligible evidence {file_id} could not be examined with {path.suffix} parser"
+            ) from exc
         for hit in hits:
             hit["file_id"] = file_id
             hit["captured_at"] = item.get("captured_at", "")

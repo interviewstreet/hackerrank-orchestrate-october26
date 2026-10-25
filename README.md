@@ -49,7 +49,7 @@ python3.12 -m venv .venv
 pip install -r code/requirements.txt
 ```
 
-Set `GOOGLE_API_KEY` only when Gemini fallback classification or vision extraction is needed. The key is read from the environment and is never written to output, logs, or cache files. Deterministic multilingual intent rules handle clear requests before any model call.
+External AI processing is disabled by default. Prefer the local deterministic classifier and local OCR. If your approved privacy/data-processing policy permits sending request text or image bytes to Google, set both `ALLOW_EXTERNAL_AI=true` and `GOOGLE_API_KEY`. The key is read from the environment and is never written to output, logs, or cache files. Review provider residency, retention, and contractual controls before opting in.
 
 Useful commands:
 
@@ -99,6 +99,8 @@ Gemini results are cached in `code/cache.json` by SHA-256 of `case_id + prompt`;
 - API keys are read only from `GOOGLE_API_KEY` and are never included in prompts, logs, outputs, or cache values.
 - Cache updates and final CSV writes use temporary files followed by atomic replacement.
 - Final validation rejects duplicate cases, malformed steps, invalid phase or operation ordering, and incorrect evidence placement.
+- Eligible evidence extraction failures are fatal; an unavailable parser or OCR engine can never be interpreted as proof that data is absent.
+- SQL evidence has file-size, virtual-machine instruction, and row-count limits in addition to attachment and extension denial.
 
 
 ## Dataset

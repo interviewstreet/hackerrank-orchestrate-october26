@@ -1,5 +1,10 @@
 # Three-Phase Resource-Lineage Improvement Plan
 
+> Historical plan: measured results below describe an earlier implementation stage.
+> Current reproducible metrics and blockers are authoritative in
+> `evaluation/evaluation_report.md`, `benchmark_diagnostics.md`, and
+> `observability_report.md`.
+
 ## Phase 1 — Grounded Catalog Lineage (Complete)
 
 - Extract subject-to-resource links only from audit-time-filtered `LINK_RESOURCE_IDENTITY` events.

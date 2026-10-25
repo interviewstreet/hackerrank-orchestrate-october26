@@ -13,7 +13,7 @@ A 100% claim is conditional on candidate observability. A ranker cannot recover 
 3. Kept the diagnostic outside prediction code and added a test preventing production modules from importing it.
 4. Enforced the gate: training cannot claim 100% unless pre-audit candidate recall is 100%.
 
-Measured result: **104/111 unique case-resource pairs (93.7%)** are observable before their cutoffs, so the gate **fails**. Seven security verifications are blocked: five IDs first appear in post-audit captures and two do not occur in participant-facing prediction inputs. See `code/evaluation/observability_report.md`.
+Latest measured result: **103/111 unique case-resource pairs (92.8%)** have a pre-audit occurrence, so the gate **fails**. Eight canonical resources are unavailable at cutoff: five first appear post-audit and three are absent globally. See `code/evaluation/observability_report.md`.
 
 ## Stage 2 — Build a self-supervised lineage training set (Complete)
 
@@ -21,7 +21,7 @@ Generated labels only from unambiguous participant-visible identity/resource edg
 
 `code/lineage_training.py` now produces in-memory numeric-feature examples and hard negatives from resources grounded to other subjects in the same artifact/system where possible. Exact edge rows are not persisted. A deterministic SHA-256 user split prevents a subject from appearing in both training and validation, and generation succeeds without `sample_output.csv`.
 
-Measured corpus: **7,533 examples**, comprising **2,036 positive grounded edges** and **5,497 hard negatives** across **835 subjects**. This includes **290 newly added request-scoped workflow edges** connected to pre-audit grounded anchors. The split contains **658 training users / 5,985 examples** and **177 validation users / 1,548 examples**. See `code/evaluation/training_set_report.md`.
+Measured corpus after ambiguity hardening: **7,103 examples**, comprising **1,925 positive grounded edges** and **5,178 hard negatives** across **835 subjects**. This includes **179 request-scoped workflow edges** for which exactly one account candidate is compatible with grounded anchors. The split contains **658 training users / 5,656 examples** and **177 validation users / 1,447 examples**. See `code/evaluation/training_set_report.md`.
 
 ## Stage 3 — Train a deterministic resource-lineage ranker
 

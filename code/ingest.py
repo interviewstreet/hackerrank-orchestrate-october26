@@ -3,7 +3,17 @@ from __future__ import annotations
 
 import csv
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
+
+TIMESTAMP_FIELDS = {
+    "deletion_requests.csv": ("requested_at", "reported_at", "audit_at"),
+    "sample_deletion_requests.csv": ("requested_at", "reported_at", "audit_at"),
+    "user_identities.csv": ("updated_at",),
+    "user_audit_log.csv": ("event_time",),
+    "system_activity.csv": ("event_time",),
+    "evidence_files.csv": ("captured_at",),
+}
 
 SCHEMAS = {
     "deletion_requests.csv": ("case_id", "email", "requested_at", "reported_status", "reported_at", "audit_at", "request_text"),
@@ -26,7 +36,25 @@ def _rows(path: Path) -> list[dict[str, str]]:
                 f"{path.name} columns do not match contract: "
                 f"expected {expected}, got {tuple(reader.fieldnames or ())}"
             )
-        return list(reader)
+        rows = list(reader)
+        for line, row in enumerate(rows, 2):
+            for field in TIMESTAMP_FIELDS.get(path.name, ()):
+                value = row.get(field, "")
+                try:
+                    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                except ValueError as exc:
+                    raise ValueError(
+                        f"{path.name}:{line} has invalid {field}: {value!r}"
+                    ) from exc
+                if parsed.tzinfo is None:
+                    raise ValueError(
+                        f"{path.name}:{line} has timezone-naive {field}"
+                    )
+                if not value.endswith("Z"):
+                    raise ValueError(
+                        f"{path.name}:{line} must encode {field} in normalized UTC (Z)"
+                    )
+        return rows
 
 
 def _index_unique(rows, key, source):
@@ -58,6 +86,14 @@ def load_all(repo_root: str | Path, include_sample_output=True) -> dict:
     activity = sorted(_rows(dataset / "system_activity.csv"), key=lambda row: row["event_time"])
     rules = _rows(dataset / "deletion_rules.csv")
 
+    for source, rows in (("deletion_requests.csv", requests),
+                         ("sample_deletion_requests.csv", samples)):
+        for row in rows:
+            if not row["requested_at"] <= row["reported_at"] <= row["audit_at"]:
+                raise ValueError(
+                    f"{source} has invalid request/report/audit chronology: {row['case_id']}"
+                )
+
     requests_by_id = _index_unique(requests, "case_id", "deletion_requests.csv")
     samples_by_id = _index_unique(samples, "case_id", "sample_deletion_requests.csv")
     sample_output = _index_unique(sample_output_rows, "case_id", "sample_output.csv")
@@ -65,6 +101,24 @@ def load_all(repo_root: str | Path, include_sample_output=True) -> dict:
     rules_by_category = _index_unique(rules, "data_category", "deletion_rules.csv")
     _index_unique(activity, "activity_id", "system_activity.csv")
     _index_unique(audits, "audit_id", "user_audit_log.csv")
+
+    identity_owners: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for row in identities:
+        for field in ("email", "phone", "email_hash"):
+            if row.get(field):
+                identity_owners[(field, row[field].casefold())].add(row["user_id"])
+    for row in audits:
+        if row.get("field_name") in {"email", "phone", "email_hash"}:
+            for field in ("old_value", "new_value"):
+                if row.get(field):
+                    identity_owners[(row["field_name"], row[field].casefold())].add(
+                        row["user_id"]
+                    )
+    conflicts = [key for key, owners in identity_owners.items() if len(owners) > 1]
+    if conflicts:
+        raise ValueError(
+            f"identity history contains {len(conflicts)} cross-user identifier collision(s)"
+        )
 
     by_user: dict[str, list[dict[str, str]]] = defaultdict(list)
     for row in audits:

@@ -27,19 +27,27 @@ def _context(hit):
     record = hit.get("record", {})
     state = hit.get("state", "").upper()
     return {
-        "has_shared_context": _boolean(record.get("shared_context")),
-        "within_retention_period": _boolean(record.get("within_retention_period")),
-        "legal_hold_active": _boolean(record.get("legal_hold_active")),
-        "restore_can_be_blocked": _boolean(record.get("restore_can_be_blocked")),
+        # Defaults are condition-specific. Missing retention/hold facts preserve data;
+        # missing destructive authorization never permits deleting a shared attachment.
+        "has_shared_context": _boolean(record.get("shared_context"), True),
+        "within_retention_period": _boolean(record.get("within_retention_period"), True),
+        "legal_hold_active": _boolean(record.get("legal_hold_active"), True),
+        # Supplied backup-control records are actionable unless they explicitly state
+        # that subject-level restore cannot be blocked.
+        "restore_can_be_blocked": _boolean(record.get("restore_can_be_blocked"), True),
         # A tombstone's stable internal reference is the reason for retaining it; the
         # presence of direct PII determines compliance, not whether retention applies.
         "only_stable_id_needed": bool(
             record.get("user_id") or record.get("subject_reference")
-            or record.get("customer_reference") or state in {"REDACTED", "TOMBSTONE"}
+            or record.get("customer_reference")
         ),
-        "attachment_belongs_only_to_subject": _boolean(record.get("attachment_belongs_only_to_subject")),
+        "attachment_belongs_only_to_subject": _boolean(
+            record.get("attachment_belongs_only_to_subject"), False
+        ),
         "record_still_attributable": state not in {"ANONYMIZED", "ABSENT"},
-        "log_contains_email": bool(record.get("email") or hit.get("identifiers_found")),
+        "log_contains_email": bool(record.get("email") or any(
+            "@" in str(value) for value in hit.get("identifiers_found", [])
+        )),
     }
 
 
@@ -70,13 +78,19 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
             else:
                 findings.append({**resource, "type": "active_data_flow"})
         elif category == "BACKUP_ARCHIVE":
-            resource["required_action"] = "BLOCK_RESTORE"
+            policy_action = get_required_action(category, _context(hit), deletion_rules)
             if state == "BLOCKED":
+                resource["required_action"] = "BLOCK_RESTORE"
                 compliant.append(resource)
-            elif state == "ACTIVE" or hit.get("record", {}).get("restore_allowed") is True:
-                findings.append({**resource, "type": "restore_risk"})
+            elif policy_action == "DELETE":
+                resource["required_action"] = "DELETE"
+                if state == "ABSENT":
+                    compliant.append(resource)
+                else:
+                    findings.append({**resource, "type": "non_compliant_resource"})
             else:
-                # A retained archive is compliant only when subject restore is blocked.
+                # Retention is allowed only after subject-specific restore is blocked.
+                resource["required_action"] = "BLOCK_RESTORE"
                 findings.append({**resource, "type": "restore_risk"})
         else:
             action = get_required_action(category, _context(hit), deletion_rules)
@@ -94,14 +108,19 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
                 findings.append({**resource, "type": "non_compliant_resource"})
         resources.append(resource)
 
-    # Activity is useful for recreation risks only when identity resolution grounded it.
-    deletion_by_resource = {}
-    for event in system_activity_events:
-        if event.get("event_type", "").upper() == "DELETE_RECORD":
-            resource_id = event.get("resource_id", "")
-            deletion_by_resource[resource_id] = max(
-                deletion_by_resource.get(resource_id, ""), event.get("event_time", "")
-            )
+    # Activity can identify a recreation risk, but operation outcomes and deletion
+    # claims never prove the risk was removed. Only authoritative evidence state does.
+    disabled_resources = {
+        resource.get("resource_id", "") for resource in compliant
+        if resource.get("state", "").upper() in {"DISABLED", "BLOCKED"}
+    }
+    resolved_at = {
+        resource.get("resource_id", ""): resource.get("captured_at", "")
+        for resource in compliant
+        if resource.get("state", "").upper() in {
+            "ABSENT", "ANONYMIZED", "REDACTED", "DISABLED", "BLOCKED"
+        }
+    }
     seen = {(finding.get("type"), finding.get("resource_id")) for finding in findings}
     for event in system_activity_events:
         kind = event.get("event_type", "").upper()
@@ -110,9 +129,9 @@ def decide(case, user_identity, evidence_index, system_activity_events, deletion
         resource_id = event.get("resource_id", "")
         if event.get("event_time", "") < case.get("requested_at", ""):
             continue
-        if event.get("event_time", "") <= deletion_by_resource.get(resource_id, ""):
+        if resource_id in disabled_resources:
             continue
-        if event.get("reported_result", "").upper() in {"DISABLED", "FAILED", "BLOCKED"}:
+        if resolved_at.get(resource_id, "") >= event.get("event_time", ""):
             continue
         finding_type = "restore_risk" if kind == "RESTORE_BACKUP" else "active_data_flow"
         key = (finding_type, event.get("resource_id", ""))

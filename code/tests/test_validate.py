@@ -17,6 +17,10 @@ class ValidateTests(unittest.TestCase):
  def test_complete_findings_rejected(self):self.assertError(row([BASE],'COMPLETE'),'verification steps only')
  def test_empty_complete_rejected(self):self.assertError(row([],'COMPLETE'),'at least one evidence-backed verification')
  def test_resource_id_format_rejected(self):self.assertError(row([{**BASE,'resource_id':'account_service'}]),'invalid resource_id format')
+ def test_within_phase_sort_order_rejected(self):
+  steps=[{**BASE,'resource_id':'account_2'},
+         {**BASE,'step_no':2,'resource_id':'account_1'}]
+  self.assertError(row(steps),'canonical operation/system/resource order')
  def test_row_count_duplicates(self):
   self.assertTrue(any('duplicate case_id' in e for e in validate_row_count([{'case_id':'c'},{'case_id':'c'}],expected=2)))
  def test_case_coverage(self):

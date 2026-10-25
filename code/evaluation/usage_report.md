@@ -1,6 +1,6 @@
 # Usage Report
 
-This report describes the final attempted 518-case run on 2026-10-25. The run accounted for every input, processed **517**, and deliberately failed closed on **1** contradictory-evidence case. It did **not** generate a fresh root `output.csv`; therefore this is a validation-run usage report, not a claim that a releasable final output was produced.
+This report describes the final attempted 518-case run on 2026-10-25. The run accounted for every input, processed **517**, and deliberately failed closed on **1** contradictory-evidence case. It did **not** generate a fresh root `output.csv`; the previously committed stale output was removed to prevent accidental submission. This is a validation-run usage report, not a claim that a releasable final output was produced.
 
 ## Model Providers and Model Names
 
@@ -10,7 +10,7 @@ This report describes the final attempted 518-case run on 2026-10-25. The run ac
 | Google | `gemini-2.5-pro` | Vision transcription fallback | No |
 | Local | RapidOCR 3.10.0 with ONNX Runtime 1.23.2 | CPU screenshot OCR when Tesseract is unavailable | Yes; local non-generative inference |
 
-`GOOGLE_API_KEY` was not configured. Clear requests were handled by deterministic multilingual authorization rules. Screenshot text was extracted locally with RapidOCR after the external Tesseract executable proved unavailable.
+`GOOGLE_API_KEY` was not configured and `ALLOW_EXTERNAL_AI` was not enabled. Clear requests were handled by deterministic multilingual authorization rules. Screenshot text was extracted locally with RapidOCR after the external Tesseract executable proved unavailable. External transfer now requires both an explicit opt-in and the environment-provided key.
 
 ## Model Call Counts
 

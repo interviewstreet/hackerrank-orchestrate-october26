@@ -10,6 +10,16 @@ def _snapshot_as_of(user_id: str, audit_at: str, data: dict) -> dict:
     current = dict(data["user_identities"].get(user_id, {}))
     if not audit_at:
         return current
+    if current.get("updated_at", "") > audit_at:
+        later_fields = {
+            event.get("field_name")
+            for event in data["user_audit_log"].get(user_id, [])
+            if event.get("event_time", "") > audit_at
+        }
+        # Values from a future snapshot are eligible only when the audit trail can
+        # reverse that field to its state at the requested cutoff.
+        for field in {"email", "phone", "email_hash", "name"} - later_fields:
+            current[field] = ""
     # The snapshot is the newest known state. Reverse changes that occurred after the
     # audit cutoff so future identifiers cannot leak into an earlier investigation.
     events = data["user_audit_log"].get(user_id, [])
@@ -24,24 +34,23 @@ def _snapshot_as_of(user_id: str, audit_at: str, data: dict) -> dict:
 
 def resolve_identity(email: str, audit_at: str, data: dict) -> dict | None:
     needle = (email or "").casefold()
-    user_id = None
+    candidates = set()
     as_of_snapshots = {}
     for candidate in data["user_identities"]:
         snapshot = _snapshot_as_of(candidate, audit_at, data)
         as_of_snapshots[candidate] = snapshot
-        if (snapshot.get("email") or "").casefold() == needle:
-            user_id = candidate
-            break
+        matched = (snapshot.get("email") or "").casefold() == needle
         eligible = [event for event in data["user_audit_log"].get(candidate, [])
                     if not audit_at or event.get("event_time", "") <= audit_at]
-        if any(event.get("field_name") == "email" and needle in {
+        matched |= any(event.get("field_name") == "email" and needle in {
             (event.get("old_value") or "").casefold(),
             (event.get("new_value") or "").casefold(),
-        } for event in eligible):
-            user_id = candidate
-            break
-    if not user_id:
+        } for event in eligible)
+        if matched:
+            candidates.add(candidate)
+    if len(candidates) != 1:
         return None
+    user_id = next(iter(candidates))
 
     current = as_of_snapshots.get(user_id) or _snapshot_as_of(user_id, audit_at, data)
     values = {"email": [], "phone": [], "email_hash": []}

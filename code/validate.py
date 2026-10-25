@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import re
 
-from code.planner import OPERATION_STATE
+from code.planner import OPERATION_STATE, OP_ORDER
 
 STATUSES = {"COMPLETE", "INCOMPLETE", "NOT_APPLICABLE"}
 PHASES = {"FINDING": 0, "REMEDIATION": 1, "VERIFICATION": 2}
@@ -54,6 +54,18 @@ def validate_output(rows: list) -> list[str]:
             isinstance(step, dict) and step.get("phase") == "FINDING" for step in steps
         ):
             errors.append(f"{prefix} INCOMPLETE must contain at least one FINDING")
+
+        expected_order = sorted(
+            (step for step in steps if isinstance(step, dict)),
+            key=lambda step: (
+                PHASES.get(step.get("phase"), 99),
+                OP_ORDER.get(step.get("operation"), 99),
+                str(step.get("system_id", "")),
+                str(step.get("resource_id", "")),
+            ),
+        )
+        if all(isinstance(step, dict) for step in steps) and steps != expected_order:
+            errors.append(f"{prefix} steps are not in canonical operation/system/resource order")
 
         last_phase = -1
         for position, step in enumerate(steps, 1):

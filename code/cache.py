@@ -33,7 +33,9 @@ def set(key: str, value: str):
             json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2),
             encoding="utf-8",
         )
+        tmp.chmod(0o600)
         tmp.replace(CACHE_PATH)
+        CACHE_PATH.chmod(0o600)
     finally:
         # A failed replace must not leave a submission artifact behind.
         try:
