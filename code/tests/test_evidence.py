@@ -25,9 +25,11 @@ class EvidenceParserTests(unittest.TestCase):
         return resolve_identity(email, "", self.data)
 
     def test_sql_snapshot_proves_absence(self):
+        identity = self.identity("amina.elmasri@gmail.com")
+        identity["lineage_resource_ids"] = ["account_001"]
         hits = parse_sql_evidence(
             self.root / "databases/customer_accounts_failover_replica_20260902.sql",
-            self.identity("amina.elmasri@gmail.com"),
+            identity,
         )
         self.assertEqual((hits[0]["resource_id"], hits[0]["state"]), ("account_001", "ABSENT"))
         self.assertEqual(hits[0]["system_id"], "account_service")
@@ -61,6 +63,15 @@ class EvidenceParserTests(unittest.TestCase):
         self.assertTrue(_contains('subject=user_1;', 'user_1'))
         self.assertFalse(_contains('subject=user_10;', 'user_1'))
         self.assertTrue(_contains('EMAIL=AMINA.ELMASRI@GMAIL.COM', 'amina.elmasri@gmail.com'))
+
+    def test_text_parser_rejects_service_and_event_names_as_resources(self):
+        text = (
+            'service=account_service event=analytics_profile_scan_started '
+            'resource_id=account_123 email=amina.elmasri@gmail.com'
+        )
+        with patch("code.evidence._read_text", return_value=text):
+            hits = parse_log_evidence(Path("trace.log"), self.identity("amina.elmasri@gmail.com"))
+        self.assertEqual([hit["resource_id"] for hit in hits], ["account_123"])
 
     def test_image_uses_vision_fallback_when_tesseract_is_unavailable(self):
         identity = {

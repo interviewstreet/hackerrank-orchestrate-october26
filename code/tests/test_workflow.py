@@ -48,6 +48,32 @@ class WorkflowLineageTests(unittest.TestCase):
         )
         self.assertEqual(resources[0]["resource_id"], "account_1")
 
+    def test_unique_near_report_action_is_identity_anchor_not_state_proof(self):
+        activity = [
+            {"activity_id": "a1", "event_time": "2026-09-01T11:55:00Z",
+             "event_type": "ANONYMIZE_RECORD", "source_system": "deletion_worker",
+             "target_system": "analytics_platform", "resource_id": "analytics_1",
+             "reported_result": "FAILED"},
+        ]
+        resources = correlate_workflow_lineage(
+            self.case(), {"user_id": "user_1"}, {}, activity, [self.case()]
+        )
+        self.assertEqual(resources[0]["resource_id"], "analytics_1")
+        self.assertEqual(resources[0]["required_action"], "ANONYMIZE")
+
+    def test_ambiguous_unanchored_batch_is_rejected(self):
+        activity = [
+            {"activity_id": "a1", "event_time": "2026-09-01T11:55:00Z",
+             "event_type": "DELETE_RECORD", "target_system": "account_service",
+             "resource_id": "account_1", "reported_result": "SUCCESS"},
+            {"activity_id": "a2", "event_time": "2026-09-01T12:05:00Z",
+             "event_type": "DELETE_RECORD", "target_system": "account_service",
+             "resource_id": "account_2", "reported_result": "FAILED"},
+        ]
+        self.assertEqual(correlate_workflow_lineage(
+            self.case(), {"user_id": "user_1"}, {}, activity, [self.case()]
+        ), [])
+
     def test_augmentation_invalidates_identifier_cache(self):
         identity = {"lineage_resource_ids": ["search_1"], "_match_identifiers": ["old"]}
         augment_workflow_lineage(identity, [{"resource_id": "account_1"}])

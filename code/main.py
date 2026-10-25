@@ -37,9 +37,13 @@ class MemoryCache:
 
 
 def process_case(case, data, repo_root, cache_override=None):
-    identity = resolve_identity(case["email"], case["requested_at"], data)
+    identity = resolve_identity(case["email"], case["audit_at"], data)
     if identity:
         identity["case_id"] = case["case_id"]
+    events = filter_events(data["system_activity"], identity, case["audit_at"])
+    augment_identity_lineage(identity, events)
+    # Refilter after catalog augmentation so resource-only sync/restore events are not
+    # lost merely because they omit direct subject identifiers.
     events = filter_events(data["system_activity"], identity, case["audit_at"])
     augment_identity_lineage(identity, events)
     evidence = build_evidence_index(
@@ -75,7 +79,7 @@ def process_case(case, data, repo_root, cache_override=None):
 
 
 def run_pipeline(repo_root, cases=None, no_cache=False, sample=False):
-    data = load_all(repo_root)
+    data = load_all(repo_root, include_sample_output=False)
     source = data["sample_requests"] if sample else data["deletion_requests"]
     wanted = set(cases or [])
     selected = [case for case in source if not wanted or case["case_id"] in wanted]
@@ -135,7 +139,7 @@ def main(argv=None):
         parser.error(str(exc))
     errors = validate_output(rows)
     if case_ids is None:
-        expected_cases = load_all(root)["deletion_requests"]
+        expected_cases = load_all(root, include_sample_output=False)["deletion_requests"]
         errors.extend(validate_row_count(rows, expected=len(expected_cases)))
         errors.extend(validate_case_coverage(rows, (case["case_id"] for case in expected_cases)))
 

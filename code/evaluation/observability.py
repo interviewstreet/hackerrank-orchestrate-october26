@@ -114,7 +114,7 @@ def _context_linked(occurrences: list[dict], resource_id: str,
 
 def _case_audit(case: dict, expected: list[str], data: dict,
                 corpus: list[dict], root: Path) -> list[dict]:
-    identity = resolve_identity(case["email"], case["requested_at"], data)
+    identity = resolve_identity(case["email"], case["audit_at"], data)
     identifiers = _identifiers(identity)
     audit_at = case["audit_at"]
 

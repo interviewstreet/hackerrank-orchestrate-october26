@@ -10,11 +10,9 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
-ACCOUNT_RESULTS = {
-    "COMPLETE": {"SUCCESS"},
-    "PARTIALLY_COMPLETE": {"PARTIAL"},
-    "NOT_STARTED": {"FAILED"},
-}
+# The supplied activity export lacks workflow IDs. Cadence is accepted only as a
+# secondary signal connected to an evidence-grounded resource; it is never sufficient
+# for unanchored or peer-rank correlation.
 # The supplied deletion worker schedules dependent actions on two recurring cadences.
 # A one-second tolerance accommodates timestamp rounding in the global activity export.
 DEPENDENCY_REMAINDERS = (41, 52)
@@ -28,12 +26,10 @@ def _compatible_accounts(case: dict, activity: list[dict]) -> list[dict]:
     start = _time(case["requested_at"])
     # Workflow readbacks can finish shortly after the reported status timestamp.
     end = min(_time(case["audit_at"]), _time(case["reported_at"]) + timedelta(hours=3))
-    outcomes = ACCOUNT_RESULTS.get(case.get("reported_status", ""), set())
     return [
         event for event in activity
         if event.get("event_type", "").upper() == "DELETE_RECORD"
         and event.get("target_system") == "account_service"
-        and event.get("reported_result", "").upper() in outcomes
         and start <= _time(event["event_time"]) <= end
     ]
 
@@ -75,7 +71,13 @@ def _account_from_anchors(case, activity, evidence_index):
             score = _dependency_score(account, anchor)
             if score is not None:
                 scored.append((score, account))
-    return min(scored, key=lambda item: item[0])[1] if scored else None
+    if not scored:
+        return None
+    scored.sort(key=lambda item: (item[0], item[1].get("activity_id", "")))
+    best_score = scored[0][0]
+    best = {item[1].get("resource_id", ""): item[1]
+            for item in scored if item[0] == best_score}
+    return next(iter(best.values())) if len(best) == 1 else None
 
 
 def _analytics_for_account(account, activity, audit_at):
@@ -95,31 +97,32 @@ def _analytics_for_account(account, activity, audit_at):
     return min(candidates, key=lambda item: item[0])[1] if candidates else None
 
 
-def _paired_accounts(case, activity):
-    pairs = []
-    reported_date = _time(case["reported_at"]).date()
-    for account in _compatible_accounts(case, activity):
-        # Unanchored correlation is intentionally limited to the reporting batch;
-        # otherwise an earlier unrelated workflow with the same cadence can match.
-        if _time(account["event_time"]).date() != reported_date:
-            continue
-        analytics = _analytics_for_account(account, activity, case["audit_at"])
-        if analytics is not None:
-            pairs.append((account, analytics))
-    return sorted(pairs, key=lambda pair: pair[0]["event_time"])
+def _unique_report_anchor(case, activity):
+    """Return one destructive worker action temporally tied to the case report.
 
-
-def _peer_rank(case, peer_requests):
-    peers = [
-        peer for peer in peer_requests
-        if peer.get("reported_at") == case.get("reported_at")
-        and peer.get("reported_status") == case.get("reported_status")
+    This is an identity link only.  The action's reported result is deliberately ignored;
+    participant-visible evidence must still prove the resulting state.
+    """
+    start = _time(case["requested_at"])
+    end = _time(case["audit_at"])
+    reported = _time(case["reported_at"])
+    actions = {
+        "DELETE_RECORD": "DELETE",
+        "ANONYMIZE_RECORD": "ANONYMIZE",
+        "REDACT_RECORD": "REDACT",
+        "DISABLE_CONNECTOR": "DISABLE",
+    }
+    candidates = [
+        event for event in activity
+        if event.get("source_system") == "deletion_worker"
+        and event.get("event_type", "").upper() in actions
+        and start <= _time(event["event_time"]) <= end
+        and abs((_time(event["event_time"]) - reported).total_seconds()) <= 15 * 60
     ]
-    peers.sort(key=lambda peer: (peer.get("requested_at", ""), peer.get("case_id", "")), reverse=True)
-    try:
-        return peers.index(case)
-    except ValueError:
-        return 0
+    if len(candidates) != 1:
+        return None
+    event = candidates[0]
+    return {**event, "required_action": actions[event["event_type"].upper()]}
 
 
 def correlate_workflow_lineage(case, identity, evidence_index, activity, peer_requests):
@@ -128,6 +131,7 @@ def correlate_workflow_lineage(case, identity, evidence_index, activity, peer_re
     The returned event claims only that the workflow acted on the resource.  Callers
     must not treat ``reported_result`` as final-state evidence.
     """
+    del peer_requests
     if identity is None:
         return []
     known = set(evidence_index)
@@ -144,34 +148,26 @@ def correlate_workflow_lineage(case, identity, evidence_index, activity, peer_re
             break
     if account is None:
         account = _account_from_anchors(case, activity, evidence_index)
+    report_anchor = _unique_report_anchor(case, activity)
+    if account is None and report_anchor is not None:
+        if report_anchor.get("target_system") == "account_service":
+            account = report_anchor
+        else:
+            # The unique near-report action can seed cadence correlation, while its
+            # claimed result remains ineligible as proof of final state.
+            account = _account_from_anchors(
+                case, activity, {report_anchor.get("resource_id", ""): []}
+            )
 
-    pair = None
-    if account is None:
-        pairs = _paired_accounts(case, activity)
-        rank = _peer_rank(case, peer_requests)
-        if rank < len(pairs):
-            pair = pairs[rank]
-            account = pair[0]
-
+    # Never pair an unanchored workflow by reported result or peer/case rank.
     resources = []
+    if report_anchor is not None:
+        resources.append(report_anchor)
     if account is not None:
         resources.append({**account, "required_action": "DELETE"})
-        analytics = pair[1] if pair else _analytics_for_account(account, activity, case["audit_at"])
+        analytics = _analytics_for_account(account, activity, case["audit_at"])
         if analytics is not None:
             resources.append({**analytics, "required_action": "ANONYMIZE"})
-    else:
-        # Some compact workflows expose only their anonymization action.  It is safe to
-        # seed it only when exactly one successful candidate exists in the request window.
-        start, end = _time(case["requested_at"]), _time(case["reported_at"])
-        reported_date = end.date()
-        candidates = [event for event in activity
-                      if event.get("event_type", "").upper() == "ANONYMIZE_RECORD"
-                      and event.get("target_system") == "analytics_platform"
-                      and event.get("reported_result", "").upper() == "SUCCESS"
-                      and _time(event["event_time"]).date() == reported_date
-                      and start <= _time(event["event_time"]) <= end]
-        if len(candidates) == 1:
-            resources.append({**candidates[0], "required_action": "ANONYMIZE"})
 
     unique = {}
     for resource in resources:

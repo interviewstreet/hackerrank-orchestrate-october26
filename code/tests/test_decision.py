@@ -8,3 +8,6 @@ class DecisionTests(unittest.TestCase):
   return decide({'request_text':'delete','case_id':'c'}, {'user_id':'u'},ev,[],RULE,classify)
  def test_complete(self):self.assertEqual(self.run_state('ABSENT')['status'],'COMPLETE')
  def test_incomplete(self):self.assertEqual(self.run_state('ACTIVE')['status'],'INCOMPLETE')
+ def test_no_evidence_fails_closed(self):
+  with self.assertRaisesRegex(ValueError,'no eligible evidence'):
+   decide({'request_text':'delete','case_id':'c'}, {'user_id':'u'}, {}, [], RULE, classify)

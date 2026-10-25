@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 import sys
 import zipfile
@@ -54,6 +55,35 @@ def _check_output(root: Path, data: dict) -> list[str]:
     errors.extend(validate_case_coverage(
         rows, (case["case_id"] for case in data["deletion_requests"])
     ))
+    cases = {case["case_id"]: case for case in data["deletion_requests"]}
+    evidence_times = {
+        file_id: item.get("captured_at", "")
+        for file_id, item in data["evidence_manifest"].items()
+    }
+    evidence_times.update({
+        event.get("activity_id", ""): event.get("event_time", "")
+        for event in data["system_activity"]
+    })
+    audit_path = root / "dataset" / "user_audit_log.csv"
+    with audit_path.open(encoding="utf-8", newline="") as handle:
+        evidence_times.update({
+            row.get("audit_id", ""): row.get("event_time", "")
+            for row in csv.DictReader(handle)
+        })
+    for row in rows:
+        case = cases.get(row.get("case_id", ""), {})
+        try:
+            steps = json.loads(row.get("steps_json", "[]"))
+        except (json.JSONDecodeError, TypeError):
+            continue
+        for step in steps if isinstance(steps, list) else []:
+            if not isinstance(step, dict) or not step.get("evidence_id"):
+                continue
+            evidence_id = step["evidence_id"]
+            if evidence_id not in evidence_times:
+                errors.append(f"{row.get('case_id')}: unknown evidence_id {evidence_id}")
+            elif evidence_times[evidence_id] > case.get("audit_at", ""):
+                errors.append(f"{row.get('case_id')}: post-audit evidence_id {evidence_id}")
     return errors
 
 
