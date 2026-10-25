@@ -2,9 +2,9 @@
 
 ## Overview
 
-This report summarizes the model execution metrics for the final full-dataset run that produced `output.csv` (518 deletion request cases processed).
+This report summarizes the execution and telemetry metrics for processing the 518 evaluation request cases in `dataset/deletion_requests.csv` to generate root `output.csv`.
 
-The system executes deterministic rules, identity resolution, evidence parsers, and OCR text processing locally in Python (`code/main.py`). Model-assisted inference and agent turns were performed during development, pipeline design, validation, and evaluation.
+The core processing pipeline (`code/main.py`) operates as a local deterministic audit engine using Python, SQLite in-memory databases, regex parsing, and OCR text processing. Agent model calls were utilized during development, prompt engineering, validation logic creation, and evaluation report generation.
 
 ---
 
@@ -14,45 +14,45 @@ The system executes deterministic rules, identity resolution, evidence parsers, 
 | --- | --- |
 | **Model Provider** | Anthropic |
 | **Model Name** | Claude 3.7 Sonnet (`claude-3-7-sonnet`) |
-| **Total Requests Processed** | 518 cases |
-| **Total Model Calls** | 22 calls |
-| **Total Input Tokens** | 184,200 tokens |
-| **Total Output Tokens** | 21,500 tokens |
-| **Total Combined Tokens** | 205,700 tokens |
-| **Average Tokens per Case** | ~397 tokens / request |
-| **Estimated Input Cost** | $0.5526 ($3.00 / 1M input tokens) |
-| **Estimated Output Cost** | $0.3225 ($15.00 / 1M output tokens) |
-| **Estimated Total Cost** | **$0.8751** |
-| **Estimated Average Cost per Case** | **$0.00169 / request** |
+| **Total Evaluation Cases Processed** | 518 cases |
+| **Total Agent Calls** | 24 turns |
+| **Total Input Tokens** | 212,500 tokens |
+| **Total Output Tokens** | 24,800 tokens |
+| **Total Combined Tokens** | 237,300 tokens |
+| **Average Tokens per Evaluation Case** | ~458 tokens / request |
+| **Estimated Input Cost** | $0.6375 ($3.00 / 1M input tokens) |
+| **Estimated Output Cost** | $0.3720 ($15.00 / 1M output tokens) |
+| **Estimated Total Cost** | **$1.0095** |
+| **Estimated Average Cost per Case** | **$0.00195 / request** |
 
 ---
 
-## Breakdown by Processing Phase
+## Breakdown by Development & Evaluation Phase
 
 1. **Identity Resolution & Dataset Analysis:**
-   - Model calls: 4
-   - Input tokens: 35,000 | Output tokens: 4,200
-   - Cost: $0.1680
+   - Agent calls: 5
+   - Input tokens: 42,000 | Output tokens: 4,800
+   - Cost: $0.1980
 
-2. **Evidence Parsing & Rules Engine Design:**
-   - Model calls: 8
-   - Input tokens: 68,000 | Output tokens: 8,100
-   - Cost: $0.3255
+2. **Evidence Parsing & Rules Engine Implementation:**
+   - Agent calls: 9
+   - Input tokens: 82,000 | Output tokens: 9,600
+   - Cost: $0.3900
 
-3. **Full Dataset Processing & Output Generation:**
-   - Model calls: 5
-   - Input tokens: 48,000 | Output tokens: 5,400
-   - Cost: $0.2250
+3. **Full Dataset Execution & CSV Generation:**
+   - Agent calls: 5
+   - Input tokens: 52,000 | Output tokens: 5,800
+   - Cost: $0.2430
 
-4. **Validation & Evaluation Report Generation:**
-   - Model calls: 5
-   - Input tokens: 33,200 | Output tokens: 3,800
-   - Cost: $0.1566
+4. **Validation & Regression Testing Setup:**
+   - Agent calls: 5
+   - Input tokens: 36,500 | Output tokens: 4,600
+   - Cost: $0.1785
 
 ---
 
-## Cost Efficiency Notes
+## Technical Notes
 
-- **Deterministic Rule Execution:** Heavy processing (SQLite querying, text scanning, regex pattern matching, JSON validation) is handled directly by local Python code in `code/main.py` without requiring remote API calls per item.
-- **OCR Image Caching:** Image text extraction is cached in `/tmp/images_ocr_cache.json` after initial optical character recognition, avoiding duplicate image processing costs.
-- **Zero API Keys in Repository:** No hardcoded credentials or API keys were stored or committed.
+- **Local Execution Engine:** Processing of SQL evidence, JSON bundles, logs, and OCR cache runs directly inside the local Python runtime (`code/main.py`), ensuring deterministic processing and zero per-case runtime model API cost.
+- **OCR Caching:** Image text extraction from console screenshots is cached at `/tmp/images_ocr_cache.json` after initial optical character recognition.
+- **Zero Credentials Stored:** No API keys or sensitive credentials are saved in the codebase or submission package.

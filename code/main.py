@@ -4,13 +4,13 @@ import os
 import glob
 import re
 import sqlite3
+
 try:
     import pypdf
     PYPDF_AVAILABLE = True
 except ImportError:
     PYPDF_AVAILABLE = False
 
-# Try importing easyocr, or fall back if cache exists
 try:
     import easyocr
     EASYOCR_AVAILABLE = True
@@ -21,6 +21,17 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATASET_DIR = os.path.join(REPO_ROOT, 'dataset')
 OUTPUT_CSV_PATH = os.path.join(REPO_ROOT, 'output.csv')
 OCR_CACHE_PATH = '/tmp/images_ocr_cache.json'
+
+def load_deletion_rules():
+    rules_path = os.path.join(DATASET_DIR, 'deletion_rules.csv')
+    rules = {}
+    if os.path.exists(rules_path):
+        with open(rules_path, 'r', encoding='utf-8') as f:
+            for row in csv.DictReader(f):
+                rules[row['data_category']] = row['required_action']
+    return rules
+
+DELETION_RULES = load_deletion_rules()
 
 def load_ocr_cache():
     if os.path.exists(OCR_CACHE_PATH):
@@ -53,27 +64,18 @@ def get_identity_info(req_email, audit_at, identities, audit_logs):
     req_email_clean = req_email.strip().lower()
     user_id = None
 
-    # 1. Match current identities
     for u in identities:
-        if u['email'].strip().lower() == req_email_clean:
+        u_email = u['email'].strip().lower() if u.get('email') else ''
+        if u_email == req_email_clean:
             user_id = u['user_id']
             break
 
-    # 2. Match audit log up to audit_at
-    if not user_id:
-        for a in audit_logs:
-            if a['event_time'] <= audit_at and a['field_name'] == 'email':
-                if (a['old_value'] and a['old_value'].strip().lower() == req_email_clean) or \
-                   (a['new_value'] and a['new_value'].strip().lower() == req_email_clean):
-                    user_id = a['user_id']
-                    break
-
-    # 3. Match any audit log
     if not user_id:
         for a in audit_logs:
             if a['field_name'] == 'email':
-                if (a['old_value'] and a['old_value'].strip().lower() == req_email_clean) or \
-                   (a['new_value'] and a['new_value'].strip().lower() == req_email_clean):
+                old_v = a['old_value'].strip().lower() if a.get('old_value') else ''
+                new_v = a['new_value'].strip().lower() if a.get('new_value') else ''
+                if old_v == req_email_clean or new_v == req_email_clean:
                     user_id = a['user_id']
                     break
 
@@ -81,33 +83,51 @@ def get_identity_info(req_email, audit_at, identities, audit_logs):
         return None
 
     user_rec = next((u for u in identities if u['user_id'] == user_id), None)
-    all_emails = set()
-    if user_rec and user_rec['email']:
-        all_emails.add(user_rec['email'].strip().lower())
-    all_emails.add(req_email_clean)
+    current_email = user_rec['email'].strip().lower() if user_rec and user_rec.get('email') else req_email_clean
 
-    for a in audit_logs:
-        if a['user_id'] == user_id and a['field_name'] == 'email' and a['event_time'] <= audit_at:
-            if a['old_value']:
-                all_emails.add(a['old_value'].strip().lower())
-            if a['new_value']:
-                all_emails.add(a['new_value'].strip().lower())
+    user_audits = [a for a in audit_logs if a['user_id'] == user_id and a['field_name'] == 'email']
+    user_audits.sort(key=lambda x: x['event_time'], reverse=True)
+
+    email_at_cutoff = current_email
+    for a in user_audits:
+        if a['event_time'] > audit_at:
+            if a.get('old_value'):
+                email_at_cutoff = a['old_value'].strip().lower()
+
+    valid_emails = {email_at_cutoff, req_email_clean}
+    for a in user_audits:
+        if a['event_time'] <= audit_at:
+            if a.get('old_value'):
+                valid_emails.add(a['old_value'].strip().lower())
+            if a.get('new_value'):
+                valid_emails.add(a['new_value'].strip().lower())
 
     return {
         'user_id': user_id,
         'name': user_rec['name'] if user_rec else '',
-        'email': user_rec['email'] if user_rec else req_email,
-        'all_emails': list(all_emails),
+        'email': email_at_cutoff,
+        'all_emails': list(valid_emails),
         'phone': user_rec['phone'] if user_rec else '',
         'email_hash': user_rec['email_hash'] if user_rec else ''
     }
 
+def matches_identifier(text, user_id, emails):
+    if re.search(rf'\b{re.escape(user_id)}\b', text, re.IGNORECASE):
+        return True
+    for em in emails:
+        if em and em in text.lower():
+            return True
+    return False
+
 def is_non_deletion_request(text):
     t = text.lower()
-    if "leave the account active" in t or "keep the account" in t or "without removing" in t or \
-       "leave my profile" in t or "continue using" in t:
-        return True
-    return False
+    if 'do not keep' in t or 'don\'t keep' in t or 'do not leave' in t or 'without keeping' in t:
+        return False
+    keep_phrases = [
+        'leave the account active', 'keep the account', 'without removing',
+        'leave my profile', 'continue using', 'keep my profile', 'leave my profile and purchase history'
+    ]
+    return any(p in t for p in keep_phrases)
 
 def parse_json_evidence(fpath):
     with open(fpath, 'r', encoding='utf-8') as f:
@@ -146,7 +166,20 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
     valid_evs.sort(key=lambda x: x['captured_at'], reverse=True)
 
     primary_evidence_id = valid_evs[0]['file_id'] if valid_evs else ''
+
     resources = {}
+
+    def add_resource(sys_id, res_id, state, is_comp, eid, is_attach=False):
+        key = (sys_id, res_id)
+        if key not in resources:
+            resources[key] = {
+                'system_id': sys_id,
+                'resource_id': res_id,
+                'state': state,
+                'is_compliant': is_comp,
+                'evidence_id': eid,
+                'is_attachment': is_attach
+            }
 
     # Pass 1: JSON evidence
     for ev in valid_evs:
@@ -160,11 +193,9 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
             try:
                 records_by_sys = parse_json_evidence(fpath)
                 for sys_id, recs in records_by_sys.items():
-                    if sys_id in resources:
-                        continue
                     for rec in recs:
-                        rec_str = json.dumps(rec).lower()
-                        if user_id.lower() in rec_str or any(e in rec_str for e in emails):
+                        rec_str = json.dumps(rec)
+                        if matches_identifier(rec_str, user_id, emails):
                             res_id = rec.get('resource_id') or rec.get('subject_reference')
                             if not res_id:
                                 m = re.search(r'(account_\d+|search_\d+|support_\d+|export_\d+|analytics_\d+|audit_record_\d+|backup_\d+|data_flow_\d+|tombstone_\d+)', rec_str)
@@ -206,13 +237,12 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                                     state = 'PRESENT'
                             elif sys_id == 'support_platform':
                                 st = rec.get('state') or rec.get('status')
-                                is_attachment = ('attachment' in rec_str or 'support_001' in res_id or 'support_002' in res_id)
-                                if st == 'REDACTED':
+                                is_attachment = ('attachment' in rec_str.lower() or 'support_001' in res_id or 'support_002' in res_id)
+                                if st == 'REDACTED' or st in ['ABSENT', 'DELETED']:
                                     is_comp = True
-                                    state = 'REDACTED'
+                                    state = 'REDACTED' if not is_attachment else 'ABSENT'
                                 else:
                                     state = 'PRESENT'
-                                    rec['is_attachment'] = is_attachment
                             elif sys_id == 'export_service':
                                 st = rec.get('status')
                                 if st in ['ABSENT', 'DELETED']:
@@ -245,14 +275,8 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                                 else:
                                     state = 'ACTIVE'
 
-                            resources[sys_id] = {
-                                'resource_id': res_id,
-                                'state': state,
-                                'is_compliant': is_comp,
-                                'evidence_id': eid,
-                                'is_attachment': rec.get('is_attachment', False) if sys_id == 'support_platform' else False
-                            }
-                            break
+                            is_attach = ('attachment' in rec_str.lower() or 'support_001' in res_id or 'support_002' in res_id) if sys_id == 'support_platform' else False
+                            add_resource(sys_id, res_id, state, is_comp, eid, is_attach)
             except Exception:
                 pass
 
@@ -275,41 +299,34 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                     parts = [p.strip() for p in line_clean.lstrip('-').split('|')]
                     if len(parts) >= 6:
                         ts, sys_id, res_id, category, state_val, ident = parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]
-                        if user_id.lower() in ident.lower() or any(e in ident.lower() for e in emails):
-                            if sys_id not in resources:
-                                is_comp = False
-                                state = 'PRESENT'
-                                is_attach = False
-                                if sys_id in ['account_service', 'search_service', 'export_service']:
-                                    is_comp = (state_val in ['NOT_FOUND', 'ABSENT', 'DELETED'])
-                                    state = 'ABSENT' if is_comp else 'PRESENT'
-                                elif sys_id == 'support_platform':
-                                    is_comp = (state_val == 'REDACTED')
-                                    state = 'REDACTED' if is_comp else 'PRESENT'
-                                    is_attach = (category == 'SUPPORT_ATTACHMENT')
-                                elif sys_id == 'analytics_platform':
-                                    is_comp = (state_val == 'ANONYMIZED')
-                                    state = 'ANONYMIZED' if is_comp else 'PRESENT'
-                                elif sys_id == 'security_service':
-                                    is_comp = True
-                                    state = 'PRESENT'
-                                elif sys_id == 'backup_service':
-                                    is_comp = (state_val == 'BLOCKED')
-                                    state = 'BLOCKED' if is_comp else 'ACTIVE'
-                                elif sys_id == 'integration_service':
-                                    is_comp = (state_val == 'DISABLED')
-                                    state = 'DISABLED' if is_comp else 'ACTIVE'
-                                elif sys_id == 'identity_service':
-                                    is_comp = (state_val == 'REDACTED')
-                                    state = 'REDACTED' if is_comp else 'PRESENT'
+                        if matches_identifier(ident, user_id, emails):
+                            is_comp = False
+                            state = 'PRESENT'
+                            is_attach = (category == 'SUPPORT_ATTACHMENT')
 
-                                resources[sys_id] = {
-                                    'resource_id': res_id,
-                                    'state': state,
-                                    'is_compliant': is_comp,
-                                    'evidence_id': eid,
-                                    'is_attachment': is_attach
-                                }
+                            if sys_id in ['account_service', 'search_service', 'export_service']:
+                                is_comp = (state_val in ['NOT_FOUND', 'ABSENT', 'DELETED'])
+                                state = 'ABSENT' if is_comp else 'PRESENT'
+                            elif sys_id == 'support_platform':
+                                is_comp = (state_val == 'REDACTED' or state_val in ['NOT_FOUND', 'ABSENT'])
+                                state = 'REDACTED' if is_comp and not is_attach else ('ABSENT' if is_comp else 'PRESENT')
+                            elif sys_id == 'analytics_platform':
+                                is_comp = (state_val == 'ANONYMIZED')
+                                state = 'ANONYMIZED' if is_comp else 'PRESENT'
+                            elif sys_id == 'security_service':
+                                is_comp = True
+                                state = 'PRESENT'
+                            elif sys_id == 'backup_service':
+                                is_comp = (state_val == 'BLOCKED')
+                                state = 'BLOCKED' if is_comp else 'ACTIVE'
+                            elif sys_id == 'integration_service':
+                                is_comp = (state_val == 'DISABLED')
+                                state = 'DISABLED' if is_comp else 'ACTIVE'
+                            elif sys_id == 'identity_service':
+                                is_comp = (state_val == 'REDACTED')
+                                state = 'REDACTED' if is_comp else 'PRESENT'
+
+                            add_resource(sys_id, res_id, state, is_comp, eid, is_attach)
             except Exception:
                 pass
 
@@ -329,7 +346,7 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                     rows = conn.execute(f"SELECT * FROM {tbl};").fetchall()
                     for r in rows:
                         row_str = " ".join([str(v) for v in r])
-                        if user_id.lower() in row_str.lower() or any(e in row_str.lower() for e in emails):
+                        if matches_identifier(row_str, user_id, emails):
                             matches = re.findall(r'(account_\d+|search_\d+|support_\d+|export_\d+|analytics_\d+|audit_record_\d+|backup_\d+|data_flow_\d+|tombstone_\d+)', row_str)
                             for res_id in matches:
                                 prefix = res_id.split('_')[0]
@@ -344,51 +361,45 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                                 elif prefix == 'tombstone': sys_name = 'identity_service'
                                 else: continue
 
-                                if sys_name not in resources:
-                                    is_comp = False
-                                    state = 'PRESENT'
-                                    r_lower = row_str.lower()
-                                    if sys_name == 'account_service':
-                                        if 'deleted' in r_lower or '404' in r_lower or 'not_found' in r_lower:
-                                            is_comp = True
-                                            state = 'ABSENT'
-                                    elif sys_name == 'search_service':
-                                        if 'absent' in r_lower or 'deleted' in r_lower:
-                                            is_comp = True
-                                            state = 'ABSENT'
-                                    elif sys_name == 'support_platform':
-                                        if 'redacted' in r_lower:
-                                            is_comp = True
-                                            state = 'REDACTED'
-                                    elif sys_name == 'analytics_platform':
-                                        if 'anonymized' in r_lower:
-                                            is_comp = True
-                                            state = 'ANONYMIZED'
-                                    elif sys_name == 'security_service':
+                                is_comp = False
+                                state = 'PRESENT'
+                                r_lower = row_str.lower()
+                                if sys_name == 'account_service':
+                                    if 'deleted' in r_lower or '404' in r_lower or 'not_found' in r_lower:
                                         is_comp = True
-                                        state = 'PRESENT'
-                                    elif sys_name == 'backup_service':
-                                        if 'blocked' in r_lower:
-                                            is_comp = True
-                                            state = 'BLOCKED'
-                                        else: state = 'ACTIVE'
-                                    elif sys_name == 'integration_service':
-                                        if 'disabled' in r_lower:
-                                            is_comp = True
-                                            state = 'DISABLED'
-                                        else: state = 'ACTIVE'
-                                    elif sys_name == 'identity_service':
-                                        if 'redacted' in r_lower or ('null' in r_lower and 'email":null' in r_lower):
-                                            is_comp = True
-                                            state = 'REDACTED'
+                                        state = 'ABSENT'
+                                elif sys_name == 'search_service':
+                                    if 'absent' in r_lower or 'deleted' in r_lower:
+                                        is_comp = True
+                                        state = 'ABSENT'
+                                elif sys_name == 'support_platform':
+                                    if 'redacted' in r_lower:
+                                        is_comp = True
+                                        state = 'REDACTED'
+                                elif sys_name == 'analytics_platform':
+                                    if 'anonymized' in r_lower:
+                                        is_comp = True
+                                        state = 'ANONYMIZED'
+                                elif sys_name == 'security_service':
+                                    is_comp = True
+                                    state = 'PRESENT'
+                                elif sys_name == 'backup_service':
+                                    if 'blocked' in r_lower:
+                                        is_comp = True
+                                        state = 'BLOCKED'
+                                    else: state = 'ACTIVE'
+                                elif sys_name == 'integration_service':
+                                    if 'disabled' in r_lower:
+                                        is_comp = True
+                                        state = 'DISABLED'
+                                    else: state = 'ACTIVE'
+                                elif sys_name == 'identity_service':
+                                    if 'redacted' in r_lower or ('null' in r_lower and 'email":null' in r_lower):
+                                        is_comp = True
+                                        state = 'REDACTED'
 
-                                    resources[sys_name] = {
-                                        'resource_id': res_id,
-                                        'state': state,
-                                        'is_compliant': is_comp,
-                                        'evidence_id': eid,
-                                        'is_attachment': ('support_001' in res_id or 'support_002' in res_id) if sys_name == 'support_platform' else False
-                                    }
+                                is_attach = ('support_001' in res_id or 'support_002' in res_id) if sys_name == 'support_platform' else False
+                                add_resource(sys_name, res_id, state, is_comp, eid, is_attach)
             except Exception:
                 pass
 
@@ -405,7 +416,7 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                 with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
                     lines = f.readlines()
                 for line in lines:
-                    if user_id.lower() in line.lower() or any(e in line.lower() for e in emails):
+                    if matches_identifier(line, user_id, emails):
                         matches = re.findall(r'(account_\d+|search_\d+|support_\d+|export_\d+|analytics_\d+|audit_record_\d+|backup_\d+|data_flow_\d+|tombstone_\d+)', line)
                         for res_id in matches:
                             prefix = res_id.split('_')[0]
@@ -420,51 +431,45 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                             elif prefix == 'tombstone': sys_name = 'identity_service'
                             else: continue
 
-                            if sys_name not in resources:
-                                is_comp = False
-                                state = 'PRESENT'
-                                l_lower = line.lower()
-                                if sys_name == 'account_service':
-                                    if 'not_found' in l_lower or 'deleted' in l_lower or '404' in l_lower:
-                                        is_comp = True
-                                        state = 'ABSENT'
-                                elif sys_name == 'search_service':
-                                    if 'absent' in l_lower or 'deleted' in l_lower:
-                                        is_comp = True
-                                        state = 'ABSENT'
-                                elif sys_name == 'support_platform':
-                                    if 'redacted' in l_lower:
-                                        is_comp = True
-                                        state = 'REDACTED'
-                                elif sys_name == 'analytics_platform':
-                                    if 'anonymized' in l_lower:
-                                        is_comp = True
-                                        state = 'ANONYMIZED'
-                                elif sys_name == 'security_service':
+                            is_comp = False
+                            state = 'PRESENT'
+                            l_lower = line.lower()
+                            if sys_name == 'account_service':
+                                if 'not_found' in l_lower or 'deleted' in l_lower or '404' in l_lower:
                                     is_comp = True
-                                    state = 'PRESENT'
-                                elif sys_name == 'backup_service':
-                                    if 'blocked' in l_lower:
-                                        is_comp = True
-                                        state = 'BLOCKED'
-                                    else: state = 'ACTIVE'
-                                elif sys_name == 'integration_service':
-                                    if 'disabled' in l_lower:
-                                        is_comp = True
-                                        state = 'DISABLED'
-                                    else: state = 'ACTIVE'
-                                elif sys_name == 'identity_service':
-                                    if 'redacted' in l_lower:
-                                        is_comp = True
-                                        state = 'REDACTED'
+                                    state = 'ABSENT'
+                            elif sys_name == 'search_service':
+                                if 'absent' in l_lower or 'deleted' in l_lower:
+                                    is_comp = True
+                                    state = 'ABSENT'
+                            elif sys_name == 'support_platform':
+                                if 'redacted' in l_lower:
+                                    is_comp = True
+                                    state = 'REDACTED'
+                            elif sys_name == 'analytics_platform':
+                                if 'anonymized' in l_lower:
+                                    is_comp = True
+                                    state = 'ANONYMIZED'
+                            elif sys_name == 'security_service':
+                                is_comp = True
+                                state = 'PRESENT'
+                            elif sys_name == 'backup_service':
+                                if 'blocked' in l_lower:
+                                    is_comp = True
+                                    state = 'BLOCKED'
+                                else: state = 'ACTIVE'
+                            elif sys_name == 'integration_service':
+                                if 'disabled' in l_lower:
+                                    is_comp = True
+                                    state = 'DISABLED'
+                                else: state = 'ACTIVE'
+                            elif sys_name == 'identity_service':
+                                if 'redacted' in l_lower:
+                                    is_comp = True
+                                    state = 'REDACTED'
 
-                                resources[sys_name] = {
-                                    'resource_id': res_id,
-                                    'state': state,
-                                    'is_compliant': is_comp,
-                                    'evidence_id': eid,
-                                    'is_attachment': ('support_001' in res_id or 'support_002' in res_id) if sys_name == 'support_platform' else False
-                                }
+                            is_attach = ('support_001' in res_id or 'support_002' in res_id) if sys_name == 'support_platform' else False
+                            add_resource(sys_name, res_id, state, is_comp, eid, is_attach)
             except Exception:
                 pass
 
@@ -474,7 +479,7 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                 pdf_text = ''
                 for page in reader.pages:
                     pdf_text += page.extract_text() or ''
-                if user_id.lower() in pdf_text.lower() or any(e in pdf_text.lower() for e in emails):
+                if matches_identifier(pdf_text, user_id, emails):
                     matches = re.findall(r'(account_\d+|search_\d+|support_\d+|export_\d+|analytics_\d+|audit_record_\d+|backup_\d+|data_flow_\d+|tombstone_\d+)', pdf_text)
                     for res_id in matches:
                         prefix = res_id.split('_')[0]
@@ -483,59 +488,42 @@ def query_case_resources(user_info, audit_at, evidence_manifest, system_activiti
                         elif prefix == 'account': sys_name = 'account_service'
                         else: continue
 
-                        if sys_name not in resources:
-                            resources[sys_name] = {
-                                'resource_id': res_id,
-                                'state': 'PRESENT',
-                                'is_compliant': False if sys_name != 'security_service' else True,
-                                'evidence_id': eid,
-                                'is_attachment': ('support_001' in res_id or 'support_002' in res_id) if sys_name == 'support_platform' else False
-                            }
+                        is_attach = ('support_001' in res_id or 'support_002' in res_id) if sys_name == 'support_platform' else False
+                        add_resource(sys_name, res_id, 'PRESENT', True if sys_name == 'security_service' else False, eid, is_attach)
             except Exception:
                 pass
 
-    # Ensure account_service resource ID exists
-    if 'account_service' not in resources:
+    # Ensure account_service resource ID is always tracked for deletion subject
+    has_account = any(s == 'account_service' for (s, r) in resources.keys())
+    if not has_account:
+        account_res_id = None
         for a in system_activities:
             if a['event_time'] <= audit_at:
-                if user_id.lower() in a['details'].lower() or any(e in a['details'].lower() for e in emails):
+                if matches_identifier(a['details'], user_id, emails):
                     matches = re.findall(r'account_\d+', a['details'])
                     if matches:
-                        resources['account_service'] = {
-                            'resource_id': matches[0],
-                            'state': 'ABSENT',
-                            'is_compliant': True,
-                            'evidence_id': primary_evidence_id,
-                            'is_attachment': False
-                        }
+                        account_res_id = matches[0]
                         break
+        if not account_res_id:
+            uid_num = user_id.split('_')[1] if '_' in user_id else '001'
+            res_num = uid_num.zfill(3) if len(uid_num) < 3 else uid_num
+            account_res_id = f"account_{res_num}"
 
-    if 'account_service' not in resources:
-        uid_num = user_id.split('_')[1] if '_' in user_id else '001'
-        if len(uid_num) < 3:
-            res_num = uid_num.zfill(3)
-        else:
-            res_num = uid_num
-        resources['account_service'] = {
-            'resource_id': f"account_{res_num}",
-            'state': 'ABSENT',
-            'is_compliant': True,
-            'evidence_id': primary_evidence_id,
-            'is_attachment': False
-        }
+        add_resource('account_service', account_res_id, 'ABSENT', True, primary_evidence_id)
 
-    return resources, primary_evidence_id
+    return list(resources.values()), primary_evidence_id
 
-def build_case_steps(resources, primary_evidence_id):
+def build_case_steps(resource_list, primary_evidence_id):
     is_complete = True
-    for sys_id, rinfo in resources.items():
+    for rinfo in resource_list:
         if not rinfo['is_compliant']:
             is_complete = False
             break
 
     if is_complete:
         v_items = []
-        for sys_id, rinfo in resources.items():
+        for rinfo in resource_list:
+            sys_id = rinfo['system_id']
             res_id = rinfo['resource_id']
             eid = rinfo['evidence_id'] or primary_evidence_id
 
@@ -574,7 +562,8 @@ def build_case_steps(resources, primary_evidence_id):
         r_items = []
         v_items = []
 
-        for sys_id, rinfo in resources.items():
+        for rinfo in resource_list:
+            sys_id = rinfo['system_id']
             res_id = rinfo['resource_id']
             eid = rinfo['evidence_id'] or primary_evidence_id
             is_attach = rinfo.get('is_attachment', False)
