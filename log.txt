@@ -1059,3 +1059,234 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T03:32:32Z] SESSION START
+
+tool=Claude Code
+model=claude-opus-5-5
+Repo Root: D:\Coding\hackerrank-orchestrate-october26
+Branch: feat/deletion-audit
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-10-25T03:53:05Z] Round-3 dual review (Codex + OpenCode) and measured triage
+
+User Prompt (verbatim, secrets redacted):
+Hi, I'm Sankalp. This repo is my finished HackerRank Orchestrate submission, "Ghost Data Still Exists", a
+deletion-audit agent. The release is committed (HEAD 4ede80b or later). I want a final round-3 review by TWO
+independent reviewers in parallel, then your triage. Do NOT change any code in this chat unless I approve.
+
+Read first: AGENTS.md (follow its log.txt rules for this chat), problem_statement.md, code/README.md, code/DESIGN.md,
+code/evaluation/evaluation_report.md (sections on the generalization audit, round 1 and round 2 reviews).
+
+Start the two reviewers with the t3-code MCP tool delegate_task (not the native Agent tool). Call
+orchestrator_capabilities ONCE first, and use search to find exact provider instance ids and model ids.
+1. Reviewer A: Codex provider, model gpt-5.6-sol, options {"reasoningEffort":"high"}.
+   clientRequestId "codex-review-r3".
+2. Reviewer B: OpenCode provider (my OpenCode Go subscription), model DeepSeek V4.1 Flash (search "deepseek" for the
+   exact id). Use its highest reasoning option if one exists; report what you set. clientRequestId "opencode-review-r3".
+Both: isolation "worktree" from HEAD, mode async. Check that each returned provider/model/options matches. Keep both
+taskIds. Wait for the completion notifications; no tight polling. If a model is not available or hits a usage limit,
+STOP that reviewer and tell me; do not substitute another model and do not review it yourself.
+
+Give BOTH reviewers this brief verbatim:
+---
+Round 3 (final) review of a HackerRank Orchestrate submission: "Ghost Data Still Exists", a deletion-audit agent.
+READ-ONLY: do not edit, create or delete files; do not commit; do not write log.txt or any log. No live model calls:
+run everything with ZENMUX_OFFLINE=1 (snapshot replay). No .env exists; never look for or print secrets.
+
+Read: problem_statement.md, AGENTS.md, code/README.md, code/DESIGN.md, code/evaluation/evaluation_report.md,
+code/evaluation/usage_report.md. You may run: the pytest suite, python code/main.py (offline),
+python code/validate.py, python code/evaluation/main.py, python code/package.py, and unzip the result in a temp dir.
+output.csv and code.zip are not tracked in git; rebuild them with the commands in code/README.md.
+
+Architecture: meta/muse-spark-1.3-contributor (via ZenMux) reads images and proposes; a bounded investigator agent
+proposes links and states; deterministic code decides every status and step. Graded row by row on 518 hidden cases;
+only 32 labeled samples exist (also our dev data). Judging: code ZIP 30% (agent architecture, prompt/tool craft,
+robustness, rigor; only observable code counts), output 30% plus a safety score, AI interview 30%, transcript 10%.
+Current sample scores: status 32/32; content step F1 0.922 (P 1.000, R 0.855); exact 7-field F1 0.704; sequence 15/32.
+Expected output.csv SHA-256: 1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b.
+
+Already decided. Do NOT re-raise these unless you have NEW evidence (a concrete data row or a reproducible failure):
+- Stale-link window (requested_at <= link time <= audit_at): kept. Of the 12 data_catalog LINK_RESOURCE_IDENTITY rows,
+  10 fall after their user's request; the only 2 before a request are in samples case_07 and case_17, and gold
+  excludes both.
+- job_burst medium edge + uniqueness guard: kept. Worker claims carry 0 subject keys; with the edge off, status
+  drops 32 -> 29.
+- Activity-only recall gap and ids that appear in no file: accepted loss, documented.
+- Attachment exclusivity = subject identifier + no other linked user: kept (catalog-only reading lowers exact F1
+  0.704 -> 0.653).
+- Citation order tier-then-newest: kept on principle; no sample depends on it.
+- Vision: strict digit grounding (3 image-supported rows dropped on purpose: a misread digit can name another user).
+- Fallback: never stop the batch; failed cases are listed and the exit code is 1.
+- System-default category for 1,002 of 1,249 targets: known, reported as a limit.
+- Fixed in round 2: unknown non-absent process copies -> UNPROVEN; collection-scoped absence; explicit hold status
+  first, contradiction -> UNPROVEN.
+
+Focus, in priority order:
+1. Any NEW correctness bug against problem_statement.md that changes rows in output.csv.
+2. Generalization: any case-specific or id-specific logic, or a rule that fits the samples but breaks a plausible hidden case.
+3. Safety: could any path delete or anonymize a retained record, or act on another user's record?
+4. Release readiness: output.csv contract, code.zip runs clean-room offline, no secrets, docs match the code.
+Verify each finding by running or reading the code before you report it. No style nits.
+At most 10 findings, most severe first:
+[SEVERITY: blocker|major|minor] title / Where: path:line / Failure scenario: concrete input -> wrong output /
+Evidence: what you ran or read / Fix: the smallest change / Rows affected in output.csv (measured, or "unknown").
+End with "Release verdict: SHIP / SHIP WITH FIXES / DO NOT SHIP" and one line why.
+---
+
+When both are done:
+1. Merge the findings and remove duplicates. Mark which reviewer found each one (A, B or both).
+2. Triage each one: verify it (reproduce, or probe with a temporary patch outside the repo plus an offline replay),
+   then ACCEPT / REJECT / NEEDS-DATA with a one-line measured reason: rows changed on the 518, and the sample score
+   change. Reject anything that adds sample-fitting or case-specific logic, or that re-raises a decided item without new evidence.
+3. Do NOT fix anything. Wait for my decision.
+
+Reply format:
+1. Both taskIds; provider/model/options actually used per reviewer
+2. Each reviewer's findings (verbatim) and release verdict
+3. Merged triage table: # | found by | severity | ACCEPT/REJECT/NEEDS-DATA | rows changed | samples change | reason
+4. Your recommendation: ship as is, or apply which fixes
+
+Agent Response Summary:
+Started two read-only round-3 reviewers with delegate_task (worktree, async): A = codex / gpt-5.6-sol / reasoningEffort high; B = opencode / opencode-go/deepseek-v4.1-flash / variant max. Both finished with SHIP WITH FIXES. Each finding was checked by reading the code and by temporary patches or instrumentation in a copy of HEAD outside the repo (%LOCALAPPDATA%\Temp\r3probe), with an offline replay (agent off) of the 518 and the 32 samples; the base copy matched the expected hashes. Accepted: DESIGN.md doc drift (0 rows), retention-date order hardening (0 rows), and conflicting structured categories to UNPROVEN (0 rows). Rejected: unknown retention UNPROVEN (53 rows, samples 31/32), support shared context UNPROVEN (165 rows, samples 29/32), all-absent flow COMPLETE for case_39 (evidence_14 shows the connector live), and the latent paths that have 0 occurrences. No repo code was changed.
+
+Actions:
+* mcp t3-code orchestrator_capabilities (search "deepseek", once)
+* mcp t3-code delegate_task x2 (clientRequestId codex-review-r3, opencode-review-r3)
+* Read problem_statement.md, code/README.md, code/DESIGN.md, code/evaluation/evaluation_report.md sections 7b-14
+* git archive HEAD to a temp probe dir; offline replays with temporary patches a1, a2, a4 (instrumented), b (instrumented + flip)
+* Appended SESSION START and this entry to log.txt
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+## [2026-10-25T04:00:45Z] Round-3 review report check: verdicts confirmed, decision requested (no fixes)
+
+User Prompt (verbatim, secrets redacted):
+Both reviewers finished and each finding is triaged. I changed no repo code. The only repo change is `log.txt`: one session-start entry and one entry for this turn.
+
+## 1. Tasks and models actually used
+
+| Reviewer | taskId | Provider / model / options (as returned) |
+| --- | --- | --- |
+| A | `node:delegated-task:command%3Amcp%3Aa7bb509f-77a0-4f3b-b4c1-b0e469c43cbb%3Adelegate-task%3Acodex-review-r3` | `codex` / `gpt-5.6-sol` / `reasoningEffort=high`. Matches your request. |
+| B | `node:delegated-task:command%3Amcp%3Aa7bb509f-77a0-4f3b-b4c1-b0e469c43cbb%3Adelegate-task%3Aopencode-review-r3` | `opencode` / `opencode-go/deepseek-v4.1-flash` / `variant=max` |
+
+- **The Reviewer B model id needs a check:** the "deepseek" search listed DeepSeek V4.1 Flash only as `nvidia/deepseek-ai/deepseek-v4.1-flash`. I did not use that id because it is not the OpenCode Go route.
+  - I sent `opencode-go/deepseek-v4.1-flash` directly. The tool accepted it, returned that same model, and the review ran to the end.
+  - I set `max` because the listed V4.1 Flash entry offers `none/low/high/max`. The catalog did not show the Go entry's own options.
+- Both reviewers ran in worktrees from HEAD, async. Neither hit a usage limit.
+
+## 2. Reviewer findings (verbatim) and verdicts
+
+### Reviewer A (Codex)
+
+1. [SEVERITY: major] Missing retention metadata is treated as proof that Rule 12 applies / Where: code/policy.py:213, code/policy.py:326 / Failure scenario: case_41's `audit_record_7814` is merely reported `FOUND`, with no retention end or status; the agent nevertheless returns `COMPLETE` with `VERIFY_RECORD_PRESENT`, although the condition "within the supplied retention period" is unproved / Evidence: offline trace found `retention_unknown_retain` in 203 cases; 53 fresh, non-stale `COMPLETE` rows depend on it / Fix: return `UNPROVEN` when Rule 12 has no retention evidence, and resolve multiple retention statements newest-first with conflicts remaining unproved / Rows affected in output.csv: 53 measured.
+2. [SEVERITY: major] Every support message is assumed to satisfy Rule 05's shared-context condition / Where: code/policy.py:248 / Failure scenario: case_41's `support_2667` is labeled `SUPPORT_MESSAGE` and `REDACTED`, but its evidence contains no customer, agent, or order context; the code adds `support_shared_context_assumed` and declares it compliant anyway / Evidence: offline trace found this assumption on 170 targets across 167 rows; 32 fresh `COMPLETE` rows rely on it / Fix: establish shared context from record content or explicit metadata; otherwise leave the condition `UNPROVEN` / Rows affected in output.csv: 32 measured, including 8 also affected by finding 1.
+3. [SEVERITY: major] Ambiguous intent defaults to authorized deletion / Where: code/intent.py:265, code/main.py:206 / Failure scenario: "Please handle my privacy request" produces `AMBIGUOUS`; a screened request, low-confidence label, model failure, or offline snapshot miss leaves it ambiguous, after which `treat_as_deletion()` returns true and destructive remediation can be planned / Evidence: read the fallback path in `intent_model.py` and `run_case`; the submitted run happened to contain zero ambiguous requests / Fix: require a rule or accepted high-confidence model label to authorize deletion; unresolved ambiguity must produce no destructive plan / Rows affected in output.csv: 0 measured; hidden-case impact unknown.
+4. [SEVERITY: major] Conflicting record categories are resolved by first iteration, bypassing retained-data safety / Where: code/policy.py:160, code/policy.py:355 / Failure scenario: an older statement identifies a resource as `USER_PROFILE`, while a newer statement identifies it as `SECURITY_AUDIT_LOG`; `category_source()` returns the first encountered category, allowing `DELETE_RECORD`, and the safety check only sees the incorrectly selected non-retained category / Evidence: code iterates statements without temporal dominance or conflict detection / Fix: resolve category using the state resolver's time/tier rules; conflicting admissible categories must be `UNPROVEN`, and any retained-category evidence should veto destructive remediation / Rows affected in output.csv: unknown.
+5. [SEVERITY: major] A catalog link can override evidence that a resource belongs to another user / Where: code/links.py:182, code/planner.py:70 / Failure scenario: the catalog links a profile to user A, but every state row identifies user B; the target is retained as "shared," and the catalog edge makes `foreign_only` false, permitting deletion or anonymization of B's record / Evidence: traced both ownership and planner guards; the current trace contains zero shared targets, so the unsafe branch is not exercised / Fix: treat catalog-versus-record ownership disagreement as `UNPROVEN`; forbid destructive actions on any resource linked to another user unless the applicable rule explicitly proves subject-exclusive ownership / Rows affected in output.csv: 0 measured; hidden-case impact unknown.
+6. [SEVERITY: major] REDACT/ANONYMIZE compliance accepts contradictory or missing final states / Where: code/policy.py:199, code/policy.py:248 / Failure scenario: a tombstone read-back reports `REDACTED` while still exposing an email; `_exposure()` trusts the treatment label before inspecting identifiers and declares it clean. Separately, an absent support or analytics record is declared compliant even though policy required retained redaction/anonymization / Evidence: read both precedence branches; the current trace contains zero clean-treatment copies with exposed identifiers and no `redact_target_absent` cases / Fix: visible prohibited identifiers must override a clean-treatment label; absence of a record requiring REDACT/ANONYMIZE should be unproved or missing-required-data, not compliant / Rows affected in output.csv: 0 measured; hidden-case impact unknown.
+
+Release mechanics passed: `output.csv` validates at 518 rows with SHA-256 `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`; evaluation metrics reproduced; repository and extracted-ZIP tests both produced 181 passed, 1 skipped, and 75 subtests; the clean-room ZIP run reproduced the same hash and contained no dataset or `.env`.
+
+**Release verdict: SHIP WITH FIXES.** Why: packaging and replay are release-ready, but 77 currently `COMPLETE` rows rely on unproved conditional-policy assumptions, and several fallback paths can authorize unsafe destructive decisions.
+
+### Reviewer B (OpenCode)
+
+**Verification runs (all offline, `ZENMUX_OFFLINE=1`):** `code/main.py` → 518 rows, SHA-256 `1d19e512…786b` (expected), 4.2 s, 0 errors; `code/validate.py` VALID; `pytest code/tests` 181 passed / 1 skipped (= 182); `code/evaluation/main.py` exit 0 (status 32/32, content P/R/F1 1.000/0.855/0.922, exact 0.704, sequence 15/32, 7/7 custom, 19/19 metamorphic); `code/package.py` 75 files, secret scan clean; zip extracted to a temp dir with `dataset/` junctioned in → same hash, VALID, 182 tests pass; `--no-agent` and sample runs reproduce the claimed hashes (`1d19e512…`, `d59f689e…`). No secrets in tree or `log.txt` (0 hits, no `.env`); all 20 commits cited in the report exist with matching subjects; `git status` shows only the untracked `output.csv`.
+
+I re-checked the round-2 decisions against data rather than re-litigating them, and ran two stronger safety probes that came back clean: **no admissible observation carrying a subject identifier is missing from its case's targets** (0 across 518 cases, including all 152 COMPLETE rows), so there is no false COMPLETE caused by a missed strong link; and **no target has two different retention dates, no shared targets, and 0 `retention_expired_delete` paths fire.** The 10 `NOT_APPLICABLE` rows are all genuinely non-deletion texts (read individually). I found no new blocker or major defect.
+
+1. **[SEVERITY: minor] A retained record can be scheduled for DELETE based on copy insertion order**
+   - **Where:** `code/policy.py:213-223` (`_retention_expired`) with `code/policy.py:320-324`
+   - **Failure scenario:** the same audit record has `retention_until=2033-12-31` in `primary` and an older `2025-12-31` in `reporting_replica`. `_retention_expired` returns the **first** statement it meets (`for cs in state.copies.values(): for st in cs.statements:`), not the newest. If the replica copy is inserted first, `expired=True`, the finding/remediation flip to `REPORT_REMAINING_RECORD` / `DELETE_RECORD`, and `check_safety` waves it through because the same stale statement set the `retention_expired_delete` hypothesis. Two identical fact sets produce opposite rows.
+   - **Evidence:** reproduction with real `Target/CopyState/Statement/Observation` objects — `replica-first -> violation | DELETE_RECORD | INCOMPLETE [REPORT_REMAINING_RECORD, DELETE_RECORD, VERIFY_RECORD_ABSENT]` vs `primary-first -> compliant | COMPLETE [VERIFY_RECORD_PRESENT]`. Measured on the dataset: 0 targets have conflicting retention values (no copy pair disagrees), so this is latent.
+   - **Fix:** choose the newest stating statement (`max(stating, key=lambda s: (s.at, s.rank, s.evidence_id))`, as `_hold_status` already does newest-first), or treat disagreeing copies as `retention_unknown_retain`. 3 lines.
+   - **Rows affected in output.csv:** 0 of 518 (measured).
+2. **[SEVERITY: minor] An unproven item with no defined operation produces the contract-invalid row `INCOMPLETE,[]`**
+   - **Where:** `code/policy.py:296-299` (non-exclusive attachment) and `code/policy.py:290-291` (two named categories) → `code/planner.py:89-95` → rejected by `code/validate.py:126-129`
+   - **Failure scenario:** a case whose only target is a `SUPPORT_ATTACHMENT` not proven exclusive (or a record whose catalog text names two categories) gets `outcome=UNPROVEN` with `finding=remediation=verification=None`. `decide_status` refuses COMPLETE, `plan()` emits no step, and the written row is `INCOMPLETE,[]` — which the project's own strict validator rejects, so `main` prints `FAILED: 1 contract errors` and exits 1 even though nothing went wrong. Note the policy asymmetry: rule_06's condition is *false* there (no action is required), yet the case can never be COMPLETE.
+   - **Evidence:** `evaluate → plan → validate` reproduction: `category SUPPORT_ATTACHMENT outcome unproven … plan -> INCOMPLETE []`, `validate_steps -> ['case_900: INCOMPLETE must have at least one step']`. Measured: 13 attachment targets, all exclusive; 0 ambiguous-category targets.
+   - **Fix:** keep the conservative INCOMPLETE but give the branch a defined verification (`d.verification = Op.VERIFY_RECORD_PRESENT`, `d.attribute="exists"`) so a step always exists; or return `NOT_TARGET` and let `plan()` drop it. 2 lines.
+   - **Rows affected in output.csv:** 0 of 518 (measured).
+3. **[SEVERITY: minor] The all-ABSENT data-flow branch is unvalidated and decides one row**
+   - **Where:** `code/policy.py:269-285` (`_process_decision`, requires `any(v == good_value)`)
+   - **Failure scenario:** `case_39`'s only target is `integration_service/data_flow_1121`, proven ABSENT in all seven copies (scopes) at `audit_at=2026-08-08T10:00`. No copy states DISABLED, so the item stays UNPROVEN and the row becomes `INCOMPLETE` with a single future `VERIFY_DATA_FLOW_DISABLED`. Compare `_exposure_decision`, which treats a proven-absent record as compliant (`VERIFY_RECORD_ABSENT`): the two readings of "record is gone" disagree. The only signal that the connector was active is `activity_3434` (SYNC_RECORD, 2026-08-25 — after `audit_at`, inadmissible), so if gold treats an absent flow as "no flow" this row should be COMPLETE, and if gold's truth is ACTIVE the row is missing the finding + remediation.
+   - **Evidence:** trace dump of the item (all copies ABSENT, `reason: ""`), `system_activity.csv` `activity_3434`, and `output.csv` `case_39,INCOMPLETE,[{…VERIFY_DATA_FLOW_DISABLED data_flow_1121}]`. Samples never exercise an absent connector/backup/tombstone (all sample flows are ACTIVE or DISABLED, backups OPEN or BLOCKED).
+   - **Fix:** decide the branch explicitly — either mirror the exposure reading (`absent ⇒ VERIFY_RECORD_ABSENT`) or require a positive DISABLED only when a non-absent copy exists — and record which reading in DESIGN §"Policy readings". One condition.
+   - **Rows affected in output.csv:** 1 (`case_39`).
+4. **[SEVERITY: minor] `DESIGN.md` (shipped in `code.zip`) contradicts the code in two places**
+   - **Where:** `code/DESIGN.md:120` says "Vision prompt `vision_extract_v2`"; the shipped prompt is `vision_extract_v3` (`config.PROMPT_VERSIONS`, `code/prompts/vision_extract_v3.md`, usage report). `code/DESIGN.md:77` says "2 retries for invalid output"; `config.SCHEMA_RETRIES = 1` (README and usage report both say 1 schema retry + 2 transport retries).
+   - **Failure scenario:** a judge reading the design doc against the code sees two false statements about the artifact it is grading; the prompt version is also the key that invalidates the replay snapshot, so it matters.
+   - **Evidence:** grep of `DESIGN.md` / `config.py` / `prompts/`; `SCHEMA_RETRIES = 1` in `code/config.py:68`.
+   - **Fix:** `vision_extract_v2 → vision_extract_v3`; "2 retries for invalid output" → "1 schema retry + 2 transport retries". 2 lines.
+   - **Rows affected in output.csv:** 0.
+5. **[SEVERITY: minor] The investigator agent changes 0 of 518 rows — an architecture-value risk, not a defect**
+   - **Where:** `code/agent/loop.py`, invoked from `code/main.py:228-229`
+   - **Failure scenario:** the agent only runs on UNPROVEN/CONFLICT items; on this dataset that is 5 cases / 18 turns / 3 proposals / 2 accepted / 1 rejected (`state_mismatch`), and the two accepted proposals only restate presence that was already known, so `--no-agent` yields byte-identical `output.csv`. The 30 % "agent architecture / prompt-tool craft" weight therefore rests on code and custom case `cc06`, not on any graded row. This is reported honestly (evaluation report §8), so it is a presentation risk, not a false claim.
+   - **Evidence:** `--no-agent` hash `1D19E512…786B` = final hash; `AgentStats` from a full replay; per-case ablation table in the report.
+   - **Fix:** none required for correctness. If time remains, make the interview/deck lead with the acceptance check and `cc06` rather than with row impact, so the ablation is not read as "the agent is unused".
+   - **Rows affected in output.csv:** 0.
+
+**Not re-raised (already decided, re-checked and still consistent with the data):** stale-link window, `job_burst` + uniqueness guard, activity-only recall gap, attachment exclusivity, citation order, strict vision digit grounding, fallback/never-stop, system-default category coverage (1,002/1,249), and the round-2 fixes (unknown process copy → UNPROVEN, collection-scoped absence, explicit hold status first).
+
+**Release verdict: SHIP WITH FIXES.** Why: `output.csv` is contract-valid, hash-reproducible offline and from the clean-room zip with no secrets, and I found no new row-changing correctness bug; fix the two `DESIGN.md` lines before rebuilding the zip, and apply the two 2-line guards (retention newest-wins, always-defined verification for unproven no-op targets) because they are the only remaining paths that can delete a retained record or emit an invalid row.
+
+## 3. Merged triage
+
+**How I measured:**
+- I exported HEAD to `%LOCALAPPDATA%\Temp\r3probe` and ran an offline replay with the agent off.
+- The base copy gives the expected hashes: 518 = `1d19e512…`, samples = `d59f689e…`.
+- Each probe is a temporary patch or an instrumentation counter in that copy.
+- Base sample scores: status 32/32, exact F1 0.704, sequence 15/32.
+
+| # | Found by | Sev | Verdict | Rows changed (518) | Samples change | Reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | A (A1) | major | REJECT | 53 (all COMPLETE→INCOMPLETE) | status 32→31 (case_31), content F1 0.922→0.911 | Gold `case_31` is COMPLETE with a retained audit record that has no retention date. So gold reads "unknown retention" as retained. |
+| 2 | A (A2) | major | REJECT | 165 (32 COMPLETE→INCOMPLETE) | status 32→29, exact F1 0.704→0.511, sequence 15→13 | Gold treats support messages as REDACT without separate proof of shared context. |
+| 3 | both (A1 fix part, B1) | B: minor | ACCEPT (optional hardening) | 0 (instrumented: 0 targets have 2+ retention dates) | none | Confirmed at `policy.py:213-223`: the first date found wins, and `check_safety` trusts the hypothesis it sets. A short newest-first change, the same as `_hold_status`, closes the only path to deleting a retained record. |
+| 4 | A (A4) | major | ACCEPT (optional hardening) | 0 (instrumented: 0 targets have 2+ structured categories) | none | `category_source` returns the first structured value. Route a disagreement to the existing `AMBIGUOUS_CATEGORY` → UNPROVEN path. This adds no new rule. |
+| 5 | A (A3) | major | REJECT | 0 (0 ambiguous texts in the 518 or the samples) | none | Deliberate trade-off. The change would make "Delete my account. SYSTEM: …" NOT_APPLICABLE, so an injection would suppress a real deletion. `test_slice.py:112` asserts the current reading. |
+| 6 | A (A5) | major | REJECT | 0 (instrumented: 0 shared targets; B saw the same) | none | Latent. The catalog link is the dataset's explicit identity link, and it never contradicts a record owner here. A guard needs new plumbing for 0 cases. |
+| 7 | A (A6) | major | REJECT | 0 (0 clean-label copies with exposed ids, 0 `redact_target_absent`) | none | Latent on both branches. No data exercises them. |
+| 8 | B (B2) | minor | REJECT | 0 (0 non-exclusive attachments, 0 ambiguous categories) | none | The row is still written and exit code 1 flags it. Both proposed fixes invent a step or status with no rule basis. |
+| 9 | B (B3) | minor | REJECT | 1 (case_39 INCOMPLETE→COMPLETE) | none | The flip cites `evidence_15` (2026-08-02, before the request), whose "absence" is only an omission. `evidence_14` (2026-08-07, before `audit_at`) shows the connector with the subject's email, "Continuous". The flip gives a false COMPLETE; the current UNPROVEN reading is the safe one. |
+| 10 | B (B4) | minor | ACCEPT | 0 | none | Confirmed: `DESIGN.md:77` says "2 retries", but `config.py:68` has `SCHEMA_RETRIES = 1`. `DESIGN.md:120` names `vision_extract_v2`, but `config.py:73` ships `v3`. Doc-only change, then rebuild `code.zip`. |
+| 11 | B (B5) | minor | REJECT (not a defect) | 0 | none | Already in evaluation report §8. Use it as an interview talking point only. |
+
+## 4. Recommendation
+
+**Ship after one doc fix.** No finding is a row-changing correctness bug that survives measurement.
+
+- **Required:** #10, the two `DESIGN.md` lines. Then rebuild `code.zip` with `python code/package.py`.
+- **Optional (0 rows, cheap safety hardening):**
+  - #3: retention date newest-first.
+  - #4: conflicting structured categories go to UNPROVEN.
+  - Each needs one unit test. After both, run the full suite once and confirm the SHA-256 stays `1d19e512…786b`.
+- **Keep everything else as is.** The two big proposals (#1, #2) would rewrite 53 and 165 rows against what gold shows.
+
+I wait for your decision before I change anything. The probe copies are in `%LOCALAPPDATA%\Temp\r3probe`, outside the repo.
+
+Agent Response Summary:
+Checked the pasted round-3 review report (Codex + OpenCode) against the repo; no code was changed. Confirmed: DESIGN.md:77 says 2 schema retries but config.SCHEMA_RETRIES is 1, and DESIGN.md:120 names vision_extract_v2 while config ships v3; gold sample case_31 is COMPLETE with VERIFY_RECORD_PRESENT on audit_record_6909, whose only record (evidence_51) has no retention field, so the reject of A1 holds; evidence_14 (2026-08-07) is before case_39 audit_at (2026-08-08), so the reject of B3 holds; test_slice.py:112 asserts the ambiguous-intent reading. Also found a stale docstring at intent.py:266. Recommended the doc fix plus the two 0-row hardenings (#3 retention newest-first, #4 category conflict to UNPROVEN) and a report note on the rule_12 rule-text vs samples disagreement; waiting for the user's decision.
+
+Actions:
+* Read: code/DESIGN.md lines 77 and 120, code/config.py, code/intent.py, code/tests/test_slice.py
+* Ran: git status and log checks; validity check of the two uncommitted round-3 log entries; sample gold and evidence-time checks for case_31 and case_39 (dataset/ participant files only)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
