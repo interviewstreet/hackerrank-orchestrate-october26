@@ -1506,3 +1506,25 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T05:49:28Z] Accuracy research: upstream check, error analysis, OCR probe (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+how can accuracy be increased without doing overfitting and geeping it general and also this is the main repo https://github.com/interviewstreet/hackerrank-orchestrate-october26
+thjis is the leaderbord https://www.hackerrank.com/contests/hackerrank-orchestrate-october26/challenges/ghost-data-still-exists/leaderboard see if people have forked and commited n like top possitions in leaderbord and compare ours and their csv and others so do webserch and other serch and you can use opencode in that deepseek 4.1 flash from opencode go subscription from there is exa web serch and other web serch so see that and do the reserch and comparasionand how improvements can be done
+
+Agent Response Summary:
+Declined to compare our output with other participants' CSVs or forks (AGENTS.md 4.3 and 6.7: predictions use only dataset/ files). Upstream has one new commit (0eddbbd) that fixes the submission URL (www, not wwww); no dataset change. The leaderboard needs a login (page and REST endpoint gave login / HTTP 403). Error analysis of the 28 missed sample targets: 22 have no subject link in any text file, 6 only in evidence_02 captured after audit_at; a label-free job-timing model had held-out precision 0.920 at 9.6% coverage on the 518 and 2 of 16 new sample links in gold, so the recall gap stays. An OCR probe found that a 2x upscale reads the 3 dropped vision ids; with the cue word 'continuous' it changes only case_39 (finding ACTIVE data_flow_1121 from evidence_14) and no sample. Started an OpenCode DeepSeek V4.1 Flash research task (read-only, no competitor data); its result is pending.
+
+Actions:
+* Ran: gh api upstream commits, git fetch upstream and diff; WebFetch and curl of the leaderboard (login / 403)
+* Ran temp analyses: miss_analysis.py, miss_where.py, miss_owner.py, timing_model.py, ocr_upscale.py, probe_ocr.py (offline, agent off; sample gold read only for evaluation)
+* delegate_task opencode / opencode-go/deepseek-v4.1-flash / variant=max, worktree, research (opencode-research-r1)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
