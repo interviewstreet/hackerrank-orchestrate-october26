@@ -1,0 +1,7 @@
+google-genai==2.33.0
+pdfminer.six==20260107
+pypdf==6.21.2
+Pillow==13.0.0
+pytesseract==0.3.13
+rapidocr==3.10.0
+onnxruntime==1.23.2
