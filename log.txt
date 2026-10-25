@@ -821,3 +821,129 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T00:48:38Z] Final phase: vision blocks, never-stop batch, generalization audit, cold run, release
+
+User Prompt (verbatim, secrets redacted):
+Good round. Decisions on your item 7, then Phase 6. Box Parts 1-4:
+
+
+Ground rule for everything below: GENERALIZE, DO NOT OVERFIT. The 518 hidden answers are what count; the 32 samples
+are regression checks only. Every rule must rest on the rule text in deletion_rules.csv / problem_statement.md, or on a
+data pattern seen across several cases. No case ids, resource ids or per-text labels in decision code. If a fix only
+helps the one case we are looking at, it is wrong. When the samples and the rule text disagree, say so; do not
+silently fit.
+
+=== PART 1: two corrections ===
+1. #9 vision grounding was too strict: it dropped 2 rows the images support (support_1034 on evidence_28, object_19
+   on evidence_46). Codex's real concern was a state taken from a different row. General fix: use Tesseract TSV
+   output (block/paragraph numbers). Accept a row when the resource id and the state cue are in the SAME block, and
+   the identifier is in the same block or the same card/region. Keep the noise tolerance. Do not special-case files or ids.
+   Report all 5 previously dropped rows: accepted/dropped now, and whether the image supports each.
+   The 3 that failed older checks must stay dropped unless the image clearly supports them.
+2. #10: never stop the batch. Process every case, write every row, collect the failures, write a failure list,
+   and exit non-zero if any case failed or strict validation fails. The conservative row rule stays (INCOMPLETE +
+   empty-evidence verification for known targets). Today there are 0 failures; keep the test.
+#7 and #8 interpretations: accepted, as you wrote them. Put both readings in DESIGN.md with the rule text.
+
+=== PART 2: generalization audit ===
+a) Add a test that scans decision code (code/ minus tests, evaluation, llm_snapshot.py) for literal case ids,
+   resource ids (pattern ^[a-z_]+_\d+$ inside string literals) and sample texts. It must fail on any hit.
+b) Add a "Generalization audit" section to evaluation_report.md: one row per data-driven rule (stale link window,
+   job_burst + uniqueness guard, category from content, citation order, status rule, exclusivity, hold activity,
+   vision grounding). For each: the source (rule text / data pattern), how many cases support it (samples vs
+   518-wide pattern), the risk on hidden cases, and what we would do with more data. Be honest about any rule that rests on 1-2 samples.
+   Include the 12 data_catalog LINK_RESOURCE_IDENTITY rows as the evidence for the stale-link window.
+c) Report the 518 status distribution and how many rows each data-driven rule changes (ablation: rule off vs on, rows changed).
+
+=== PART 3: the final run (this run's output.csv is the submission) ===
+1. Make the cache store usage (tokens, latency) with each entry, so replays report the original cost.
+2. Do ONE live run from an EMPTY cache directory (do not delete the old cache; point the run at a new dir).
+   This is the final run that produces root output.csv.
+3. Compare its hash with the current output. If it differs, list the changed rows and the cause (model
+   nondeterminism vs code). Keep the cold-run output as final if the gate passes and the sample scores are not
+   worse; otherwise STOP and report.
+4. Export the snapshot from this run. Then replay with ZENMUX_OFFLINE=1: the hash must equal the cold run's.
+5. Finalize usage_report.md from this run only (no estimates): provider ZenMux, model meta/muse-spark-1.3-contributor
+   (base id returned HTTP 403), calls per purpose, input/output tokens, total and average per request, cost total and
+   per request, cache hits.
+6. Finalize evaluation_report.md with the final numbers (both step metrics, sequence, confusion matrix, custom cases,
+   metamorphic, agent stats, failures found and improvements per phase, limits incl. the activity-only recall gap).
+
+=== PART 4: package + clean-room ===
+1. README.md in code/: what it does, architecture (model reads/proposes, code decides), the agent loop and its
+   caps, safety, setup (Python 3.11+, requirements, .env from .env.example), entry point, offline replay,
+   evaluation command, known limits. Claims only what the code does.
+2. package.py builds code.zip: code/ incl. evaluation/ (both reports), prompts, README, requirements, .env.example,
+   llm_snapshot.py. Exclude .env, caches, **pycache**, venvs, the dataset, output.csv. Scan for secrets.
+3. Clean-room test: unzip into a new temp dir, new venv, pip install -r requirements.txt, put the dataset next to it
+   the way the README says, run with ZENMUX_OFFLINE=1. The output hash must equal the final output.csv.
+4. Check log.txt follows AGENTS.md and holds no secret.
+
+Gate: full suite; strict validation 0 errors (518 + samples); ruff + mypy clean; replay hash = cold-run hash;
+clean-room hash equal; secret scan clean. Commit as "release: final run, reports, packaging". If the gate fails,
+STOP and report; do not start Part 5.
+
+=== PART 5: Codex review round 2 (same model as round 1) ===
+Start a NEW delegate_task (do not message the round-1 child thread): Codex provider, model gpt-5.6-sol, options
+{"reasoningEffort":"high"}, isolation "worktree" from the release commit, mode async, clientRequestId "codex-review-r2".
+Check that the returned provider/model/options match. Wait for the completion notification; no tight polling.
+
+Brief for the subagent (verbatim, then append the two lists below):
+---
+Round 2 review of a HackerRank Orchestrate submission, "Ghost Data Still Exists" (deletion-audit agent).
+READ-ONLY: do not edit, create or delete files, do not commit, do not write log.txt or any log. No live model calls:
+run with ZENMUX_OFFLINE=1. No .env exists; never look for or print secrets.
+Read: problem_statement.md, AGENTS.md, code/README.md, code/DESIGN.md, C:\Users\sanka\Downloads\plan.md,
+code/evaluation/evaluation_report.md, code/evaluation/usage_report.md. You may run pytest, code/main.py (offline),
+code/validate.py, code/evaluation/main.py, package.py, and unzip code.zip into a temp dir.
+Architecture: the model (meta/muse-spark-1.3-contributor via ZenMux) reads and proposes; deterministic code decides.
+Graded on 518 hidden cases; 32 labeled samples. Judging: code 30%, output 30% + safety, interview 30%, transcript 10%.
+
+Focus, in priority order:
+1. OVERFITTING / GENERALIZATION: for every data-driven rule in the "Generalization audit" section, judge if it is
+   principled or sample-fitted, and give a concrete hidden-case scenario where it fails. Search decision code for any
+   case-specific or id-specific logic.
+2. Check that each round-1 fix below is correct and complete, and that no fix caused a regression.
+3. Release readiness: output.csv contract (518 rows, numeric order, strict rules); code.zip runs clean-room offline;
+   no secrets; the reports match what the code does (no overclaiming); the usage report describes the run that
+   produced output.csv.
+4. Any new correctness bug against problem_statement.md.
+Verify each finding by running or reading before you report it. No style nits. At most 12 findings, most severe
+first: [SEVERITY: blocker|major|minor] title / Where: path:line / Failure scenario / Evidence / Fix.
+Then "Release verdict: SHIP / SHIP WITH FIXES / DO NOT SHIP" with one line why.
+---
+Append: (a) the 14 round-1 findings, one line each, with our verdict and what we did; (b) the unresolved objections:
+#3 stale link (kept: 12 catalog-link rows show the window is a dataset design), #5 activity-only recall (accepted
+loss), #13 citation order (kept: gold case_01).
+
+When it completes: triage each finding (verify, then ACCEPT / REJECT / NEEDS-DATA + one-line reason; reject anything
+that adds sample-fitting). Do NOT fix. Wait for my decision.
+
+=== Reply format ===
+1. Commits (hash + title)
+2. Gate results (tests, validation, ruff/mypy, hashes: cold / replay / clean-room)
+3. Part 1: the 5 vision rows (accepted/dropped, image supports?); rows changed on 518
+4. Generalization audit table + rule ablation (rows changed per rule)
+5. Final run: calls per purpose, tokens, cost; hash vs previous output and the cause of any difference
+6. Sample scores (status; exact 7-field P/R/F1; content 6-field P/R/F1; sequence); 518 status distribution
+7. code.zip size and file list summary; clean-room result
+8. Codex r2: taskId, model/options, findings verbatim, release verdict, your triage table
+
+Agent Response Summary:
+Part 1: vision rows are grounded on Tesseract TSV layout blocks (support_1034 and object_19 recovered; the 3 OCR id misreads stay dropped although the images support them), the batch never stops (failure list, exit 1), and DESIGN.md states the rule_06 / rule_13 readings. Part 2: a literal scan test found real dataset ids in the prompts (now fictional, prompts v3/v2) and hand-copied rule ids (now bound from deletion_rules.csv); the report gained a generalization audit with a per-rule ablation. Part 3: cache entries keep usage; one cold live run from an empty cache dir (29 calls, 84,023/14,812 tokens, $0.0113647) produced output.csv 1d19e512...; vs the previous output 2 rows changed (case_61 code, case_53 code plus model variance); offline replay hash equal. Part 4: code/README.md, package.py with root report copies and a secret scan, clean-room venv run hash equal, log.txt checked. Gate passed (180 tests, strict validation 0 errors, ruff/mypy clean); release commit fe27024. Part 5: Codex round-2 review started (codex / gpt-5.6-sol / reasoningEffort high, worktree, async, clientRequestId codex-review-r2); triage follows its result, no fixes.
+
+Actions:
+* code/evidence/extract_vision.py, code/evidence/extract_text.py, code/facts.py, code/config.py, code/main.py, code/tests/test_adversarial.py (commit 2062f67); code/main.py, code/tests/test_main.py, .gitignore (cf2e615); code/DESIGN.md (76a3651)
+* code/policy.py, code/prompts (vision_extract_v3, agent_v2), code/tests/test_generalization.py, code/tests/conftest.py (e17ccb1); code/llm_client.py, code/main.py, .env.example (788556e)
+* Ran: cold live run with ZENMUX_CACHE_DIR=.cache/llm_final and --export-snapshot (518 then samples), offline replay, rule ablation script (11 variants), evaluation/main.py, full pytest suite (180 passed), validate.py, ruff, mypy, package.py, clean-room venv install and offline run, worktree CRLF replay check
+* code/evaluation/evaluation_report.md, code/evaluation/usage_report.md, code/README.md, code/package.py, code/llm_snapshot.py, code/ocr_snapshot.json (release commit fe27024); code.zip built (not committed)
+* mcp__t3-code__delegate_task: Codex round-2 review (clientRequestId codex-review-r2)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
