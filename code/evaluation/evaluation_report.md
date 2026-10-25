@@ -6,21 +6,21 @@ The final official public-sample evaluator run classified **32 of 32 cases corre
 
 ## Step-Level and Field-Level Accuracy
 
-| Metric | Reported baseline | Final evidence-conservative run | Change |
+| Metric | Audited `ff03e5f` | Final evidence-conservative run | Change |
 |---|---:|---:|---:|
-| Status accuracy | 31/32 (96.9%) | **32/32 (100.0%)** | +1 case |
-| Step-count accuracy | 14/32 (43.8%) | **13/32 (40.6%)** | -1 case |
-| Positional step accuracy | 124/193 (64.2%) | **125/193 (64.8%)** | +1 step |
-| Field accuracy | 858/1,158 (74.1%) | **855/1,158 (73.8%)** | -3 fields |
-| Exact sequence accuracy | 11/32 (34.4%) | **13/32 (40.6%)** | +2 cases |
+| Status accuracy | 32/32 (100.0%) | **32/32 (100.0%)** | 0 |
+| Step-count accuracy | 13/32 (40.6%) | **20/32 (62.5%)** | +7 cases |
+| Positional step accuracy | 125/193 (64.8%) | **162/193 (83.9%)** | +37 steps |
+| Field accuracy | 855/1,158 (73.8%) | **1,013/1,158 (87.5%)** | +158 fields |
+| Exact sequence accuracy | 13/32 (40.6%) | **20/32 (62.5%)** | +7 cases |
 
-The evaluation-only exact-step set diagnostic reports **167 exact true-positive steps**, **171 predicted steps**, and **193 expected steps**: **97.7% precision**, **86.5% recall**, and **91.8% F1**. This supplementary metric does not alter the official evaluator.
+The evaluation-only multiset diagnostic reports **181 exact true-positive steps**, **185 predicted steps**, and **193 expected steps**: **97.8% precision**, **93.8% recall**, and **95.8% F1**. This supplementary metric counts duplicate tuples with multiplicity and does not alter the official evaluator.
 
-The small field-accuracy trade-off is intentional: ambiguous global workflow events are no longer assigned among overlapping users using outcome, rank, or a best-score guess. Conversely, local OCR exposed two additional participant-visible resources that are strongly linked by pre-audit catalog events but omitted from the public canonical sequence. Suppressing those grounded resources would improve benchmark matching by weakening completeness.
+Ambiguous global workflow events are still rejected rather than assigned by outcome, rank, or case order. The improvement comes from requiring either a subject-evidenced member in a unique report batch or at least two independently evidenced members of a coherent temporal workflow chain. Local OCR also exposes two participant-visible resources that are strongly linked by pre-audit catalog events but omitted from the public canonical sequence; suppressing them would improve benchmark matching by weakening completeness.
 
 ## Sequence Accuracy
 
-**13 of 32 cases (40.6%)** exactly match the complete canonical sequence. `benchmark_diagnostics.md` lists every remaining public mismatch and groups it by root cause. `observability_report.md` independently demonstrates that eight canonical resources cannot lawfully be reproduced: three are absent globally and five first appear after their case's `audit_at` cutoff.
+**20 of 32 cases (62.5%)** exactly match the complete canonical sequence. `benchmark_diagnostics.md` lists every remaining public mismatch and groups it by root cause. `observability_report.md` independently demonstrates that eight canonical resources cannot lawfully be reproduced: three are absent globally and five first appear after their case's `audit_at` cutoff.
 
 All emitted sequences continue to use the specification's phase order and operation order. Findings and complete-case checks carry participant-visible evidence; future remediation and verification use empty evidence IDs.
 
@@ -67,6 +67,8 @@ Regression tests cover prompt injection in request text, malformed caches, dupli
 5. **Cross-user workflow leakage:** One near-report event could be assigned to several overlapping requests, and cadence scoring could select the wrong account. Peer-window ambiguity and conflicting account candidates now fail closed.
 6. **Prompt injection:** A deterministic denial pattern now prevents meta-instructions requesting the literal classifier label from authorizing deletion.
 7. **Provenance:** Parsed hits retain participant-visible source path, capture time, extraction method, record payload, identifiers found, resource, system, and evidence ID.
+8. **Over-strict report batches:** A report window containing one account action and one independently subject-linked resource was discarded solely because it had multiple actions. Unique peer-compatible batches now recover the account without trusting outcomes.
+9. **Interleaved workflow chains:** A single cadence edge was too ambiguous, but requiring two independently evidenced, scheduler-aligned downstream resources identifies one account safely. Competing accounts still fail closed.
 
 The final full-dataset accounting processed **517 cases** and failed closed on **1 case**, while accounting for all **518 inputs**. The remaining case has a pre-audit catalog claim linking a marketing resource to the subject, but the participant-visible screenshot for that same resource visibly belongs to another person. No eligible evidence proves the requested subject's deletion state. Emitting a status or step would require trusting a contradicted claim or fabricating proof.
 

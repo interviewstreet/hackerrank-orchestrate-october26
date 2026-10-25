@@ -94,6 +94,77 @@ def _account_from_anchors(case, activity, evidence_index):
     return next(iter(best.values())) if len(best) == 1 else None
 
 
+def _account_from_evidence_chain(case, activity, evidence_index):
+    """Link an account to two or more independently evidenced cadence events."""
+    known = set(evidence_index)
+    by_resource = _activity_by_resource(activity)
+    anchors = [
+        event for resource_id in known for event in by_resource.get(resource_id, [])
+        if event.get("target_system") != "account_service"
+        and _time(event["event_time"]) <= _time(case["audit_at"])
+    ]
+    candidates = []
+    for account in _compatible_accounts(case, activity):
+        for root in anchors:
+            dependency = _dependency_score(account, root)
+            if dependency is None:
+                continue
+            root_time = _time(root["event_time"])
+            grounded = set()
+            for anchor in anchors:
+                elapsed = (_time(anchor["event_time"]) - root_time).total_seconds()
+                cadence_error = min(elapsed % 30, 30 - (elapsed % 30))
+                if 0 <= elapsed <= 60 * 60 and cadence_error <= 2:
+                    grounded.add(anchor.get("resource_id", ""))
+            grounded.discard("")
+            if len(grounded) >= 2 and dependency[0] == 0:
+                candidates.append(account)
+    unique = {account.get("resource_id", ""): account for account in candidates}
+    return next(iter(unique.values())) if len(unique) == 1 else None
+
+
+def _account_from_causal_chain(case, activity, evidence_index):
+    """Recover an account from a dependency-complete, evidence-anchored workflow chain.
+
+    The global stream interleaves workflows.  A candidate is accepted only when its
+    account-to-analytics cadence matches and at least two resources in that chain are
+    independently present in the subject's evidence index.  This is substantially
+    stronger than choosing the closest account or the best single cadence edge.
+    """
+    known = set(evidence_index)
+    accounts = _compatible_accounts(case, activity)
+    analytics_events = [
+        event for event in activity
+        if event.get("event_type", "").upper() == "ANONYMIZE_RECORD"
+        and event.get("target_system") == "analytics_platform"
+        and _time(event["event_time"]) <= _time(case["audit_at"])
+    ]
+    by_resource = _activity_by_resource(activity)
+    anchored_events = [
+        event for resource_id in known for event in by_resource.get(resource_id, [])
+        if event.get("target_system") != "account_service"
+        and _time(event["event_time"]) <= _time(case["audit_at"])
+    ]
+    candidates = []
+    for account in accounts:
+        for analytics in analytics_events:
+            dependency = _dependency_score(account, analytics)
+            if dependency is None:
+                continue
+            analytics_time = _time(analytics["event_time"])
+            grounded = {analytics.get("resource_id", "")} & known
+            for anchor in anchored_events:
+                elapsed = (_time(anchor["event_time"]) - analytics_time).total_seconds()
+                cadence_error = min(elapsed % 30, 30 - (elapsed % 30))
+                if 0 < elapsed <= 45 * 60 and cadence_error <= 2:
+                    grounded.add(anchor.get("resource_id", ""))
+            grounded.discard("")
+            if len(grounded) >= 2:
+                candidates.append(account)
+    unique = {account.get("resource_id", ""): account for account in candidates}
+    return next(iter(unique.values())) if len(unique) == 1 else None
+
+
 def _analytics_for_account(account, activity, audit_at):
     candidates = []
     for event in activity:
@@ -101,14 +172,58 @@ def _analytics_for_account(account, activity, audit_at):
             continue
         if event.get("target_system") != "analytics_platform":
             continue
-        if event.get("reported_result", "").upper() != "SUCCESS":
-            continue
         if _time(event["event_time"]) > _time(audit_at):
             continue
         score = _dependency_score(account, event)
         if score is not None:
             candidates.append((score, event))
-    return min(candidates, key=lambda item: item[0])[1] if candidates else None
+    if not candidates:
+        return None
+    best_score = min(score for score, _event in candidates)
+    best = {event.get("resource_id", ""): event
+            for score, event in candidates if score == best_score}
+    return next(iter(best.values())) if len(best) == 1 else None
+
+
+def _event_is_unique_to_case(event, case, peer_requests, tolerance=15 * 60):
+    event_time = _time(event["event_time"])
+    compatible = [
+        peer for peer in peer_requests
+        if _time(peer["requested_at"]) <= event_time <= _time(peer["audit_at"])
+        and abs((event_time - _time(peer["reported_at"])).total_seconds()) <= tolerance
+    ]
+    return len(compatible) == 1 and compatible[0].get("case_id") == case.get("case_id")
+
+
+def _anchored_report_account(case, evidence_index, activity, peer_requests):
+    """Link one near-report account action to an evidenced action in the same batch.
+
+    Multiple worker actions near a report are not inherently ambiguous when exactly one
+    is an account action, another acted on a resource independently retrieved for this
+    subject, and every participating event is temporally unique to this request among
+    peers.  Outcomes remain ignored and provide no state proof.
+    """
+    start = _time(case["requested_at"])
+    end = _time(case["audit_at"])
+    reported = _time(case["reported_at"])
+    candidates = [
+        event for event in activity
+        if event.get("source_system") == "deletion_worker"
+        and start <= _time(event["event_time"]) <= end
+        and abs((_time(event["event_time"]) - reported).total_seconds()) <= 15 * 60
+    ]
+    accounts = [event for event in candidates
+                if event.get("event_type", "").upper() == "DELETE_RECORD"
+                and event.get("target_system") == "account_service"]
+    anchors = [event for event in candidates
+               if event.get("resource_id", "") in evidence_index
+               and event.get("target_system") != "account_service"]
+    participants = [*accounts, *anchors]
+    if (len(accounts) != 1 or not anchors
+            or not all(_event_is_unique_to_case(event, case, peer_requests)
+                       for event in participants)):
+        return None
+    return accounts[0]
 
 
 def _unique_report_anchor(case, activity, peer_requests):
@@ -136,16 +251,10 @@ def _unique_report_anchor(case, activity, peer_requests):
     if len(candidates) != 1:
         return None
     event = candidates[0]
-    event_time = _time(event["event_time"])
     # Overlapping request windows with the same report-time proximity make a global
     # worker event ambiguous.  Reject it instead of assigning one shared event to
     # several users by rank or input order.
-    compatible_peers = [
-        peer for peer in peer_requests
-        if _time(peer["requested_at"]) <= event_time <= _time(peer["audit_at"])
-        and abs((event_time - _time(peer["reported_at"])).total_seconds()) <= 15 * 60
-    ]
-    if len(compatible_peers) != 1:
+    if not _event_is_unique_to_case(event, case, peer_requests):
         return None
     return {**event, "required_action": actions[event["event_type"].upper()]}
 
@@ -171,7 +280,15 @@ def correlate_workflow_lineage(case, identity, evidence_index, activity, peer_re
             account = match
             break
     if account is None:
+        account = _account_from_causal_chain(case, activity, evidence_index)
+    if account is None:
+        account = _account_from_evidence_chain(case, activity, evidence_index)
+    if account is None:
         account = _account_from_anchors(case, activity, evidence_index)
+    if account is None:
+        account = _anchored_report_account(
+            case, evidence_index, activity, peer_requests
+        )
     report_anchor = _unique_report_anchor(case, activity, peer_requests)
     if account is None and report_anchor is not None:
         if report_anchor.get("target_system") == "account_service":

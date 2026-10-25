@@ -152,11 +152,19 @@ def _case_audit(case: dict, expected: list[str], data: dict,
             category = POST_AUDIT
         else:
             category = ABSENT
+        ordered = sorted(occurrences, key=lambda item: (
+            item.get("available_at", ""), item.get("source_id", "")
+        ))
+        earliest = ordered[0] if ordered else {}
         rows.append({
             "case_id": case["case_id"],
             "resource_id": resource_id,
             "audit_at": audit_at,
             "category": category,
+            "earliest_at": earliest.get("available_at", ""),
+            "earliest_source": earliest.get("source_id", ""),
+            "earliest_location": earliest.get("location", ""),
+            "identity_linked": category in {RETRIEVABLE, LINKED_UNRETRIEVED},
             "pre_audit_sources": [item["source_id"] for item in pre],
             "post_audit_sources": [item["source_id"] for item in post],
         })
@@ -216,6 +224,23 @@ def render_report(result: dict) -> str:
         lines.append(
             f"| `{row['case_id']}` | `{row['resource_id']}` | "
             f"`{row['audit_at']}` | `{row['category']}` | {later} |"
+        )
+    lines.extend([
+        "", "## All 111 Canonical Case-resource Pairs", "",
+        "`Earliest at` is the earliest manifest capture time or activity event time in",
+        "participant data. `Linked` means the production retriever found the resource or",
+        "the same local pre-audit context contains a resolved subject identifier.", "",
+        "| Case | Resource | Earliest at | Earliest source | Linked | Classification |",
+        "|---|---|---|---|---|---|",
+    ])
+    for row in result.get("resources", []):
+        earliest_at = f"`{row['earliest_at']}`" if row["earliest_at"] else "—"
+        earliest_source = (f"`{row['earliest_source']}`"
+                           if row["earliest_source"] else "—")
+        lines.append(
+            f"| `{row['case_id']}` | `{row['resource_id']}` | "
+            f"{earliest_at} | {earliest_source} | "
+            f"{'yes' if row['identity_linked'] else 'no'} | `{row['category']}` |"
         )
     lines.extend([
         "", "## Decision", "",
