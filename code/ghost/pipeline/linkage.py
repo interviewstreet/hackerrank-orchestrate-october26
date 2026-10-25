@@ -60,7 +60,8 @@ def build_linkage(ctx: Context, requests: list[Request], is_deletion) -> Linkage
         s = ctx.resolve_subject(r.email)
         if s is not None:
             subjects[cid] = s
-    linked = {cid: linked_resources(ctx, s, since=reqs[cid].requested_at) for cid, s in subjects.items()}
+    linked = {cid: linked_resources(ctx, s, since=reqs[cid].requested_at, until=reqs[cid].audit_at)
+              for cid, s in subjects.items()}
     claimed: dict[str, set[str]] = defaultdict(set)
     for cid, rs in linked.items():
         for rid in rs:

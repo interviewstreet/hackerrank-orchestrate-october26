@@ -44,7 +44,11 @@ class CasePipeline:
             if t.verification is None and not t.violation:
                 notes.append(f"{rid}: {st.category} {st.result} needs no step")
                 continue
-            if t.violation:
+            if t.violation and not st.evidence_id:
+                # A finding must cite evidence available at audit_at. Without it the violation is
+                # only suspected (seen in later files), so only the end-state check is emitted.
+                notes.append(f"{rid}: {st.result} seen only after audit_at, verification only")
+            elif t.violation:
                 findings.append(Step("FINDING", st.system_id, rid, t.finding, st.evidence_id))
                 remediations.append(Step("REMEDIATION", st.system_id, rid, t.remediation))
             verifications.append((Step("VERIFICATION", st.system_id, rid, t.verification, ""),

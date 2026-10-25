@@ -15,12 +15,14 @@ from ..config import DATASET_DIR, TABLES_DB
 from ..models import Activity, Observation
 from .files import EvidenceFile
 from .identities import IdentityRow
+from .catalog import CatalogLink, RestoreEdge
 
 log = logging.getLogger(__name__)
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 _CODE_DIR = Path(__file__).resolve().parents[1]  # code/ghost
 _FINGERPRINT_SOURCES = ("tables", "parsers", "identifiers.py", "models.py")
+# Note: a vision result change is picked up through cache/llm, not this fingerprint.
 
 SCHEMA = """
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -48,6 +50,14 @@ CREATE TABLE observations (
 );
 CREATE INDEX idx_observations_resource ON observations(resource_id, observed_at);
 CREATE TABLE parse_failures (evidence_id TEXT PRIMARY KEY, reason TEXT NOT NULL);
+CREATE TABLE catalog_links (
+    activity_id TEXT PRIMARY KEY, event_time TEXT NOT NULL, resource_id TEXT NOT NULL,
+    alias TEXT NOT NULL, identifiers TEXT NOT NULL, exclusive INTEGER NOT NULL
+);
+CREATE TABLE restore_edges (
+    activity_id TEXT PRIMARY KEY, event_time TEXT NOT NULL, backup_id TEXT NOT NULL,
+    resource_id TEXT NOT NULL, result TEXT NOT NULL
+);
 """
 
 
@@ -67,6 +77,7 @@ def fingerprint() -> str:
 
 def save(files: list[EvidenceFile], scopes: dict[str, list], identities: list[IdentityRow],
          activities: list[Activity], observations: list[Observation], failures: list[dict],
+         catalog: list[CatalogLink], restores: list[RestoreEdge],
          fp: str, path: Path = TABLES_DB) -> None:
     """Write all tables in one transaction to a temp file, then swap it in."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -95,6 +106,12 @@ def save(files: list[EvidenceFile], scopes: dict[str, list], identities: list[Id
                  for o in observations])
             con.executemany("INSERT INTO parse_failures VALUES (?,?)",
                             [(x["evidence_id"], x["reason"]) for x in failures])
+            con.executemany("INSERT INTO catalog_links VALUES (?,?,?,?,?,?)",
+                            [(c.activity_id, c.event_time, c.resource_id, c.alias,
+                              json.dumps(list(c.identifiers)), int(c.exclusive)) for c in catalog])
+            con.executemany("INSERT INTO restore_edges VALUES (?,?,?,?,?)",
+                            [(e.activity_id, e.event_time, e.backup_id, e.resource_id, e.result)
+                             for e in restores])
             con.executemany("INSERT INTO meta VALUES (?,?)",
                             [("fingerprint", fp), ("schema_version", str(SCHEMA_VERSION))])
     finally:
@@ -134,10 +151,16 @@ def load(fp: str, path: Path = TABLES_DB):
                 " result, subjects, retention_until, raw_ref FROM observations ORDER BY id")]
         failures = [{"evidence_id": e, "reason": r} for e, r in con.execute(
             "SELECT evidence_id, reason FROM parse_failures ORDER BY evidence_id")]
+        catalog = [CatalogLink(a, t, r, al, tuple(json.loads(i)), bool(x)) for a, t, r, al, i, x in
+                   con.execute("SELECT activity_id, event_time, resource_id, alias, identifiers,"
+                               " exclusive FROM catalog_links ORDER BY activity_id")]
+        restores = [RestoreEdge(*row) for row in con.execute(
+            "SELECT activity_id, event_time, backup_id, resource_id, result FROM restore_edges"
+            " ORDER BY event_time")]
     except sqlite3.DatabaseError as exc:
         log.warning("cache: unreadable (%s), rebuilding", exc)
         return None
     finally:
         con.close()
     log.info("cache: loaded %s", path)
-    return files, scopes, identities, activities, observations, failures
+    return files, scopes, identities, activities, observations, failures, catalog, restores

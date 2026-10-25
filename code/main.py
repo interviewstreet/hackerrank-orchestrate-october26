@@ -51,7 +51,7 @@ def main(argv: list[str] | None = None) -> int:
             requests = requests[: args.limit]
         ctx = build_context(settings, use_cache=not args.no_cache)
         results = run_all(requests, ctx)
-        write_all(results, output)
+        write_all(results, output, ctx)
     except GhostError as exc:
         log.error("run failed: %s", exc)
         return 1

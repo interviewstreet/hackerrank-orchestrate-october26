@@ -26,13 +26,17 @@ class Context:
     obs_by_subject: dict[str, list[Observation]]
     obs_by_resource: dict[str, list[Observation]]     # each list sorted by observed_at
     parse_failures: list[dict]
+    catalog_by_identifier: dict[str, list]           # identifier -> [(event_time, resource id)]
+    catalog_by_resource: dict[str, tuple[str, ...]]  # resource id -> identifiers
+    restores: list                                   # RestoreEdge, sorted by event_time
     _worker: list[Activity] = field(default_factory=list, repr=False)
     _worker_times: list[str] = field(default_factory=list, repr=False)
 
     @classmethod
     def build(cls, files: list[EvidenceFile], scopes: dict[str, list],
               identities: list[IdentityRow], activities: list[Activity],
-              observations: list[Observation], parse_failures: list[dict]) -> "Context":
+              observations: list[Observation], parse_failures: list[dict],
+              catalog=(), restores=()) -> "Context":
         ids_by_user: dict[str, set[str]] = defaultdict(set)
         for r in identities:
             ids_by_user[r.user_id].add(r.identifier)
@@ -51,6 +55,12 @@ class Context:
             lst.sort(key=lambda o: (o.observed_at, o.evidence_id))
 
         worker = [a for a in activities if a.source_system == "deletion_worker"]
+        cat_by_id: dict[str, list] = defaultdict(list)
+        cat_by_res: dict[str, tuple[str, ...]] = {}
+        for c in catalog:
+            cat_by_res[c.resource_id] = c.identifiers
+            for i in c.identifiers:
+                cat_by_id[i].append((c.event_time, c.resource_id))
         return cls(
             files={f.evidence_id: f for f in files},
             scopes={k: tuple(tuple(x) for x in v) for k, v in scopes.items()},
@@ -62,6 +72,9 @@ class Context:
             obs_by_subject=dict(obs_by_subject),
             obs_by_resource=dict(obs_by_resource),
             parse_failures=parse_failures,
+            catalog_by_identifier=dict(cat_by_id),
+            catalog_by_resource=cat_by_res,
+            restores=sorted(restores, key=lambda e: e.event_time),
             _worker=worker,
             _worker_times=[a.event_time for a in worker],
         )
@@ -83,6 +96,10 @@ class Context:
     def owners_of(self, resource_id: str) -> set[str]:
         """user_ids that any observation, at any time, ties to this resource."""
         owners: set[str] = set()
+        for s in self.catalog_by_resource.get(resource_id, ()):
+            uid = self.user_by_identifier.get(s)
+            if uid:
+                owners.add(uid)
         for o in self.obs_by_resource.get(resource_id, ()):
             for s in o.subjects:
                 uid = self.user_by_identifier.get(s)

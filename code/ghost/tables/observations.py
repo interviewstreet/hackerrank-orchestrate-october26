@@ -9,7 +9,7 @@ from typing import Callable
 from ..config import DATASET_DIR
 from ..errors import ParseError
 from ..models import Observation
-from ..parsers import handover_txt, json_records, service_logs, sql_snapshot
+from ..parsers import handover_txt, json_records, media, service_logs, sql_snapshot
 from ..parsers.base import RESULTS, ParseResult, merge
 from .files import EvidenceFile
 
@@ -22,19 +22,20 @@ PARSERS: dict[str, Parser] = {
     "txt": handover_txt.parse,
     "log": service_logs.parse,
 }
-# png and pdf are handled by the extraction stage (milestone M5) and plug in here.
-EXTRA_PARSERS: dict[str, Parser] = {}
 
 
-def build_observations(files: list[EvidenceFile]) -> tuple[list[Observation], dict[str, list], list[dict]]:
+def build_observations(files: list[EvidenceFile], known_identifiers: frozenset[str] = frozenset(),
+                       client=None, catalog=()) -> tuple[list[Observation], dict[str, list], list[dict]]:
     """Return (observations, scopes, failures). A failing file is reported, never fatal."""
+    media_parser = media.make_parser(known_identifiers, client, catalog)
+    extra = {"png": media_parser, "pdf": media_parser}
     observations: list[Observation] = []
     scopes: dict[str, list] = {}
     failures: list[dict] = []
     per_kind: Counter = Counter()
 
     for f in files:
-        parser = PARSERS.get(f.kind) or EXTRA_PARSERS.get(f.kind)
+        parser = PARSERS.get(f.kind) or extra.get(f.kind)
         if parser is None:
             log.info("%s: no parser yet for %s (%s)", f.evidence_id, f.kind, f.path)
             failures.append({"evidence_id": f.evidence_id, "reason": f"no parser for {f.kind}"})

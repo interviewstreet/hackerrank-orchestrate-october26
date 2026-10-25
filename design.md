@@ -211,6 +211,19 @@ reports last but started from M6's numbers.
   from activity: absent via the newest covering snapshot <= audit_at, else verify-only without
   evidence. Score: case 96.9%, step precision 97.8%, recall 92.2%, sequence 59.4%.
 
+- **M5 done (2026-10-25).** `parsers/media.py` (pypdf for PDFs; vision model when a key is set,
+  tesseract OCR otherwise; emails accepted only if they exactly match a known identity),
+  `llm/client.py` (OpenAI, sha256 disk cache, 3 retries, token/cost accounting to usage.json),
+  `llm/intent_fallback.py`. Found that system_activity.csv carries 12 data-catalog
+  LINK_RESOURCE_IDENTITY rows, each written minutes after one media file is captured, naming the
+  resource, its alias in the document (statement number, file name, user ref) and the person;
+  and one RESTORE_BACKUP row (backup_9287 recreated search_4882). Both are parsed in
+  `tables/catalog.py`. Catalog links count only inside the case's [request, audit] window
+  (samples 03, 07, 17); restored copies inherit the backup's owner; a violation seen only in files
+  after audit_at becomes verification-only (a finding must cite evidence). No API key in this
+  environment, so screenshots ran through OCR. Score: case 100%, precision 98.9%, recall 94.3%,
+  F1 96.6%, sequence 65.6%. Full run: 518 rows, 0 contract violations, byte-identical reruns.
+
 ## 8. Open questions carried into code
 
 1. Tie-break for crowded windows (17 of 22 realistic samples have 2-5 candidates).
