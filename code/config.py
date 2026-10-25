@@ -72,7 +72,8 @@ INTENT_BATCH_SIZE = 20
 
 PROMPT_VERSIONS = {"vision": "vision_extract_v3", "intent": "intent_v1", "agent": "agent_v2"}
 PROMPTS_DIR = CODE_DIR / "prompts"
-CACHE_DIR = REPO_ROOT / ".cache" / "llm"
+# Live-call cache. ZENMUX_CACHE_DIR points a run at another directory (an empty one gives a cold run).
+CACHE_DIR = Path(setting("ZENMUX_CACHE_DIR") or REPO_ROOT / ".cache" / "llm")
 SNAPSHOT_FILE = CODE_DIR / "llm_snapshot.py"
 OCR_SNAPSHOT_FILE = CODE_DIR / "ocr_snapshot.json"   # Tesseract readings by image hash
 

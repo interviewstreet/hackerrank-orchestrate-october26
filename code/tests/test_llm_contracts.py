@@ -152,8 +152,15 @@ class ClientTest(unittest.TestCase):
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             replay = fake_client([], LLMCache(cache_dir=None, snapshot=module.SNAPSHOT), mode=REPLAY)
-            self.assertEqual(self.call(replay).value, first.value)
+            replayed = self.call(replay)
+            self.assertEqual(replayed.value, first.value)
             self.assertEqual(replay.transport.bodies, [])   # replay never calls the network
+            # A hit reports the original call's usage; only live calls count as spent now.
+            for hit in (second, replayed):
+                self.assertEqual((hit.usage.input_tokens, hit.usage.output_tokens), (100, 20))
+                self.assertEqual(hit.usage.latency_ms, first.usage.latency_ms)
+            totals = replay.totals()["vision"]
+            self.assertEqual((totals["input_tokens"], totals["live_input_tokens"], totals["cache_hits"]), (100, 0, 1))
 
     def test_snapshot_miss_is_flagged(self):
         result = self.call(fake_client([], mode=REPLAY))

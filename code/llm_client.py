@@ -176,7 +176,10 @@ class LLMClient:
                 stored, error = None, f"stored result invalid: {exc.error_count()} errors"
             else:
                 self.cache.mark_used(key, stored)
-                return CallResult(value, usage=self._record(purpose, ref_id, 0, 0, 0, 0, True, ""))
+                u = stored.get("usage") or {}   # the original call's cost, so a replay reports it
+                return CallResult(value, usage=self._record(
+                    purpose, ref_id, int(u.get("input_tokens", 0)), int(u.get("output_tokens", 0)),
+                    int(u.get("latency_ms", 0)), int(u.get("retries", 0)), True, ""))
         if self.mode == REPLAY or self.transport is None:
             return CallResult(None, "snapshot_miss", self._record(purpose, ref_id, 0, 0, 0, 0, False, "snapshot_miss"))
 
@@ -211,7 +214,8 @@ class LLMClient:
                 continue
             latency = int((time.monotonic() - started) * 1000)
             record = {"purpose": purpose, "ref_id": ref_id, "model": self.model, "prompt_version": prompt_version,
-                      "result": value.model_dump(mode="json")}
+                      "result": value.model_dump(mode="json"),
+                      "usage": {"input_tokens": tin, "output_tokens": tout, "latency_ms": latency, "retries": retries}}
             self.cache.put(key, record)
             self.cache.mark_used(key, record)
             return CallResult(value, usage=self._record(purpose, ref_id, tin, tout, latency, retries, False, ""))
@@ -223,11 +227,16 @@ class LLMClient:
         out: dict[str, dict] = {}
         for u in self.usage:
             t = out.setdefault(u.purpose, {"calls": 0, "live_calls": 0, "cache_hits": 0, "input_tokens": 0,
-                                           "output_tokens": 0, "retries": 0})
+                                           "output_tokens": 0, "live_input_tokens": 0, "live_output_tokens": 0,
+                                           "latency_ms": 0, "retries": 0})
             t["calls"] += 1
             t["live_calls"] += 0 if u.cache_hit else int(u.input_tokens > 0)
             t["cache_hits"] += int(u.cache_hit)
-            t["input_tokens"] += u.input_tokens
+            t["input_tokens"] += u.input_tokens        # original cost of every result used
             t["output_tokens"] += u.output_tokens
+            if not u.cache_hit:                        # spent by this run
+                t["live_input_tokens"] += u.input_tokens
+                t["live_output_tokens"] += u.output_tokens
+            t["latency_ms"] += u.latency_ms
             t["retries"] += u.retries
         return out

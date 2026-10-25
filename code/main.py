@@ -330,6 +330,8 @@ def usage_summary(ctx: Context, requests: int) -> dict:
     tin = sum(t["input_tokens"] for t in totals.values())
     tout = sum(t["output_tokens"] for t in totals.values())
     cost = config.cost_usd(client.model, tin, tout) if client else 0.0
+    live_in = sum(t["live_input_tokens"] for t in totals.values())
+    live_out = sum(t["live_output_tokens"] for t in totals.values())
     stats = ctx.agent_stats
     return {
         "mode": client.mode if client else "off", "model": client.model if client else "",
@@ -339,6 +341,11 @@ def usage_summary(ctx: Context, requests: int) -> dict:
         "input_tokens": tin, "output_tokens": tout, "total_tokens": tin + tout,
         "avg_tokens_per_request": round((tin + tout) / requests, 1) if requests else 0,
         "cost_usd": cost, "cost_per_request_usd": (cost / requests) if (cost is not None and requests) else None,
+        # Tokens and cost above are the original cost of every model result used (a cache or
+        # snapshot hit reports its stored usage); the live_* values were spent by this run.
+        "live_input_tokens": live_in, "live_output_tokens": live_out,
+        "live_cost_usd": config.cost_usd(client.model, live_in, live_out) if client else 0.0,
+        "cache_hits": sum(t["cache_hits"] for t in totals.values()),
         "flags": dict(Counter(c["flag"] for c in client.calls if c["flag"])) if client else {},
         "agent": {"runs": stats.runs, "turns": stats.turns, "proposals": stats.proposals,
                   "accepted": stats.accepted, "rejected": dict(stats.rejected), "stopped": stats.stopped,
@@ -401,7 +408,9 @@ def main(argv: list[str] | None = None) -> int:
         summary = usage_summary(ctx, len(results))
         calls = sum(t["calls"] for t in summary["per_purpose"].values())
         print(f"model: {summary['mode']} {summary['model']} calls={calls} "
-              f"tokens in/out={summary['input_tokens']}/{summary['output_tokens']} flags={summary['flags']}")
+              f"tokens in/out={summary['input_tokens']}/{summary['output_tokens']} "
+              f"(live {summary['live_input_tokens']}/{summary['live_output_tokens']}) hits={summary['cache_hits']} "
+              f"flags={summary['flags']}")
         if args.usage:
             Path(args.usage).write_text(json.dumps(summary, indent=1, sort_keys=True, default=str), encoding="utf-8")
         if args.export_snapshot:
