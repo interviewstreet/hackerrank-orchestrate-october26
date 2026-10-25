@@ -294,11 +294,18 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
     if check == "retain":
         expired = _retention_expired(state, cutoff)
         if category == "LEGAL_HOLD_RECORD":
-            status = _hold_status(state)
+            status = _hold_status(state)   # an explicit status governs; the end date counts only without one
             if status in HOLD_RELEASED:   # an explicit released hold is not retained
                 expired = True
                 d.hypothesis.append(f"legal_hold_{status.lower()}")
-            elif not status and expired is None:   # no status and no end date: active is not proven
+            elif status and expired:   # an active status with a past end date: a contradiction, never delete
+                d.finding = d.remediation = None
+                d.reason = "legal hold status contradicts its end date"
+                return d
+            elif status:
+                expired = False
+                d.hypothesis.append(f"legal_hold_{status.lower()}")
+            elif expired is None:   # no status and no end date: active is not proven
                 d.finding = d.remediation = None
                 d.reason = "legal hold status missing"
                 return d

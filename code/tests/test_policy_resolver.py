@@ -253,6 +253,13 @@ class PolicyRowTest(unittest.TestCase):
                          (UNPROVEN, "legal hold status missing", Op.VERIFY_RECORD_PRESENT))
         ended = hold(retained_until="2026-01-01T00:00:00Z")
         self.assertEqual((ended.outcome, ended.remediation), (VIOLATION, Op.DELETE_RECORD))
+        # r2-#4: an explicit status governs; an active status with a past end date is a contradiction.
+        contra = hold(hold_status="ACTIVE", retained_until="2026-01-01T00:00:00Z")
+        self.assertEqual((contra.outcome, contra.reason, contra.finding, contra.remediation, contra.verification),
+                         (UNPROVEN, "legal hold status contradicts its end date", None, None,
+                          Op.VERIFY_RECORD_PRESENT))
+        kept = hold(hold_status="ACTIVE", retained_until="2033-12-31T23:59:59Z")
+        self.assertEqual((kept.outcome, kept.remediation), (COMPLIANT, None))
 
     def test_rule_12_missing_retained_record(self):
         _, d, item = run([], [scope("security_service", "evidence_3", subjects=SUBJECT)],
