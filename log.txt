@@ -247,3 +247,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:27:00Z] Interview help: stale failover replicas and the coverage check
+
+User Prompt (verbatim, secrets redacted):
+"That's a good example. A failover replica can lag behind the primary, though. What stops your coverage check from treating a stale snapshot as proof that the account is gone?"
+
+Agent Response Summary:
+Drafted a spoken answer: coverage is only a fallback when no in-window file shows the account; any row on the primary or another replica decides state, worst state wins among simultaneous rows; the snapshot must contain the system's table and fall inside the window; and lag usually fails safe for deletion (a stale replica still shows the account). Named the gap honestly (no replication-lag or truncation check) and a fix (require a pre-deletion record or a replication position after the deletion activity, else review). No code changes.
+
+Actions:
+* None beyond this log entry
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
