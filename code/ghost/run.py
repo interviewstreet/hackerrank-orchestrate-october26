@@ -11,22 +11,24 @@ from .dataset_io import write_output
 from .logging_setup import stage
 from .models import CaseResult, Request
 from .tables.build import load_or_build
-from .tables.context import Context
+from .pipeline.case import CasePipeline
+from .pipeline.intent import IntentClassifier
+from .pipeline.policy import Policy
 
 log = logging.getLogger(__name__)
 
 
-def build_context(settings: Settings, use_cache: bool = True) -> Context:
-    """Build or load the startup tables (identities, activities, files, observations)."""
-    return load_or_build(use_cache=use_cache)
+def build_context(settings: Settings, use_cache: bool = True) -> CasePipeline:
+    """Build or load the startup tables, load the policy, and wire the per-case pipeline."""
+    ctx = load_or_build(use_cache=use_cache)
+    return CasePipeline(ctx, Policy.load(), IntentClassifier(fallback=None))
 
 
-def run_case(request: Request, ctx: Context) -> CaseResult:
-    """Steps 1-6 for one case. Filled in by milestone M3."""
-    return CaseResult(request.case_id, "INCOMPLETE", notes=["pipeline not implemented"])
+def run_case(request: Request, pipeline: CasePipeline) -> CaseResult:
+    return pipeline.run(request)
 
 
-def run_all(requests: list[Request], ctx: Context) -> list[CaseResult]:
+def run_all(requests: list[Request], ctx: CasePipeline) -> list[CaseResult]:
     results: list[CaseResult] = []
     with stage(log, f"cases ({len(requests)})"):
         for req in requests:

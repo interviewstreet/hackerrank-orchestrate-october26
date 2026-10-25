@@ -80,11 +80,13 @@ def _restore_candidate(kv):
 def _export(kv):
     available = flag(kv.get("available"))
     return None if available is None else ("USER_EXPORT", _exists(kv) if available else "NOT_FOUND")
-def _contact(kv):   return ("SUPPORT_MESSAGE", "NOT_FOUND" if _rows_zero(kv) else "IDENTIFIABLE")
+# The support replica's legacy contact index is a secondary copy of the person's contact
+# details, not a conversation: rule_02 SECONDARY_IDENTIFIER (always DELETE) applies.
+def _contact(kv):   return ("SECONDARY_IDENTIFIER", "NOT_FOUND" if _rows_zero(kv) else "IDENTIFIABLE")
 def _marketing(kv): return ("MARKETING_PROFILE", "NOT_FOUND" if _rows_zero(kv) else "IDENTIFIABLE")
 def _marker(kv):
     found = flag(kv.get("marker_found"))
-    return ("SUPPORT_MESSAGE", "IDENTIFIABLE") if found is False else None
+    return ("SECONDARY_IDENTIFIER", "IDENTIFIABLE") if found is False else None
 
 
 EVENTS: dict[str, Handler] = {

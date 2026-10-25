@@ -190,6 +190,16 @@ reports last but started from M6's numbers.
   M5. Checks: case_30 yields its 4 remnants in evidence_92; evidence_54 scope = account_service.
   Bug found and fixed: 64-hex `integrity_seal` was read as an email hash.
 
+- **M3 done (2026-10-25).** `llm/intent_rules.py` (multilingual delete signals + account-protection
+  clauses; 539 DELETE, 10 OTHER = cases 533-542, 1 UNSURE = sample case_26 for the model), steps in
+  `pipeline/{intent,discovery,state,policy,case}.py`. Score on samples with identifier links only:
+  case accuracy 96.9% (11-32: 100%), step precision 99.4%, recall 81.9%. Lessons from the labeled
+  answers: (1) a snapshot's omission never overrides an explicit observation, scope-based absence
+  is a fallback for resources with no eligible observation; (2) the support replica's legacy
+  contact index is a SECONDARY_IDENTIFIER copy (DELETE), not a support message (REDACT).
+  Correction to earlier notes: case_534 ("stop the promotional emails… not asking for deletion") is
+  NOT_APPLICABLE, so there are 10 non-deletion cases, 533-542.
+
 ## 8. Open questions carried into code
 
 1. Tie-break for crowded windows (17 of 22 realistic samples have 2-5 candidates).
