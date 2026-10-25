@@ -210,17 +210,26 @@ def _exposure(cs, check: str) -> str:
     return UNKNOWN
 
 
-def _retention_expired(state: ResourceState, cutoff) -> bool | None:
+def _retention_expired(state: ResourceState, cutoff) -> bool | str | None:
+    """Is the retention end date at or before ``cutoff``? The newest statement that states a date
+    decides (time, then tier, then ``evidence_id``), in every copy order (r3-#3). ``None``: no date.
+    ``CONFLICT``: statements of the same time and tier state different dates."""
+    dated = []
     for cs in state.copies.values():
         for st in cs.statements:
             if st.obs is None:
                 continue
             for key in RETENTION_KEYS:
-                if st.obs.fields.get(key):
-                    until = parse_ts(str(st.obs.fields[key]))
-                    if until is not None:
-                        return until <= cutoff
-    return None
+                until = parse_ts(str(st.obs.fields[key])) if st.obs.fields.get(key) else None
+                if until is not None:
+                    dated.append((st, until))
+                    break
+    if not dated:
+        return None
+    best, until = max(dated, key=lambda pair: (pair[0].at, pair[0].rank, pair[0].evidence_id))
+    if len({u for st, u in dated if (st.at, st.rank) == (best.at, best.rank)}) > 1:
+        return CONFLICT
+    return until <= cutoff
 
 
 def attachment_exclusive(target: Target) -> bool:
@@ -301,6 +310,10 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
 
     if check == "retain":
         expired = _retention_expired(state, cutoff)
+        if expired == CONFLICT:   # two equal statements, two dates: unproven, never a delete
+            d.finding = d.remediation = None
+            d.reason = "retention dates contradict"
+            return d
         if category == "LEGAL_HOLD_RECORD":
             status = _hold_status(state)   # an explicit status governs; the end date counts only without one
             if status in HOLD_RELEASED:   # an explicit released hold is not retained

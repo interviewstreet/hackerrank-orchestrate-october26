@@ -261,6 +261,34 @@ class PolicyRowTest(unittest.TestCase):
         kept = hold(hold_status="ACTIVE", retained_until="2033-12-31T23:59:59Z")
         self.assertEqual((kept.outcome, kept.remediation), (COMPLIANT, None))
 
+    def test_rule_12_newest_retention_date_decides_in_any_copy_order(self):
+        # r3-#3: the newest statement (time, then tier) gives the retention date, whatever the copy order.
+        def audit(copy, at, until):
+            return obs("security_service", "audit_record_1", copy=copy, at=at, exists=PRESENT,
+                       record_type="SECURITY_AUDIT_LOG", fields={"retention_until": until})
+
+        def decide(*observations):
+            return run(list(observations), system="security_service", rid="audit_record_1")[1]
+
+        past, future = "2026-01-01T00:00:00Z", "2033-12-31T23:59:59Z"
+        newer_future = audit("primary", T0 + timedelta(days=2), future)
+        for older in (audit("reporting_replica", T0, past), audit("primary", T0, past)):
+            for order in ((older, newer_future), (newer_future, older)):
+                d = decide(*order)   # an older expired date never beats a newer future date
+                self.assertEqual((d.outcome, d.remediation), (COMPLIANT, None))
+                self.assertNotIn("retention_expired_delete", d.hypothesis)
+        newer_past = audit("primary", T0 + timedelta(days=2), past)
+        for order in ((audit("reporting_replica", T0, future), newer_past),
+                      (newer_past, audit("reporting_replica", T0, future))):
+            d = decide(*order)
+            self.assertEqual((d.outcome, d.remediation), (VIOLATION, Op.DELETE_RECORD))
+        # Same time, same tier, different dates: a contradiction is unproven, never a delete.
+        for order in ((audit("primary", T0, past), audit("reporting_replica", T0, future)),
+                      (audit("reporting_replica", T0, future), audit("primary", T0, past))):
+            d = decide(*order)
+            self.assertEqual((d.outcome, d.reason, d.finding, d.remediation, d.verification),
+                             (UNPROVEN, "retention dates contradict", None, None, Op.VERIFY_RECORD_PRESENT))
+
     def test_rule_12_missing_retained_record(self):
         _, d, item = run([], [scope("security_service", "evidence_3", subjects=SUBJECT)],
                          system="security_service", rid="audit_record_1")
