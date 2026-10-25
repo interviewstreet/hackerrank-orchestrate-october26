@@ -100,8 +100,11 @@ def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
             values.pop("exposed_ids", None)
         out.append(Statement(obs.physical_copy, obs.state_observed_at, RANK[obs.assertion], obs.file_id,
                              values, obs=obs))
+    # A listing of one collection says nothing about a record of another (or of an unknown) collection.
+    collections = {o.collection for o in observations if o.system_id == target.system_id and o.collection}
     for scope in store.scopes_for(target.system_id, cutoff):
         if (not _scope_applies(scope, keys)
+                or (scope.collection and scope.collection not in collections)
                 or store.file_has_row(scope.file_id, target.resource_id, scope.physical_copy)):
             continue
         out.append(Statement(scope.physical_copy, scope.observed_at, RANK[SCOPED_ABSENCE], scope.file_id,

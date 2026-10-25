@@ -97,6 +97,23 @@ class ResolverTest(unittest.TestCase):
         state, d, item = run([], [scope("account_service", "evidence_7", subjects=SUBJECT)])
         self.assertEqual((d.outcome, item.evidence_id), (COMPLIANT, "evidence_7"))
 
+    def test_collection_scope_covers_only_its_own_collection(self):
+        # r2-#2: a later attachment listing says nothing about a message in another collection.
+        message = obs("support_platform", "support_1", file_id="evidence_1", exists=PRESENT,
+                      record_type="SUPPORT_MESSAGE", treatment=IDENTIFIABLE)
+        message.collection = "support_messages"
+        listing = scope("support_platform", "evidence_2", at=T0 + timedelta(days=1), subjects=SUBJECT)
+        listing.collection = "ticket_attachments"
+        state, d, _ = run([message], [listing], system="support_platform", rid="support_1")
+        self.assertEqual(state.copies["primary"].get("exists"), PRESENT)
+        self.assertEqual(d.outcome, VIOLATION)
+        listing.collection = "support_messages"   # the same collection: the listing proves absence
+        state, _, _ = run([message], [listing], system="support_platform", rid="support_1")
+        self.assertEqual(state.copies["primary"].get("exists"), ABSENT)
+        listing.collection = "ticket_attachments"   # an unknown target collection is never covered
+        state, d, _ = run([], [listing], system="support_platform", rid="support_1")
+        self.assertFalse(state.known)
+
     def test_cutoff_is_inclusive(self):
         # case_11 shape: the file is captured exactly at audit_at and counts.
         row = obs("search_service", "search_1", at=AUDIT, exists=PRESENT)
