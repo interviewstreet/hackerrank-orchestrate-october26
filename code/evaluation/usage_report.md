@@ -1,14 +1,20 @@
-# Usage report (Phase 6 final run)
+# Usage report (final run)
 
-The final full run produced the submitted `output.csv`:
+The final run produced the submitted `output.csv`. It ran live from an **empty** cache
+directory, so every model result in it was a new call. All numbers below are measured in
+this run. There are no estimates.
 
 ```text
-python code/main.py --out output.csv --trace ... --usage ... --export-snapshot
+ZENMUX_CACHE_DIR=<new empty dir> python code/main.py --out output.csv --trace ... --usage ... --export-snapshot
 ```
 
-It ran in live mode with the model cache from earlier phases. 26 of its 30 model results
-came from the cache, and 4 were new live calls. Section 3 gives the tokens billed in this
-run. Section 2 gives the cold-cache cost of all 30 results that the run used.
+| Item | Value |
+| --- | --- |
+| Time (UTC) | 2026-10-25 00:36:24 to 00:37:54, together with the sample run after it |
+| Requests | 518 (`dataset/deletion_requests.csv`) |
+| Cache | empty directory at the start: 0 cache hits, 29 live calls |
+| Output | `output.csv`, SHA-256 `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b` |
+| Exit code | 0 (0 failed cases, strict validation 0 errors) |
 
 ## 1. Model
 
@@ -16,56 +22,58 @@ run. Section 2 gives the cold-cache cost of all 30 results that the run used.
 | --- | --- |
 | Provider | ZenMux (OpenAI-compatible chat completions, `https://zenmux.ai/api/v1`) |
 | Model id | `meta/muse-spark-1.3-contributor` |
-| Why this id | Muse Spark 1.3 was chosen for multimodal (image) input. The base id `meta/muse-spark-1.3` returned HTTP 403 for this account; the `-contributor` tier of the same model is available, so we use it. |
-| Price (ZenMux list) | $0.10 / M input tokens, $0.20 / M output tokens (the base 1.3 tier: $1.25 / $4.25) |
-| Settings | temperature 0, JSON-schema output, 1 schema retry, 2 transport retries |
+| Why this id | Muse Spark 1.3 was chosen for image input. The base id `meta/muse-spark-1.3` returned HTTP 403 for this account; the `-contributor` tier of the same model is available, so we use it. |
+| Price (ZenMux model list, 2026-10-24) | $0.10 / M input tokens, $0.20 / M output tokens |
+| Settings | temperature 0, JSON output validated by `schema.py`, 1 schema retry, 2 transport retries |
+| Prompts | `vision_extract_v3`, `agent_v2`, `intent_v1` |
 
-Only one model is used, for every purpose. So the per-model totals equal the overall totals.
+One model is used for every purpose, so the per-model totals are the overall totals.
 
-## 2. Calls and tokens per purpose (518 requests, cold-cache equivalent)
+## 2. Calls and tokens per purpose (518 requests)
 
-| Purpose | Calls | Input tokens | Output tokens | Total tokens | Cost (USD) | Source of the numbers |
+| Purpose | Calls | Input tokens | Output tokens | Total tokens | Latency (sum) | Cost (USD) |
 | --- | --- | --- | --- | --- | --- | --- |
-| vision (11 PNG screenshots, prompt v2) | 11 | 46,874 | 11,760 | 58,634 | 0.007039 | measured when the cached v2 results were made (Phase 5) |
-| agent: case_39, case_46, case_55 (11 turns) | 11 | 19,652 | 3,051 | 22,703 | 0.002575 | measured in the Phase 4 cold run (prompt `agent_v1`, unchanged) |
-| agent: case_390 (4 calls, 1 schema retry) | 4 | 17,127 | 3,099 | 20,226 | 0.002333 | measured in this run (live) |
-| agent: case_61 (4 calls) | 4 | ~17,127 | ~3,099 | ~20,226 | ~0.002333 | **estimate**: tokens were not recorded in Phase 5; set equal to case_390 |
-| intent (ambiguous request texts) | 0 | 0 | 0 | 0 | 0.000000 | the rules left 0 of the 518 texts ambiguous |
-| **Overall (one model)** | **30** | **~100,780** | **~21,009** | **~121,789** | **~0.014280** | |
+| vision (11 PNG screenshots, one call each) | 11 | 46,874 | 11,463 | 58,337 | 52.7 s | 0.0069800 |
+| agent (5 investigations, 18 turns) | 18 | 37,149 | 3,349 | 40,498 | 30.6 s | 0.0043847 |
+| intent (ambiguous request texts) | 0 | 0 | 0 | 0 | 0 s | 0.0000000 |
+| **Overall (one model)** | **29** | **84,023** | **14,812** | **98,835** | **83.3 s** | **0.0113647** |
 
 - Cost = input x $0.10/M + output x $0.20/M.
-- Retries: 1 schema retry (case_390), 0 transport retries. Fallbacks: none. Flags: none.
-- The cache stores validated results only, not token counts. This is why the case_61 row is an estimate.
+- Retries: 0 schema, 0 transport. Fallbacks: none. Flags: none.
+- Intent: the deterministic rules left 0 of the 518 request texts ambiguous, so no intent call was made.
+- Agent: 5 runs (case_39, case_46, case_53, case_55, case_390), 18 turns, 3 proposals,
+  2 accepted, 1 rejected (`state_mismatch`). Two runs ended at the 4-turn cap with no
+  proposal. No run reached the 40,000-token case budget.
 
-## 3. Tokens billed in the final run
+## 3. Per-request averages (518 requests)
 
 | Metric | Value |
 | --- | --- |
-| Model calls | 30 (26 cache hits, 4 live) |
-| Input / output tokens billed | 17,127 / 3,099 (all from the 4 live agent calls, case_390) |
-| Total tokens billed | 20,226 |
-| Cost billed | $0.0023325 |
+| Model calls per request | 29 / 518 = 0.056 |
+| Tokens per request | 98,835 / 518 = 190.8 |
+| Cost per request | $0.0113647 / 518 = $0.0000219 |
+| Cache hits | 0 |
 
-## 4. Per-request averages (518 requests)
+Most cases need no model call: deterministic code parses the evidence. Vision runs once per
+screenshot, shared by all cases. The agent runs only for items that code leaves undecided.
 
-| Metric | Cold-cache equivalent | Billed in the final run |
-| --- | --- | --- |
-| Model calls per request | 30 / 518 = 0.058 | 4 / 518 = 0.008 (live) |
-| Tokens per request | ~121,789 / 518 = ~235.1 | 20,226 / 518 = 39.0 |
-| Cost per request | ~$0.01428 / 518 = ~$0.0000276 | $0.0023325 / 518 = $0.0000045 |
+## 4. Replay
 
-Most cases need no model call: deterministic code parses the evidence. Vision runs once
-per screenshot (shared by all cases). The agent runs only for undecided items (5 runs on
-the 518: 4 proposals, 2 accepted, 2 rejected `state_mismatch`, 1 stop).
+`export-snapshot` wrote the 29 validated results to `code/llm_snapshot.py` and the 22 OCR
+readings (11 images x 2 readings) to `code/ocr_snapshot.json`. Each snapshot entry keeps the
+usage of the call that made it.
 
-## 5. Replay runs
+`ZENMUX_OFFLINE=1 python code/main.py` makes 0 network calls. Its output has the same SHA-256
+as the final run (`1d19e512...786b` for the 518, `d59f689e...5e45` for the 32 samples). The
+replay reports the original usage (84,023 / 14,812 tokens, $0.0113647) and 0 live tokens.
 
-Later runs read the cache or `code/llm_snapshot.py` (validated model output only):
-`ZENMUX_OFFLINE=1 python code/main.py` makes 0 network calls. Its output has the same
-SHA-256 as the final live run (`4f63cd85...e590` for the 518, `d59f689e...5e45` for the samples).
+## 5. The sample run
 
-## 6. Development calls (not part of the final run)
+The 32 samples ran right after the final run with the same cache: 11 calls, all cache hits
+(the vision results of the same screenshots), 0 new tokens. Their stored usage is
+46,874 / 11,463 tokens.
 
-- Phase 5: vision prompt v2 (11 calls, 46,874 / 11,760 tokens) and one agent investigation
-  for case_61 (4 calls). Both results are reused by the final run (section 2).
-- Phase 6: the 4 live calls of section 3 were the only new calls.
+## 6. Not in this report
+
+Development runs of earlier phases used other prompt versions. Their results are not in
+the snapshot and did not produce `output.csv`.

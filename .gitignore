@@ -5,3 +5,4 @@ __pycache__/
 .pytest_cache/
 .cache/
 *_failures.csv
+code.zip

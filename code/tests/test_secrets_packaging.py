@@ -68,17 +68,50 @@ class PackagingTest(unittest.TestCase):
         with self.assertRaises(package.PackagingError):
             package.check([Path("code/main.py"), Path("code/.env")])
 
-    def test_archive_never_contains_env(self):
+    @staticmethod
+    def _tree(root: Path) -> None:
+        (root / "code" / "evaluation").mkdir(parents=True)
+        for rel in ("code/main.py", "code/README.md", "code/evaluation/evaluation_report.md",
+                    "code/evaluation/usage_report.md"):
+            (root / rel).write_text("x\n", encoding="utf-8")
+        # An empty key line followed by another setting is not a key (the scan stays on one line).
+        (root / ".env.example").write_text("ZENMUX_API_KEY=\nZENMUX_BASE_URL=https://example.invalid\n",
+                                           encoding="utf-8")
+
+    def test_archive_never_contains_env_or_output(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / "code").mkdir()
-            (root / "code" / "main.py").write_text("print(1)\n", encoding="utf-8")
+            self._tree(root)
             (root / "code" / ".env").write_text("ZENMUX_API_KEY=placeholder\n", encoding="utf-8")
             (root / ".env").write_text("ZENMUX_API_KEY=placeholder\n", encoding="utf-8")
+            (root / "code" / "output.csv").write_text("case_id\n", encoding="utf-8")
+            (root / "code" / "output_failures.csv").write_text("case_id\n", encoding="utf-8")
             out = root / "code.zip"
-            self.assertEqual(package.build(out, root), 1)
+            self.assertEqual(package.build(out, root), 8)
             with zipfile.ZipFile(out) as archive:
-                self.assertEqual(archive.namelist(), ["code/main.py"])
+                self.assertEqual(sorted(archive.namelist()), sorted([
+                    "code/main.py", "code/README.md", "code/evaluation/evaluation_report.md",
+                    "code/evaluation/usage_report.md", ".env.example", "README.md",
+                    "evaluation/evaluation_report.md", "evaluation/usage_report.md"]))
+
+    def test_secret_scan_refuses_key_shaped_content(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._tree(root)
+            (root / "code" / "notes.txt").write_text("ZENMUX_API_KEY=abcdefgh12345678\n", encoding="utf-8")
+            with self.assertRaises(package.PackagingError) as err:
+                package.build(root / "code.zip", root)
+            self.assertIn("code/notes.txt: api key assignment", str(err.exception))
+            self.assertNotIn("abcdefgh", str(err.exception))   # the match is never echoed
+            self.assertFalse((root / "code.zip").exists())
+
+    def test_build_needs_the_readme_and_both_reports(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._tree(root)
+            (root / "code" / "evaluation" / "usage_report.md").unlink()
+            with self.assertRaises(package.PackagingError):
+                package.build(root / "code.zip", root)
 
 
 if __name__ == "__main__":
