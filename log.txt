@@ -1772,3 +1772,37 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T13:26:53Z] SESSION START
+
+tool=Claude Code
+model=claude-opus-5-5
+Repo Root: D:\Coding\hackerrank-orchestrate-october26
+Branch: feat/deletion-audit
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-10-25T13:30:42Z] Write HOW_IT_WORKS.md end-to-end walkthrough
+
+User Prompt (verbatim, secrets redacted):
+Create a full md on how this is done
+
+Agent Response Summary:
+Read the pipeline modules (main, intent, identity, links, resolver, policy, citation, planner, facts, evidence common) and the existing DESIGN.md, README and evaluation reports. Wrote code/HOW_IT_WORKS.md: core rule, pipeline diagram, each stage with its rules, model use (vision, intent, agent, cache/replay), injection safety, failure handling, a worked example of sample case_15 traced from a fresh offline run (output matches the gold row), evaluation numbers, cost, limits and a file map. Added a pointer in code/README.md. No pipeline code or output changed.
+
+Actions:
+* Read code/*.py modules, code/DESIGN.md, code/README.md, evaluation results and usage report
+* Ran offline sample run with --trace into a temp dir to inspect case_15
+* Created code/HOW_IT_WORKS.md
+* Edited code/README.md (pointer to HOW_IT_WORKS.md)
+* Ran python -m pytest code/tests/test_secrets_packaging.py (9 passed)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none

@@ -30,7 +30,8 @@ request text --> intent (rules; model label only for ambiguous texts)
   in one layout block. The model never sets a status or writes a step.
 - Rule ids and required actions come from `deletion_rules.csv` (`policy.bind_rules`).
 
-See `DESIGN.md` for the module list, the policy readings and the failure-mode guards.
+See `DESIGN.md` for the module list, the policy readings and the failure-mode guards, and
+`HOW_IT_WORKS.md` for an end-to-end walkthrough with a worked sample case.
 
 ## The investigator agent loop
 
