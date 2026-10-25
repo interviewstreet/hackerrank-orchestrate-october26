@@ -31,7 +31,7 @@ RE_USER = re.compile(r"^user_\d+$")
 def catalog_alias_rows(data: Dataset) -> list[tuple[str, str, str, datetime]]:
     """(alias, system_id, resource_id, catalog time) from LINK_RESOURCE_IDENTITY rows.
 
-    Aliases that are ids (``user_17``) or shorter than 6 characters are skipped."""
+    Aliases that are ids (``user_<n>``) or shorter than 6 characters are skipped."""
     rows = []
     for a in data.activity:
         if a.event_type != "LINK_RESOURCE_IDENTITY":

@@ -25,7 +25,7 @@ from evidence.common import (
     Identifiers,
 )
 from links import STRONG, Target
-from loaders import parse_ts
+from loaders import DATASET_DIR, Rule, load_rules, parse_ts
 from resolver import CONFLICT, UNKNOWN, ResourceState, exists_rollup
 from schema import Operation as Op
 
@@ -36,32 +36,59 @@ COMPLIANT, VIOLATION, UNPROVEN, MISSING_RETAINED, NOT_TARGET = (
 RETAINED = frozenset({"SECURITY_AUDIT_LOG", "LEGAL_HOLD_RECORD", "BACKUP_ARCHIVE", "ACCOUNT_TOMBSTONE",
                       "SUPPORT_MESSAGE", "EMAIL_DELIVERY_LOG"})
 
-# Category -> (rule_id, check, finding, remediation, verification).
+# Category -> (check, finding, remediation, verification). The rule id comes from deletion_rules.csv.
 #   check: "exists"  - violation while any copy is PRESENT
 #          "direct"  - violation while a present copy exposes direct identifiers
 #          "linked"  - violation while a present copy is attributable (any identifier, user_id too)
 #          "retain"  - the record must stay PRESENT
 #          "flow"    - violation while the flow is ACTIVE
 #          "restore" - violation while restore is OPEN
-RULES: dict[str, tuple[str, str, Op | None, Op | None, Op]] = {
-    "USER_PROFILE": ("rule_01", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
-    "SECONDARY_IDENTIFIER": ("rule_02", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD,
+TREATMENT: dict[str, tuple[str, Op | None, Op | None, Op]] = {
+    "USER_PROFILE": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
+    "SECONDARY_IDENTIFIER": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD,
                              Op.VERIFY_RECORD_ABSENT),
-    "SEARCH_INDEX_ENTRY": ("rule_03", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
-    "CACHE_ENTRY": ("rule_04", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
-    "SUPPORT_MESSAGE": ("rule_05", "direct", Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, Op.VERIFY_RECORD_REDACTED),
-    "SUPPORT_ATTACHMENT": ("rule_06", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
-    "ANALYTICS_PROFILE": ("rule_07", "linked", Op.REPORT_EXPOSED_PII, Op.ANONYMIZE_RECORD, Op.VERIFY_RECORD_ANONYMIZED),
-    "PRODUCT_TELEMETRY": ("rule_08", "linked", Op.REPORT_EXPOSED_PII, Op.ANONYMIZE_RECORD, Op.VERIFY_RECORD_ANONYMIZED),
-    "USER_EXPORT": ("rule_09", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
-    "MARKETING_PROFILE": ("rule_10", "exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
-    "EMAIL_DELIVERY_LOG": ("rule_11", "direct", Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, Op.VERIFY_RECORD_REDACTED),
-    "SECURITY_AUDIT_LOG": ("rule_12", "retain", None, None, Op.VERIFY_RECORD_PRESENT),
-    "LEGAL_HOLD_RECORD": ("rule_13", "retain", None, None, Op.VERIFY_RECORD_PRESENT),
-    "BACKUP_ARCHIVE": ("rule_14", "restore", Op.REPORT_RESTORE_RISK, Op.BLOCK_RESTORE, Op.VERIFY_RESTORE_BLOCKED),
-    "ACCOUNT_TOMBSTONE": ("rule_15", "direct", Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, Op.VERIFY_RECORD_REDACTED),
-    "DATA_FLOW": ("flow", "flow", Op.REPORT_ACTIVE_DATA_FLOW, Op.DISABLE_DATA_FLOW, Op.VERIFY_DATA_FLOW_DISABLED),
+    "SEARCH_INDEX_ENTRY": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
+    "CACHE_ENTRY": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
+    "SUPPORT_MESSAGE": ("direct", Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, Op.VERIFY_RECORD_REDACTED),
+    "SUPPORT_ATTACHMENT": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
+    "ANALYTICS_PROFILE": ("linked", Op.REPORT_EXPOSED_PII, Op.ANONYMIZE_RECORD, Op.VERIFY_RECORD_ANONYMIZED),
+    "PRODUCT_TELEMETRY": ("linked", Op.REPORT_EXPOSED_PII, Op.ANONYMIZE_RECORD, Op.VERIFY_RECORD_ANONYMIZED),
+    "USER_EXPORT": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
+    "MARKETING_PROFILE": ("exists", Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD, Op.VERIFY_RECORD_ABSENT),
+    "EMAIL_DELIVERY_LOG": ("direct", Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, Op.VERIFY_RECORD_REDACTED),
+    "SECURITY_AUDIT_LOG": ("retain", None, None, Op.VERIFY_RECORD_PRESENT),
+    "LEGAL_HOLD_RECORD": ("retain", None, None, Op.VERIFY_RECORD_PRESENT),
+    "BACKUP_ARCHIVE": ("restore", Op.REPORT_RESTORE_RISK, Op.BLOCK_RESTORE, Op.VERIFY_RESTORE_BLOCKED),
+    "ACCOUNT_TOMBSTONE": ("direct", Op.REPORT_EXPOSED_PII, Op.REDACT_RECORD, Op.VERIFY_RECORD_REDACTED),
+    "DATA_FLOW": ("flow", Op.REPORT_ACTIVE_DATA_FLOW, Op.DISABLE_DATA_FLOW, Op.VERIFY_DATA_FLOW_DISABLED),
 }
+
+# deletion_rules.csv required_action -> the checks that carry it out.
+ACTION_CHECKS = {"DELETE": {"exists"}, "REDACT": {"direct"}, "ANONYMIZE": {"linked"},
+                 "RETAIN": {"retain", "restore"}}
+FLOW_RULE = "flow"   # DATA_FLOW is a process, not a data category of deletion_rules.csv
+
+
+def bind_rules(rules: list[Rule]) -> dict[str, tuple[str, str, Op | None, Op | None, Op]]:
+    """category -> (rule_id, check, finding, remediation, verification). The rule id and the
+    required action come from ``deletion_rules.csv``; a category with no treatment, or an
+    action that the treatment does not carry out, stops the run."""
+    bound: dict[str, tuple[str, str, Op | None, Op | None, Op]] = {}
+    for rule in rules:
+        treatment = TREATMENT.get(rule.data_category)
+        if treatment is None or rule.data_category == "DATA_FLOW":
+            raise ValueError(f"{rule.rule_id}: no treatment for category {rule.data_category}")
+        if treatment[0] not in ACTION_CHECKS.get(rule.required_action, ()):
+            raise ValueError(f"{rule.rule_id}: action {rule.required_action} does not fit check {treatment[0]}")
+        bound[rule.data_category] = (rule.rule_id, *treatment)
+    missing = set(TREATMENT) - set(bound) - {"DATA_FLOW"}
+    if missing:
+        raise ValueError(f"no rule in deletion_rules.csv for {sorted(missing)}")
+    bound["DATA_FLOW"] = (FLOW_RULE, *TREATMENT["DATA_FLOW"])
+    return bound
+
+
+RULES = bind_rules(load_rules(DATASET_DIR / "deletion_rules.csv"))
 
 # Fallback category when the record states none: (system_id, collection) then system_id.
 COLLECTION_CATEGORY = {
@@ -189,7 +216,7 @@ def _retention_expired(state: ResourceState, cutoff) -> bool | None:
 
 
 def attachment_exclusive(target: Target) -> bool:
-    """rule_06 deletes an attachment that "belongs only to the deletion subject". Proof: a catalog
+    """The SUPPORT_ATTACHMENT rule deletes an attachment that "belongs only to the deletion subject". Proof: a catalog
     says so (``exclusive``), or the record itself carries the subject's identifier (a strong
     identifier edge) and no other user is linked to it."""
     if target.exclusive:

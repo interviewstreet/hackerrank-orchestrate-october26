@@ -237,7 +237,7 @@ def fallback_result(req: Request, ctx: Context, exc: Exception) -> CaseResult:
     """Conservative row for a case that raised: INCOMPLETE plus a future verification step
     (evidence_id "") for every known, non-stale target, with the verification of its policy row.
     The category comes from the catalog words, else the system; a target with none, or with
-    two named categories, or a non-exclusive attachment (rule_06), is skipped.
+    two named categories, or a non-exclusive attachment (SUPPORT_ATTACHMENT rule), is skipped.
     With no step, or when this lookup fails too, the row is ``INCOMPLETE,[]`` (flag
     ``no_fallback_row``): strict validation rejects it and main exits non-zero, but the batch
     goes on and every other row is written."""

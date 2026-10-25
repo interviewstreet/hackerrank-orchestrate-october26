@@ -59,7 +59,7 @@ def normalize_phone(value: str | None) -> str:
 
 
 def case_number(case_id: str) -> int:
-    """Integer suffix of a case id: 'case_100' -> 100. Used for numeric row order."""
+    """Integer suffix of a case id (``case_<n>`` -> n). Used for numeric row order."""
     match = re.fullmatch(r"case_(\d+)", case_id.strip())
     if not match:
         raise ValueError(f"bad case_id: {case_id!r}")

@@ -1,4 +1,4 @@
-# agent_v1
+# agent_v2
 
 ## System
 
@@ -26,10 +26,10 @@ You have at most {{MAX_ITERATIONS}} turns. Prefer `stop` to a guess.
 
 Answer with the JSON object only: no prose before or after it. Examples of valid turns:
 
-- `{"tool": "search_evidence", "query": "data_flow_1121"}`
-- `{"tool": "read_evidence", "file_id": "evidence_14"}`
-- `{"tool": "query_facts", "query": "data_flow_1121"}`
-- `{"tool": "submit_proposal", "proposal": {"kind": "STATE", "case_id": "case_1", "system_id": "integration_service", "resource_id": "data_flow_1121", "proposed_state": "DISABLED", "evidence_ids": ["evidence_14"], "quotes": ["<exact text copied from evidence_14>"], "reason": "the connector row shows the flow disabled"}}`
+- `{"tool": "search_evidence", "query": "data_flow_4242"}`
+- `{"tool": "read_evidence", "file_id": "evidence_9042"}`
+- `{"tool": "query_facts", "query": "data_flow_4242"}`
+- `{"tool": "submit_proposal", "proposal": {"kind": "STATE", "case_id": "{{CASE_ID}}", "system_id": "integration_service", "resource_id": "data_flow_4242", "proposed_state": "DISABLED", "evidence_ids": ["evidence_9042"], "quotes": ["<exact text copied from evidence_9042>"], "reason": "the connector row shows the flow disabled"}}`
 - `{"tool": "stop"}`
 
 AgentAction JSON schema:
