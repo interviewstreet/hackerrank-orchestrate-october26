@@ -125,7 +125,7 @@ Reports: `evaluation/evaluation_report.md` and `evaluation/usage_report.md`.
 
 - Records linked to the subject only by a worker claim in `system_activity.csv` get no step
   (the main recall loss on the samples: 28 of 193 gold steps).
-- OCR misreads drop some vision rows that the image supports (3 in the final run).
+- OCR misreads drop some vision rows that the image supports (1 of 24 in the final run).
 - A legal hold with no stated status and no end date counts as active (rule_13 text: "A supplied
   legal hold is active"), and a catalog link of a tombstone to an email counts as an exposure
   (rule_15). No sample tests these two readings (evaluation report, section 17).
