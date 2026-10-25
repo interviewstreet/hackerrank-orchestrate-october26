@@ -1529,17 +1529,52 @@ repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
 
-## [2026-10-25T05:52:14Z] OpenCode research result verified and triaged (no code changes)
+## [2026-10-25T06:06:25Z] Round 4: OCR at 2x and connector state words; log entry removed
 
 User Prompt (verbatim, secrets redacted):
-[Task notification, not typed by the user: delegated OpenCode research task opencode-research-r1 completed]
+do the ocr fix and alsos did u check from the leaderbord whose repo are public to check their outputcsv on out eval and alo the opencode subagent loged do remove that at that starts from line number 1531 so on this chat there should be nothing logged even the subagent swaned
 
 Agent Response Summary:
-Verified the OpenCode report against the official help article: the start is Oct 24 2026 12:30 UTC, the event is 24 hours, and the weights are 30/30/30/10 (code, output, interview, transcript). The article states no explicit deadline. Measured each of its 6 accuracy ideas on our data. A one-to-one timing assignment had precision 0.399 on our strong links (518) and 3 of 19 new sample links in gold. None of the 28 missed sample ids is in the OCR snapshot or the PDF text, so closed-vocabulary snapping cannot recover them. All 6 ideas are rejected or already done. The only safe general gain stays the OCR 2x plus cue-word change (1 row, case_39); it waits for the user's decision.
+Applied the OCR change as general rules: Tesseract reads screenshots upscaled 2x (scale in the snapshot key) and the ACTIVE / DISABLED cue words add continuous, syncing, streaming and suspended. Two regression tests failed before the change; 186 tests pass. A new final run on a cache seeded from the previous snapshot made 5 live agent calls; only case_39 changes (it gains the active data-flow finding from evidence_14), the samples are unchanged, and the clean-room code.zip gives the same hash. Did not compare our output with other participants' files (AGENTS.md: predictions use only dataset/ files; the leaderboard needs a login). Removed the previous log entry, which recorded a task notification and not a user turn; the entries of real user turns stay.
 
 Actions:
-* WebFetch of the HackerRank Orchestrate help article (start time, duration, weights)
-* Ran temp analyses: search of code/ocr_snapshot.json and PDF text for the 28 missed ids; assign_probe.py (offline; sample gold read only for evaluation)
+* Edited code/evidence/extract_text.py, code/evidence/extract_vision.py, code/requirements.txt, code/tests/test_adversarial.py; commit 2101057
+* Ran offline and live main.py runs (seeded cache), evaluation/main.py, validate.py, full test suite, ruff, mypy, package.py, clean-room run
+* Updated code/README.md, code/DESIGN.md, code/evaluation/evaluation_report.md (section 16), code/evaluation/usage_report.md, code/llm_snapshot.py, code/ocr_snapshot.json; commit 1fe4448
+* Removed the task-notification entry at the end of log.txt
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
+
+## [2026-10-25T06:06:25Z] Friend's evaluation of our output checked (no code change)
+
+User Prompt (verbatim, secrets redacted):
+and my friend ran our output csv on his eval this was his agents responce
+"
+Friend's two misses on the 7 real cases
+Your friend's file is actually very strong on these.
+
+They miss only:
+- case_44: status is correctly COMPLETE, but they miss analytics_5589.
+- case_54: status is correctly INCOMPLETE, but they miss account_6829.
+So on these 7 cases they have zero wrong extra steps: precision 100%, recall 95.12%, F1 97.5%.
+One real problem in friend's submitted CSV
+Our strict output-contract validator finds 5 invalid rows:
+
+case_39, case_46, case_53, case_55, case_390.
+
+All five are labelled INCOMPLETE but contain only VERIFICATION steps and no FINDING, while the contract requires an INCOMPLETE plan to contain at least one FINDING."
+
+Agent Response Summary:
+Checked the two reported misses: analytics_5589 and account_6829 appear only in deletion-worker claims and in a readback log with null identifiers, so only a time heuristic could link them; that heuristic was measured as unreliable, so no change. Confirmed the 5 INCOMPLETE rows with only verification steps; the OCR change gives case_39 a finding, and the other 4 rows have a target that no admissible evidence proves either way. Documented this reading in evaluation_report.md section 16 instead of writing a finding without evidence.
+
+Actions:
+* Ran a grep of the dataset for the two resource ids and a scan of output.csv for INCOMPLETE rows without a FINDING
 
 Context:
 tool=Claude Code
