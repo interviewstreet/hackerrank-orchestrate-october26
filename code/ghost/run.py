@@ -10,21 +10,23 @@ from .config import REVIEW_JSONL, Settings
 from .dataset_io import write_output
 from .logging_setup import stage
 from .models import CaseResult, Request
+from .tables.build import load_or_build
+from .tables.context import Context
 
 log = logging.getLogger(__name__)
 
 
-def build_context(settings: Settings, use_cache: bool = True) -> object:
-    """Build or load the startup tables. Filled in by milestones M1-M2."""
-    return None
+def build_context(settings: Settings, use_cache: bool = True) -> Context:
+    """Build or load the startup tables (identities, activities, files, observations)."""
+    return load_or_build(use_cache=use_cache)
 
 
-def run_case(request: Request, ctx: object) -> CaseResult:
+def run_case(request: Request, ctx: Context) -> CaseResult:
     """Steps 1-6 for one case. Filled in by milestone M3."""
     return CaseResult(request.case_id, "INCOMPLETE", notes=["pipeline not implemented"])
 
 
-def run_all(requests: list[Request], ctx: object) -> list[CaseResult]:
+def run_all(requests: list[Request], ctx: Context) -> list[CaseResult]:
     results: list[CaseResult] = []
     with stage(log, f"cases ({len(requests)})"):
         for req in requests:

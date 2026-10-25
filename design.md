@@ -169,6 +169,14 @@ reports last but started from M6's numbers.
   empty pipeline (always INCOMPLETE): case accuracy 68.8%, everything else 0%. Note: labeled file
   mixes two key orders (01-10 alphabetical, 11-32 contract order); we emit contract order.
 
+- **M1 done (2026-10-25).** `identifiers.py` (shared normalisation: lower-case emails/hashes,
+  digits-only phones, word-boundary user ids), `tables/identities.py` (3,706 identifiers for 850
+  users, old-email hashes derived, collision = fatal), `tables/activities.py`, `tables/files.py`
+  (94 files with sha256), `tables/cache.py` (SQLite schema with PKs and indexes, one transaction,
+  temp-file swap, fingerprint over dataset + table code), `tables/context.py` (dict indexes,
+  binary-search worker window). Checks: 518/518 and 32/32 request emails resolve; case_40 →
+  user_38 with 6 identifiers; case_21 window returns its 6 accounts. Cold build 0.07 s, warm 0.02 s.
+
 ## 8. Open questions carried into code
 
 1. Tie-break for crowded windows (17 of 22 realistic samples have 2-5 candidates).
