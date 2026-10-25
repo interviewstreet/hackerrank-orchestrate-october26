@@ -264,6 +264,21 @@ class PolicyRowTest(unittest.TestCase):
         self.assertEqual((d.outcome, d.finding, d.remediation),
                          (VIOLATION, Op.REPORT_ACTIVE_DATA_FLOW, Op.DISABLE_DATA_FLOW))
 
+    def test_process_copy_that_is_not_absent_must_be_proven(self):
+        # r2-#1: one DISABLED copy does not prove a present copy whose flow state is unknown.
+        primary = obs("integration_service", "data_flow_1", exists=PRESENT, flow_state="DISABLED")
+        replica = obs("integration_service", "data_flow_1", copy="read_replica", exists=PRESENT)
+        d = run([primary, replica], system="integration_service", rid="data_flow_1")[1]
+        self.assertEqual(d.outcome, UNPROVEN)
+        # An absent replica runs no flow: an unknown state there does not block the proof.
+        gone = obs("integration_service", "data_flow_1", copy="read_replica", exists=ABSENT)
+        d = run([primary, gone], system="integration_service", rid="data_flow_1")[1]
+        self.assertEqual((d.outcome, d.copy), (COMPLIANT, "primary"))
+        backup = obs("backup_service", "backup_1", exists=PRESENT, restore_state=BLOCKED)
+        backup_copy = obs("backup_service", "backup_1", copy="replica_eu_west", exists=PRESENT)
+        d = run([backup, backup_copy], system="backup_service", rid="backup_1")[1]
+        self.assertEqual(d.outcome, UNPROVEN)
+
     def test_out_of_rules_system_is_not_a_target(self):
         d = self._one("object_storage", "object_1", exists=PRESENT)
         self.assertEqual(d.outcome, NOT_TARGET)

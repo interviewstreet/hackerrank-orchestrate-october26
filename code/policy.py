@@ -259,7 +259,8 @@ def _exposure_decision(d: Decision, state: ResourceState, check: str, exists: st
 
 
 def _process_decision(d: Decision, state: ResourceState, check: str) -> Decision:
-    """Data flows and backups: any ACTIVE / OPEN copy is a violation; all known DISABLED / BLOCKED is compliant."""
+    """Data flows and backups: any ACTIVE / OPEN copy is a violation. Compliant needs every copy DISABLED /
+    BLOCKED; only a copy proven ABSENT may leave the state unknown (an absent copy runs no flow)."""
     attr, bad_value, good_value = (("flow_state", ACTIVE, DISABLED) if check == "flow"
                                    else ("restore_state", OPEN, BLOCKED))
     values = {name: cs.get(attr) for name, cs in sorted(state.copies.items())}
@@ -267,7 +268,8 @@ def _process_decision(d: Decision, state: ResourceState, check: str) -> Decision
     if bad:
         d.outcome, d.copy, d.attribute = VIOLATION, bad[0], attr
         d.bad_copies = bad
-    elif values and all(v == good_value for v in values.values() if v not in (UNKNOWN,)) \
+    elif values and all(v == good_value or (v == UNKNOWN and state.copies[name].get("exists") == ABSENT)
+                        for name, v in values.items()) \
             and any(v == good_value for v in values.values()):
         d.outcome, d.copy, d.attribute = COMPLIANT, next(n for n, v in values.items() if v == good_value), attr
     elif any(v == CONFLICT for v in values.values()):
