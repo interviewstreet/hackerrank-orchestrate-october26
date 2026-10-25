@@ -1583,3 +1583,22 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T06:15:07Z] Status of the open issues and a prompt for a new chat (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+give me a promt to be given in new chant to fix all these issues
+
+Agent Response Summary:
+Reported the status: the OCR change and case_39 are fixed; the friend's two misses are not defects (only a time heuristic could link them). Open: 4 INCOMPLETE rows with only verification steps (case_46, case_53, case_55, case_390) and the stale interview prep sheet. Wrote a prompt for a new chat that investigates the 4 rows, measures general candidate rules on the samples, and waits for approval before code changes.
+
+Actions:
+* No files changed; wrote the prompt in the reply
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
