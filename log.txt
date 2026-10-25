@@ -111,3 +111,22 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:13:00Z] Question: how a sync job flags a case
+
+User Prompt (verbatim, secrets redacted):
+sync job a case gets flagged how
+
+Agent Response Summary:
+Explained how an active data flow (sync job) is linked to a subject, how its state is read from JSON/SQL (enabled flag), logs (enabled / scheduler_registered) and screenshots, and that an ACTIVE flow yields REPORT_ACTIVE_DATA_FLOW, DISABLE_DATA_FLOW first in remediation, and VERIFY_DATA_FLOW_DISABLED, making the case INCOMPLETE. No code changes.
+
+Actions:
+* Read code/audit/evidence.py to confirm the flow-state rules
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
