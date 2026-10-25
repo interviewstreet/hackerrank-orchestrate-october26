@@ -367,10 +367,8 @@ def evaluate(state: ResourceState, cutoff) -> Decision:
             elif status:
                 expired = False
                 d.hypothesis.append(f"legal_hold_{status.lower()}")
-            elif expired is None:   # no status and no end date: active is not proven
-                d.finding = d.remediation = None
-                d.reason = "legal hold status missing"
-                return d
+            elif expired is None:   # r5-#4: rule_13 "A supplied legal hold is active": a supplied hold
+                d.hypothesis.append("legal_hold_active_supplied")   # is active unless evidence ends it
         if expired:
             d.hypothesis.append("retention_expired_delete")
             d.finding, d.remediation, d.verification = (Op.REPORT_REMAINING_RECORD, Op.DELETE_RECORD,

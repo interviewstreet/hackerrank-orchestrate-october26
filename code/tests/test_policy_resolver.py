@@ -265,9 +265,12 @@ class PolicyRowTest(unittest.TestCase):
         for status in ("INACTIVE", "released"):
             gone = hold(hold_status=status, retained_until="2033-12-31T23:59:59Z")
             self.assertEqual((gone.outcome, gone.remediation), (VIOLATION, Op.DELETE_RECORD))
+        # r5-#4: rule_13 "A supplied legal hold is active": no status and no end date is an active
+        # hold, retained and cited from the record.
         missing = hold()
-        self.assertEqual((missing.outcome, missing.reason, missing.verification),
-                         (UNPROVEN, "legal hold status missing", Op.VERIFY_RECORD_PRESENT))
+        self.assertEqual((missing.outcome, missing.finding, missing.remediation, missing.verification),
+                         (COMPLIANT, None, None, Op.VERIFY_RECORD_PRESENT))
+        self.assertIn("legal_hold_active_supplied", missing.hypothesis)
         ended = hold(retained_until="2026-01-01T00:00:00Z")
         self.assertEqual((ended.outcome, ended.remediation), (VIOLATION, Op.DELETE_RECORD))
         # r2-#4: an explicit status governs; an active status with a past end date is a contradiction.
