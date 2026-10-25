@@ -187,3 +187,24 @@ branch=claude/deletion-audit-agent
 repo_root=/home/claude/hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T09:21:00Z] Interview help: model choice and comparison with a cheaper model
+
+User Prompt (verbatim, secrets redacted):
+Thanks for the correction, that's a useful distinction. Now let's look at the model side. You used Claude for vision and intent classification, so why that model over a smaller one, and did you ever compare it's readings against a cheaper alternative?
+
+this was asked. help me asnwer
+
+Agent Response Summary:
+Drafted a spoken answer: claude-opus-5-5 was chosen because the volume was tiny (48 calls, $0.42) and a misread identifier is costly; no side-by-side with Haiku was run (stated in the usage report), but readings were checked against a hand transcription and the intent labels against the dataset's CLASSIFY_REQUEST activities; and the comparison is cheap via AUDIT_MODEL since the cache is keyed by model. No code changes.
+
+Actions:
+* None beyond this log entry
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5[1m]
+branch=claude/deletion-audit-agent
+repo_root=/home/claude/hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
