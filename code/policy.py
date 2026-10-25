@@ -159,16 +159,18 @@ def category_of(state: ResourceState) -> str:
 
 def category_source(state: ResourceState) -> tuple[str, str]:
     """(category, source). Source: ``structured`` (a stated record type or data category),
-    ``collection``, ``content`` (catalog words), ``ambiguous`` or ``system_default``."""
-    for cs in state.copies.values():
-        for st in cs.statements:
-            if st.obs is None:
-                continue
-            for value in (st.obs.record_type, st.obs.fields.get("record_type"), st.obs.fields.get("data_category")):
-                if isinstance(value, str) and value in RULES:
-                    return value, "structured"
-    if state.record_type in RULES:
-        return state.record_type, "structured"
+    ``collection``, ``content`` (catalog words), ``ambiguous`` or ``system_default``.
+    Every admissible structured category counts, not the first one met (r3-#4): two different
+    ones give ``ambiguous``, so the record stays unproven."""
+    structured = {value for cs in state.copies.values() for st in cs.statements if st.obs is not None
+                  for value in (st.obs.record_type, st.obs.fields.get("record_type"),
+                                st.obs.fields.get("data_category"))
+                  if isinstance(value, str) and value in RULES}
+    structured |= {value for value in (state.record_type, *state.record_types) if value in RULES}
+    if len(structured) > 1:
+        return AMBIGUOUS_CATEGORY, "ambiguous"
+    if structured:
+        return structured.pop(), "structured"
     system = state.target.system_id
     if (system, state.collection) in COLLECTION_CATEGORY:
         return COLLECTION_CATEGORY[(system, state.collection)], "collection"

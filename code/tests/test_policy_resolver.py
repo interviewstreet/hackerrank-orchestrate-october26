@@ -367,6 +367,22 @@ class StatusAndSafetyTest(unittest.TestCase):
         self.assertEqual((both.outcome, both.category, both.reason), (UNPROVEN, "", "ambiguous category"))
         self.assertEqual(content_category(["attachment in the nightly backup"]), "")
 
+    def test_two_structured_categories_give_no_category(self):
+        # r3-#4: every admissible structured category counts, not the first one met. Two different
+        # categories on one resource are unproven: no rule applies with proof, so no DELETE_RECORD.
+        profile = obs("account_service", "account_1", exists=PRESENT, record_type="USER_PROFILE")
+        audit = obs("account_service", "account_1", at=T0 + timedelta(days=1), copy="reporting_replica",
+                    exists=PRESENT, fields={"data_category": "SECURITY_AUDIT_LOG"})
+        for order in ((profile, audit), (audit, profile)):
+            _, d, item = run(list(order))
+            self.assertEqual((d.outcome, d.category, d.reason, d.remediation),
+                             (UNPROVEN, "", "ambiguous category", None))
+            _, steps = planner.plan([item])
+            self.assertNotIn("DELETE_RECORD", [s["operation"] for s in steps])
+        same = obs("account_service", "account_1", copy="reporting_replica", exists=PRESENT,
+                   fields={"data_category": "USER_PROFILE"})
+        self.assertEqual(run([profile, same])[1].category, "USER_PROFILE")   # one category stated twice
+
     def test_never_delete_or_anonymize_retained(self):
         for op in (Op.DELETE_RECORD, Op.ANONYMIZE_RECORD):
             d = Decision("SECURITY_AUDIT_LOG", "rule_12", VIOLATION, remediation=op)

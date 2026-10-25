@@ -74,6 +74,7 @@ class ResourceState:
     copies: dict[str, CopyState] = field(default_factory=dict)
     record_type: str = ""
     collection: str = ""
+    record_types: set[str] = field(default_factory=set)   # every stated record type (r3-#4)
 
     @property
     def known(self) -> bool:
@@ -120,6 +121,8 @@ def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff,
         if obs.system_id == target.system_id:
             state.record_type = state.record_type or obs.record_type
             state.collection = state.collection or obs.collection
+            if obs.record_type:
+                state.record_types.add(obs.record_type)
     for st in statements:
         state.copies.setdefault(st.copy, CopyState(st.copy)).statements.append(st)
     for cs in state.copies.values():
