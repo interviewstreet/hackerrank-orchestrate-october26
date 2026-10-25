@@ -3,6 +3,12 @@ from __future__ import annotations
 
 import re
 
+CATALOG_ALIAS_PATTERN = re.compile(
+    r"\b((?:account|search|support|analytics|export|backup|data_flow|audit_record|"
+    r"tombstone|cache|marketing|email_delivery|object|telemetry|legal)_"
+    r"[A-Za-z0-9.-]*\d[A-Za-z0-9.-]*)\s*\(([^()]+)\)",
+    re.IGNORECASE,
+)
 RESOURCE_PATTERN = re.compile(
     r"\b(?:account|search|support|analytics|export|backup|data_flow|audit_record|"
     r"tombstone|cache|marketing|email_delivery|object|telemetry|legal)_"
@@ -35,6 +41,29 @@ def augment_identity_lineage(identity: dict | None, events: list[dict]) -> dict 
     identity["lineage_resource_ids"] = list(
         dict.fromkeys([*identity.get("lineage_resource_ids", []), *resources])
     )
+    aliases = dict(identity.get("lineage_aliases", {}))
+    metadata = dict(identity.get("lineage_resource_metadata", {}))
+    for event in events:
+        if event.get("event_type", "").upper() != "LINK_RESOURCE_IDENTITY":
+            continue
+        resource_id = event.get("resource_id", "")
+        details = event.get("details", "")
+        for matched_resource, alias in CATALOG_ALIAS_PATTERN.findall(details):
+            if matched_resource == resource_id and alias != resource_id:
+                aliases[alias] = resource_id
+        if resource_id:
+            target = event.get("target_system", "unknown")
+            metadata[resource_id] = {
+                "system_id": target,
+                "data_category": (
+                    "SUPPORT_ATTACHMENT" if "attachment" in details.casefold()
+                    else "ACCOUNT_TOMBSTONE" if target == "identity_service"
+                    else ""
+                ),
+                "attachment_belongs_only_to_subject": "belongs only" in details.casefold(),
+            }
+    identity["lineage_aliases"] = aliases
+    identity["lineage_resource_metadata"] = metadata
     # Invalidate the evidence matcher cache if a caller augments an identity twice.
     identity.pop("_match_identifiers", None)
     return identity

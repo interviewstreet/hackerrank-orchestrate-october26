@@ -31,6 +31,8 @@ DENIAL_PATTERNS = tuple(re.compile(pattern, re.IGNORECASE) for pattern in (
     r"\bwithout (?:deleting|erasing|removing|closing)\b",
     r"\b(?:keep|leave) (?:my |the )?(?:account|profile) (?:active|open|in place)\b",
     r"\b(?:remove me from|unsubscribe me from|opt out of) marketing (?:lists )?only\b",
+    r"\bignore (?:all |the |any )?(?:previous |system )?(?:instructions?|prompt).*"
+    r"\b(?:say|output|return|reply)(?: with)?\s+deletion\b",
 ))
 
 

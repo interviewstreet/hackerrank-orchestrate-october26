@@ -11,3 +11,16 @@ class DecisionTests(unittest.TestCase):
  def test_no_evidence_fails_closed(self):
   with self.assertRaisesRegex(ValueError,'no eligible evidence'):
    decide({'request_text':'delete','case_id':'c'}, {'user_id':'u'}, {}, [], RULE, classify)
+ def test_anonymized_record_keeps_strong_verification_treatment(self):
+  rules={'ANALYTICS_PROFILE':{'required_action':'ANONYMIZE','condition':'attributable'}}
+  ev={'analytics_1':[{'resource_id':'analytics_1','system_id':'analytics_platform',
+      'data_category':'ANALYTICS_PROFILE','state':'ANONYMIZED','file_id':'e','record':{}}]}
+  result=decide({'request_text':'delete','case_id':'c'}, {'user_id':'u'},ev,[],rules,classify)
+  self.assertEqual(result['compliant_resources'][0]['required_action'],'ANONYMIZE')
+ def test_identifiable_tombstone_with_stable_reference_is_redacted(self):
+  rules={'ACCOUNT_TOMBSTONE':{'required_action':'REDACT','condition':'stable reference'}}
+  ev={'tombstone_1':[{'resource_id':'tombstone_1','system_id':'identity_service',
+      'data_category':'ACCOUNT_TOMBSTONE','state':'PRESENT','file_id':'e',
+      'record':{'subject_reference':'user_1','email':'a@example.test'}}]}
+  result=decide({'request_text':'delete','case_id':'c'}, {'user_id':'u'},ev,[],rules,classify)
+  self.assertEqual(result['findings'][0]['required_action'],'REDACT')

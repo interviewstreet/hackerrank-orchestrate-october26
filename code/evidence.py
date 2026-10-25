@@ -54,6 +54,15 @@ RESOURCE_FIELD_RE = re.compile(
     r"tombstone|cache|marketing|email_delivery|object|telemetry|legal)_[A-Za-z0-9.-]+)",
     re.IGNORECASE,
 )
+# Human-readable PDFs and screenshots display typed IDs without a ``resource_id=``
+# label.  This remains deliberately narrower than a generic underscore-token regex so
+# service names and event names cannot become resources.
+EMAIL_RE = re.compile(r"\b[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
+RESOURCE_TOKEN_RE = re.compile(
+    r"\b((?:account|search|support|analytics|export|backup|data_flow|audit_record|"
+    r"tombstone|cache|marketing|email_delivery|object|telemetry|legal)_[A-Za-z0-9.-]*\d[A-Za-z0-9.-]*)\b",
+    re.IGNORECASE,
+)
 
 
 def _valid_resource_id(value: str) -> bool:
@@ -67,6 +76,7 @@ def _identifiers(identity: dict) -> list[str]:
     values = [identity.get("user_id", "")]
     for key in ("all_emails", "all_phones", "all_email_hashes", "lineage_resource_ids"):
         values.extend(identity.get(key, []))
+    values.extend(identity.get("lineage_aliases", {}).keys())
     identifiers = list(dict.fromkeys(str(value) for value in values if value))
     identity["_match_identifiers"] = identifiers
     return identifiers
@@ -360,9 +370,12 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
     groups: dict[str, list[str]] = defaultdict(list)
     singles = []
     for line in lines:
-        trace = re.search(r"\btrace_id=([^\s]+)", line)
+        # Supplied exports encode correlation IDs as key/value, JSON, cloud requestId,
+        # or a bare RFC5424 structured token.  Group first so a subject-bearing start
+        # record can be joined to its resource-bearing completion record.
+        trace = re.search(r"\btr-[A-Za-z0-9-]+\b", line)
         if trace:
-            groups[trace.group(1)].append(line)
+            groups[trace.group(0)].append(line)
         else:
             singles.append(line)
     candidates = [" ".join(group) for group in groups.values()] + singles
@@ -371,6 +384,9 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
         found = _matches(candidate, user_identity)
         if not found:
             continue
+        # Cloud-runtime exports wrap structured fields in an escaped message string.
+        # Normalize quoting after grouping; do not interpret escape sequences broadly.
+        candidate = candidate.replace('\\"', '"')
         record = _fields(candidate)
         # Pipe-delimited handover records are intentionally human-readable.
         pipe = [part.strip() for part in candidate.split("|")]
@@ -390,11 +406,51 @@ def _text_hits(text: str, path, user_identity) -> list[dict]:
     if not hits:
         found = _matches(text, user_identity)
         if found:
-            resources = [value for value in RESOURCE_FIELD_RE.findall(text)
-                         if _valid_resource_id(value)]
-            if resources:
-                source = Path(path).stem
-                record = {"resource_id": resources[0]}
+            # Associate unlabeled human-readable IDs only from local context around a
+            # verified subject identifier.  This avoids attaching decoy rows elsewhere
+            # in a multi-customer report or screenshot.
+            folded = text.casefold()
+            resources = []
+            for identifier in found:
+                needle = identifier.casefold()
+                start = folded.find(needle)
+                while start >= 0:
+                    left, right = max(0, start - 220), start + len(identifier) + 220
+                    contextual = []
+                    for match in RESOURCE_TOKEN_RE.finditer(text[left:right]):
+                        value = match.group(1).rstrip(".-")
+                        absolute = left + match.start(1)
+                        distance = min(abs(absolute - start),
+                                       abs(absolute + len(value) - (start + len(identifier))))
+                        contextual.append((distance, value))
+                    if contextual:
+                        nearest = min(distance for distance, _value in contextual)
+                        resources.extend(value for distance, value in contextual if distance == nearest)
+                    start = folded.find(needle, start + 1)
+            aliases = user_identity.get("lineage_aliases", {})
+            resources.extend(aliases[identifier] for identifier in found if identifier in aliases)
+            source = Path(path).stem
+            for resource_id in dict.fromkeys(
+                    value for value in resources if _valid_resource_id(value)):
+                # A catalog-linked resource can collide with a screen that visibly
+                # belongs to another subject.  Treat that as contradictory evidence,
+                # not proof about the requested user.
+                resource_at = folded.find(resource_id.casefold())
+                local = text[max(0, resource_at - 250):resource_at + len(resource_id) + 250]
+                visible_emails = {email.casefold() for email in EMAIL_RE.findall(local)}
+                subject_emails = {email.casefold() for email in user_identity.get("all_emails", [])}
+                lineage_only = resource_id.casefold() in {value.casefold() for value in found}
+                if lineage_only and visible_emails and not (visible_emails & subject_emails):
+                    continue
+                metadata = user_identity.get("lineage_resource_metadata", {}).get(resource_id, {})
+                record = {"resource_id": resource_id, **metadata}
+                if (metadata.get("data_category") == "ACCOUNT_TOMBSTONE"
+                        and not any(_contains(text, value) for value in [
+                            *user_identity.get("all_emails", []),
+                            *user_identity.get("all_phones", []),
+                            *user_identity.get("all_email_hashes", []),
+                        ])):
+                    record["state"] = "REDACTED"
                 if "attachment" in source.casefold() or "attachment" in text.casefold():
                     record.update({"system_id": "support_platform", "data_category": "SUPPORT_ATTACHMENT"})
                 hit = _hit(record, source)
@@ -475,18 +531,41 @@ def _gemini_vision_text(path, user_identity):
         return ""
 
 
+@lru_cache(maxsize=1)
+def _rapid_ocr_engine():
+    from rapidocr import RapidOCR
+    return RapidOCR()
+
+
 @lru_cache(maxsize=128)
 def _extract_image_text(path: str) -> str:
+    """Extract image text locally, preferring Tesseract then bundled RapidOCR.
+
+    RapidOCR provides a reproducible CPU-only fallback when the external tesseract
+    executable is unavailable.  Neither engine receives instructions from the image.
+    """
+    failures = []
     try:
         import pytesseract
         from PIL import Image
         with Image.open(path) as image:
-            return pytesseract.image_to_string(image)
+            text = pytesseract.image_to_string(image)
+        if text.strip():
+            return text
     except (ImportError, OSError, RuntimeError) as exc:
-        logging.getLogger(__name__).warning(
-            "Local OCR unavailable for %s: %s", Path(path).name, type(exc).__name__
-        )
-        return ""
+        failures.append(type(exc).__name__)
+    try:
+        result = _rapid_ocr_engine()(path)
+        text = "\n".join(result.txts or ())
+        if text.strip():
+            return text
+    except (ImportError, OSError, RuntimeError, ValueError) as exc:
+        failures.append(type(exc).__name__)
+    logging.getLogger(__name__).warning(
+        "Local OCR unavailable for %s: %s", Path(path).name,
+        "/".join(failures) or "empty extraction",
+    )
+    return ""
 
 
 def parse_image_evidence(path, user_identity):
@@ -533,6 +612,12 @@ def build_evidence_index(repo_root, manifest, user_identity, audit_at):
         for hit in hits:
             hit["file_id"] = file_id
             hit["captured_at"] = item.get("captured_at", "")
+            hit["source_path"] = item["file_path"]
+            hit["extraction_method"] = {
+                ".sql": "sqlite_snapshot", ".json": "json_structure",
+                ".log": "trace_correlated_text", ".txt": "structured_text",
+                ".pdf": "pdf_text", ".png": "local_ocr_or_vision",
+            }.get(path.suffix.casefold(), "unknown")
             result[hit["resource_id"]].append(hit)
 
     # An account lookup can appear in several historical readback exports under a

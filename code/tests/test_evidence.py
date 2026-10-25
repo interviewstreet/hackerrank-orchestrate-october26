@@ -64,6 +64,25 @@ class EvidenceParserTests(unittest.TestCase):
         self.assertFalse(_contains('subject=user_10;', 'user_1'))
         self.assertTrue(_contains('EMAIL=AMINA.ELMASRI@GMAIL.COM', 'amina.elmasri@gmail.com'))
 
+    def test_human_readable_resource_is_linked_only_near_subject(self):
+        text = (
+            "account_999 decoy@example.test\n" + "unrelated filler " * 30
+            + "support_123 Subject a@example.test attachment"
+        )
+        identity = {"user_id": "user_1", "all_emails": ["a@example.test"],
+                    "all_phones": [], "all_email_hashes": []}
+        with patch("code.evidence._read_text", return_value=text):
+            hits = parse_text_evidence(Path("attachment.txt"), identity)
+        self.assertEqual([hit["resource_id"] for hit in hits], ["support_123"])
+
+    def test_catalog_resource_collision_with_foreign_email_is_rejected(self):
+        text = "marketing_123 - other@example.test - ACTIVE"
+        identity = {"user_id": "user_1", "all_emails": ["subject@example.test"],
+                    "all_phones": [], "all_email_hashes": [],
+                    "lineage_resource_ids": ["marketing_123"]}
+        with patch("code.evidence._read_text", return_value=text):
+            self.assertEqual(parse_text_evidence(Path("screen.txt"), identity), [])
+
     def test_text_parser_rejects_service_and_event_names_as_resources(self):
         text = (
             'service=account_service event=analytics_profile_scan_started '
