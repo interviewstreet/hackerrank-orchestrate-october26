@@ -1,0 +1,7 @@
+# local run artefacts
+cache/
+.env
+__pycache__/
+*.pyc
+.venv/
+code.zip

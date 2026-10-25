@@ -1,0 +1,4 @@
+# Core pipeline uses the Python standard library only.
+# Optional, needed for PDF text and screenshot extraction (milestone M5):
+openai>=1.40
+pypdf>=4.0
