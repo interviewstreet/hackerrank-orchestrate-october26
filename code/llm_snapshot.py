@@ -90,6 +90,48 @@ SNAPSHOT = {'02a3f19473a06fe0b39e69cd2720c4f53f04f9826d268393d3b53baa5f113f15:vi
                                                                                                                          'latency_ms': 1657,
                                                                                                                          'output_tokens': 145,
                                                                                                                          'retries': 0}},
+ '175d041d874bbc003eb0ec3bee9443eceee4bcff4e919acef5862ff1d21c7b84:agent_v2:meta/muse-spark-1.3-contributor': {'key': '175d041d874bbc003eb0ec3bee9443eceee4bcff4e919acef5862ff1d21c7b84:agent_v2:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v2',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_55',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': {'case_id': 'case_55',
+                                                                                                                                       'evidence_ids': ['evidence_32'],
+                                                                                                                                       'kind': 'STATE',
+                                                                                                                                       'proposed_state': 'PRESENT',
+                                                                                                                                       'quotes': ['3 '
+                                                                                                                                                  'backup_9287 '
+                                                                                                                                                  'areed1433@gmail.com '
+                                                                                                                                                  'eu-west-1 '
+                                                                                                                                                  '26 '
+                                                                                                                                                  'Apr '
+                                                                                                                                                  '02:00 '
+                                                                                                                                                  '84.7 '
+                                                                                                                                                  'GB '
+                                                                                                                                                  'AES-256 '
+                                                                                                                                                  'Archive'],
+                                                                                                                                       'reason': 'evidence_32 '
+                                                                                                                                                 'vision_row '
+                                                                                                                                                 'shows '
+                                                                                                                                                 'backup_9287 '
+                                                                                                                                                 'present '
+                                                                                                                                                 'with '
+                                                                                                                                                 'areed1433@gmail.com '
+                                                                                                                                                 'at '
+                                                                                                                                                 '2026-04-29 '
+                                                                                                                                                 'before '
+                                                                                                                                                 'audit '
+                                                                                                                                                 'time',
+                                                                                                                                       'resource_id': 'backup_9287',
+                                                                                                                                       'system_id': 'backup_service',
+                                                                                                                                       'user_identifier': None},
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'submit_proposal'},
+                                                                                                               'usage': {'input_tokens': 2489,
+                                                                                                                         'latency_ms': 1878,
+                                                                                                                         'output_tokens': 320,
+                                                                                                                         'retries': 0}},
  '207d37ca2ad40f3028293b55926ad12d9f14bcac610fc41b3d45769e4bc98270:vision_extract_v3:meta/muse-spark-1.3-contributor': {'key': '207d37ca2ad40f3028293b55926ad12d9f14bcac610fc41b3d45769e4bc98270:vision_extract_v3:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v3',
@@ -427,6 +469,51 @@ SNAPSHOT = {'02a3f19473a06fe0b39e69cd2720c4f53f04f9826d268393d3b53baa5f113f15:vi
                                                                                                                                   'latency_ms': 5247,
                                                                                                                                   'output_tokens': 1554,
                                                                                                                                   'retries': 0}},
+ '704973cf4cd29982e1982e82d14ebd23f3a9ea7f5979f1f52f57b4b3c17cf80c:agent_v2:meta/muse-spark-1.3-contributor': {'key': '704973cf4cd29982e1982e82d14ebd23f3a9ea7f5979f1f52f57b4b3c17cf80c:agent_v2:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v2',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_53',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': {'case_id': 'case_53',
+                                                                                                                                       'evidence_ids': ['evidence_28'],
+                                                                                                                                       'kind': 'STATE',
+                                                                                                                                       'proposed_state': 'PRESENT',
+                                                                                                                                       'quotes': ['My '
+                                                                                                                                                  'tickets '
+                                                                                                                                                  'support_1034 '
+                                                                                                                                                  '- '
+                                                                                                                                                  'Kofi '
+                                                                                                                                                  'Agyeman '
+                                                                                                                                                  '- '
+                                                                                                                                                  'Normal '
+                                                                                                                                                  'priority'],
+                                                                                                                                       'reason': 'evidence_28 '
+                                                                                                                                                 'vision_row '
+                                                                                                                                                 'shows '
+                                                                                                                                                 'support_1034 '
+                                                                                                                                                 'PRESENT '
+                                                                                                                                                 'in '
+                                                                                                                                                 'primary '
+                                                                                                                                                 'at '
+                                                                                                                                                 '2026-05-24T07:00, '
+                                                                                                                                                 'just '
+                                                                                                                                                 'before '
+                                                                                                                                                 'audit '
+                                                                                                                                                 'time, '
+                                                                                                                                                 'matching '
+                                                                                                                                                 'primary '
+                                                                                                                                                 'factual '
+                                                                                                                                                 'existence',
+                                                                                                                                       'resource_id': 'support_1034',
+                                                                                                                                       'system_id': 'support_platform',
+                                                                                                                                       'user_identifier': None},
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'submit_proposal'},
+                                                                                                               'usage': {'input_tokens': 2768,
+                                                                                                                         'latency_ms': 2622,
+                                                                                                                         'output_tokens': 404,
+                                                                                                                         'retries': 0}},
  '823c31fb4b08e63fb4a9bbb2e60b1b8b785608d5b21f2765173284dceada5563:vision_extract_v3:meta/muse-spark-1.3-contributor': {'key': '823c31fb4b08e63fb4a9bbb2e60b1b8b785608d5b21f2765173284dceada5563:vision_extract_v3:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v3',
@@ -466,6 +553,19 @@ SNAPSHOT = {'02a3f19473a06fe0b39e69cd2720c4f53f04f9826d268393d3b53baa5f113f15:vi
                                                                                                                          'latency_ms': 1419,
                                                                                                                          'output_tokens': 100,
                                                                                                                          'retries': 0}},
+ '89cf170df265fc2e84e4a45aa6a7d41873404c60c3bd9cd9c34b46c957f031ff:agent_v2:meta/muse-spark-1.3-contributor': {'key': '89cf170df265fc2e84e4a45aa6a7d41873404c60c3bd9cd9c34b46c957f031ff:agent_v2:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v2',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_55',
+                                                                                                               'result': {'file_id': 'evidence_32',
+                                                                                                                          'proposal': None,
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'read_evidence'},
+                                                                                                               'usage': {'input_tokens': 1690,
+                                                                                                                         'latency_ms': 1369,
+                                                                                                                         'output_tokens': 123,
+                                                                                                                         'retries': 0}},
  '8bf0ccd6f8e00caad2aab449cb1af9a58bb73d2eb96cf50b144991ab6f547c3e:vision_extract_v3:meta/muse-spark-1.3-contributor': {'key': '8bf0ccd6f8e00caad2aab449cb1af9a58bb73d2eb96cf50b144991ab6f547c3e:vision_extract_v3:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v3',
@@ -480,6 +580,19 @@ SNAPSHOT = {'02a3f19473a06fe0b39e69cd2720c4f53f04f9826d268393d3b53baa5f113f15:vi
                                                                                                                                   'latency_ms': 3256,
                                                                                                                                   'output_tokens': 505,
                                                                                                                                   'retries': 0}},
+ '8d90c3506b879f50ecccf5f9eabf2bd2ab80bd53c72b582d0ea4aeb36ba32706:agent_v2:meta/muse-spark-1.3-contributor': {'key': '8d90c3506b879f50ecccf5f9eabf2bd2ab80bd53c72b582d0ea4aeb36ba32706:agent_v2:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v2',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_53',
+                                                                                                               'result': {'file_id': 'evidence_28',
+                                                                                                                          'proposal': None,
+                                                                                                                          'query': None,
+                                                                                                                          'tool': 'read_evidence'},
+                                                                                                               'usage': {'input_tokens': 1613,
+                                                                                                                         'latency_ms': 2333,
+                                                                                                                         'output_tokens': 83,
+                                                                                                                         'retries': 0}},
  '8e981522397c0a563e69b8926e5a49df8e34a5f75fa9ae2c156fbacadf2f731c:vision_extract_v3:meta/muse-spark-1.3-contributor': {'key': '8e981522397c0a563e69b8926e5a49df8e34a5f75fa9ae2c156fbacadf2f731c:vision_extract_v3:meta/muse-spark-1.3-contributor',
                                                                                                                         'model': 'meta/muse-spark-1.3-contributor',
                                                                                                                         'prompt_version': 'vision_extract_v3',
@@ -755,6 +868,19 @@ SNAPSHOT = {'02a3f19473a06fe0b39e69cd2720c4f53f04f9826d268393d3b53baa5f113f15:vi
                                                                                                                'usage': {'input_tokens': 1447,
                                                                                                                          'latency_ms': 1258,
                                                                                                                          'output_tokens': 82,
+                                                                                                                         'retries': 0}},
+ 'e7e0ac5d6915a3eb40d3f2f595406f138993c6d002ec3ab662f92d6a8678735d:agent_v2:meta/muse-spark-1.3-contributor': {'key': 'e7e0ac5d6915a3eb40d3f2f595406f138993c6d002ec3ab662f92d6a8678735d:agent_v2:meta/muse-spark-1.3-contributor',
+                                                                                                               'model': 'meta/muse-spark-1.3-contributor',
+                                                                                                               'prompt_version': 'agent_v2',
+                                                                                                               'purpose': 'agent',
+                                                                                                               'ref_id': 'case_53',
+                                                                                                               'result': {'file_id': None,
+                                                                                                                          'proposal': None,
+                                                                                                                          'query': 'support_platform',
+                                                                                                                          'tool': 'search_evidence'},
+                                                                                                               'usage': {'input_tokens': 2079,
+                                                                                                                         'latency_ms': 2368,
+                                                                                                                         'output_tokens': 162,
                                                                                                                          'retries': 0}},
  'e8e99f6afe811f26ba4a24ea1d87b0022a971616228982a89080ad33f26af94f:agent_v2:meta/muse-spark-1.3-contributor': {'key': 'e8e99f6afe811f26ba4a24ea1d87b0022a971616228982a89080ad33f26af94f:agent_v2:meta/muse-spark-1.3-contributor',
                                                                                                                'model': 'meta/muse-spark-1.3-contributor',

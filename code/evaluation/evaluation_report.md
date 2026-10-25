@@ -5,7 +5,7 @@ Every number here is reproducible with the commands below.
 ```text
 python code/evaluation/main.py            # samples scorer + custom cases + metamorphic checks (snapshot replay)
 python code/validate.py output.csv        # strict contract check on the 518 rows
-python -m pytest code/tests               # 184 tests
+python -m pytest code/tests               # 186 tests
 ```
 
 `code/evaluation/main.py` writes `code/evaluation/results.md` and `results.json`.
@@ -191,7 +191,8 @@ case_01 cites `evidence_54`) and #5 (accepted loss, section 12).
 | evidence_14 | `data_flow_1121` | dropped | yes: the connector row shows `jain.aditi@gmail.com`, Continuous | OCR does not read the email on that row |
 
 The 3 rows that failed the id checks stay dropped: the image supports them, but OCR cannot
-ground their ids, and we do not relax digit matching.
+ground their ids, and we do not relax digit matching. (Round 4, section 16: OCR on a 2x
+upscaled image grounds `support_9538` and `data_flow_1121`; `account_5762` stays dropped.)
 
 **Cold final run vs the previous output.** The prompts changed (example ids only), so every
 model call was new. Against the previous `output.csv` (`4f63cd85...e590`) 2 rows changed:
@@ -214,12 +215,13 @@ The sample rows did not change. The cold-run output is final.
 | Content P / R / F1 (6 fields) | 1.000 / 0.855 / 0.922 | same |
 | Exact P / R / F1 (7 fields) | 0.764 / 0.653 / 0.704 | same |
 
-On the 518 (final run) the agent ran 5 times (18 turns): 3 proposals, 2 accepted, 1 rejected.
+On the 518 (final run, round 4) the agent ran 4 times (15 turns): 2 proposals, 2 accepted.
 
 - Accepted: case_53 `support_1034` and case_55 `backup_9287` (both STATE PRESENT). Neither
   changes a row: presence was already known; the exposure of `support_1034` stays unproven.
-- Rejected `state_mismatch`: case_39 `data_flow_1121` (the quote did not state the claimed state).
 - No proposal within the 4-turn cap: case_46 `tombstone_17`, case_390 `legal_hold_8049`.
+- case_39 `data_flow_1121` no longer needs the agent: the grounded vision row decides it
+  (section 16). Before round 4 the agent proposal for it was rejected (`state_mismatch`).
 
 0 rows changed by the agent: the agent-off run has the same SHA-256 as the final run.
 
@@ -256,8 +258,10 @@ records are not linked by any strong edge, so they have no account step. The tra
 - Samples: VALID, 32 rows, 0 errors.
 - Status counts: COMPLETE 152, INCOMPLETE 356, NOT_APPLICABLE 10.
 - 0 failed cases (no `output_failures.csv`), exit code 0.
-- Replay: `ZENMUX_OFFLINE=1 python code/main.py` gives the same SHA-256 as the cold final run
-  (518: `1d19e512...786b`; samples: `d59f689e...5e45`). The agent-off run gives the same hashes.
+- Replay: `ZENMUX_OFFLINE=1 python code/main.py` gives the same SHA-256 as the final run
+  (518: `4a1d1c3f...a132`; samples: `d59f689e...5e45`). The agent-off run gives the same hashes.
+- 4 INCOMPLETE rows have only verification steps (case_46, case_53, case_55, case_390): each
+  has a target whose state no admissible evidence proves (section 16).
 - Clean room: `code.zip` unpacked into a new directory with a new virtual environment gives
   the same SHA-256 offline (see `code/README.md`).
 
@@ -306,13 +310,10 @@ What would fix it: a subject key on the worker rows (a request id, user id or em
 a join key between the deletion job and the request. With such a key the link is exact and
 needs no time heuristic.
 
-**Vision rows dropped (final run).** The model returned 24 rows for the 11 screenshots and
-20 are grounded. 4 are dropped: the 3 OCR id misreads of section 7b, and `data_flow_9846`
-(evidence_14) `ACTIVE`. The image shows that connector as "Continuous" and "Healthy", but the
-ACTIVE cue words are `active`, `enabled` and `running`, so the block rule finds no cue. Its
-case (sample case_15) already reports the flow from `evidence_01`, so no row changes. A wider
-cue vocabulary (for example "continuous sync") is a candidate change; we did not make it
-after the final run.
+**Vision rows dropped (final run, round 4).** The model returned 24 rows for the 11
+screenshots and 23 are grounded. 1 is dropped: `account_5762` (evidence_04), because OCR
+does not put the id, its cue and `user_11` in one block even at 2x. Before round 4, 20 were
+grounded: 3 OCR misreads and `data_flow_9846`, whose "Continuous" had no ACTIVE cue word.
 
 **Model variance on a fresh call.** At temperature 0 the same image gave a different row
 state in two calls (`support_1034`: IDENTIFIABLE with the email, then PRESENT with no
@@ -447,3 +448,50 @@ After the three fixes the offline output is unchanged: `output.csv` SHA-256
 `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`, samples
 `d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`; `results.md` and
 `results.json` are unchanged. Tests: 184 (182 before, plus the two regression tests).
+
+## 16. Round 4: OCR at 2x and connector state words
+
+**Change** (general, no case or id logic):
+
+- `extract_text`: Tesseract reads each screenshot upscaled 2x (Lanczos, `OCR_SCALE`). At the
+  native size it misread small ids (`sepport 9588`) and missed a connector row. The scale is
+  part of the snapshot key, so a reading at another scale is never reused.
+- `extract_vision.STATE_WORDS`: ACTIVE adds `continuous|syncing|streaming`, DISABLED adds
+  `suspended`. Connector consoles show a running flow as "Continuous".
+- Regression tests (both failed before the change): `test_connector_console_words_are_state_cues`,
+  `test_ocr_reading_is_keyed_by_its_scale`. Tests: 186.
+
+**Effect.** Grounded vision rows: 20 -> 23 of 24 (`support_9538`, `data_flow_1121`,
+`data_flow_9846`). Each part alone changes 0 rows. Together they change 1 row on the 518:
+
+- case_39: INCOMPLETE stays INCOMPLETE. The single unproven verification step becomes
+  `REPORT_ACTIVE_DATA_FLOW data_flow_1121` (`evidence_14`, captured 2026-08-07, before
+  `audit_at`), `DISABLE_DATA_FLOW`, `VERIFY_DATA_FLOW_DISABLED`. This is the state that the
+  round-3 finding #9 described from the image.
+
+The samples do not change: status 32/32, exact F1 0.704, content F1 0.922, sequence 15/32,
+custom 7/7, metamorphic 19/19 (`results.md` and `results.json` unchanged).
+
+**Final run.** The OCR text is part of the agent prompts, so the agent prompts changed. The run
+used a new cache seeded with the 29 validated results of the previous final run: 26 calls,
+21 cache hits, 5 live agent calls (see `usage_report.md`). `output.csv` SHA-256
+`4a1d1c3f23303ab9f0891fd5ddd15d40ba7861b5f037538130f17187a4aaa132`; samples
+`d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`. Offline replay and the
+agent-off run give the same hashes.
+
+**Rejected in this round** (measured, no change):
+
+- Global one-to-one assignment of deletion-worker claims to requests by time (offset learned
+  from our own strong links): precision 0.399 on claims whose owner we already know (518),
+  and 3 of 19 new sample links are in gold. A wrong link names another user's record.
+- Closed-vocabulary snapping of OCR ids: 0 of the 28 missed sample targets appear in any OCR
+  reading or PDF text, so it cannot recover them.
+
+**Known reading: INCOMPLETE with verification steps only.** 4 rows on the 518 (case_46,
+case_53, case_55, case_390) are INCOMPLETE with only empty-evidence verification steps. Each
+has a target that no admissible evidence proves compliant or violating (`tombstone_17`: no
+evidence; `support_1034` and `backup_9287`: present, treatment or restore state not shown;
+`legal_hold_8049`: no status and no end date). A finding needs evidence that proves the
+violation, and COMPLETE needs proof of the compliant state, so neither is written. A
+validator that requires a FINDING in every INCOMPLETE row rejects these 4 rows; the sample
+gold has no such row to decide the reading.

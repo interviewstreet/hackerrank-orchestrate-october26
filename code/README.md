@@ -80,8 +80,9 @@ For live model calls copy `.env.example` to `.env` and set `ZENMUX_API_KEY`. Wit
 run replays the snapshot (below).
 
 Tesseract OCR is optional. `code/ocr_snapshot.json` holds the OCR readings of the 11 dataset
-screenshots (keyed by image SHA-256). Tesseract is needed only for images that are not in
-the snapshot; without it such an image gives no vision rows.
+screenshots at 2x scale (keyed by image SHA-256, reading and scale). Tesseract and Pillow are
+needed only for images that are not in the snapshot; without Tesseract such an image gives
+no vision rows.
 
 ## Run
 
@@ -103,16 +104,16 @@ the written file fails.
 ZENMUX_OFFLINE=1 python code/main.py      (PowerShell: $env:ZENMUX_OFFLINE="1"; python code/main.py)
 ```
 
-Replay makes no network call. It reads `code/llm_snapshot.py` (29 validated results of the
-final run) and `code/ocr_snapshot.json`, and gives the same `output.csv` as the final run:
-SHA-256 `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`.
+Replay makes no network call. It reads `code/llm_snapshot.py` (34 validated results; the final
+run uses 26 of them) and `code/ocr_snapshot.json`, and gives the same `output.csv` as the final run:
+SHA-256 `4a1d1c3f23303ab9f0891fd5ddd15d40ba7861b5f037538130f17187a4aaa132`.
 
 ## Evaluation
 
 ```text
 python code/evaluation/main.py            # sample scores, 7 custom cases, 19 metamorphic checks
 python code/validate.py output.csv        # strict contract check
-python -m pytest code/tests               # 184 tests (they always replay; no network)
+python -m pytest code/tests               # 186 tests (they always replay; no network)
 python code/package.py                    # builds code.zip with a secret scan
 ```
 
