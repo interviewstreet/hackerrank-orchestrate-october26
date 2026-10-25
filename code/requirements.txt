@@ -2,4 +2,5 @@
 pydantic>=2.6,<3       # schema.py contract models (D21)
 pypdf>=4.0             # PDF text layer, pure Python (cross-check for vision extraction)
 rank_bm25>=0.2.2       # BM25 search tool for the investigator agent (D19)
+pillow>=10.0           # 2x upscale before Tesseract (only for images not in ocr_snapshot.json)
 pytest>=8.0            # test runner (tests are unittest-compatible)

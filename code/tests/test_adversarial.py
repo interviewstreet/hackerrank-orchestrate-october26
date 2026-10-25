@@ -1,23 +1,25 @@
 """Adversarial inputs for every model path (D20). Each one must fall back safely. No network."""
 
+import hashlib
 import json
 import tempfile
 import unittest
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from unittest import mock
 
 import helpers  # noqa: F401
 import intent_model
 import main as pipeline
 import safety
 from agent.loop import accept
-from evidence import extract_vision
+from evidence import extract_text, extract_vision
 from evidence.common import Identifiers
 from llm_cache import LLMCache
 from llm_client import LIVE, FakeTransport, LLMClient
 from loaders import DATASET_DIR, EvidenceFile, load_requests
-from schema import AgentProposal
+from schema import AgentProposal, RawState
 
 AT = datetime(2026, 5, 1, tzinfo=UTC)
 OCR = "Console | account_901 | ana.test@example.org | Active\nsupport_77 | bo.other@example.org | Open"
@@ -171,6 +173,33 @@ class AdversarialTest(unittest.TestCase):
         self.assertEqual(extract_vision.layout_blocks(layout),
                          [["account_901 Active", "ana.test@example.org"], ["Help"]])
         self.assertEqual(extract_vision.layout_blocks(None), [])
+
+    def test_connector_console_words_are_state_cues(self):
+        # A connector console shows "Continuous" / "Syncing" for a running flow, "Suspended" for a stopped one.
+        for line in ("data_flow_7 ana.test@example.org Continuous", "data_flow_7 Syncing", "data_flow_7 streaming"):
+            with self.subTest(line):
+                self.assertTrue(extract_vision.state_cue(RawState.ACTIVE, line))
+        self.assertTrue(extract_vision.state_cue(RawState.DISABLED, "data_flow_7 Suspended"))
+        self.assertFalse(extract_vision.state_cue(RawState.ACTIVE, "data_flow_7 Inactive"))
+
+    def test_ocr_reading_is_keyed_by_its_scale(self):
+        # A reading at another scale is never reused, and the export drops it.
+        with tempfile.TemporaryDirectory() as tmp:
+            image = Path(tmp) / "screen.png"
+            image.write_bytes(b"not decoded: the snapshot answers first")
+            digest = hashlib.sha256(image.read_bytes()).hexdigest()
+            scaled = f"{digest}:text:x{extract_text.OCR_SCALE}"
+            old = {f"{digest}:text": "native-size reading"}
+            with mock.patch.object(extract_text, "_SNAPSHOT", dict(old)), \
+                    mock.patch.object(extract_text, "USED", {}), \
+                    mock.patch.object(extract_text, "TESSERACT_PATHS", ()):
+                self.assertIsNone(extract_text.ocr_text(image))
+            with mock.patch.object(extract_text, "_SNAPSHOT", {**old, scaled: "scaled reading"}), \
+                    mock.patch.object(extract_text, "USED", {}):
+                self.assertEqual(extract_text.ocr_text(image), "scaled reading")
+                out = Path(tmp) / "ocr_snapshot.json"
+                extract_text.export_ocr_snapshot(out)
+                self.assertEqual(json.loads(out.read_text(encoding="utf-8")), {scaled: "scaled reading"})
 
     def test_listing_block_takes_the_state_from_the_records_own_line(self):
         # One table block: the "not found" cue belongs to account_902's line, not to account_901's.

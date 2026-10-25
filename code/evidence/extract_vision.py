@@ -69,8 +69,8 @@ STATE_WORDS = {
     RawState.IDENTIFIABLE: r"identifiable|@|\+\d",
     RawState.REDACTED: r"redact|masked|\*\*\*",
     RawState.ANONYMIZED: r"anonymi[sz]",
-    RawState.ACTIVE: r"\bactive\b|enabled|running|enabled=\"?true",
-    RawState.DISABLED: r"disabled|paused|stopped|inactive|enabled=\"?false",
+    RawState.ACTIVE: r"\bactive\b|enabled|running|enabled=\"?true|continuous|syncing|streaming",
+    RawState.DISABLED: r"disabled|paused|stopped|inactive|enabled=\"?false|suspended",
     RawState.BLOCKED: r"blocked|denied|not allowed|restore_allowed=\"?false",
 }
 

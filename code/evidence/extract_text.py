@@ -165,9 +165,14 @@ def scan_text_identifiers(text: str) -> Identifiers:
 # local cache, then Tesseract. The snapshot makes a run reproducible on a machine without
 # Tesseract or with another Tesseract version. Every reading used in a run is kept in ``USED``
 # for ``export_ocr_snapshot``.
+#
+# Tesseract reads an image upscaled ``OCR_SCALE`` times (Lanczos). At the native size it misreads
+# some small screenshot ids and connector names; at 2x it reads them. The scale is part of
+# the key, so a reading at another scale is never reused.
 
 TESSERACT_PATHS = ("tesseract", r"C:\Program Files\Tesseract-OCR\tesseract.exe")
 READINGS = {"text": (["--psm", "6"], "txt"), "layout": (["--psm", "3", "tsv"], "psm3.tsv")}
+OCR_SCALE = 2
 USED: dict[str, str] = {}
 _SNAPSHOT: dict[str, str] | None = None
 
@@ -187,26 +192,40 @@ def _tesseract(path: Path, reading: str, cache_dir: Path | None) -> str | None:
     import subprocess
 
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    key = f"{digest}:{reading}"
+    key = f"{digest}:{reading}:x{OCR_SCALE}"
     args, suffix = READINGS[reading]
     out = _ocr_snapshot().get(key)
-    cached = cache_dir / f"{digest}.{suffix}" if cache_dir else None
+    cached = cache_dir / f"{digest}.x{OCR_SCALE}.{suffix}" if cache_dir else None
     if out is None and cached is not None and cached.exists():
         out = cached.read_text(encoding="utf-8")
     if out is None:
         exe = next((p for p in TESSERACT_PATHS if shutil.which(p) or Path(p).exists()), None)
         if exe is None:
             return None
-        result = subprocess.run([exe, str(path), "-", *args], capture_output=True, text=True,  # noqa: S603 - fixed exe, no shell
-                                encoding="utf-8", check=False)
+        result = subprocess.run([exe, "stdin", "-", *args], input=_upscaled_png(path), capture_output=True,  # noqa: S603 - fixed exe, no shell
+                                check=False)
         if result.returncode != 0:
-            raise ShapeError(f"tesseract failed on {path.name}: {result.stderr.strip()[:80]}")
-        out = result.stdout
+            err = result.stderr.decode("utf-8", errors="replace").strip()[:80]
+            raise ShapeError(f"tesseract failed on {path.name}: {err}")
+        out = result.stdout.decode("utf-8").replace("\r\n", "\n")
         if cached is not None:
             cached.parent.mkdir(parents=True, exist_ok=True)
             cached.write_text(out, encoding="utf-8")
     USED[key] = out
     return out
+
+
+def _upscaled_png(path: Path) -> bytes:
+    """The image as PNG bytes, upscaled ``OCR_SCALE`` times (Pillow is needed only here)."""
+    import io
+
+    from PIL import Image
+
+    with Image.open(path) as img:
+        big = img.resize((img.width * OCR_SCALE, img.height * OCR_SCALE), Image.Resampling.LANCZOS)
+    buf = io.BytesIO()
+    big.save(buf, format="PNG")
+    return buf.getvalue()
 
 
 def ocr_text(path: Path, cache_dir: Path | None = None) -> str | None:
@@ -220,8 +239,9 @@ def ocr_layout(path: Path, cache_dir: Path | None = None) -> str | None:
 
 
 def export_ocr_snapshot(path: Path | None = None) -> int:
-    """Write every OCR reading used in this run (merged with the existing snapshot)."""
+    """Write every OCR reading used in this run (merged with the existing snapshot).
+    Readings at another scale than ``OCR_SCALE`` are dropped: no run can use them."""
     path = path or config.OCR_SNAPSHOT_FILE
-    merged = {**_ocr_snapshot(), **USED}
+    merged = {k: v for k, v in {**_ocr_snapshot(), **USED}.items() if k.endswith(f":x{OCR_SCALE}")}
     path.write_text(json.dumps(merged, indent=0, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
     return len(merged)
