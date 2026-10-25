@@ -1404,3 +1404,105 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T05:36:32Z] Round-3 release report verified against the repo (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+All three fixes are committed with their tests. No row changes: `output.csv` and the samples keep their exact hashes.
+
+One thing to know first: a `.env` file now exists at the repo root (the brief said none existed). I did not read it. Git ignores it (`.gitignore:3`), it is not in `code.zip`, and every run was offline.
+
+## 1. Commits
+
+| Hash | Title |
+| --- | --- |
+| `16118f1` | fix(r3-#10): DESIGN.md and intent docstring match the code |
+| `bcf53dc` | fix(r3-#3): the newest retention date decides; equal statements with two dates are unproven |
+| `a55454c` | fix(r3-#4): two different structured categories on one resource are unproven |
+| `3ff43f7` | release: round-3 review fixes |
+| `46ae461` | chore: log the round-3 release turn |
+
+Both regression tests failed before their fix. The failure logs are in `%LOCALAPPDATA%\Temp\r3log\`:
+- **#3:** an older expired date gave `violation / DELETE_RECORD` instead of `compliant`.
+- **#4:** the first category won and gave `violation / USER_PROFILE / DELETE_RECORD` instead of `unproven / ambiguous category`.
+
+I did not commit `AGENTS.md`, `output.csv`, `plan.md`, `code.zip` or `.env`.
+
+## 2. Gate results
+
+| Gate | Result |
+| --- | --- |
+| Full suite (`full_suite.py`) | 184 passed, exit 0 |
+| Strict validation | 518: VALID, 0 errors. Samples (`--requests` samples): VALID, 0 errors |
+| ruff | All checks passed |
+| mypy (from `code/`) | No issues in 51 source files |
+| `output.csv` SHA-256 (offline) | `1d19e51212cf4e294de420928564a2869b87d91a189b09051842be19b26f786b`, unchanged |
+| Samples SHA-256 (offline) | `d59f689eae92e80d8de2226248f03e9113cce79833a0b26981697d5627485e45`, unchanged |
+| Hash check after each fix | Unchanged after #3 and after #4 |
+| `results.md` / `results.json` | Unchanged (`d8ed9417…` / `480f3cc1…`) |
+| Clean room (new temp dir, new venv, no key, offline) | 518 hash and sample hash both equal; VALID; 183 passed, 1 skipped |
+| Secret scan | `package.py` scan clean. My scan of 75 zip members plus `log.txt`: 0 hits, no `.env` in the zip |
+
+## 3. Row changes
+
+None. Both fixes act only when one target states 2+ retention dates or 2+ structured categories. No target in the dataset does.
+
+## 4. Metrics (before = after)
+
+**Samples:**
+
+| Metric | Value |
+| --- | --- |
+| Status accuracy | 32/32 = 1.000 |
+| Confusion (gold → pred) | COMPLETE 10→10; INCOMPLETE 22→22; NOT_APPLICABLE 0; no off-diagonal |
+| Exact 7-field | matched 126 / pred 165 / gold 193; P 0.764, R 0.653, F1 0.704 |
+| Content 6-field | matched 165; P 1.000, R 0.855, F1 0.922 |
+| Field accuracy (of 193) | `step_no` 165 (0.855), `phase` 165 (0.855), `system_id` 126 (0.653), `resource_id` 126 (0.653), `operation` 133 (0.689), `state` 133 (0.689), `evidence_id` 164 (0.850) |
+| Sequence accuracy | 15/32 = 0.469 |
+| Row accuracy | 15/32 = 0.469 |
+| Custom cases | 7/7 PASS |
+| Metamorphic checks | 19/19 PASS |
+
+**The 518 and other values:**
+
+| Metric | Before | After |
+| --- | --- | --- |
+| Status distribution | COMPLETE 152, INCOMPLETE 356, NOT_APPLICABLE 10 | same |
+| Strict validation errors | 0 | 0 |
+| `output.csv` SHA-256 | `1d19e512…786b` | same |
+| Test count | 182 | 184 (+2 regression tests) |
+| Final-run usage | 29 calls; 84,023 in / 14,812 out = 98,835 tokens; $0.0113647 ($0.0000219 per request) | unchanged; offline replay reports the same 29 calls and tokens |
+
+## 5. Other doc mismatches from the #10 grep
+
+| Where | Mismatch | Change |
+| --- | --- | --- |
+| `DESIGN.md:68` | It said the agent runs for "… or AMBIGUOUS" items. `main.py:181` runs it only for unproven or conflict items, never for intent. | Now reads "unproven (`UNKNOWN`/`CONFLICT`); never for intent" |
+| `DESIGN.md:70-75` | The tool list had 4 tools. `stop` is missing, but the code and README have it. | Added "5. `stop`"; "read-only except `submit_proposal`" |
+| `README.md:115`, report line 8 | "182 tests" | Now 184 (release commit) |
+
+These numbers already match the code and data: 518 cases, 4,011 events, 15 rules, 94 files (11 PNG, 4 PDF), 29 snapshot results, 4 turns, 40,000 tokens, 1+2 retries in the README, 7 custom cases, 19 metamorphic checks, commit `b7de58c`. No other prompt version is out of date (`intent_v1` and `agent_v2` match).
+
+## 6. Package and log
+
+- `code.zip`: 247,983 bytes, 75 files.
+- `log.txt`: 21 entries. The new entry has one `tool=Claude Code` line and one `model=claude-opus-5-5` line.
+
+The report's new section 15 records the round-3 review and the rule_12 disagreement:
+- rule_12 says "within the supplied retention period".
+- Gold `case_31` keeps `audit_record_6909` as retained, but `evidence_51` has no retention field.
+- 53 COMPLETE rows on the 518 rest on that reading.
+
+Agent Response Summary:
+Checked the pasted round-3 release report against the repo; no code was changed. Confirmed: commits 16118f1, bcf53dc, a55454c, 3ff43f7 and 46ae461 exist; output.csv SHA-256 is still 1d19e512...786b; code.zip is 247,983 bytes with 75 members, every member equal to the committed file, no .env and no output.csv; .env is untracked and git-ignored and was not read; log.txt has 21 entries and its last entry has one valid tool= and one valid model= line. The submission artifacts are ready.
+
+Actions:
+* Ran: git log/status, .env tracked/ignored check (content not read), output.csv hash, code.zip member compare against the working tree, log.txt entry check
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
