@@ -33,6 +33,11 @@ _PROTECT_PATTERNS = [
     r"\bmarketing (lists?|emails?) only\b",
     r"\bcontinue using\b",
     r"\bstill (want|need|use)\b[^.]{0,30}\b(account|receipts|service|it)\b",
+    # Spanish, Portuguese, French, Japanese, Korean negations of a deletion verb
+    r"\bno\s+(borr|elimin|cierr|cerr)\w*", r"\bsin\s+(borrar|eliminar)\b",
+    r"\bn[ãa]o\s+(exclu|apag|encerr|remov)\w*", r"\bsem\s+(excluir|apagar)\b",
+    r"\bne\s+(pas\s+)?(supprim|effac|ferm)\w*(\s+pas)?", r"\bsans\s+(supprimer|effacer)\b",
+    r"(削除|退会|解約)(しないで|しない|せず)", r"(삭제|탈퇴)(하지\s*(마|말|않))",
 ]
 
 _DELETE_RE = [re.compile(p, re.IGNORECASE) for p in _DELETE_PATTERNS]

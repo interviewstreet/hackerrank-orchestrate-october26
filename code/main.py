@@ -25,6 +25,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Ghost Data Still Exists deletion audit")
     p.add_argument("--input", choices=("eval", "sample"), default="eval",
                    help="eval = deletion_requests.csv (default), sample = the 32 labeled samples")
+    p.add_argument("--requests", type=Path, default=None,
+                   help="custom requests CSV (overrides --input), e.g. evaluation/custom_cases/requests.csv")
     p.add_argument("--output", type=Path, default=None, help="output CSV path")
     p.add_argument("--limit", type=int, default=None, help="process only the first N cases")
     p.add_argument("--no-cache", action="store_true", help="rebuild startup tables")
@@ -39,8 +41,8 @@ def main(argv: list[str] | None = None) -> int:
     settings = Settings.from_env(offline=args.offline)
     log.info("model=%s offline=%s", settings.model, settings.offline)
 
-    source = SAMPLE_REQUESTS_CSV if args.input == "sample" else REQUESTS_CSV
-    output = args.output or (OUTPUT_CSV if args.input == "eval" else None)
+    source = args.requests or (SAMPLE_REQUESTS_CSV if args.input == "sample" else REQUESTS_CSV)
+    output = args.output or (OUTPUT_CSV if args.input == "eval" and args.requests is None else None)
     if output is None:
         from ghost.config import CACHE_DIR
         output = CACHE_DIR / "sample_predictions.csv"

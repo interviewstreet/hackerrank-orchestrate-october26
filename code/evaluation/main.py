@@ -81,11 +81,10 @@ def score(gold: dict, pred: dict, case_ids: list[str]) -> dict:
 
 def print_report(gold: dict, pred: dict) -> dict[str, dict]:
     ids = sorted(gold)
-    groups = {
-        "all": ids,
-        "01-10": [c for c in ids if int(c.split("_")[1]) <= 10],
-        "11-32": [c for c in ids if int(c.split("_")[1]) > 10],
-    }
+    groups = {"all": ids}
+    if all(c.startswith("case_") for c in ids):
+        groups["01-10"] = [c for c in ids if int(c.split("_")[1]) <= 10]
+        groups["11-32"] = [c for c in ids if int(c.split("_")[1]) > 10]
     reports = {name: score(gold, pred, cids) for name, cids in groups.items()}
     metrics = [k for k in reports["all"] if k != "cases"]
     print(f"{'metric':<20}" + "".join(f"{g:>10}" for g in groups))
@@ -113,13 +112,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--show", nargs="*", default=[], help="case ids to diff, or 'failed'")
     ap.add_argument("--offline", action="store_true")
     ap.add_argument("--json", type=Path, default=None, help="also write metrics as JSON")
+    ap.add_argument("--custom", action="store_true",
+                    help="run and score the participant-made cases in evaluation/custom_cases/")
     args = ap.parse_args(argv)
 
     pred_path = args.pred
+    custom_dir = Path(__file__).resolve().parent / "custom_cases"
+    if args.custom:
+        args.gold = custom_dir / "expected.csv"
     if pred_path is None:
         import main as pipeline_main  # code/main.py
-        pred_path = CACHE_DIR / "sample_predictions.csv"
-        flags = ["--input", "sample", "--output", str(pred_path)]
+        pred_path = CACHE_DIR / ("custom_predictions.csv" if args.custom else "sample_predictions.csv")
+        flags = (["--requests", str(custom_dir / "requests.csv")] if args.custom
+                 else ["--input", "sample"]) + ["--output", str(pred_path)]
         if args.offline:
             flags.append("--offline")
         if pipeline_main.main(flags) != 0:

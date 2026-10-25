@@ -100,6 +100,41 @@ code/evaluation/usage_report.md
 
 ---
 
+## Solution: setup and run
+
+The solution is a Python batch job in `code/` (design notes: `design.md`).
+
+```bash
+# Python 3.11+; core pipeline uses only the standard library
+python3 -m venv .venv
+.venv/bin/pip install -r code/requirements.txt     # pypdf (PDF text), openai (optional vision/intent)
+brew install tesseract                             # or apt-get install tesseract-ocr; screenshot OCR fallback
+
+# optional: enables the vision model and intent fallback (never commit the key)
+cp code/.env.example .env && edit .env              # OPENAI_API_KEY=...
+
+.venv/bin/python code/main.py                      # writes output.csv (518 rows) at the repo root
+.venv/bin/python code/evaluation/main.py           # scores the 32 labeled samples
+.venv/bin/python code/evaluation/main.py --custom  # runs the participant-made cases
+.venv/bin/python code/evaluation/main.py --show failed   # per-case step diffs
+```
+
+Flags for `code/main.py`: `--input sample` (labeled samples), `--requests FILE`, `--limit N`,
+`--no-cache` (rebuild tables), `--offline` (never call the model), `-v` (debug logging).
+
+Outputs besides `output.csv`: `cache/run.log` (stage timings, per-file parse counts),
+`cache/review.jsonl` (cases with ambiguous linkage or uncited verifications),
+`cache/usage.json` (model calls and tokens), `cache/tables.sqlite` (startup tables cache).
+
+How it works, in one paragraph: at startup every input file is read once into four tables
+(identities, evidence observations, worker activity, data-catalog links) cached in SQLite; each
+request then runs six lookups-only steps: intent rules, identity resolution over current and
+historical identifiers, discovery (identifier links plus a global assignment of worker deletions
+to requests for records that no longer name anyone), state at `audit_at` from the newest
+citable evidence, `deletion_rules.csv`, and contract-ordered output.
+
+---
+
 ## Chat Transcript
 
 This repository includes [`AGENTS.md`](./AGENTS.md), which instructs compatible AI coding tools to append conversation summaries to `log.txt` in the repository root:

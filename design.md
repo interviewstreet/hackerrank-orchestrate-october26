@@ -65,8 +65,8 @@ code/
     custom_cases/              ≥3 participant-made cases with expected output
     evaluation_report.md       required deliverable
     usage_report.md            required deliverable (filled from usage.json)
-requirements.txt               openai, pypdf, pytesseract (optional), pillow
-.env.example                   OPENAI_API_KEY=
+code/requirements.txt          pypdf, openai (core pipeline is stdlib only)
+code/.env.example              OPENAI_API_KEY=
 ```
 
 Stdlib everywhere it can be: csv, json, sqlite3, hashlib, logging, dataclasses, argparse,
@@ -224,9 +224,18 @@ reports last but started from M6's numbers.
   environment, so screenshots ran through OCR. Score: case 100%, precision 98.9%, recall 94.3%,
   F1 96.6%, sequence 65.6%. Full run: 518 rows, 0 contract violations, byte-identical reruns.
 
+- **M6 done (2026-10-25).** Full 518 run triaged from `cache/review.jsonl`: 18 COMPLETE cases
+  had an uncited verification for records seen only in later files; deletable records now take the
+  covering snapshot before audit_at, retained records never (18 -> 1, no sample change). Intent
+  negation extended to es/pt/fr/ja/ko. Final: 151 COMPLETE, 357 INCOMPLETE, 10 NOT_APPLICABLE.
+- **M7 done (2026-10-25).** `code/evaluation/evaluation_report.md` (metrics, 4 custom cases,
+  failure/improvement log, rejected alternatives, limitations), `code/evaluation/usage_report.md`
+  (0 model calls in the final run: no key configured), README setup/run section, `code.zip`.
+
 ## 8. Open questions carried into code
 
-1. Tie-break for crowded windows (17 of 22 realistic samples have 2-5 candidates).
-2. Whether unobserved resources (activities only) should always be verified or only on SUCCESS.
-3. Conflict rule when two files observe the same resource at the same minute.
-4. Whether the vision model should see the OCR text as a hint or only as a post-check.
+1. Resolved: crowded windows use elimination then hour-rounded proximity (14/18 correct).
+2. Resolved: activity-only resources are verified; covering snapshot before audit_at cites absence.
+3. Resolved: same-moment rows merge with the worse state winning.
+4. Open: vision output is validated against known identities; the OCR cross-check is not wired
+   (OCR is the fallback instead). Downstream records in shared windows remain unlinked.

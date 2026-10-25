@@ -9,6 +9,20 @@ from ..tables.context import Context
 
 
 _CATEGORY_BY_SYSTEM = {"account_service": "USER_PROFILE"}
+_NO_OMISSION_INFERENCE = frozenset({"SECURITY_AUDIT_LOG", "LEGAL_HOLD_RECORD", "BACKUP_ARCHIVE",
+                                    "DATA_FLOW", "ACCOUNT_TOMBSTONE"})
+
+
+def _latest_covering(ctx: Context, system: str, audit_at: str) -> str:
+    """Newest file captured at or before audit_at whose scope covers the system, or ''."""
+    best_at, best_file = "", ""
+    for eid, entries in ctx.scopes.items():
+        if ctx.files[eid].captured_at > audit_at:
+            continue
+        for sys_id, at in entries:
+            if sys_id == system and (at, eid) > (best_at, best_file):
+                best_at, best_file = at, eid
+    return best_file
 
 
 @dataclass(frozen=True)
@@ -40,13 +54,7 @@ def _unobserved(ctx: Context, resource_id: str, audit_at: str, use_scope: bool) 
     if not system or category is None:
         return None
     if use_scope:
-        absent_at, absent_file = "", ""
-        for eid, entries in ctx.scopes.items():
-            if ctx.files[eid].captured_at > audit_at:
-                continue
-            for sys_id, at in entries:
-                if sys_id == system and (at, eid) > (absent_at, absent_file):
-                    absent_at, absent_file = at, eid
+        absent_file = _latest_covering(ctx, system, audit_at)
         if absent_file:
             return ResourceState(system, resource_id, category, "NOT_FOUND", absent_file, None, "scope")
     return ResourceState(system, resource_id, category, "NOT_FOUND", "", None, "activity")
@@ -70,6 +78,14 @@ def _observed(ctx: Context, resource_id: str, history: list, audit_at: str, use_
     if best is not None:
         return ResourceState(best.system_id, resource_id, best.category, best.result,
                              best.evidence_id, best.retention_until, "observation")
-    # Observed only in files captured after audit_at: the link is valid, the state is not citable.
+    # Observed only in files captured after audit_at: those files may link the resource but cannot
+    # describe it at audit_at. For deletable records, a covering snapshot taken before audit_at that
+    # omits the resource is the citable state. Retained records are never inferred absent from an
+    # omission (sample case_30 keeps audit_record_1707 present although an export omits it).
+    if use_scope and known.category not in _NO_OMISSION_INFERENCE:
+        covering = _latest_covering(ctx, known.system_id, audit_at)
+        if covering:
+            return ResourceState(known.system_id, resource_id, known.category, "NOT_FOUND",
+                                 covering, None, "scope")
     return ResourceState(known.system_id, resource_id, known.category, known.result, "",
                          known.retention_until, "none")

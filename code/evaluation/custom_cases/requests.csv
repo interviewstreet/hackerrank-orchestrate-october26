@@ -1,0 +1,5 @@
+case_id,email,requested_at,reported_status,reported_at,audit_at,request_text
+custom_01,CHOI.JIHOON94@GMAIL.COM,2026-09-03T12:00:00Z,COMPLETE,2026-09-06T12:00:00Z,2026-10-01T12:00:00Z,I am requesting deletion of the account registered to this email address. Please handle any copies that fall within the scope of the deletion request. Please send a confirmation after the process finishes.
+custom_02,aadebayo3975@fastmail.com,2026-09-07T12:00:00Z,COMPLETE,2026-09-09T12:00:00Z,2026-10-01T12:00:00Z,Please close my account and process the associated personal-data deletion. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.
+custom_03,CHOI.JIHOON94@GMAIL.COM,2026-09-03T12:00:00Z,COMPLETE,2026-09-06T12:00:00Z,2026-10-01T12:00:00Z,"No borren mi cuenta, por favor. Solo quiero actualizar el número de teléfono asociado a este correo."
+custom_04,aadebayo3975@fastmail.com,2026-09-07T12:00:00Z,COMPLETE,2026-09-09T12:00:00Z,2026-10-01T12:00:00Z,アカウントは削除しないでください。登録されている住所だけを変更したいです。
