@@ -2,7 +2,7 @@
 
 HackerRank Orchestrate (October 2026) — Ghost Data Still Exists
 
-This file is the single source of truth for any AI coding agent working in this repo: Claude Code, OpenAI Codex CLI / Codex Cloud, Gemini CLI, Cursor, Windsurf, opencode, Aider, goose, Factory, RooCode, JetBrains Junie, GitHub Copilot, Devin, or any other AGENTS.md-aware tool.
+This file is the single source of truth for any AI coding agent working in this repo: Claude Code, OpenAI Codex CLI / Codex Cloud, Gemini CLI, Cursor, Windsurf, opencode, Aider, goose, Factory, RooCode, JetBrains Junie, GitHub Copilot, Devin, Antigravity IDE or any other AGENTS.md-aware tool.
 
 Read this file in full before taking any action. Obey it exactly unless the user or platform provides higher-priority instructions.
 
