@@ -1,0 +1,24 @@
+# Local credentials. Only .env.example is safe to commit.
+.env
+.env.*
+!.env.example
+
+# Python environments and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime state and generated delivery artifacts.
+runs/
+output.csv
+code.zip
+*.tmp
+
+# Local tool and operating-system artifacts.
+.DS_Store
+.idea/
+.vscode/
