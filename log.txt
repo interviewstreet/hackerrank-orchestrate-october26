@@ -1528,3 +1528,23 @@ branch=feat/deletion-audit
 repo_root=D:\Coding\hackerrank-orchestrate-october26
 worktree=main
 parent_agent=none
+
+## [2026-10-25T05:52:14Z] OpenCode research result verified and triaged (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+[Task notification, not typed by the user: delegated OpenCode research task opencode-research-r1 completed]
+
+Agent Response Summary:
+Verified the OpenCode report against the official help article: the start is Oct 24 2026 12:30 UTC, the event is 24 hours, and the weights are 30/30/30/10 (code, output, interview, transcript). The article states no explicit deadline. Measured each of its 6 accuracy ideas on our data. A one-to-one timing assignment had precision 0.399 on our strong links (518) and 3 of 19 new sample links in gold. None of the 28 missed sample ids is in the OCR snapshot or the PDF text, so closed-vocabulary snapping cannot recover them. All 6 ideas are rejected or already done. The only safe general gain stays the OCR 2x plus cue-word change (1 row, case_39); it waits for the user's decision.
+
+Actions:
+* WebFetch of the HackerRank Orchestrate help article (start time, duration, weights)
+* Ran temp analyses: search of code/ocr_snapshot.json and PDF text for the 28 missed ids; assign_probe.py (offline; sample gold read only for evaluation)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feat/deletion-audit
+repo_root=D:\Coding\hackerrank-orchestrate-october26
+worktree=main
+parent_agent=none
