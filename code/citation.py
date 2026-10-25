@@ -18,7 +18,7 @@ from __future__ import annotations
 import re
 
 from evidence.common import ABSENT, ANONYMIZED, IDENTIFIABLE, PRESENT, REDACTED, Identifiers
-from policy import Decision
+from policy import Decision, holds_subject
 from resolver import ResourceState, Statement
 
 
@@ -26,7 +26,7 @@ def _natural(evidence_id: str) -> tuple:
     return tuple(int(p) if p.isdigit() else p for p in re.split(r"(\d+)", evidence_id))
 
 
-def _supports(st: Statement, decision: Decision, violating: bool) -> bool:
+def _supports(st: Statement, decision: Decision, violating: bool, keys: Identifiers) -> bool:
     attr = decision.attribute
     if attr == "exists":
         want = PRESENT if (violating or decision.check == "retain") else ABSENT
@@ -40,6 +40,8 @@ def _supports(st: Statement, decision: Decision, violating: bool) -> bool:
                 return False
             return (treatment == IDENTIFIABLE) == violating
         ids = st.values.get("exposed_ids")
+        if decision.check == "restore":   # r5-#2: the statement shows the subject's own identifiers
+            return holds_subject(ids, keys) == violating
         if isinstance(ids, Identifiers):
             hit = ids.direct() if decision.check == "direct" else ids.any()
             return hit == violating
@@ -66,7 +68,7 @@ def cite(state: ResourceState, decision: Decision, violating: bool) -> tuple[str
     support: dict[str, list[Statement]] = {}
     for cs in copies:
         stating = [st for st in cs.statements if _states(st, decision.attribute)]
-        backers = [st for st in stating if _supports(st, decision, violating)]
+        backers = [st for st in stating if _supports(st, decision, violating, state.keys)]
         latest_contra = max((st.at for st in stating if st not in backers), default=None)
         for st in backers:
             if latest_contra is None or st.at >= latest_contra:

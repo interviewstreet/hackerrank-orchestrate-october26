@@ -76,6 +76,7 @@ class ResourceState:
     record_type: str = ""
     collection: str = ""
     record_types: set[str] = field(default_factory=set)   # every stated record type (r3-#4)
+    keys: Identifiers = field(default_factory=Identifiers)   # the subject's identifiers (r5-#2)
 
     @property
     def known(self) -> bool:
@@ -134,7 +135,7 @@ def statements_for(store: FactStore, target: Target, keys: Identifiers, cutoff,
 def resolve(store: FactStore, target: Target, keys: Identifiers, cutoff,
             extra: Sequence[Observation] = ()) -> ResourceState:
     statements, observations = statements_for(store, target, keys, cutoff, extra)
-    state = ResourceState(target)
+    state = ResourceState(target, keys=keys)
     for obs in observations:
         if obs.system_id == target.system_id:
             state.record_type = state.record_type or obs.record_type

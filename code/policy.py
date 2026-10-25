@@ -277,9 +277,18 @@ def _exposure_decision(d: Decision, state: ResourceState, check: str, exists: st
     return d
 
 
+def holds_subject(ids, keys: Identifiers) -> bool:
+    """``ids`` hold one of the subject's direct identifiers (email, phone, email hash)."""
+    return isinstance(ids, Identifiers) and any(getattr(ids, k) & getattr(keys, k)
+                                                for k in ("emails", "phones", "hashes"))
+
+
 def _process_decision(d: Decision, state: ResourceState, check: str) -> Decision:
     """Data flows and backups: any ACTIVE / OPEN copy is a violation. Compliant needs every copy DISABLED /
-    BLOCKED; only a copy proven ABSENT may leave the state unknown (an absent copy runs no flow)."""
+    BLOCKED; only a copy proven ABSENT may leave the state unknown (an absent copy runs no flow).
+    A backup with no restore state on any copy is a violation when a present copy holds the
+    subject's direct identifiers (r5-#2): REPORT_RESTORE_RISK is "A backup or restore path can
+    bring deleted data back", and no BLOCKED observation stops that path."""
     attr, bad_value, good_value = (("flow_state", ACTIVE, DISABLED) if check == "flow"
                                    else ("restore_state", OPEN, BLOCKED))
     values = {name: cs.get(attr) for name, cs in sorted(state.copies.items())}
@@ -293,6 +302,11 @@ def _process_decision(d: Decision, state: ResourceState, check: str) -> Decision
         d.outcome, d.copy, d.attribute = COMPLIANT, next(n for n, v in values.items() if v == good_value), attr
     elif any(v == CONFLICT for v in values.values()):
         d.reason = "conflict"
+    elif check == "restore" and all(v == UNKNOWN for v in values.values()):
+        held = [cs.copy for cs in _present_copies(state) if holds_subject(cs.get("exposed_ids"), state.keys)]
+        if held:
+            d.outcome, d.copy, d.attribute, d.bad_copies = VIOLATION, held[0], "exposure", held
+            d.hypothesis.append("restore_block_not_shown")
     return d
 
 

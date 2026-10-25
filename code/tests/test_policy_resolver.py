@@ -320,6 +320,22 @@ class PolicyRowTest(unittest.TestCase):
         d = self._one("backup_service", "backup_1", exists=PRESENT, restore_state=BLOCKED)
         self.assertEqual((d.outcome, d.verification), (COMPLIANT, Op.VERIFY_RESTORE_BLOCKED))
 
+    def test_present_backup_with_the_subjects_ids_and_no_block_is_a_restore_risk(self):
+        # r5-#2: REPORT_RESTORE_RISK = "A backup or restore path can bring deleted data back".
+        held = obs("backup_service", "backup_1", file_id="evidence_32", exists=PRESENT)
+        _, d, item = run([held], system="backup_service", rid="backup_1")
+        self.assertEqual((d.outcome, d.finding, item.evidence_id),
+                         (VIOLATION, Op.REPORT_RESTORE_RISK, "evidence_32"))
+        # Another user's identifiers, or no identifiers: no proof, stays unproven.
+        for ids in (Identifiers(emails={"bob@example.com"}), Identifiers(user_ids={"user_1"})):
+            other = obs("backup_service", "backup_1", exists=PRESENT, ids=ids)
+            self.assertEqual(run([other], system="backup_service", rid="backup_1")[1].outcome, UNPROVEN)
+        # A BLOCKED observation on any copy: the existing rule decides (compliant here).
+        blocked = obs("backup_service", "backup_1", copy="failover_replica", exists=PRESENT, restore_state=BLOCKED,
+                      ids=Identifiers())
+        d = run([held, blocked], system="backup_service", rid="backup_1")[1]
+        self.assertNotEqual(d.outcome, VIOLATION)
+
     def test_rule_15_tombstone(self):
         clean = obs("identity_service", "tombstone_1", exists=PRESENT, ids=Identifiers(user_ids={"user_1"}))
         d = run([clean], system="identity_service", rid="tombstone_1")[1]
