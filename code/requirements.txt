@@ -1,0 +1,2 @@
+anthropic>=2.0
+pdfplumber>=0.11

@@ -1,0 +1,1016 @@
+{
+ "02c5b1ec159f855462e3bbfa9ae2832850c23293ee2b7ac29c4e13f9f7b757eb": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer asks the company to remove the records tied to both their old and current email addresses. That is a request to erase the personal data linked to the account, not a request to correct or change a field."
+  }
+ },
+ "04e53b4058b36fd640e8029e438ec9a466d52255f490fb98283e2addf4bd5538": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": true,
+     "personal_fields_visible": [],
+     "record_kind": "stored object",
+     "reference": "delivery_confirmation_19.pdf",
+     "status_text": "v3"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "stored object",
+     "reference": "delivery_confirmation_20.pdf",
+     "status_text": "v1"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "stored object",
+     "reference": "return_label_4821.pdf",
+     "status_text": "v1"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "stored object",
+     "reference": "return_label_4876.pdf",
+     "status_text": "v2"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "stored object",
+     "reference": "invoice_NS-10493.pdf",
+     "status_text": "v1"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "stored object",
+     "reference": "parcel_damage_7713.jpg",
+     "status_text": "v1"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "data export",
+     "reference": "customer_export_2026-02-10.zip",
+     "status_text": "v1"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "data export",
+     "reference": "customer_export_2026-02-12.zip",
+     "status_text": "v1"
+    }
+   ]
+  }
+ },
+ "088213c75ab50a36b74de8e37dbd41167f14ebbe053446a17e4422ce9730af30": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_003",
+     "status_text": "Account closure recorded"
+    }
+   ]
+  }
+ },
+ "0ced382e94b7dda94aa888e7689c3111f3b44288cdabfaebccc46ae8098cb68f": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer says an earlier deletion did not finish, since the account and its search result can still be found, and asks the company to investigate and complete it."
+  }
+ },
+ "11c591317723ace77fd4887314e112d7a3532a25c7116c98f69aaa4189703123": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer wants a copy of their account data and says explicitly not to delete or change anything. The account should keep existing."
+  }
+ },
+ "125d2cf74a44dcddd720f0a3f14005b8a00e108101e3514c547e76b4d393db67": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer says they no longer need the account and asks to remove their name and contact details. That is a request to close the account and erase its personal data. Allowing an internal deleted-account reference to remain does not change that."
+  }
+ },
+ "15a217e0af0beff6c59048a01cff7494dbeee9716e419be89f9f587d2949108b": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The account appears to have been removed already, but the old profile still shows up in search. The customer is asking for that leftover trace to be removed, which counts as an incomplete deletion."
+  }
+ },
+ "2023b2ff473e51cb926b83101385610949b368ce54413c2ee50dd07e53bef6b8": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer deleted their account and wants confirmation that no data tied to the old email address remains. That is a request to verify the deletion was completed and nothing was left behind."
+  }
+ },
+ "27aa746bf106a5f33ed6c33ad9b0949c28755a1f85d2d54594fb4c7923c0b17d": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "user_18",
+      "ingrid.dahl@outlook.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "postal_address",
+      "user_id"
+     ],
+     "record_kind": "customer statement",
+     "reference": "NST-2026-0718-1842",
+     "status_text": "paid"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "user_18",
+      "ingrid.dahl@outlook.com"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "postal_address",
+      "user_id"
+     ],
+     "record_kind": "order",
+     "reference": "ORD-20261260",
+     "status_text": "delivered"
+    }
+   ]
+  }
+ },
+ "2a1d9cc7e31bba15fffaba7d313f69d9fca8dafede3d2796ef1a83a6c5c309fe": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer reports that an earlier account deletion left traces in search, support and analytics. They ask for those traces to be handled and for any synchronization that could recreate them to be disabled. This is an incomplete-deletion report."
+  }
+ },
+ "3207d4a017fa76593ef5e8291784b2c421305caebffe0db3da97be0f6228e89a": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_08"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "disputed order record",
+     "reference": "ORD-20264118",
+     "status_text": "Retain until 04 May 2033"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_12"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "disputed order record",
+     "reference": "ORD-20264207",
+     "status_text": "Retain until 09 May 2033"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_17"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "disputed order record",
+     "reference": "ORD-20264319",
+     "status_text": "Retain until 14 May 2033"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_21"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "disputed order record",
+     "reference": "ORD-20264402",
+     "status_text": "Retain until 18 May 2033"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_24"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "disputed order record",
+     "reference": "ORD-20264511",
+     "status_text": "Retain until 23 May 2033"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_29"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "tax record",
+     "reference": "ORD-20264600",
+     "status_text": "Retain until 28 May 2033"
+    }
+   ]
+  }
+ },
+ "32bc233f3939585d45ef22d01518b810564b0d8d7b6209bb19da76cfd172a65b": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "FLOW_ACTIVE",
+     "identifiers": [
+      "jain.aditi@gmail.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "connector",
+     "reference": "data_flow_1121",
+     "status_text": "Healthy"
+    },
+    {
+     "condition": "FLOW_ACTIVE",
+     "identifiers": [
+      "lucia-torres@gmail.com"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "connector",
+     "reference": "data_flow_9846",
+     "status_text": "Continuous"
+    }
+   ]
+  }
+ },
+ "37e1381ee421cda1fa7fe630fd6e69377edd140aeedffbb18c1d7e651c4a687b": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer explicitly asks to delete their account, plus personal data they gave support (an identity document)."
+  }
+ },
+ "38deaa82f7a236a9c5276714c4b08bcb5947d8305e32e5b43f4029b0fa31200f": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer asks to update their phone number and explicitly wants the account to stay active, so this is not a deletion request."
+  }
+ },
+ "3bdc0819bd629bb99ef45abdbd3b0063f62f7d79b6a2e7631e1b618b9e6b6918": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "sj.park@naver.com",
+      "+82 10-5837-9451"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "phone"
+     ],
+     "record_kind": "customer profile",
+     "reference": "marketing_001",
+     "status_text": "Live"
+    }
+   ]
+  }
+ },
+ "3e509d6f2e1ed8464be855e21d21399db709fbf13d83a1d0b2c307a65c148c6e": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer explicitly asks for the account to be closed and for the profile and attached personal details to be removed."
+  }
+ },
+ "4d4b7b3ddeeea98babd93c82b7a975f75229a184c2e019ec4f6fec50878af842": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer wants help resetting their login and explicitly says not to close the account."
+  }
+ },
+ "4d554ba42b9a0c9f384d6806610683b63f4b5daf9a12542696fb984a5c6bf0c4": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "kagyeman8947@fastmail.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email"
+     ],
+     "record_kind": "support ticket",
+     "reference": "CS-5034 / support_1034",
+     "status_text": "SLA 01:42"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "name"
+     ],
+     "record_kind": "order",
+     "reference": "ORD-20265034",
+     "status_text": "In transit"
+    }
+   ]
+  }
+ },
+ "4d6e58d3af7aabcdf63691a355a65e605cef6f918ff4457470173eca778f4ccf": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer asks to correct a misspelled surname and explicitly wants their records kept. This is a correction request, not a deletion."
+  }
+ },
+ "51a14aabea7ab23ea5f1ac1831385abddac833dc5f09681b1e213dafb7834bf0": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer wants confirmation that their profile has been removed and that any remaining records cannot identify them. That is a request to verify that a deletion was completed, which falls under account deletion."
+  }
+ },
+ "6780db549ecce3cb6ad7b867d44c7984acd13ac764828d97fb83fca93fc22424": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer says their earlier request failed and asks the company to check whether the account and identifiable analytics data have been removed. This is a request to verify a deletion that did not complete."
+  }
+ },
+ "6f38123ece04c90214e2ffd7a5cd2d91c01c6d0e1682a38fd8a9a06ec2a22709": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer explicitly asks to delete the account along with the earlier data archive and any search results pointing to them. Allowing security records to stay where policy requires does not change the deletion intent."
+  }
+ },
+ "8134d850b6cfe3e60d62d0e7ca0a7178d974db9e215c869767b0cfadf54d6136": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer asks only to stop marketing and wants to keep the account and keep getting receipts and service messages."
+  }
+ },
+ "8f496c537aeb0c92cf9f70381fc9a025438619282b26ec2be0efebed64ea4032": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer asks for removal of their records under both current and former email addresses, plus disabling integrations that could restore them. That is a request to erase the account's personal data."
+  }
+ },
+ "9efc4de91f4b05e1b251f299613ad0e48150d4d248c26a374170442182b4641f": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "RESTORE_ALLOWED",
+     "identifiers": [
+      "bluepeakco@outlook.com"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "backup archive",
+     "reference": "backup_9291",
+     "status_text": "Archive"
+    },
+    {
+     "condition": "RESTORE_ALLOWED",
+     "identifiers": [
+      "miller.logistics@company.com"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "backup archive",
+     "reference": "backup_9288",
+     "status_text": "Archive"
+    },
+    {
+     "condition": "RESTORE_ALLOWED",
+     "identifiers": [
+      "areed1433@gmail.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "backup archive",
+     "reference": "backup_9287",
+     "status_text": "Archive"
+    },
+    {
+     "condition": "RESTORE_ALLOWED",
+     "identifiers": [
+      "summit-retail@company.com"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "backup archive",
+     "reference": "backup_9286",
+     "status_text": "Archive"
+    }
+   ]
+  }
+ },
+ "a0d7c590a47f9438407920ec53e91ceceb530be004be9d1ce3a75021f3970929": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer asks to close the account permanently and wants their personal profile made unrecoverable, even from any backups that are kept. This is a deletion request."
+  }
+ },
+ "a16001c75036f27cd99e0f77c676bc3339a4c72caa1f3d9961315f844f7b19e7": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "g.silva76@gmail.com",
+      "user_13"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "user_id"
+     ],
+     "record_kind": "search document",
+     "reference": "search_428",
+     "status_text": ""
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "g.silva76.jr@gmail.com"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "search document",
+     "reference": "search_1874",
+     "status_text": ""
+    }
+   ]
+  }
+ },
+ "aaf29743091709dc79f7a07c6541ec18b95169b6c4dd9af5e755f565760bc61d": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer only wants promotional emails to stop and explicitly says they want to keep the account and order history, not delete it."
+  }
+ },
+ "b3de393f74b718dd5deaa11ef547fc42af66342357d20aca257990b921cbf9ec": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_003",
+     "status_text": "Valid"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_002",
+     "status_text": "Valid"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_001",
+     "status_text": "Valid"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_006",
+     "status_text": "Valid"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_005",
+     "status_text": "Valid"
+    },
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_03"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "audit event",
+     "reference": "audit_record_004",
+     "status_text": "Valid"
+    }
+   ]
+  }
+ },
+ "b57da98153b8485d22e79fd076deeb83a24ca6f1fc417f8d8778e974ae6f737b": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer explicitly asks to close the account completely. They also say an earlier disconnection left an integration active, which counts as a report that a prior closure did not finish."
+  }
+ },
+ "b70654a5b73faece6f69e4c876efbe48d983b6bffaf2fdffa852ec08880f6b95": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "user_20",
+      "darwish.omar@icloud.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "user_id"
+     ],
+     "record_kind": "analytics user profile",
+     "reference": "user_20",
+     "status_text": "Last 90 days"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "user_20",
+      "darwish.omar@icloud.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "user_id"
+     ],
+     "record_kind": "analytics profile id",
+     "reference": "analytics_7438",
+     "status_text": "Last 90 days"
+    }
+   ]
+  }
+ },
+ "b72e739e91195cba5245c77e42243a34a8bfedfadeba3ff2d9cb4444165ace5b": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer asks to remove their profile and erase their personal details from past support conversations. That is a request to delete the account and its personal data. Their note that the conversations may need to stay concerns another customer's data, not keeping their own account."
+  }
+ },
+ "bac56168b50a38536f275da26ab332ac505999bd230682d48fa09982b2c05e53": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "priya.raman@gmail.com",
+      "+91 98765 73142"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "phone"
+     ],
+     "record_kind": "support ticket",
+     "reference": "CS-4827 / support_001",
+     "status_text": ""
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": true,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "attachment",
+     "reference": "delivery_address_correction.pdf",
+     "status_text": ""
+    }
+   ]
+  }
+ },
+ "baf083cde20a14d2d3b353bc8c2caff2f40cae8300db891728c694aedcfe39c4": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer (writing in Spanish) says an earlier attempt to delete the account failed with an error. They ask the company to check whether any data remains and to finish the deletion if needed."
+  }
+ },
+ "be6144059df2264edd231a54f922196f8f478d643cc31eef49261dd5f65a8dce": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer says they are deleting their account and asks that no identifiable data remain in analytics. Allowing anonymous statistics still fits a deletion request."
+  }
+ },
+ "c2f7dbdfb8c36abbf8e2885c9ddef51cab26ddd960d4718b66c7cecaf7a0bf1b": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer asks the company to verify that their account deletion was completed, which the definition counts as a deletion request. The note about another person's record with a similar email only clarifies which account is theirs."
+  }
+ },
+ "c5600594c50ce6a8e75e99ab26b6e6d2223e11529ca85c0e04ea722abb3c40a1": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer wants the company to audit an earlier deletion and confirm the account was fully removed. Requests to verify that a deletion was completed fall under ACCOUNT_DELETION."
+  }
+ },
+ "c61ed4f0e7171283e143ccf7e85daeb02a10f20304e9163680f877298e065d67": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer reports that an earlier account deletion left personal details behind in an internal record. They ask for the remaining personal data to be removed, keeping only the reference needed for retained records. This is an incomplete-deletion follow-up."
+  }
+ },
+ "c6c605cf05bc322066c108d129d057b01d2ea2b5fd9107a08da3ace1db676626": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer reports that an earlier deletion left traces behind, since the email is still recognized, and asks for the remaining profile data to be removed."
+  }
+ },
+ "cd7c5de5bfcc9404c1c46942e1d681494259f6bd4cde47b995e3980d56b19fe0": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer wants copies of invoices and explicitly asks that the profile and purchase history stay in place, so the account should keep existing."
+  }
+ },
+ "d47b1a38372e43349a08b222bf8b987414a87be729b93c79034faf75f32c4b03": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "RETAINED_RECORD",
+     "identifiers": [
+      "user_17"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "user_id"
+     ],
+     "record_kind": "customer reference",
+     "reference": "user_17",
+     "status_text": "Retained reference"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "order",
+     "reference": "ORD-20263245",
+     "status_text": "Active"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "support ticket",
+     "reference": "CS-3245",
+     "status_text": "Active"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "support ticket",
+     "reference": "CS-3378",
+     "status_text": "Active"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "finance record",
+     "reference": "FIN-7742",
+     "status_text": "Active"
+    }
+   ]
+  }
+ },
+ "de921e322d877725132dc0a23e9f556437014f5b421187e54313bd94d89994ec": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "marcus.lee@northstar.shop"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "data export",
+     "reference": "export_1261",
+     "status_text": "Collecting"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "ingrid.dahl@outlook.com"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "data export",
+     "reference": "export_1260",
+     "status_text": "Ready"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "sara.kim@northstar.shop"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "data export",
+     "reference": "export_1259",
+     "status_text": "Packaging"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "daniel.park@northstar.shop"
+     ],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [
+      "email"
+     ],
+     "record_kind": "data export",
+     "reference": "export_1258",
+     "status_text": "Ready"
+    }
+   ]
+  }
+ },
+ "e0e095934f9252aadf0cb438c3f72d273bf6bce3f618de1214d977556f5de483": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer asks what personal information is held about them and says explicitly that this is not an erasure request."
+  }
+ },
+ "f5938f6d54c3be6b31540a6fa544d237945afb9aa09f9d9baf3eaa9cbbaf758b": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer reports that a past account closure left personal data behind (a data export that is still reachable) and asks for that file to be deleted. This is a report of incomplete deletion, which counts as ACCOUNT_DELETION."
+  }
+ },
+ "f5e72e7f6334fcf533ac7f4121a9acb18917b99624841471d2f276e4acd2da1a": {
+  "purpose": "visual_extraction",
+  "result": {
+   "records": [
+    {
+     "condition": "EXISTS",
+     "identifiers": [
+      "user_11",
+      "haruka.s1838@zoho.com",
+      "+81 90 7610 2507"
+     ],
+     "is_attachment": false,
+     "is_focus": true,
+     "personal_fields_visible": [
+      "name",
+      "email",
+      "phone",
+      "postal_address",
+      "user_id"
+     ],
+     "record_kind": "customer profile",
+     "reference": "account_5762",
+     "status_text": "Silver"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "order",
+     "reference": "ORD-20265762",
+     "status_text": "Delivered · 18 Sep"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "order",
+     "reference": "ORD-20265518",
+     "status_text": "Returned · 03 Sep"
+    },
+    {
+     "condition": "EXISTS",
+     "identifiers": [],
+     "is_attachment": false,
+     "is_focus": false,
+     "personal_fields_visible": [],
+     "record_kind": "support ticket",
+     "reference": "CS-8538 / support_9538",
+     "status_text": ""
+    }
+   ]
+  }
+ },
+ "fa3ab10923d152abc63fb9b7da307519d0d5e0b4c762c8adac27e5ab4d7323b7": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "ACCOUNT_DELETION",
+   "reason": "The customer asks the company to verify that their account deletion is complete and the profile is gone. Requests to confirm a deletion was completed fall under ACCOUNT_DELETION."
+  }
+ },
+ "fbb6f7aadb512dcde37e6fe2b022fa2324532bca5507f0d74b15ddfdddcfcb85": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer asks only to change the account's email address and says they want to keep using the service, so the account should stay open."
+  }
+ },
+ "fe88ef2c5e91f3dfb1ba6cf4f7ab29e8f5902b7c50969c09e895a7bda363f704": {
+  "purpose": "intent_classification",
+  "result": {
+   "label": "NOT_DELETION",
+   "reason": "The customer wants a portable copy of their account data and explicitly asks for the account to stay as it is. That is a data portability request, not a deletion."
+  }
+ }
+}

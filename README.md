@@ -1,5 +1,12 @@
 # HackerRank Orchestrate - October 2026
 
+> **Submission: deletion audit agent.** Setup, run instructions and architecture are in
+> [`code/README.md`](./code/README.md). Run `pip install -r code/requirements.txt`, export
+> `ANTHROPIC_API_KEY`, then `python3 code/main.py` to regenerate `output.csv`
+> (`--offline` reuses the cached model answers in `code/cache/`). Reports:
+> [`code/evaluation/evaluation_report.md`](./code/evaluation/evaluation_report.md),
+> [`code/evaluation/usage_report.md`](./code/evaluation/usage_report.md).
+
 ## Ghost Data Still Exists
 
 Build an AI agent that audits whether a user's personal data was actually deleted.
