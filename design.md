@@ -200,6 +200,17 @@ reports last but started from M6's numbers.
   Correction to earlier notes: case_534 ("stop the promotional emails… not asking for deletion") is
   NOT_APPLICABLE, so there are 10 non-deletion cases, 533-542.
 
+- **M4 done (2026-10-25).** `pipeline/linkage.py`: global window assignment over all requests
+  (evaluation + sample files share the activity stream). Accounts: worker DELETE_RECORD in
+  [requested_at, reported_at + 15 min], result matching reported status (fallback any), not tied to
+  anyone else; iterative elimination; remaining conflicts by hour-rounded proximity to reported_at
+  in (reported_at, case number) order, each recorded in review notes. Downstream records: linked only
+  when exactly one request can claim them and they appear in that request's own evidence files.
+  Measured alternatives on the samples before choosing: job-ordering for downstream records was
+  wrong (jobs interleave), unique-only accounts were too timid (6 of 28 found). Resources known only
+  from activity: absent via the newest covering snapshot <= audit_at, else verify-only without
+  evidence. Score: case 96.9%, step precision 97.8%, recall 92.2%, sequence 59.4%.
+
 ## 8. Open questions carried into code
 
 1. Tie-break for crowded windows (17 of 22 realistic samples have 2-5 candidates).

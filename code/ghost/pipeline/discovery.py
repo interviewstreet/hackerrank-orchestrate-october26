@@ -17,6 +17,10 @@ def linked_resources(ctx: Context, subject: Subject) -> set[str]:
     return found
 
 
-def discover(ctx: Context, request: Request, subject: Subject) -> tuple[set[str], list[str]]:
-    """Return (resource_ids, notes). Window-based candidates arrive in milestone M4."""
-    return linked_resources(ctx, subject), []
+def discover(ctx: Context, request: Request, subject: Subject, linkage=None) -> tuple[set[str], list[str]]:
+    """Return (resource_ids, notes): identifier links plus window links from the global linkage."""
+    found = linked_resources(ctx, subject)
+    if linkage is None:
+        return found, []
+    extra, notes = linkage.for_case(request.case_id)
+    return found | extra, list(notes)

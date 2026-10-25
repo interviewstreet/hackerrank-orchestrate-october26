@@ -14,8 +14,8 @@ log = logging.getLogger(__name__)
 
 
 class CasePipeline:
-    def __init__(self, ctx: Context, policy: Policy, intent: IntentClassifier) -> None:
-        self.ctx, self.policy, self.intent = ctx, policy, intent
+    def __init__(self, ctx: Context, policy: Policy, intent: IntentClassifier, linkage=None) -> None:
+        self.ctx, self.policy, self.intent, self.linkage = ctx, policy, intent, linkage
 
     def run(self, req: Request) -> CaseResult:
         label, why = self.intent(req.request_text)                       # step 1
@@ -27,7 +27,7 @@ class CasePipeline:
         if subject is None:
             return CaseResult(req.case_id, "INCOMPLETE", notes=["subject not resolved"])
 
-        resources, disc_notes = discover(self.ctx, req, subject)         # step 3
+        resources, disc_notes = discover(self.ctx, req, subject, self.linkage)         # step 3
         notes += disc_notes
 
         findings, remediations, verifications = [], [], []

@@ -6,13 +6,14 @@ import logging
 from collections import Counter
 from pathlib import Path
 
-from .config import REVIEW_JSONL, Settings
-from .dataset_io import write_output
+from .config import REQUESTS_CSV, REVIEW_JSONL, SAMPLE_REQUESTS_CSV, Settings
+from .dataset_io import load_requests, write_output
 from .logging_setup import stage
 from .models import CaseResult, Request
 from .tables.build import load_or_build
 from .pipeline.case import CasePipeline
 from .pipeline.intent import IntentClassifier
+from .pipeline.linkage import build_linkage
 from .pipeline.policy import Policy
 
 log = logging.getLogger(__name__)
@@ -21,7 +22,12 @@ log = logging.getLogger(__name__)
 def build_context(settings: Settings, use_cache: bool = True) -> CasePipeline:
     """Build or load the startup tables, load the policy, and wire the per-case pipeline."""
     ctx = load_or_build(use_cache=use_cache)
-    return CasePipeline(ctx, Policy.load(), IntentClassifier(fallback=None))
+    intent = IntentClassifier(fallback=None)
+    # Linkage is global: both request files share one activity stream, so both are considered.
+    all_requests = load_requests(REQUESTS_CSV) + load_requests(SAMPLE_REQUESTS_CSV)
+    with stage(log, "window linkage"):
+        linkage = build_linkage(ctx, all_requests, lambda text: intent(text)[0] == "DELETE")
+    return CasePipeline(ctx, Policy.load(), intent, linkage)
 
 
 def run_case(request: Request, pipeline: CasePipeline) -> CaseResult:
