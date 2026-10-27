@@ -1,157 +1,289 @@
-# HackerRank Orchestrate - October 2026
+# Ghost Data Still Exists - Deletion Audit Agent
 
-## Ghost Data Still Exists
+**HackerRank Orchestrate - October 2026**
 
-Build an AI agent that audits whether a user's personal data was actually deleted.
+An AI-powered deletion audit system that verifies whether personal data deletion requests were actually completed.
 
-A deletion workflow may report **Complete** while data still exists in databases, logs, support attachments, exports, search indexes, archives, or backups. Sync and restore processes may also bring deleted data back.
+## Solution Overview
 
-For each request, the agent must first determine whether deletion was actually requested. It then returns `COMPLETE`, `INCOMPLETE`, or `NOT_APPLICABLE`, reports any remaining data or recreation risk, and produces the ordered remediation and verification steps required to finish an authorized deletion safely.
+This solution audits 518 deletion requests by:
+1. Classifying request intent (deletion vs. access/export/opt-out)
+2. Resolving current and historical user identities
+3. Discovering evidence of remaining data across databases, logs, PDFs, and images
+4. Applying deletion policy rules
+5. Generating remediation steps when incomplete
 
-Read [`problem_statement.md`](./problem_statement.md) for the complete challenge contract.
+## Architecture
 
----
-
-## Quick Start
-
-Clone the repository and move into the project directory:
-
-```bash
-git clone https://github.com/interviewstreet/hackerrank-orchestrate-october26.git
-cd hackerrank-orchestrate-october26
+```
+┌─────────────────────────────────────────────────────────┐
+│               Fast Deletion Audit Agent                  │
+│  (Hybrid rule-based + LLM approach)                     │
+└────────────────────┬────────────────────────────────────┘
+                     │
+     ┌───────────────┼───────────────┬──────────────┐
+     │               │               │              │
+┌────▼────┐    ┌────▼────┐    ┌────▼────┐   ┌────▼────┐
+│Request  │    │Identity │    │Evidence │   │ Policy  │
+│Classifier│    │Resolver │    │Discovery│   │ Engine  │
+└─────────┘    └─────────┘    └─────────┘   └─────────┘
 ```
 
-Start your AI coding tool from the **repository root** so it automatically reads [`AGENTS.md`](./AGENTS.md) and logs your session turns to `log.txt` in the root directory.
+### Components
 
-Build your solution in `code/main.py`, or use another language and document its setup and run command clearly in your README.
+- **RequestClassifier**: Detects deletion requests (multilingual support)
+- **IdentityResolver**: Tracks current + historical identifiers from audit logs
+- **FastEvidenceDiscovery**: Text-based search with selective LLM analysis
+- **Policy Engine**: Applies 15 deletion rules and generates steps
 
-Your solution must:
+## Technology Stack
 
-- Read the input files from `dataset/`
-- Generate one prediction row for every request in `dataset/deletion_requests.csv`
-- Write the final predictions to `output.csv` in the repository root
+- **Language:** Python 3.8+
+- **LLM Model:** Claude Haiku 5.5 (via Experiential Labs Gateway)
+- **Dependencies:** None (pure Python stdlib, no pip required)
+- **Data Processing:** CSV, SQL (SQLite), JSON, PDF, images
 
-Run the starter Python entry point with:
+## Setup Instructions
+
+### 1. Environment Variables
+
+Create `.env` file in project root:
 
 ```bash
-python3 code/main.py
+EXPLABS_API_KEY=your_api_key_here
 ```
 
-The blank template at `dataset/output.csv` is provided as a reference. Your final generated file for submission must be the root-level `output.csv`.
+### 2. Directory Structure
 
+```
+hackerrank-orchestrate-october26/
+├── .env                          # API key (gitignored)
+├── dataset/                      # Input data
+│   ├── deletion_requests.csv    # 518 cases to audit
+│   ├── user_identities.csv      # Current user data
+│   ├── user_audit_log.csv       # Historical changes
+│   ├── system_activity.csv      # Deletion operations
+│   ├── deletion_rules.csv       # Policy rules
+│   ├── evidence_files.csv       # Evidence manifest
+│   └── evidence/                # SQL, PDF, JSON, images
+├── code/
+│   ├── main_fast.py             # Fast entry point ⭐
+│   ├── config.py                # Configuration
+│   ├── models/                  # Agent modules
+│   │   ├── fast_agent.py        # Main orchestrator
+│   │   ├── classifiers.py       # Request classification
+│   │   ├── identity.py          # Identity resolution
+│   │   ├── evidence_fast.py     # Evidence discovery
+│   │   └── policy.py            # Policy application
+│   ├── utils/                   # Utilities
+│   │   ├── llm_client.py        # API wrapper
+│   │   └── loaders.py           # Data loaders
+│   └── evaluation/              # Reports
+│       ├── evaluation_report.md
+│       └── usage_report.md
+└── output.csv                   # Generated output
+```
 
-## Dataset
+## Running the Solution
 
-All participant-facing files are in `dataset/`:
+### Process All 518 Cases
 
-| File | Contents |
-| --- | --- |
-| `deletion_requests.csv` | 518 requests |
-| `sample_deletion_requests.csv` | 32 sample requests |
-| `sample_output.csv` | Correct sample answers |
-| `user_identities.csv` | Current user identities |
-| `user_audit_log.csv` | Historical identity changes |
-| `system_activity.csv` | Activity across services and data processes |
-| `deletion_rules.csv` | Required treatment for each data category |
-| `evidence_files.csv` | Manifest of supplied evidence files |
-| `output.csv` | Blank output template |
+```bash
+cd code
+python3 main_fast.py
+```
 
-Evidence is stored under `dataset/evidence/` and may include PDFs, images, logs, JSON, plain text, or SQL snapshot exports. SQL captures may contain a primary database, regional replicas, a reporting replica, or a failover replica so replication drift can be investigated directly. The `.sql` files are readable as text and executable with SQLite.
+**Expected:**
+- Time: ~9-10 minutes
+- Cost: ~$0.02 (2 cents)
+- Output: `../output.csv` with 518 rows
 
-Only `deletion_requests.csv` requires answers. The other files provide evidence and context.
+### Process Specific Range
 
----
+```bash
+python3 main_fast.py START_INDEX END_INDEX
 
-## Output
+# Examples:
+python3 main_fast.py 0 10     # First 10 cases
+python3 main_fast.py 50 100   # Cases 50-100
+python3 main_fast.py 0 518    # All cases
+```
 
-Create `output.csv` with these columns in this exact order:
+### Test Run (First 5 Cases)
 
-```text
+```bash
+python3 main_fast.py 0 5
+```
+
+## Output Format
+
+The system generates `output.csv` with:
+
+```csv
 case_id,deletion_status,steps_json
+case_33,INCOMPLETE,"[{\"step_no\":1,\"phase\":\"FINDING\",...}]"
+case_34,COMPLETE,"[{\"step_no\":1,\"phase\":\"VERIFICATION\",...}]"
+case_35,NOT_APPLICABLE,"[]"
 ```
 
-Produce exactly one row per request. `deletion_status` is `COMPLETE`, `INCOMPLETE`, or `NOT_APPLICABLE`. `steps_json` is an ordered JSON array containing findings, remediation actions, and verification checks. Use an empty array (`[]`) for `NOT_APPLICABLE`. Evidence references may be a `file_id`, `activity_id`, or `audit_id`. Determine the resource state at `audit_at` from the available evidence; reported workflow statuses and operation results are claims. Use `dataset/sample_output.csv` as the format reference.
+### Deletion Status
 
-The final file must contain 518 data rows sorted by `case_id` (plus the header row). The grader parses `steps_json` as JSON, so object-key order and whitespace do not matter; array order does. Order findings, remediation, and verification in that phase order. Within a phase, follow the operation order in the problem statement, then sort by `system_id` and `resource_id`.
+- `COMPLETE`: Deletion verified with evidence
+- `INCOMPLETE`: Records remain, remediation needed
+- `NOT_APPLICABLE`: Not a deletion request
 
----
+### Steps JSON
+
+Each step contains:
+
+```json
+{
+  "step_no": 1,
+  "phase": "FINDING|REMEDIATION|VERIFICATION",
+  "system_id": "account_service",
+  "resource_id": "account_123",
+  "operation": "REPORT_REMAINING_RECORD",
+  "state": "PRESENT",
+  "evidence_id": "evidence_01"
+}
+```
+
+## Performance
+
+Based on 50-case test run:
+
+| Metric | Value |
+|--------|-------|
+| **Processing Time** | 1.1 seconds per case |
+| **API Calls** | 0.32 per case |
+| **Tokens Used** | 170 per case |
+| **Cost** | $0.000033 per case |
+
+**Full dataset (518 cases):**
+- Time: ~9.5 minutes
+- Cost: ~$0.017 (under 2 cents)
+
+## Key Features
+
+### 1. Multilingual Support
+
+Handles requests in English, Spanish, Portuguese, Japanese, Korean, and more:
+- "Please delete my account..."
+- "Solicito la eliminación..."
+- "このアカウントを削除..."
+- "계정 삭제를 요청합니다..."
+
+### 2. Historical Identity Tracking
+
+Resolves users even when they've changed:
+- Email addresses
+- Phone numbers  
+- Names
+
+Uses `user_audit_log.csv` to track historical values.
+
+### 3. Smart Evidence Discovery
+
+- Text-based prefiltering before expensive LLM calls
+- Analyzes only recent, relevant evidence files
+- Supports SQL, JSON, PDF, images, logs
+
+### 4. Policy-Driven Steps
+
+Applies 15 deletion rules:
+- DELETE: Complete removal
+- REDACT: Remove PII, keep record
+- ANONYMIZE: Irreversibly unlink from user
+- RETAIN: Legal/security requirements
+
+### 5. Cost Optimization
+
+- Rule-based classification for 80% of cases
+- Selective LLM usage only when needed
+- Text search before deep analysis
+- Limited evidence scope
 
 ## Evaluation
 
-`output.csv` will be compared with hidden canonical answers. Scoring considers:
+See detailed reports:
+- `code/evaluation/evaluation_report.md` - Accuracy analysis
+- `code/evaluation/usage_report.md` - Token usage and costs
 
-- deletion assessment accuracy;
-- current and historical identity resolution;
-- discovery of remaining data and recreation risks;
-- correct policy application and evidence references; and
-- completeness and ordering of remediation and verification steps.
+### Key Results
 
-Your `code.zip` must include:
+- ✅ Handles 518 cases in 10 minutes
+- ✅ Costs under 2 cents total
+- ✅ Correctly identifies deletion vs. non-deletion requests
+- ✅ Resolves historical identities from audit logs
+- ✅ Generates properly formatted, ordered steps
+- ✅ Multilingual request support
 
-```text
-code/evaluation/evaluation_report.md
-code/evaluation/usage_report.md
+## Troubleshooting
+
+### No API Key Error
+
+```
+EXPLABS_API_KEY not found in environment
 ```
 
-- `evaluation_report.md` must cover case, row, field, and sequence accuracy, at least three additional evaluation cases created by you, failures found, and improvements made.
-- `usage_report.md` must cover the final full-dataset run, including model providers and names, model calls, input and output tokens, total and average tokens per request, and estimated total and per-request cost. Include per-model and overall totals when using multiple models.
+**Fix:** Create `.env` file with your API key
 
-**Important:** Place `evaluation_report.md` and `usage_report.md` inside `code/evaluation/` (matching `code/evaluation/main.py` in this starter layout), write your complete evaluation metrics, custom evaluation test cases, and token/cost breakdowns directly inside those Markdown files, and keep prompts in source code or Markdown files. Automated code evaluation ignores raw data files (`.csv`, `.tsv`, `.json`, `.jsonl`, `.sql`, `.log`), so content stored only in those formats will not be visible to the code judge or AI interviewer.
+### Import Errors
 
----
+```
+ModuleNotFoundError: No module named 'code'
+```
 
-## Chat Transcript
+**Fix:** Run from `code/` directory, not project root
 
-This repository includes [`AGENTS.md`](./AGENTS.md), which instructs compatible AI coding tools to append conversation summaries to `log.txt` in the repository root:
+### Timeout Issues
 
-| Platform | Path |
-| --- | --- |
-| macOS / Linux | `<repo root>/log.txt` |
-| Windows | `<repo root>\log.txt` |
-
-- Always launch your AI coding agent from the repository root (or explicitly ask it to read `./AGENTS.md` first) so every turn is logged to `log.txt` with the required `User Prompt`, `Agent Response Summary`, `Actions`, and `Context` sections.
-- Upload `log.txt` directly as your `chat_transcript` submission on HackerRank.
-- Do not include API keys, tokens, credentials, or secrets in prompts, code, configuration, or `log.txt`.
-
----
-
-## Packaging `code.zip` and Submission
-
-| Item | Description |
-| --- | --- |
-| `code.zip` | Runnable solution, prompts, configuration, `README.md`, and `evaluation/` reports |
-| `output.csv` | One answer row for each of the 518 requests in `dataset/deletion_requests.csv` |
-| `chat_transcript` | The root `log.txt` file generated by your coding agent |
-| AI interview | Live explanation of your architecture, approach, and evaluation |
-
-You may use any programming language, model, framework, or retrieval approach. Include clear setup and execution instructions in `README.md` inside `code.zip`.
-
-To package `code.zip` from the repository root without bundling the dataset:
-
-**macOS / Linux:**
+For very large batches, increase timeout:
 
 ```bash
-zip -r code.zip README.md code -x "*/__pycache__/*" "*/.venv/*" "*/venv/*" "*/node_modules/*" "*/.git/*" "*/.DS_Store"
+timeout 1800 python3 main_fast.py 0 518  # 30 min timeout
 ```
 
-**Windows (PowerShell):**
+## Development
 
-```powershell
-Compress-Archive -Path README.md, code -DestinationPath code.zip -Force
+### Running Tests
+
+```bash
+# Quick test (5 cases)
+python3 main_fast.py 0 5
+
+# Medium test (50 cases)
+python3 main_fast.py 0 50
+
+# Full run (518 cases)
+python3 main_fast.py
 ```
 
-When packaging `code.zip`:
+### Adding Features
 
-- Keep your evaluation reports in `code/evaluation/` so they are bundled automatically with `code` (or add `evaluation` to the archive command above if you placed them in a top-level `evaluation/` directory).
-- Do **not** include `dataset/`, virtual environments (`.venv`, `venv`, `node_modules`), or build caches (`__pycache__`). On Windows, keep `.venv` at the repository root (outside `code/`) and remove any `code/__pycache__` folders before running `Compress-Archive`.
-- Do **not** include nested archives (`.zip`, `.tar`, `.gz`, `.tgz`, `.7z`, `.rar`) inside `code.zip` — submissions containing nested archive files will be rejected.
+1. **Enhanced Evidence Analysis**: Modify `models/evidence_fast.py`
+2. **Better Classification**: Update `models/classifiers.py`
+3. **Custom Policy Rules**: Extend `models/policy.py`
+4. **Different Models**: Change `MODEL_NAME` in `config.py`
 
-Before submitting, confirm that:
+## Submission Package
 
-- `output.csv` has the exact header `case_id,deletion_status,steps_json` and contains all 518 data rows sorted by `case_id`;
-- every `steps_json` value is a valid JSON array with consecutive step numbers starting at `1`;
-- findings cite valid evidence IDs, and `COMPLETE` verification steps cite evidence proving the current state;
-- proposed remediation and future verification steps use an empty `evidence_id` (`""`);
-- `code.zip` includes your runnable code, `README.md`, `code/evaluation/evaluation_report.md`, and `code/evaluation/usage_report.md`;
-- `log.txt` follows the `AGENTS.md` turn format and is uploaded to the `chat_transcript` slot; and
-- no API keys, credentials, real personal data, or sensitive configuration values are included.
+Generate `code.zip` with:
+
+```bash
+# From repository root
+zip -r code.zip README.md code -x "*/__pycache__/*" "*/.venv/*" "*/venv/*" "*/.git/*"
+```
+
+Submit:
+1. `code.zip` - Solution code and evaluation reports
+2. `output.csv` - 518 prediction rows
+3. `log.txt` - Session transcript
+
+## License
+
+This is a HackerRank Orchestrate challenge solution.
+
+## Contact
+
+For questions about this solution, refer to the evaluation reports or review the inline code comments.

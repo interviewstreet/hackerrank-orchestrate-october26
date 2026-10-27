@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "sha256": "0919c931c018565e82502050ee1026918c1baf210c8ba23d2386415dd46efb10",
+  "filename": "legal_retention_register_20260529.pdf",
+  "pageCount": 2,
+  "textPages": 2,
+  "textBudgetExhausted": false,
+  "pagesWithoutText": [],
+  "renderedPages": [
+    {
+      "page": 1,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 48554,
+      "mime": "image/png",
+      "fileName": "page-001.png"
+    },
+    {
+      "page": 2,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 66254,
+      "mime": "image/png",
+      "fileName": "page-002.png"
+    }
+  ],
+  "renderBudgetExhausted": false
+}

@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "sha256": "0c58960759d4821b030b467d6fe531e83e38e7f50b3de3389a735521d0001f18",
+  "filename": "delivery_correction_attachment.pdf",
+  "pageCount": 2,
+  "textPages": 2,
+  "textBudgetExhausted": false,
+  "pagesWithoutText": [],
+  "renderedPages": [
+    {
+      "page": 1,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 75968,
+      "mime": "image/png",
+      "fileName": "page-001.png"
+    },
+    {
+      "page": 2,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 50663,
+      "mime": "image/png",
+      "fileName": "page-002.png"
+    }
+  ],
+  "renderBudgetExhausted": false
+}

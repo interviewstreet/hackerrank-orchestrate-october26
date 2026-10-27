@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "sha256": "8a6428a899dc8d0769048c8e6f6db70c614fe65fd1e0bb87a43c7927c27ecdda",
+  "filename": "security_retention_extract.pdf",
+  "pageCount": 1,
+  "textPages": 1,
+  "textBudgetExhausted": false,
+  "pagesWithoutText": [],
+  "renderedPages": [
+    {
+      "page": 1,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 86559,
+      "mime": "image/png",
+      "fileName": "page-001.png"
+    }
+  ],
+  "renderBudgetExhausted": false
+}
