@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "sha256": "abe1877efe69fb5617a79c0d22df9113372e1e6804f8986b0fd408563ecca448",
+  "filename": "account_history_report_20260718.pdf",
+  "pageCount": 2,
+  "textPages": 2,
+  "textBudgetExhausted": false,
+  "pagesWithoutText": [],
+  "renderedPages": [
+    {
+      "page": 1,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 69717,
+      "mime": "image/png",
+      "fileName": "page-001.png"
+    },
+    {
+      "page": 2,
+      "width": 1108,
+      "height": 1566,
+      "bytes": 36628,
+      "mime": "image/png",
+      "fileName": "page-002.png"
+    }
+  ],
+  "renderBudgetExhausted": false
+}
