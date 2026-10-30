@@ -1,0 +1,22 @@
+{
+  "exported_at": "2026-06-24T11:00:00Z",
+  "region": "global",
+  "service_exports": {
+    "identity_service": {
+      "deleted_customer_references": [
+        {
+          "resource_id": "tombstone_8261",
+          "subject_reference": "user_226",
+          "first_name": "Yusuf",
+          "last_name": "Demir",
+          "email": null,
+          "phone": null,
+          "email_hash": null,
+          "account_status": "DELETED",
+          "observed_at": "2026-06-24T10:40:00Z"
+        }
+      ]
+    }
+  },
+  "source": "records_assurance_gateway"
+}

@@ -1,0 +1,21 @@
+{
+  "exported_at": "2026-06-04T11:00:00Z",
+  "source": "records_assurance_service",
+  "snapshots": [
+    {
+      "captured_at": "2026-06-04T11:00:00Z",
+      "data_store": "support_platform",
+      "collection": "ticket_attachments",
+      "records": [
+        {
+          "resource_id": "support_8181",
+          "ticket_id": "CS-81801",
+          "file_name": "joint_delivery_claim.pdf",
+          "uploaded_by": "daniel.mwangi@example.net",
+          "shared_with": "grace.wanjiru@example.net",
+          "storage_class": "ticket_attachment"
+        }
+      ]
+    }
+  ]
+}

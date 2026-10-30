@@ -1,0 +1,135 @@
+"""Compare a second vision model (default: Ollama qwen2.5vl:7b) with the cached Claude Sonnet transcriptions.
+
+    OLLAMA_HOST=http://10.0.2.2:11434 python3 code/evaluation/vision_compare.py
+
+Runs the same `extract_visual` prompt and schema through the `ollama` backend for every PNG/JPG in the real
+dataset and the edge dataset, caches the results under their own keys (the Sonnet entries are untouched)
+and writes code/evaluation/vision_comparison.md. PDFs are listed as not comparable: Ollama vision models take
+raster images only. Edge images have no Sonnet transcription; they are checked against the generator's facts.
+"""
+from __future__ import annotations
+
+import argparse
+import os
+import sys
+from pathlib import Path
+
+EVAL_DIR = Path(__file__).resolve().parent
+CODE = EVAL_DIR.parent
+sys.path.insert(0, str(CODE))
+
+from ghostaudit import loaders  # noqa: E402
+from ghostaudit.config import DEFAULT_DATASET_DIR  # noqa: E402
+from ghostaudit.evidence import multimodal  # noqa: E402
+from ghostaudit.llm.adapter import LLMAdapter, parse_json  # noqa: E402
+from ghostaudit.llm.cache import LLMCache, cache_key  # noqa: E402
+
+FIELDS = ("email", "phone", "file", "result", "record_type", "user_id")
+EDGE = EVAL_DIR / "edge_dataset" / "main"
+OUT = EVAL_DIR / "vision_comparison.md"
+
+
+def norm(v) -> str:
+    s = "" if v is None else str(v).strip().lower()
+    return "".join(s.split()) if s.startswith("+") else s
+
+
+def records(payload) -> dict[str, dict]:
+    out = {}
+    for r in (payload or {}).get("records", []) if isinstance(payload, dict) else []:
+        rid = str(r.get("resource_id") or "").strip()
+        if rid:
+            out[rid] = r.get("fields") or {}
+    return out
+
+
+def compare(ref: dict[str, dict], got: dict[str, dict]) -> tuple[int, int, int, int, int, list[str]]:
+    """(ref ids, got ids, common ids, field checks, field agreements, notes)."""
+    common = sorted(set(ref) & set(got))
+    checks = agree = 0
+    notes = [f"missed `{r}`" for r in sorted(set(ref) - set(got))]
+    notes += [f"extra `{r}`" for r in sorted(set(got) - set(ref))]
+    for rid in common:
+        for f in FIELDS:
+            if f in ref[rid]:
+                checks += 1
+                if norm(ref[rid].get(f)) == norm(got[rid].get(f)):
+                    agree += 1
+                else:
+                    notes.append(f"`{rid}`.{f}: {ref[rid].get(f)!r} vs {got[rid].get(f)!r}")
+    return len(ref), len(got), len(common), checks, agree, notes
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default=os.environ.get("GDA_COMPARE_MODEL", "qwen2.5vl:7b"))
+    a = ap.parse_args()
+    os.environ["GDA_MODEL_VISION"] = a.model
+    llm = LLMAdapter(backend="ollama")
+    if llm._backend is None:
+        print(f"Ollama unavailable: {llm._backend_error}")
+        return 2
+    cache = LLMCache()
+
+    rows, notes_all, totals = [], [], [0, 0, 0, 0, 0]
+    sources = [("real", DEFAULT_DATASET_DIR), ("edge", EDGE)]
+    for label, root in sources:
+        manifest = loaders.load_manifest(root / "evidence_files.csv", root)
+        for ef in sorted(manifest, key=lambda e: e.file_id):
+            if ef.path.suffix.lower() not in multimodal.VISUAL_SUFFIXES:
+                continue
+            name = f"{label}:{ef.file_id} `{ef.path.name}`"
+            if ef.path.suffix.lower() == ".pdf":
+                rows.append(f"| {name} | – | – | – | – | n/a (PDF) |")
+                continue
+            prompt = multimodal.prompt_for(ef)
+            res = llm.complete(task="extract_visual", prompt=prompt, images=[ef.path], json_schema=multimodal.SCHEMA)
+            got = records(res.parsed_json) if res is not None and res.provider.startswith("ollama") else None
+            if got is None:
+                rows.append(f"| {name} | – | – | – | – | no {a.model} result |")
+                continue
+            if label == "real":
+                hit = cache.get(cache_key("extract_visual", "vision", prompt, [ef.path]))
+                ref = records(parse_json(hit["text"])) if hit else {}
+            else:
+                ref = edge_truth(ef)
+            n_ref, n_got, n_common, checks, agree, notes = compare(ref, got)
+            for i, v in enumerate((n_ref, n_got, n_common, checks, agree)):
+                totals[i] += v
+            rate = f"{agree}/{checks}" if checks else "–"
+            rows.append(f"| {name} | {n_ref} | {n_got} | {n_common} | {rate} | {'; '.join(notes[:4]) or 'agree'} |")
+            notes_all += [f"- {name}: {n}" for n in notes]
+
+    n_ref, n_got, n_common, checks, agree = totals
+    lines = [
+        "# Vision model comparison", "",
+        f"Second model `{a.model}` (Ollama, local, temperature 0, seed 7) vs the reference transcriptions: the cached "
+        "`claude-sonnet-5-5` results for real images, and the generator's facts for edge images. Same prompt and "
+        "schema (`prompts/extract_visual.md`). Generated by `python3 code/evaluation/vision_compare.py`.", "",
+        f"- Resource ids: reference {n_ref}, {a.model} {n_got}, common {n_common} "
+        f"(recall {n_common / n_ref:.1%}, precision {n_common / n_got:.1%})" if n_ref and n_got else "- Resource ids: –",
+        f"- Field agreement on common ids ({', '.join(FIELDS)} when the reference has them): {agree}/{checks}"
+        + (f" ({agree / checks:.1%})" if checks else ""), "",
+        "| file | ref ids | model ids | common | fields agree | notes |", "|---|---|---|---|---|---|", *rows, "",
+        "## All differences", "", *(notes_all or ["none"]), ""]
+    OUT.write_text("\n".join(lines), encoding="utf-8")
+    print("\n".join(lines[:8]))
+    print(llm.spend_line())
+    return 0
+
+
+def edge_truth(ef) -> dict[str, dict]:
+    """Facts the edge generator printed into its screenshots (see edge_cases.py e14-e16)."""
+    sys.path.insert(0, str(EVAL_DIR))
+    import csv
+    users = {r["user_id"]: r for r in csv.DictReader(open(EDGE / "user_identities.csv", encoding="utf-8"))}
+    if "object_storage" in ef.path.name:
+        return {}  # lists files by name only; checked through the file-listing pass in the edge run
+    n = {"20260515": 14, "20260526": 16}.get(ef.path.stem.rsplit("_", 1)[-1])
+    if n is None:
+        return {}
+    return {f"export_8{n:02d}1": {"email": users[f"user_2{n:02d}"]["email"], "result": "FOUND"}}
+
+
+if __name__ == "__main__":
+    sys.exit(main())

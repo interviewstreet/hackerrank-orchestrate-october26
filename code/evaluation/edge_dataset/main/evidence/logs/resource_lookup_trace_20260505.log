@@ -1,0 +1,5 @@
+2026-05-05T10:00:00Z level=INFO service=readback_collector event=export_started target_count=2 mode=point_in_time
+2026-05-05T08:00:00Z level=DEBUG service=account_service trace_id=rb-000001 event=profile_lookup_started resource_id=account_8121 lookup_key=hannah.becker@example.net
+2026-05-05T08:00:00Z level=INFO service=account_service trace_id=rb-000001 event=profile_lookup_completed resource_id=account_8121 rows=0 http_status=404
+2026-05-05T08:10:00Z level=DEBUG service=email_delivery_service trace_id=rb-000002 event=delivery_log_read_started resource_id=email_delivery_8121 lookup_key=hannah.becker@example.net
+2026-05-05T08:10:00Z level=INFO service=email_delivery_service trace_id=rb-000002 event=delivery_log_read_completed resource_id=email_delivery_8121 rows=1 recipient_email=hannah.becker@example.net template=order_shipped

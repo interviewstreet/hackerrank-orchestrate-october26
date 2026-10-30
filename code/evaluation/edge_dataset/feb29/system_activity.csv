@@ -1,0 +1,2 @@
+activity_id,event_time,event_type,source_system,target_system,resource_id,reported_result,details
+activity_01,2026-02-29T08:00:00Z,SYNC_RECORD,integration_service,search_service,data_flow_8401,SUCCESS,Active connector repopulated downstream resource search_8401.

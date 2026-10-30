@@ -1,0 +1,21 @@
+{
+  "exported_at": "2026-05-30T11:00:00Z",
+  "source": "records_assurance_service",
+  "snapshots": [
+    {
+      "captured_at": "2026-05-30T11:00:00Z",
+      "data_store": "legal_service",
+      "collection": "retained_order_records",
+      "records": [
+        {
+          "resource_id": "legal_hold_8171",
+          "subject_reference": "user_217",
+          "order_reference": "ORD-81701",
+          "retention_reason": "payment_dispute",
+          "retained_until": "2026-05-28T00:00:00Z",
+          "hold_status": "RELEASED"
+        }
+      ]
+    }
+  ]
+}

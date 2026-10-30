@@ -1,0 +1,3 @@
+2026-07-19T10:00:00Z level=INFO service=readback_collector event=export_started target_count=1 mode=point_in_time
+2026-07-19T08:00:00Z level=DEBUG service=account_service trace_id=rb-000001 event=profile_lookup_started resource_id=account_8321 lookup_key=margaret.hughes@example.net
+2026-07-19T08:00:00Z level=INFO service=account_service trace_id=rb-000001 event=profile_lookup_completed resource_id=account_8321 rows=0 http_status=404

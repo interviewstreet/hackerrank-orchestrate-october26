@@ -1,0 +1,28 @@
+{
+  "exported_at": "2026-03-31T09:00:00Z",
+  "source": "records_assurance_service",
+  "snapshots": [
+    {
+      "captured_at": "2026-03-31T09:00:00Z",
+      "data_store": "account_service",
+      "collection": "customer_profiles",
+      "records": []
+    },
+    {
+      "captured_at": "2026-03-31T09:00:00Z",
+      "data_store": "identity_service",
+      "collection": "deleted_customer_references",
+      "records": [
+        {
+          "resource_id": "tombstone_8051",
+          "subject_reference": "user_205",
+          "name": null,
+          "email": null,
+          "phone": null,
+          "email_hash": "351081c02a8799b10e3f007021fb10ce596443fae0e8c8af46cef5c235901817",
+          "account_status": "DELETED"
+        }
+      ]
+    }
+  ]
+}

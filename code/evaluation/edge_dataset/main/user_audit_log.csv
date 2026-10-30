@@ -1,0 +1,4 @@
+audit_id,user_id,event_time,field_name,old_value,new_value
+audit_01,user_203,2026-02-10T10:00:00Z,phone,+34 611 480 903,+34 622 117 903
+audit_02,user_204,2026-02-12T10:00:00Z,email,akosua.mensah@oldmail.example,akosua.mensah@example.net
+audit_03,user_204,2026-02-12T10:00:00Z,email_hash,07eee37e6297f1263c98acc31b61e0b4798f9c203a81f04d07e1bc08b6b5ca1f,75595eea1770281d538b5dd4a8e78b7c1970d535ecf0d5b9f6e8c22f4f4a1271

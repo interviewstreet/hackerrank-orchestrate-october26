@@ -1,0 +1,1 @@
+2026-03-26T10:58:00Z level=DEBUG service=analytics_platform instance=analytics-2 trace_id=tr-8040401 resource_id=analytics_8041 event=contact_lookup_completed rows=1 email_opt_in=true correlation_key="07eee37e6297f1263c98acc31b61e0b4798f9c203a81f04d07e1bc08b6b5ca1f"

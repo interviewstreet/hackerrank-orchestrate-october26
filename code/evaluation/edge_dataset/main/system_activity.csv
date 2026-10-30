@@ -1,0 +1,11 @@
+activity_id,event_time,event_type,source_system,target_system,resource_id,reported_result,details
+activity_01,2026-03-15T06:00:00Z,RESTORE_BACKUP,backup_service,search_service,backup_8021,SUCCESS,Restore job repopulated downstream resource search_8021.
+activity_02,2026-03-29T08:00:00Z,DELETE_RECORD,deletion_worker,account_service,account_8051,SUCCESS,Deletion worker submitted primary profile account_8051 to account_service.
+activity_03,2026-04-03T06:00:00Z,SYNC_RECORD,integration_service,search_service,data_flow_8061,SUCCESS,Active connector repopulated downstream resource search_8061.
+activity_04,2026-04-03T08:00:00Z,DISABLE_DATA_FLOW,deletion_worker,integration_service,data_flow_8061,SUCCESS,Policy action completed for data_flow_8061.
+activity_05,2026-04-03T09:00:00Z,CHECK_DATA_FLOW,deletion_worker,integration_service,data_flow_8061,SUCCESS,Connector status check confirmed that data flow data_flow_8061 is disabled.
+activity_06,2026-04-08T06:00:00Z,CHECK_RESTORE_ACCESS,deletion_worker,backup_service,backup_8071,SUCCESS,Restore-access check confirmed that archive backup_8071 can still be restored.
+activity_07,2026-04-08T08:00:00Z,BLOCK_RESTORE,deletion_worker,backup_service,backup_8071,SUCCESS,Policy action completed for backup_8071.
+activity_08,2026-04-26T13:00:00Z,SYNC_RECORD,integration_service,search_service,data_flow_8101,SUCCESS,Active connector repopulated downstream resource search_8101.
+activity_09,2026-05-13T07:00:00Z,CREATE_EXPORT,export_service,object_store,export_8141,SUCCESS,Scheduled account export processed export_8141.
+activity_10,2026-05-18T06:00:00Z,LINK_RESOURCE_IDENTITY,data_catalog,object_storage,object_8151,SUCCESS,Data catalog linked object_8151 (account_export_15.zip) to zainab.rahimi@example.net and user_215.

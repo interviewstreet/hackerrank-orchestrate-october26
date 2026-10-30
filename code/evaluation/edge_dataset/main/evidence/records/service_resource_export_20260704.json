@@ -1,0 +1,25 @@
+{
+  "exported_at": "2026-07-04T11:00:00Z",
+  "region": "global",
+  "service_exports": {
+    "support_platform": {
+      "tickets": [
+        {
+          "resource_id": "support_8281",
+          "customer_reference": "user_228",
+          "requester": {
+            "name": {
+              "first": "Jonas",
+              "last": "Petersen"
+            },
+            "email": null,
+            "phone": null
+          },
+          "message_excerpt": "Customer asked support to correct delivery details.",
+          "observed_at": "2026-07-04T10:40:00Z"
+        }
+      ]
+    }
+  },
+  "source": "records_assurance_gateway"
+}

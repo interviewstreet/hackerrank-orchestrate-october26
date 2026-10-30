@@ -1,0 +1,6 @@
+case_id,email,requested_at,reported_status,reported_at,audit_at,request_text
+case_f01,farah.aziz@example.net,2026-03-03T09:00:00Z,COMPLETE,2026-03-05T09:00:00Z,2026-03-07T12:00:00Z,Please permanently delete the account associated with this email address.
+case_f02,liam.oconnor@oldmail.example,2026-03-08T09:00:00Z,COMPLETE,2026-03-10T09:00:00Z,2026-03-12T12:00:00Z,"I want my account closed and all personal data erased, including any copies."
+case_f03,sara.haddad@example.net,2026-03-13T09:00:00Z,COMPLETE,2026-03-15T09:00:00Z,2026-03-17T12:00:00Z,Please remove my profile and everything linked to this email.
+case_f04,kofi.boateng@example.net,2026-02-29T09:00:00Z,COMPLETE,2026-03-20T09:00:00Z,2026-03-22T12:00:00Z,Please permanently delete the account associated with this email address.
+case_f05,ines.moreau@example.net,2026-03-23T09:00:00Z,COMPLETE,2026-03-25T09:00:00Z,2026-03-27T12:00:00Z,"I want my account closed and all personal data erased, including any copies."

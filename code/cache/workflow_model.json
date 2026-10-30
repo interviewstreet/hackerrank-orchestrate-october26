@@ -1,0 +1,51 @@
+{
+  "cadence": {
+    "policy": [
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "result": [
+      19,
+      20,
+      21,
+      22,
+      23
+    ]
+  },
+  "first_phase": {
+    "policy": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "result": [
+      20,
+      21,
+      22,
+      23,
+      51,
+      52,
+      53
+    ]
+  },
+  "lead_range_minutes": [
+    45.87,
+    73.63
+  ],
+  "phase_histogram": {
+    "policy:10": 40,
+    "policy:11": 6,
+    "policy:9": 27,
+    "result:20": 20,
+    "result:21": 134,
+    "result:22": 150
+  },
+  "spacing": {
+    "policy": 449.0,
+    "result": 1169.0
+  }
+}
