@@ -215,3 +215,26 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T17:58:12Z] Resend setup questions (also covers earlier push and next-steps turns)
+
+User Prompt (verbatim, secrets redacted):
+how to integrate resend email
+like from which email should i login to resend
+how to create api key
+from which id mail will be sent
+tell simple steps on what to do next
+
+Agent Response Summary:
+Explained how to set up Resend: sign up with any email, use the free onboarding sender for a first test or verify a domain for a real sender, create a sending-access API key, add a webhook for the signing secret, and put the three values in .env. Earlier turns this session (what do I have to do, repeated push hook requests) were answered without code changes; the branch was deliberately not pushed because the PRD requires Rach's approval.
+
+Actions:
+* No files changed besides this log entry; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
