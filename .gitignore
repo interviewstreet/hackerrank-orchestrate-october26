@@ -3,5 +3,13 @@ dist/
 .env
 .env.local
 .taste-skill/inspect/
+.taste-skill/redesign/
+*.tsbuildinfo
 __pycache__/
 .venv/
+
+.taste-skill/blue-refinement/
+
+.taste-skill/final-correction/
+
+.taste-skill/pixel-reference/

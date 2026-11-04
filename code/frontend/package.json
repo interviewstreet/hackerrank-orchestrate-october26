@@ -12,7 +12,6 @@
   "dependencies": {
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
-    "cytoscape": "^3.30.0",
     "lucide-react": "^0.468.0",
     "motion": "^14.9.1",
     "react": "^19.0.0",
@@ -22,7 +21,6 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
-    "@types/cytoscape": "^3.21.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/graph.tsx","./src/api.ts","./src/data.test.ts","./src/data.ts","./src/main.tsx","./src/types.ts","./vite.config.ts"],"version":"5.9.3"}
+{"root":["./src/app.tsx","./src/globescene.tsx","./src/graph.tsx","./src/hero.tsx","./src/api.ts","./src/data.test.ts","./src/data.ts","./src/graphmodel.ts","./src/main.tsx","./src/types.ts","./vite.config.ts"],"version":"5.9.3"}

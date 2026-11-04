@@ -1,22 +1,30 @@
 import type { CaseResult, GraphNode } from './types';
 export type Position = [number, number, number];
-export const nodeColors = { VERIFIED: '#247f68', ISSUE: '#f0442a', PENDING: '#b36a12', CONNECTED: '#53575b' };
+export const nodeColors = { VERIFIED: '#00b897', ISSUE: '#ff435e', PENDING: '#d89b24', CONNECTED: '#46e7ff' };
 
-/** Stable spherical layout; layout positions carry no analytical meaning. */
+/** Fixed outer rim plus depth layers; geometry never creates evidence relationships. */
 export function globeLayout(nodes: GraphNode[]): Map<string, Position> {
   const sorted = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
   const outer = sorted.filter(n => n.type !== 'IDENTITY');
   const positions = new Map<string, Position>();
-  sorted.filter(n => n.type === 'IDENTITY').forEach((n, i) => positions.set(n.id, [i * 0.25, 0, 0]));
-  outer.forEach((node, index) => {
-    const y = 1 - 2 * (index + 0.5) / outer.length;
-    const angle = index * Math.PI * (3 - Math.sqrt(5)) + 0.5;
-    const radius = ['SYSTEM', 'BACKUP'].includes(node.type) ? 2.0 : 2.43;
-    const ring = Math.sqrt(1 - y * y);
-    positions.set(node.id, [Math.cos(angle) * ring * radius, y * radius, Math.sin(angle) * ring * radius]);
+  sorted.filter(n => n.type === 'IDENTITY').forEach((n, i) => positions.set(n.id, [i * .25, -.25, 0]));
+  const rimCount = Math.min(18, outer.length);
+  // Interleave resource types so alert/system nodes do not collect on one side.
+  const ordered = [...outer].sort((a, b) => hash(a.id) - hash(b.id) || a.id.localeCompare(b.id));
+  ordered.forEach((node, i) => {
+    if (i < rimCount) {
+      const angle = Math.PI / 2 + i * Math.PI * 2 / rimCount;
+      positions.set(node.id, [Math.cos(angle) * 2.42, Math.sin(angle) * 2.28, Math.sin(angle * 3) * .38]);
+    } else {
+      const index = i - rimCount, count = outer.length - rimCount;
+      const y = 1 - 2 * (index + .5) / count, angle = index * 2.39996;
+      const r = 2.05, ring = Math.sqrt(1 - y * y);
+      positions.set(node.id, [Math.cos(angle) * ring * r, y * r, Math.sin(angle) * ring * r]);
+    }
   });
   return positions;
 }
+function hash(id: string) { return [...id].reduce((value, char) => (Math.imul(value, 31) + char.charCodeAt(0)) >>> 0, 2166136261); }
 
 /** Only supplied edges participate in highlighted paths, including cyclic graphs. */
 export function connectedPath(result: CaseResult, selectedId: string | null) {
