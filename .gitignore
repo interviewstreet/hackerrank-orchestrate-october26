@@ -18,3 +18,9 @@ explanations.json
 .pytest_cache/
 .env.*
 !.env.example
+email_outbox.db
+email_outbox.db-*
+
+code.zip
+agent-trace/
+agent-trace.zip
