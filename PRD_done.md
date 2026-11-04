@@ -1,6 +1,6 @@
 # ERASIGHT: Member 2 PRD, Part 1: What Is Done
 
-Owner: Rachana Shende (Member 2). Branch: `member-2-backend-resend`. Latest local commit: `25a46d8`. **Nothing has been pushed.**
+Owner: Rachana Shende (Member 2). Branch: `member-2-backend-resend`. Latest local commit: see `git log` (work on Sections A and B of the TODO is included). **Nothing has been pushed.**
 Sections are independent; each one lists its files and how to check it.
 
 ## How to run and check
@@ -54,9 +54,26 @@ Latest sample results (32 cases):
 | Evidence-id accuracy | about 0.97 |
 | Sequence similarity | about 0.97 |
 
-Known remaining sample gaps (about 6 steps): case_04 `account_004` (appears in no evidence), case_17 two extra steps, cases 18 and 20 missing an audit record, case_23 `account_410`, case_24 `account_5334`.
+Sample results above are from the latest run (exact-case 27/32, step precision 100%, recall 96.9%).
+Known remaining sample gaps (6 missing steps, no wrong steps): case_04 `account_004` (appears in no evidence), cases 18 and 20 missing an audit record, case_23 `account_410`, case_24 `account_5334` (remediation for it).
 
 ## Assumptions to mention in the evaluation report
 - Peer ordering: cases sharing a report time take worker activities in case order.
 - Inferred analytics records are attributed only to cases that are otherwise complete.
 - These were tuned on the 32 samples and are not confirmed on the other 486 cases.
+
+## Section 8: Evaluation and usage reports: DONE (was TODO Section A)
+- `code/evaluation/evaluation_report.md` and `usage_report.md`, regenerated from a fresh run by `python3 code/evaluation/generate_reports.py` (all numbers measured).
+- Six team-written cases in `code/evaluation/custom_cases.py` (lookalike identity, email normalisation, multilingual request, negated request, audit before evidence, other customer's active flow): 6/6 pass.
+- `code/evaluation/invariants.py`: policy/time rules checked over all 518 rows and the answer key: 0 violations.
+- Usage report states zero model calls, 0 tokens, $0.00.
+
+## Section 9: Tests: DONE (was TODO Section B)
+- `pytest code/tests` runs 30 tests (classifier, identity incl. lookalikes, pipeline accuracy floors and determinism, policy/time invariants, output validation, custom cases). Install with `pip install pytest`. No network used.
+- Email tests are not written yet (they belong to Section C).
+
+## Fixes made while building Sections 8 and 9 (found by the new cases)
+- Spanish/other-language deletion verbs were missed; vocabulary broadened.
+- Worker activity after `audit_at` was used; now ignored.
+- A case with nothing attributable could return COMPLETE with no steps; COMPLETE now needs at least one proven-compliant resource.
+- Resources known only from evidence older than the request are not claimed (case_07/case_61 behaviour); `output.csv` regenerated (only case_61 changed).

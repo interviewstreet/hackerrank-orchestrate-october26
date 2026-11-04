@@ -16,8 +16,9 @@ NEGATIONS = [
 # Intent verbs / nouns for deletion in the languages present in the dataset.
 DELETE_WORDS = [
     r"\bdelet\w*", r"\berase\w*", r"\bclos(?:e|ed|ing)\b", r"\bremov\w*", r"\bgone\b", r"account[- ]deletion",
-    r"\bsuppression\b", r"\bsupprim\w*", r"\beliminaci[oó]n\b", r"\beliminar\b", r"\bexclus[aã]o\b", r"\bexcluir\b",
-    r"삭제", r"削除", r"\bl[oö]sch\w*",
+    r"\bsuppression\b", r"\bsupprim\w*", r"\beffac\w*", r"\bélimin\w*", r"\belimin\w*", r"\bborr\w*",
+    r"\bexclus[aã]o\b", r"\bexclu[ií]\w*", r"\bexcluir\b", r"\bapag\w*", r"\bcancell\w*", r"\bverwijder\w*",
+    r"\bl[oö]sch\w*", r"\bentfern\w*", r"삭제", r"탈퇴", r"削除", r"退会", r"删除", r"刪除", r"注销",
 ]
 NEG_RE = re.compile("|".join(NEGATIONS), re.IGNORECASE)
 DEL_RE = re.compile("|".join(DELETE_WORDS), re.IGNORECASE)

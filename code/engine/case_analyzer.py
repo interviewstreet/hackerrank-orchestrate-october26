@@ -111,7 +111,7 @@ def analyze_case(request: Dict[str, str], ec: EngineContext, _peer_pass: bool = 
         result.deletion_status = "INCOMPLETE"            # cannot prove anything about an unresolved identity
         return result
 
-    claims = claimed_resources(ec.store, subject, audit_at)          # resource_id -> reasons
+    claims = claimed_resources(ec.store, subject, audit_at, request["requested_at"])          # resource_id -> reasons
     inferred: Dict[str, str] = {}
 
     def has(prefix: str) -> bool:
@@ -159,7 +159,7 @@ def analyze_case(request: Dict[str, str], ec: EngineContext, _peer_pass: bool = 
         used_systems.add(system_id)
 
     violations = [d for d in decisions if not d.compliant]
-    complete = not violations
+    complete = (bool(decisions) or _peer_pass) and not violations      # nothing found at all is "cannot prove", not "proved gone"
     result.deletion_status = "COMPLETE" if complete else "INCOMPLETE"
 
     findings = detect_findings(decisions)

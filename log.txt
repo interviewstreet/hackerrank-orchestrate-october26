@@ -117,3 +117,25 @@ branch=member-2-backend-resend
 repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T14:50:00Z] Evaluation reports, custom cases, invariants and tests
+
+User Prompt (verbatim, secrets redacted):
+can you fill out these gaps in the first 2 sections, later we can move onto section c in a new chat
+
+Agent Response Summary:
+Wrote the evaluation and usage reports (generated from a fresh run), six team-written evaluation cases, a policy/time invariant checker and a 30-test pytest suite. The new cases exposed real defects (missed Spanish deletion wording, use of worker activity after audit_at, vacuous COMPLETE) which were fixed; sample status accuracy stays 32/32 with step precision 100% and recall 96.9%. output.csv regenerated (only case_61 changed).
+
+Actions:
+* Added code/evaluation/{custom_cases,invariants,generate_reports}.py, evaluation_report.md, usage_report.md
+* Added code/tests/* (30 tests)
+* Fixed classifier lexicon, activity time gate, COMPLETE guard, pre-request evidence gate
+* Updated PRD_done.md and PRD_todo.md; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
