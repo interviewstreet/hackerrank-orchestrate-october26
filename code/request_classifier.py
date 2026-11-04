@@ -32,6 +32,13 @@ from models import ClassificationResult
 
 _F = re.IGNORECASE
 
+# "<remove> me / us / my email ... from <up to 3 words> list|marketing|..."
+_OPTOUT_TAIL = (
+    r"\s+(?:me|us|my\s+(?:e-?mail(?:\s+address)?|address|name|(?:phone\s+)?number))"
+    r"\s+from\s+(?:[\w'-]+\s+){0,3}?"
+    r"(?:lists?|mailing|marketing|newsletters?|promotions?|promotional|campaigns?)\b"
+)
+
 # ---------------------------------------------------------------------------
 # Deletion terms
 # ---------------------------------------------------------------------------
@@ -39,7 +46,8 @@ _DELETION = [
     # English
     r"\bdelet\w*",
     r"\beras\w*",
-    r"\bremov\w*\b(?!\s+(?:me|us)\s+from)",          # "remove me from <list>" is an opt-out
+    # "remove me / my email from <marketing list>" is an opt-out, not deletion
+    rf"\bremov\w*\b(?!{_OPTOUT_TAIL})",
     r"\bclos(?:e|ing)\s+(?:my|this|the)\s+account",
     # asks to confirm a deleted / unlinkable state
     r"\b(?:is|are)\s+(?:now\s+)?gone\b",
@@ -49,7 +57,8 @@ _DELETION = [
     r"\beliminaci[oó]n\b", r"\belimina[çc][aã]o\b", r"\belimin\w+",
     r"\bborr\w+", r"\bsupresi[oó]n\b", r"\bsuprim\w+",
     r"\bcerrar\s+(?:mi|la)\s+cuenta",
-    r"\bexclus[aã]o\b", r"\bexclu\w+", r"\bapag\w+",
+    # Portuguese "excluir" only — a bare exclu- stem would match English "exclude"
+    r"\bexclus[aã]o\b", r"\bexclu(?:ir|a|am)\b", r"\bapag\w+",
     r"\bencerr\w+\s+(?:a|minha)\s+conta",
     # French
     r"\bsuppression\b", r"\bsupprim\w+", r"\beffac\w+",
@@ -60,30 +69,44 @@ _DELETION = [
     r"삭제", r"탈퇴", r"파기",
 ]
 
-# Stems used inside negation patterns
+# Deletion verbs used inside negation patterns
 _EN_DEL = r"(?:delet|eras|remov|clos)\w*"
-_ES_DEL = r"(?:elimin|borr|suprim|cerr)\w*"
-_PT_DEL = r"(?:exclu|apag|elimin|encerr|delet)\w*"
-_FR_DEL = r"(?:supprim|effac|ferm|cl[oô]tur)\w*"
-# Up to 4 intervening words, not crossing punctuation
-_GAP = r"(?:\s+[\w'-]+){0,4}?\s+"
+_EN_DEL_NOUN = r"(?:(?:account\s+)?deletion|erasure|removal|closure)"
+# Imperative / infinitive forms only, so a negated *description* ("no fue
+# eliminada", "n'a pas été supprimé") does not count.
+_ES_DEL = r"(?:elimin(?:en|e|ar)|borr(?:en|e|ar)|suprim(?:an|a|ir)|cierr(?:en|e)|cerrar)\b"
+_PT_DEL = r"(?:exclu(?:a|am|ir)|apagu(?:e|em)|apagar|elimin(?:e|em|ar)|encerr(?:e|em|ar))\b"
+_FR_DEL = r"(?:supprim(?:ez|er)|effac(?:ez|er)|ferm(?:ez|er)|cl[oô]tur(?:ez|er))\b"
 
 # ---------------------------------------------------------------------------
-# Negated deletion
+# Negated deletion — only negations that are *instructions* ("don't delete",
+# "do not close", "not asking for deletion"), never descriptions
+# ("was not removed", "has not been erased", "do not hesitate to delete").
 # ---------------------------------------------------------------------------
 _NEGATION = [
-    # English: don't/do not/not/never/without ... delete
-    rf"\b(?:don't|do not|does not|did not|not|never|without|no need to)(?:{_GAP}|\s+){_EN_DEL}",
-    # Spanish: no (quiero) eliminen ...
-    rf"\bno(?:{_GAP}|\s+){_ES_DEL}",
-    # Portuguese: não (quero) exclua ...
-    rf"\bn[aã]o(?:{_GAP}|\s+){_PT_DEL}",
+    # English imperative: don't / do not / never [please|ever] delete
+    rf"\b(?:don't|do\s+not|never)\s+(?:please\s+|ever\s+|actually\s+)?{_EN_DEL}",
+    # English wish: I / we don't want (my account / it) (to be) deleted
+    rf"\b(?:i|we)\s+(?:don't|do\s+not)\s+want\s+"
+    rf"(?:(?:my|the|this|our|it)\s+)?(?:(?:account|data|profile|information)\s+)?"
+    rf"(?:to\s+be\s+|to\s+)?{_EN_DEL}",
+    # English: not asking for / not requesting / not a request to (erase|deletion)
+    rf"\bnot\s+(?:asking|requesting|a\s+request)\s+(?:for|to)\s+(?:an?\s+|the\s+)?"
+    rf"(?:{_EN_DEL_NOUN}|{_EN_DEL})",
+    rf"\bnot\s+requesting\s+(?:an?\s+)?{_EN_DEL_NOUN}",
+    # English condition on another request: "... without removing my records"
+    rf"\bwithout\s+{_EN_DEL}",
+    rf"\bno\s+need\s+to\s+{_EN_DEL}",
+    # Spanish: no eliminen / no quiero (que) eliminar ...
+    rf"\bno\s+(?:(?:quiero|deseo)\s+(?:que\s+)?)?(?:(?:me|mi|la|los)\s+)?{_ES_DEL}",
+    # Portuguese: não exclua / não quero (que) excluir ...
+    rf"\bn[aã]o\s+(?:(?:quero|desejo)\s+(?:que\s+)?)?(?:(?:a|minha)\s+)?{_PT_DEL}",
     # French: ne supprimez pas / n'effacez pas / ne pas supprimer
     rf"\bn(?:e\s+|')(?:pas\s+)?{_FR_DEL}",
-    # Japanese
-    r"(?:削除|消去|退会)(?:しないで|しない|せず|は不要|しなくて)",
-    # Korean
-    r"(?:삭제|탈퇴|파기)(?:를|는|은)?\s*(?:하지\s*(?:마|말|않)|원하지\s*않|안\s*해)",
+    # Japanese: 削除しないで(ください) / 削除は不要 / 削除しなくていい
+    r"(?:削除|消去|退会)(?:しないで|は不要|しなくて(?:いい|よい|結構))",
+    # Korean: 삭제하지 마(세요) / 삭제를 원하지 않 / 삭제하지 않아도
+    r"(?:삭제|탈퇴|파기)(?:를|는|은)?\s*(?:하지\s*(?:마|말)|원하지\s*않|하지\s*않아도)",
 ]
 
 # ---------------------------------------------------------------------------
@@ -157,8 +180,14 @@ _KEEP_RE = [re.compile(p, _F) for p in _KEEP]
 _OTHER_RE = [re.compile(p, _F) for p in _OTHER]
 
 
-# Conjunctions that start a new clause (a second, separate request)
-_CONJ = r"\b(?:and|but|then|also|y|pero|e|mas|et|mais|puis)\b"
+# Conjunctions that start a new clause (a second, separate request):
+# and / but / or / then in EN, ES (y, pero, o), PT (e, mas, ou), FR (et, mais,
+# ou, puis), plus JA (または, あるいは, もしくは) and KO (또는, 아니면, 혹은).
+# JA/KO have no word boundaries, so they are matched without \b.
+_CONJ = (
+    r"\b(?:and|but|or|then|also|y|pero|o|e|mas|ou|et|mais|puis)\b"
+    r"|または|あるいは|もしくは|또는|아니면|혹은"
+)
 
 
 def _normalise(text: str) -> str:

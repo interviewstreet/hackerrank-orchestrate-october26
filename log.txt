@@ -285,3 +285,97 @@ branch=main
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T14:04:26Z] Person 1: strict review of branch p1-identity vs main (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+Review my branch p1-identity against main like a strict senior engineer. I’m a beginner, so explain in simple words.
+
+List every file I changed and what it does, in one line each.
+Check for bugs, especially around audit_at timestamps, lowercase/uppercase emails, the 10 NOT_APPLICABLE cases, and anything that could crash on the hidden dataset.
+Check the rules in AGENTS.md: no hardcoded case IDs or answers in the main code, no API keys, no edits to dataset/, and log.txt only appended.
+Check that output.csv has 518 rows, the right header and valid JSON.
+Run all the tests and show the results.
+
+End with a table: Problem | How serious (High/Medium/Low) | Suggested fix. Don’t change any code yet.
+
+Agent Response Summary:
+Reviewed the 5 commits on p1-identity (12 files, +1910 lines). Rule checks pass: no case IDs or keys in main code, dataset/ unchanged, log.txt append-only in every commit (but the log itself records that the first session edited two earlier model= lines before the first commit). output.csv is valid: 518 rows, exact header, valid JSON, numeric order. Tests: 45/45 and 12/12 pass. Found by probing: a timestamp without a timezone or an empty one crashes the whole run; main.py has no per-case error handling; the classifier calls "do not hesitate to delete" and "my profile has still not been erased" NOT_APPLICABLE and calls "exclude me from marketing" / "remove my email from your marketing list" IS_DELETION; reused emails resolve to the wrong user. No code changed.
+
+Actions:
+* Ran git log/diff main...p1-identity; checked .gitignore, dataset/ and log.txt history per commit
+* Grepped code/*.py for case IDs and secrets
+* Ran edge-case probes for classifier, timestamps and email reuse (scratch files only)
+* Validated output.csv
+* Ran: python3 code/test_identity_resolver.py -> 45/45 OK
+* Ran: python3 code/test_request_classifier.py -> 12/12 OK
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T14:15:03Z] Person 1: review fixes (error isolation, utils.parse_ts, classifier negation) + tests
+
+User Prompt (verbatim, secrets redacted):
+Fix these from your review, then run all tests and main.py:
+
+In main.py, wrap each case in try/except. On an error, print a warning with the case_id and write INCOMPLETE, [] for that case, so output.csv is always written. Also check that decide() returns a dict.
+Make one shared timestamp parser in code/utils.py: a missing timezone means UTC, and an empty value gives a clear warning. Use it in identity_resolver.py and main.py.
+Classifier: only count a negation when it’s an instruction (“don’t delete”, “do not close”, “not asking for deletion”), not a description (“was not removed”, “do not hesitate to delete”). Limit the Portuguese stem to excluir/exclua/excluam/exclusão so “exclude” doesn’t match. Treat “remove my email from … list” as an opt-out.
+Add the 4 sentences from your review as tests.
+At the end of main.py, print the case_ids of any UNCERTAIN results.
+
+Check that the 10 NOT_APPLICABLE cases (533–542) still come out NOT_APPLICABLE.
+
+Agent Response Summary:
+Added code/utils.py with parse_ts() (missing timezone = UTC, other offsets converted to UTC, empty -> warning + None, unparseable -> clear ValueError), to_utc() and warn(); identity_resolver.py and main.py now use it (event_time parsed once at load; empty event_time kept as before audit_at; naive audit_at taken as UTC). main.py runs each case through run_case() with try/except (error -> warning with case_id, INCOMPLETE []), checks decide() returns a dict and build_steps() a list, and prints UNCERTAIN and failed case_ids at the end. Classifier negation now only matches instructions; Portuguese stem limited to excluir/exclua/excluam/exclusão; "remove me/my email from ... list" is an opt-out. Added test_utils.py (13), test_main.py (9), 6 classifier tests and 2 resolver tests; fixed the unclosed-file warning. All 87 tests pass; main.py: 518 rows, 0/508/10, 0 UNCERTAIN, 0 errors, NOT_APPLICABLE exactly case_533-case_542. Not done (not requested): the "or" conjunction issue and time-aware email ownership.
+
+Actions:
+* Created code/utils.py, code/test_utils.py, code/test_main.py
+* Modified code/identity_resolver.py, code/main.py, code/request_classifier.py
+* Modified code/test_identity_resolver.py, code/test_request_classifier.py, code/README_identity.md
+* Ran: test_utils 13 OK, test_identity_resolver 47 OK, test_request_classifier 18 OK, test_main 9 OK
+* Ran: python3 code/main.py -> 518 rows; validated output.csv
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T14:23:56Z] Person 1: "or" starts a new request + time-aware email ownership (100 tests)
+
+User Prompt (verbatim, secrets redacted):
+delete … or update …”: make “or”, “o” (Spanish) and “ou” (Portuguese/French) start a new request, the same way “and” and “but” do. So “Delete my account or update my email” comes out UNCERTAIN, not IS_DELETION. Add tests in all relevant languages.
+Email that changed owner: when looking up the request email, find who owned it at the request’s requested_at time using the audit log event_time, not just today’s snapshot. If user A had the email until a change, and user B got it later, a request sent while A owned it must resolve to A. If two users could match and you can’t decide, print a warning with the case_id and pick the owner at requested_at. Add tests with made-up data for:
+an email that moved from user A to user B, with the request before the move → A
+the same email, with the request after the move → B
+two users with the same old email → warning, correct owner chosen
+
+Don’t break existing behaviour: all 518 cases must still resolve to the same users as before, and case_533 to case_542 must still be NOT_APPLICABLE. Run all tests with python3 -m unittest discover -s code -p "test_*.py" -v and show me the results.
+
+Agent Response Summary:
+Classifier: or / o / ou (plus JA または/あるいは/もしくは and KO 또는/아니면/혹은) now start a new clause, so "delete ... or update ..." is UNCERTAIN in all 6 languages; added TestOrStartsNewRequest. Resolver: replaced the current-then-historical lookup with per-email ownership periods built from the snapshot and audit-log email changes; resolve() takes requested_at (falls back to audit_at, then "now" = current owner) and case_id. If several users could own the email at that time it warns with the case_id and picks the user who gave it up first; if nobody did, it warns and picks the nearest owner. main.py and resolve_all() pass requested_at and case_id. Saved a baseline before the change: all 550 bundles (518 + 32 samples) are identical afterwards. Added TestEmailOwnerAtRequestTime (11 tests). 100/100 tests pass; main.py 518 rows, 0/508/10, NOT_APPLICABLE exactly case_533-case_542, 0 UNCERTAIN, 0 errors.
+
+Actions:
+* Saved baseline bundles to scratchpad, compared after change (0 differences)
+* Modified code/request_classifier.py (_CONJ)
+* Modified code/identity_resolver.py (_build_email_owners, _owner_at, resolve/resolve_all signature)
+* Modified code/main.py (pass requested_at, case_id)
+* Modified code/test_request_classifier.py, code/test_identity_resolver.py, code/README_identity.md
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -v -> 100 OK
+* Ran: python3 code/main.py -> 518 rows
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none

@@ -27,8 +27,10 @@ Japanese, Korean.
 | `note` | one-line reason |
 | `is_deletion()` | `True` only for `IS_DELETION` |
 
-**Rules:** `IS_DELETION` only if it asks for deletion with no negation
-("don't delete", "ne supprimez pas", "삭제하지 마") and no keep-the-account
+**Rules:** `IS_DELETION` only if it asks for deletion with no negated
+*instruction* ("don't delete", "not asking for deletion", "ne supprimez pas",
+"삭제하지 마"). A negated *description* such as "was not removed" or "do not
+hesitate to delete" is still a deletion request. It also needs no keep-the-account
 phrase ("keep the account", "continue using"). A negation or keep phrase
 with no other deletion request gives `NOT_APPLICABLE`, and so does a
 non-deletion intent on its own (access, copy, correct, update, opt-out,
@@ -46,7 +48,7 @@ r.matched_keywords  # ['NEGATION:Do not close', "OTHER:can't access", 'OTHER:res
 On the real data: case_533 to case_542 are `NOT_APPLICABLE`, the other 508
 are `IS_DELETION`, and no case is `UNCERTAIN`.
 
-## `IdentityResolver(identities_path, audit_log_path).resolve(email, audit_at=None) -> IdentityBundle | None`
+## `IdentityResolver(identities_path, audit_log_path).resolve(email, audit_at=None, requested_at=None, case_id="") -> IdentityBundle | None`
 
 Maps the request email (current or historical, any letter case) to the user
 and gives every identifier you need to search evidence for.
@@ -55,8 +57,18 @@ and gives every identifier you need to search evidence for.
 - `identities_path`, `audit_log_path`: paths to `dataset/user_identities.csv`
   and `dataset/user_audit_log.csv` (loaded once, in the constructor)
 - `email`: the request's `email` field
-- `audit_at`: a timezone-aware `datetime`. Always pass the case's `audit_at`,
-  so that identifiers that only appeared after it are left out.
+- `requested_at`: the request's `requested_at` as a `datetime`. The email
+  resolves to whoever owned it at this time (see "For P3", section 4).
+- `case_id`: only used to label warnings
+- `audit_at`: a `datetime`; parse the CSV string with `utils.parse_ts()`. A
+  naive datetime is treated as UTC. Always pass the case's `audit_at`, so
+  that identifiers that only appeared after it are left out.
+
+**Timestamps:** use `utils.parse_ts(value, context)` everywhere. It returns
+an aware UTC `datetime`, treats a missing timezone as UTC, returns `None`
+with a warning for an empty value, and raises a clear `ValueError` for text
+that isn't a date. An audit-log row with an empty `event_time` is kept as
+if it happened before `audit_at`.
 
 **Output:** `IdentityBundle` (from `models.py`), or `None` if the email is unknown:
 
@@ -91,8 +103,12 @@ dicts (it reads `email` and `audit_at` from each row) and returns
 ## Tests
 
 ```text
-python3 code/test_identity_resolver.py    # 45 tests
-python3 code/test_request_classifier.py   # 12 tests, 22 made-up sentences
+python3 -m unittest discover -s code -p "test_*.py" -v   # all 100 tests
+
+python3 code/test_utils.py                # 13 tests
+python3 code/test_identity_resolver.py    # 58 tests
+python3 code/test_request_classifier.py   # 20 tests, 47 made-up sentences
+python3 code/test_main.py                 # 9 tests: one bad case never stops the run
 ```
 
 ## For P3
@@ -160,12 +176,24 @@ to the historical lists.
 
 ### 4. How identifiers are resolved as of `audit_at`
 
-`resolve(email, audit_at)` does this:
+`resolve(email, audit_at, requested_at, case_id)` does this:
 
-1. **Find the user.** It looks the lowercased email up among the current
-   emails in `user_identities.csv`, then among every `old_value` email in
-   `user_audit_log.csv`. This step uses the full history, whatever
-   `audit_at` is, so the user is always found.
+1. **Find who owned the email when the request was sent.** From
+   `user_identities.csv` and the email changes in `user_audit_log.csv`, it
+   knows the periods each user owned each email (a change's `event_time`
+   is when the new value starts). The lowercased request email resolves to
+   the user who owned it at `requested_at`, or at `audit_at` if
+   `requested_at` is missing, or the current owner if neither is given.
+   So if an email moved from user A to user B, a request sent before the
+   move resolves to A.
+   - If several users could have owned it at that time (e.g. two users
+     list the same old email with unknown start dates), it prints a
+     warning with the `case_id` and picks the user who gave the email up
+     first, assuming the email passed from one user to the next.
+   - If nobody owned it at that exact time, it warns and picks the nearest
+     owner in time (the last owner before, otherwise the first after).
+   - In today's dataset no email ever belonged to two users, so this never
+     triggers and every case resolves exactly as it did before.
 2. **Roll the snapshot back to `audit_at`.** `user_identities.csv` shows
    the latest state. Every change with `event_time > audit_at` is undone,
    newest first: email, phone and hash are set back to that change's
@@ -190,19 +218,24 @@ then `decide()`, so you receive it as the `identity` argument. To call it
 yourself:
 
 ```python
-from datetime import datetime
 from identity_resolver import IdentityResolver
+from utils import parse_ts
 
 resolver = IdentityResolver("dataset/user_identities.csv",   # build once
                             "dataset/user_audit_log.csv")
 
-audit_at = datetime.fromisoformat(case["audit_at"].replace("Z", "+00:00"))
-identity = resolver.resolve(case["email"], audit_at=audit_at)
+audit_at = parse_ts(case["audit_at"], context=f"{case['case_id']} audit_at")
+requested_at = parse_ts(case["requested_at"], context=f"{case['case_id']} requested_at")
+identity = resolver.resolve(case["email"], audit_at=audit_at,
+                            requested_at=requested_at, case_id=case["case_id"])
 if identity is None:
     ...  # unknown email (doesn't happen in the current data)
 ```
 
-`audit_at` must be a timezone-aware `datetime`.
+Use `parse_ts()` for every timestamp (`audit_at`, `event_time`, evidence
+capture times) so all comparisons are between aware UTC datetimes.
+If you raise an exception, `main.py` writes that case as `INCOMPLETE, []`
+and lists it at the end of the run, so check the summary.
 
 ### 6. Real sample: case_43
 

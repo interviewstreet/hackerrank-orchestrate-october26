@@ -7,12 +7,16 @@ current and historical identifiers for the subject.
 Design decisions
 ----------------
 * Emails are always normalised to lowercase before any lookup.
-* The resolution chain is:
-    1. Current identity snapshot (user_identities.csv)
-    2. Historical email addresses (user_audit_log.csv, field_name='email')
+* Email ownership is time-aware.  From user_identities.csv and the email
+  changes in user_audit_log.csv we build, for each email, the periods each
+  user owned it.  The request email resolves to the user who owned it at
+  the request's requested_at (or audit_at, if requested_at is missing).
+  With no time given, the current owner wins (the old behaviour).
+* If several users could have owned the email at that time (e.g. two
+  users with the same old email and unknown start dates), a warning is
+  printed with the case_id and the user who gave the email up first is
+  chosen: ownership is assumed to pass from one user to the next.
 * Phone and email-hash history is also collected from the audit log.
-* An email cannot belong to two different users simultaneously in this
-  dataset (verified by data analysis — no such case exists).
 * If resolution fails, returns None; callers must handle the missing case.
 * audit_at: when supplied, only audit entries at or before that timestamp
   are included in the returned identifier bundle (§6.2 contract).  The
@@ -33,11 +37,9 @@ from pathlib import Path
 from typing import Optional
 
 from models import IdentityBundle, IdentityChange
+from utils import parse_ts, to_utc, warn
 
-
-def _parse_dt(ts: str) -> datetime:
-    """Parse an ISO-8601 UTC timestamp (with or without Z suffix)."""
-    return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+_MIN_DT = datetime.min.replace(tzinfo=timezone.utc)
 
 
 def _sha256(email: str) -> str:
@@ -61,16 +63,16 @@ class IdentityResolver:
         self._identities_path = Path(identities_path)
         self._audit_log_path = Path(audit_log_path)
 
-        # Maps normalised email → identity row dict
-        self._current_by_email: dict[str, dict] = {}
         # Maps user_id → identity row dict
         self._current_by_uid: dict[str, dict] = {}
-        # Maps normalised old_email → user_id  (email history)
-        self._historical_email_to_uid: dict[str, str] = {}
         # Maps user_id → list of historical audit rows
         self._audit_by_uid: dict[str, list[dict]] = {}
+        # Maps normalised email → ownership periods (start, end, user_id).
+        # start is inclusive, end exclusive; None means open-ended.
+        self._email_owners: dict[str, list[tuple[Optional[datetime], Optional[datetime], str]]] = {}
 
         self._load()
+        self._build_email_owners()
 
     # ------------------------------------------------------------------
     # Private loading helpers
@@ -81,21 +83,91 @@ class IdentityResolver:
         # --- user_identities.csv ---
         with open(self._identities_path, newline="", encoding="utf-8") as fh:
             for row in csv.DictReader(fh):
-                norm = row["email"].lower().strip()
-                self._current_by_email[norm] = row
                 self._current_by_uid[row["user_id"]] = row
 
         # --- user_audit_log.csv ---
         with open(self._audit_log_path, newline="", encoding="utf-8") as fh:
             for row in csv.DictReader(fh):
                 uid = row["user_id"]
+                # Parse once. An empty event_time can't be placed in time, so
+                # it is treated as before audit_at (kept, never rolled back):
+                # searching one extra identifier is safer than missing one.
+                row["_event_dt"] = parse_ts(
+                    row.get("event_time"),
+                    context=f"user_audit_log {row.get('audit_id', '?')} event_time"
+                            " (treated as before audit_at)",
+                )
                 self._audit_by_uid.setdefault(uid, []).append(row)
-                if row["field_name"] == "email":
-                    old_norm = row["old_value"].lower().strip()
-                    # Only register if no current user owns this email
-                    # (prevents shadowing a live account)
-                    if old_norm not in self._current_by_email:
-                        self._historical_email_to_uid[old_norm] = uid
+
+    def _build_email_owners(self) -> None:
+        """
+        Turn each user's email changes into ownership periods.
+
+        For a user whose email went  e0 --t1--> e1 --t2--> e2 (current):
+            e0 owned (None, t1),  e1 owned [t1, t2),  e2 owned [t2, None)
+        A user with no email change owns the snapshot email for all time.
+        """
+        def add(email: str, start, end, uid: str) -> None:
+            email = email.lower().strip()
+            if email:
+                self._email_owners.setdefault(email, []).append((start, end, uid))
+
+        for uid, ident in self._current_by_uid.items():
+            changes = [a for a in self._audit_by_uid.get(uid, [])
+                       if a["field_name"] == "email"]
+            # Undated changes sort first (treated as the oldest)
+            changes.sort(key=lambda a: (a["_event_dt"] or _MIN_DT, a["audit_id"]))
+            start: Optional[datetime] = None
+            for a in changes:
+                t = a["_event_dt"]
+                add(a["old_value"], start, t, uid)
+                start = t
+            if changes and changes[-1]["new_value"].strip().lower() != ident["email"].strip().lower():
+                add(changes[-1]["new_value"], start, None, uid)   # inconsistent data: keep both
+            add(ident["email"], start, None, uid)
+
+    def _owner_at(self, email: str, at: Optional[datetime], case_id: str) -> Optional[str]:
+        """
+        Return the user_id that owned *email* at time *at*.
+        at=None means "now", so the current owner wins.
+        """
+        periods = self._email_owners.get(email, [])
+        if not periods:
+            return None
+        if len({uid for _, _, uid in periods}) == 1:
+            return periods[0][2]                      # only one user ever had it
+
+        def contains(p) -> bool:
+            start, end, _ = p
+            if at is None:
+                return end is None
+            return (start is None or start <= at) and (end is None or at < end)
+
+        def end_key(p):                               # earliest end first; open end last
+            return (p[1] is None, p[1] or _MIN_DT, p[2])
+
+        where = f"{case_id}: " if case_id else ""
+        when = at.isoformat() if at else "now"
+        hits = sorted((p for p in periods if contains(p)), key=end_key)
+        hit_users = sorted({p[2] for p in hits})
+        if len(hit_users) == 1:
+            return hit_users[0]
+        if len(hit_users) > 1:
+            chosen = hits[0][2]
+            warn(f"{where}email {email!r} could belong to {', '.join(hit_users)} at {when}; "
+                 f"chose {chosen} (gave the email up first, so owned it earliest)")
+            return chosen
+
+        # Nobody owned it at that time: take the most recent owner before it,
+        # otherwise the first owner after it.
+        before = [p for p in periods if p[1] is not None and at is not None and p[1] <= at]
+        if before:
+            chosen = max(before, key=lambda p: (p[1], p[2]))[2]
+        else:
+            chosen = min(periods, key=lambda p: (p[0] or _MIN_DT, p[2]))[2]
+        warn(f"{where}email {email!r} had no owner at {when}; chose {chosen} "
+             f"(nearest owner in time)")
+        return chosen
 
     # ------------------------------------------------------------------
     # Public API
@@ -105,6 +177,8 @@ class IdentityResolver:
         self,
         request_email: str,
         audit_at: Optional[datetime] = None,
+        requested_at: Optional[datetime] = None,
+        case_id: str = "",
     ) -> Optional[IdentityBundle]:
         """
         Resolve *request_email* to a full IdentityBundle.
@@ -114,29 +188,34 @@ class IdentityResolver:
         request_email:
             The email address supplied with the deletion request.
         audit_at:
-            The audit cutoff timestamp (§6.2).  When provided, only audit
+            The audit cutoff timestamp (§6.2), e.g. from utils.parse_ts().
+            A naive datetime is treated as UTC.  When provided, only audit
             log entries whose event_time is **at or before** this timestamp
-            are included in the returned identifier bundle.  The user-lookup
-            tables always use the full history to identify the user.
+            are included in the returned identifier bundle.
+        requested_at:
+            When the request was sent.  The email resolves to the user who
+            owned it at this time.  Falls back to audit_at, then to "now".
+        case_id:
+            Only used to label warnings.
 
-        Returns None if no match is found in either the current snapshot
-        or the historical audit log.
+        Returns None if no user ever had this email.
         """
         norm = request_email.lower().strip()
+        if audit_at is not None:
+            audit_at = to_utc(audit_at)   # a naive datetime is taken as UTC
+        if requested_at is not None:
+            requested_at = to_utc(requested_at)
 
-        # Step 1 — try current snapshot
-        identity_row = self._current_by_email.get(norm)
+        def _after_audit(row: dict) -> bool:
+            dt = row["_event_dt"]
+            return audit_at is not None and dt is not None and dt > audit_at
 
-        # Step 2 — try historical emails (full history, no time filter)
-        if identity_row is None:
-            uid = self._historical_email_to_uid.get(norm)
-            if uid is not None:
-                identity_row = self._current_by_uid.get(uid)
-
+        # Who owned the request email when the request was sent?
+        lookup_at = requested_at if requested_at is not None else audit_at
+        uid = self._owner_at(norm, lookup_at, case_id)
+        identity_row = self._current_by_uid.get(uid) if uid else None
         if identity_row is None:
             return None
-
-        uid = identity_row["user_id"]
         audit_rows = self._audit_by_uid.get(uid, [])
 
         # The snapshot reflects the latest state, which may postdate audit_at.
@@ -147,8 +226,8 @@ class IdentityResolver:
         cur_phone = identity_row["phone"]
         cur_hash = identity_row["email_hash"]
         if audit_at is not None:
-            later = [a for a in audit_rows if _parse_dt(a["event_time"]) > audit_at]
-            later.sort(key=lambda a: _parse_dt(a["event_time"]), reverse=True)
+            later = [a for a in audit_rows if _after_audit(a)]
+            later.sort(key=lambda a: a["_event_dt"], reverse=True)
             email_rolled = hash_rolled = False
             for a in later:
                 old_val = a["old_value"].strip()
@@ -172,10 +251,8 @@ class IdentityResolver:
 
         for audit_row in audit_rows:
             # Time-filter: skip entries that occur after audit_at
-            if audit_at is not None:
-                entry_time = _parse_dt(audit_row["event_time"])
-                if entry_time > audit_at:
-                    continue
+            if _after_audit(audit_row):
+                continue
 
             history.append(IdentityChange(
                 audit_id=audit_row["audit_id"],
@@ -208,7 +285,10 @@ class IdentityResolver:
             if _sha256(e) not in hist_hashes_stored
         ]
         hist_hashes = hist_hashes_stored + hist_hashes_computed
-        history.sort(key=lambda c: (_parse_dt(c.event_time), c.audit_id))
+        history.sort(key=lambda c: (
+            parse_ts(c.event_time, "history sort") if c.event_time.strip() else _MIN_DT,
+            c.audit_id,
+        ))
 
         return IdentityBundle(
             user_id=uid,
@@ -229,13 +309,20 @@ class IdentityResolver:
         """
         Resolve a list of request dicts.
 
-        Each dict must have 'email' and optionally 'audit_at' (ISO-8601 str).
+        Each dict must have 'email' and optionally 'audit_at', 'requested_at'
+        (ISO-8601 str) and 'case_id'.
         Returns a list of (request_row, IdentityBundle | None) tuples.
         """
         results = []
         for req in requests:
-            audit_at: Optional[datetime] = None
-            if req.get("audit_at"):
-                audit_at = _parse_dt(req["audit_at"])
-            results.append((req, self.resolve(req["email"], audit_at=audit_at)))
+            case_id = req.get("case_id", "")
+            # Empty audit_at -> warning + None (no time filter)
+            audit_at = parse_ts(req.get("audit_at"), context=f"{case_id or '?'} audit_at")
+            requested_at = (
+                parse_ts(req["requested_at"], context=f"{case_id or '?'} requested_at")
+                if "requested_at" in req else None
+            )
+            results.append((req, self.resolve(req["email"], audit_at=audit_at,
+                                              requested_at=requested_at,
+                                              case_id=case_id)))
         return results

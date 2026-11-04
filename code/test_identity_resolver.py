@@ -14,6 +14,7 @@ import io
 import sys
 import os
 import unittest
+from contextlib import redirect_stderr
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -288,6 +289,138 @@ class TestFutureIdentifiersExcluded(unittest.TestCase):
         self.assertEqual(b.current_email_hash, "hash_alice_current")
 
 
+class TestTimestampRobustness(unittest.TestCase):
+    """Naive audit_at and empty event_time must not crash (review fix)."""
+
+    def setUp(self):
+        self.resolver = _make_resolver()
+
+    def test_naive_audit_at_treated_as_utc(self):
+        naive = datetime(2025, 9, 1)   # no tzinfo
+        b = self.resolver.resolve("alice@example.com", audit_at=naive)
+        self.assertEqual(b.current_email, "alice-old2@example.com")
+
+    def test_empty_event_time_kept_as_before_audit_at(self):
+        audit = AUDIT_CSV + "audit_06,user_03,,email,carol-old@example.com,carol@example.com\n"
+        err = io.StringIO()
+        with redirect_stderr(err):
+            r = _make_resolver(audit=audit)
+        self.assertIn("audit_06", err.getvalue())
+        b = r.resolve("carol@example.com", audit_at=datetime(2024, 1, 1, tzinfo=timezone.utc))
+        self.assertIn("carol-old@example.com", b.historical_emails)
+        self.assertEqual(b.current_email, "carol@example.com")   # not rolled back
+        self.assertEqual([c.audit_id for c in b.history], ["audit_06"])
+
+
+OWNER_IDS_CSV = """\
+user_id,name,email,phone,email_hash,updated_at
+user_A,Ana A,a-new@x.com,+1-1,h_a,2026-03-01T00:00:00Z
+user_B,Ben B,shared@x.com,+1-2,h_b,2026-04-01T00:00:00Z
+user_C,Cy C,c-now@x.com,+1-3,h_c,2025-01-01T00:00:00Z
+user_D,Di D,d-now@x.com,+1-4,h_d,2025-06-01T00:00:00Z
+"""
+# shared@x.com: user_A until 2026-03-01, user_B from 2026-04-01.
+# dup-old@x.com: old email of BOTH user_C (until 2025-01-01) and user_D
+# (until 2025-06-01); neither start date is known.
+OWNER_AUDIT_CSV = """\
+audit_id,user_id,event_time,field_name,old_value,new_value
+audit_1,user_A,2026-03-01T00:00:00Z,email,shared@x.com,a-new@x.com
+audit_2,user_B,2026-04-01T00:00:00Z,email,b-old@x.com,shared@x.com
+audit_3,user_C,2025-01-01T00:00:00Z,email,dup-old@x.com,c-now@x.com
+audit_4,user_D,2025-06-01T00:00:00Z,email,DUP-OLD@x.com,d-now@x.com
+"""
+
+
+def _utc(*args) -> datetime:
+    return datetime(*args, tzinfo=timezone.utc)
+
+
+class TestEmailOwnerAtRequestTime(unittest.TestCase):
+    """The request email resolves to whoever owned it at requested_at."""
+
+    def setUp(self):
+        self.resolver = _make_resolver(OWNER_IDS_CSV, OWNER_AUDIT_CSV)
+
+    def _resolve(self, email, requested_at, audit_at=None, case_id="case_t"):
+        err = io.StringIO()
+        with redirect_stderr(err):
+            b = self.resolver.resolve(email, audit_at=audit_at,
+                                      requested_at=requested_at, case_id=case_id)
+        return b, err.getvalue()
+
+    def test_moved_email_request_before_move_is_old_owner(self):
+        b, err = self._resolve("shared@x.com", _utc(2026, 2, 1), audit_at=_utc(2026, 2, 15))
+        self.assertEqual(b.user_id, "user_A")
+        self.assertEqual(err, "")                       # clear-cut, no warning
+        # at audit_at A still had shared@, so it is A's current email then
+        self.assertEqual(b.current_email, "shared@x.com")
+        self.assertNotIn("a-new@x.com", b.all_emails())
+
+    def test_moved_email_request_after_move_is_new_owner(self):
+        b, err = self._resolve("shared@x.com", _utc(2026, 5, 1), audit_at=_utc(2026, 5, 10))
+        self.assertEqual(b.user_id, "user_B")
+        self.assertEqual(err, "")
+        self.assertIn("b-old@x.com", b.all_emails())
+
+    def test_old_owner_bundle_keeps_moved_email_as_history(self):
+        b, _ = self._resolve("shared@x.com", _utc(2026, 2, 1), audit_at=_utc(2026, 5, 1))
+        self.assertEqual(b.user_id, "user_A")
+        self.assertEqual(b.current_email, "a-new@x.com")
+        self.assertIn("shared@x.com", b.historical_emails)
+
+    def test_move_happens_exactly_at_requested_at(self):
+        """At the change time the new value applies (start is inclusive)."""
+        b, _ = self._resolve("shared@x.com", _utc(2026, 4, 1))
+        self.assertEqual(b.user_id, "user_B")
+
+    def test_gap_between_owners_warns_and_picks_previous_owner(self):
+        b, err = self._resolve("shared@x.com", _utc(2026, 3, 15))
+        self.assertEqual(b.user_id, "user_A")
+        self.assertIn("case_t", err)
+        self.assertIn("had no owner", err)
+
+    def test_same_old_email_two_users_warns_and_picks_correct_owner(self):
+        """Both C and D listed dup-old@ with unknown start; at 2024-06 both
+        could match. Ownership passes on, so C (gave it up first) had it."""
+        b, err = self._resolve("dup-old@x.com", _utc(2024, 6, 1), case_id="case_dup")
+        self.assertEqual(b.user_id, "user_C")
+        self.assertIn("WARNING", err)
+        self.assertIn("case_dup", err)
+        self.assertIn("user_C", err)
+        self.assertIn("user_D", err)
+        self.assertIn("chose user_C", err)
+
+    def test_same_old_email_after_first_owner_left_is_second_owner(self):
+        b, err = self._resolve("DUP-OLD@X.COM", _utc(2025, 3, 1))   # any case
+        self.assertEqual(b.user_id, "user_D")
+        self.assertEqual(err, "")                       # only D fits then
+
+    def test_no_time_given_current_owner_wins(self):
+        """Old behaviour is kept when neither requested_at nor audit_at is given."""
+        b, err = self._resolve("shared@x.com", None)
+        self.assertEqual(b.user_id, "user_B")
+        self.assertEqual(err, "")
+
+    def test_falls_back_to_audit_at_without_requested_at(self):
+        b, _ = self._resolve("shared@x.com", None, audit_at=_utc(2026, 2, 1))
+        self.assertEqual(b.user_id, "user_A")
+
+    def test_resolve_all_uses_requested_at(self):
+        rows = [
+            {"case_id": "c1", "email": "shared@x.com",
+             "requested_at": "2026-02-01T00:00:00Z", "audit_at": "2026-02-10T00:00:00Z"},
+            {"case_id": "c2", "email": "shared@x.com",
+             "requested_at": "2026-05-01T00:00:00Z", "audit_at": "2026-05-10T00:00:00Z"},
+        ]
+        with redirect_stderr(io.StringIO()):
+            got = [b.user_id for _, b in self.resolver.resolve_all(rows)]
+        self.assertEqual(got, ["user_A", "user_B"])
+
+    def test_unknown_email_still_none(self):
+        b, _ = self._resolve("nobody@x.com", _utc(2026, 1, 1))
+        self.assertIsNone(b)
+
+
 class TestHistory(unittest.TestCase):
     """bundle.history keeps the full audit row for each change up to audit_at."""
 
@@ -369,7 +502,8 @@ class TestRealDataset(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.resolver = IdentityResolver(IDS_PATH, AUDIT_PATH)
-        cls.requests = list(csv.DictReader(open(REQ_PATH, encoding="utf-8")))
+        with open(REQ_PATH, newline="", encoding="utf-8") as fh:
+            cls.requests = list(csv.DictReader(fh))
 
     def test_all_518_cases_attempted(self):
         results = self.resolver.resolve_all(self.requests)

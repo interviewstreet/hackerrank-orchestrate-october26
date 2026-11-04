@@ -94,6 +94,77 @@ class TestMadeUpUncertain(unittest.TestCase):
                 self.assertEqual(classify_request(text).label, UNC)
 
 
+class TestReviewFindings(unittest.TestCase):
+    """The 4 sentences the code review found misclassified."""
+
+    def test_do_not_hesitate_is_deletion(self):
+        r = classify_request("Please do not hesitate to delete everything you hold about me.")
+        self.assertEqual(r.label, IS_DEL)
+
+    def test_not_been_erased_complaint_is_deletion(self):
+        self.assertEqual(classify_request("My profile has still not been erased.").label, IS_DEL)
+
+    def test_exclude_me_from_marketing_is_opt_out(self):
+        self.assertEqual(classify_request("Please exclude me from your marketing emails.").label, NA)
+
+    def test_remove_my_email_from_list_is_opt_out(self):
+        self.assertEqual(classify_request("Please remove my email from your marketing list.").label, NA)
+
+
+class TestNegationMustBeInstruction(unittest.TestCase):
+    """A negated *description* is not a refusal; a negated *instruction* is."""
+
+    DESCRIPTIONS_ARE_DELETION = [
+        "You marked my request complete, but my data was not removed. Please remove it.",
+        "Mi cuenta no fue eliminada todavía.",
+        "Le compte n'a pas été supprimé, merci de le supprimer.",
+        "Minha conta ainda não foi excluída, por favor excluam.",
+        "データがまだ削除されていません。",
+        "제 계정이 아직 삭제되지 않았습니다.",
+        # "remove my email from" something that is not a list = deletion
+        "Please remove my email from your systems.",
+    ]
+    INSTRUCTIONS_ARE_NOT_APPLICABLE = [
+        "I don't want my account deleted, just unsubscribe me.",
+        "Please don’t delete my account, I only need a copy of my invoices.",
+        "No quiero eliminar mi cuenta, solo cambiar mi correo.",
+        "Ne pas supprimer mon compte, je veux juste corriger mon adresse.",
+    ]
+
+    def test_descriptions(self):
+        for text in self.DESCRIPTIONS_ARE_DELETION:
+            with self.subTest(text=text):
+                self.assertEqual(classify_request(text).label, IS_DEL)
+
+    def test_instructions(self):
+        for text in self.INSTRUCTIONS_ARE_NOT_APPLICABLE:
+            with self.subTest(text=text):
+                self.assertEqual(classify_request(text).label, NA)
+
+
+class TestOrStartsNewRequest(unittest.TestCase):
+    """'or' joins two separate requests, like 'and' / 'but' (review fix)."""
+
+    CASES = [
+        "Delete my account or update my email.",                       # EN
+        "Eliminen mi cuenta o cambien mi correo.",                     # ES
+        "Excluam minha conta ou alterem meu e-mail.",                  # PT
+        "Supprimez mon compte ou modifiez mon adresse.",               # FR
+        "アカウントを削除またはメールアドレスを変更してください。",          # JA
+        "계정을 삭제 또는 이메일 주소를 변경해 주세요.",                    # KO
+    ]
+
+    def test_or_gives_uncertain(self):
+        for text in self.CASES:
+            with self.subTest(text=text):
+                self.assertEqual(classify_request(text).label, UNC)
+
+    def test_object_of_deletion_still_works(self):
+        """Without a conjunction, the word after the verb is still the object."""
+        self.assertEqual(
+            classify_request("Eliminen cualquier copia de mis datos.").label, IS_DEL)
+
+
 class TestResultShape(unittest.TestCase):
     def test_returns_classification_result(self):
         r = classify_request("Please delete my account.")
