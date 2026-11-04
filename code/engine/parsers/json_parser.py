@@ -54,7 +54,7 @@ def parse_json(evidence_id: str, captured_at: str, path: str) -> Tuple[List[Obse
     if "service_exports" in data:                              # service_resource_export
         ts = data.get("exported_at") or captured_at
         for service, body in data["service_exports"].items():
-            cov.append(Coverage(evidence_id, ts, service, "", "json", service))
+            cov.append(Coverage(evidence_id, ts, service, "", "json_lookup", service))
             for list_key, items in body.items():
                 if not isinstance(items, list):
                     continue

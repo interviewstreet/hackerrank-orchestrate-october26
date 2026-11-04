@@ -19,6 +19,7 @@ def text_to_observations(evidence_id: str, captured_at: str, pages: List[str], f
     """One observation per resource id mentioned on a page; identifiers come from the same page."""
     obs: List[Observation] = []
     seen = set()
+    whole = file_label + " " + " ".join(pages)           # an attachment is described on a later page / by its name
     for pno, text in enumerate(pages, 1):
         ids = extract_identifiers({"text": text})
         rids = list(dict.fromkeys(RESOURCE_ID_RE.findall(text)))
@@ -27,6 +28,8 @@ def text_to_observations(evidence_id: str, captured_at: str, pages: List[str], f
                 continue
             seen.add(rid)
             system, cat = category_for_resource(rid)
+            if rid.startswith("support_") and re.search(r"attachment", whole, re.IGNORECASE):
+                cat = "SUPPORT_ATTACHMENT"
             obs.append(Observation(
                 evidence_id=evidence_id, captured_at=captured_at, system_id=system or "", resource_id=rid,
                 data_category=cat or "", state="PRESENT", observed_at=captured_at, emails=ids["emails"],

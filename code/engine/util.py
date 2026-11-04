@@ -24,7 +24,6 @@ RESOURCE_PREFIX_CATEGORY = [
     ("tombstone_", "identity_service", "ACCOUNT_TOMBSTONE"),
     ("legal_hold_", "legal_service", "LEGAL_HOLD_RECORD"),
     ("marketing_", "marketing_platform", "MARKETING_PROFILE"),
-    ("object_", "object_storage", "SUPPORT_ATTACHMENT"),
     ("cache_", "cache_service", "CACHE_ENTRY"),
 ]
 RESOURCE_ID_RE = re.compile(

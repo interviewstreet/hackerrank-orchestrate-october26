@@ -63,7 +63,7 @@ def _clean(v):
     return None if v is None or v.strip().lower() in ("", "null", "none", "[redacted]") else v
 
 
-def _event_to_obs(evidence_id, captured_at, f, lineno):
+def _event_to_obs_inner(evidence_id, captured_at, f, lineno):
     ev = f.get("event", "")
     rid = f.get("resource_id", "")
     ts = f.get("_ts") or captured_at
@@ -107,6 +107,9 @@ def _event_to_obs(evidence_id, captured_at, f, lineno):
     elif ev == "restore_policy_read_completed":
         ra = truthy(f.get("restore_allowed"))
         state = ("ACTIVE" if ra else "BLOCKED") if ra is not None else None
+    elif ev == "connector_heartbeat":
+        en = truthy(f.get("enabled"))
+        state = ("ACTIVE" if (en and truthy(f.get("scheduler_registered")) is not False) else "DISABLED") if en is not None else None
     elif ev in ("connector_config_loaded", "connector_config_read_completed"):
         en = truthy(f.get("enabled"))
         state = ("ACTIVE" if en else "DISABLED") if en is not None else None
@@ -116,21 +119,73 @@ def _event_to_obs(evidence_id, captured_at, f, lineno):
         state = "PRESENT"
     if not state:
         return None
+    cat = {"attachment_pii_scan": "SUPPORT_ATTACHMENT", "contact_query_completed": "SUPPORT_ATTACHMENT",
+           "contact_lookup_completed": "MARKETING_PROFILE", "message_pii_scan": "SUPPORT_MESSAGE",
+           "message_read": "SUPPORT_MESSAGE", "support_ticket_read_completed": "SUPPORT_MESSAGE"}.get(ev, "")
     for k in ("correlation_key", "match_key", "lookup_key", "matched_value", "subject_ref", "subject_reference",
               "customer_email", "requester_email", "owner_email", "email"):
         pass  # identifiers are harvested generically below
     return make_obs(evidence_id, captured_at, {k: v for k, v in rec.items() if k != "resource_id"} | {"resource_id": rid},
-                    state=state, **kw, extra_attrs={"event": ev})
+                    state=state, category=cat, **kw, extra_attrs={"event": ev})
+
+
+
+LOOKUP_KEYS = ("lookup_key", "match_key", "subject_key", "correlation_key", "subject_ref")
+
+
+def _event_to_obs(evidence_id, captured_at, f, lineno):
+    """Lookup keys say which subject was queried (a LINK); they are not data stored in the record."""
+    lookup = {k: f[k] for k in LOOKUP_KEYS if k in f}
+    f2 = {k: v for k, v in f.items() if k not in LOOKUP_KEYS}
+    o = _event_to_obs_inner(evidence_id, captured_at, f2, lineno)
+    if o:
+        ids = extract_identifiers(lookup)
+        o.links = {"emails": list(ids["emails"]), "user_refs": list(ids["user_refs"]), "hashes": list(ids["hashes"])}
+        o.attrs["lookup"] = lookup
+    return o
+
+
+# fields that carry a subject identifier (email / user ref / hash) rather than a resource id
+IDENT_KEYS = ("lookup_key", "match_key", "subject_key", "correlation_key", "matched_value", "subject_ref",
+              "subject_reference", "customer_email", "requester_email", "owner_email", "email", "customer_reference",
+              "user_id", "requester_phone")
 
 
 def parse_log(evidence_id: str, captured_at: str, path: str) -> Tuple[List[Observation], List[Coverage]]:
-    obs: List[Observation] = []
+    """Parse a log. Events of one trace (same trace_id) describe one lookup: the 'started' event carries the key that
+    was looked up (an email), the 'completed' event carries the resource id. Identifiers are therefore shared across
+    a trace so the resource can be tied to the subject."""
+    events = []
     with open(path, encoding="utf-8") as fh:
         for n, line in enumerate(fh, 1):
-            if not line.strip():
-                continue
-            f = parse_line(line)
-            o = _event_to_obs(evidence_id, captured_at, f, n)
-            if o:
-                obs.append(o)
+            if line.strip():
+                events.append((n, parse_line(line)))
+
+    trace_ids: Dict[str, Dict[str, List[str]]] = {}
+    for _, f in events:
+        tid = f.get("trace_id") or f.get("requestId")
+        if not tid:
+            continue
+        ids = extract_identifiers({k: f[k] for k in IDENT_KEYS if k in f})
+        bucket = trace_ids.setdefault(tid, {"emails": [], "user_refs": [], "hashes": []})
+        for kind in bucket:
+            for v in ids[kind]:
+                if v not in bucket[kind]:
+                    bucket[kind].append(v)
+
+    obs: List[Observation] = []
+    for n, f in events:
+        o = _event_to_obs(evidence_id, captured_at, f, n)
+        if not o:
+            continue
+        tid = f.get("trace_id") or f.get("requestId")
+        shared = trace_ids.get(tid)
+        if shared:
+            for kind in ("emails", "user_refs", "hashes"):
+                bucket = o.links.setdefault(kind, [])
+                for v in shared[kind]:
+                    if v not in bucket:
+                        bucket.append(v)
+            o.attrs["trace_id"] = tid
+        obs.append(o)
     return obs, []

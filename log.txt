@@ -96,3 +96,24 @@ repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
 worktree=main
 parent_agent=none
 
+
+## [2026-11-04T14:05:00Z] Core engine, accuracy tuning and output.csv generation
+
+User Prompt (verbatim, secrets redacted):
+do whatever you think is best, let me know at the end of each step before we push any changes. ask any questions if needed i can clarify
+
+Agent Response Summary:
+Completed the deterministic audit engine (identity resolution, evidence matching, state reconstruction, policy, findings, remediation and verification planners, case analyzer, pipeline) and tuned it against the 32 sample cases: deletion_status 32/32, step F1 about 0.98, 26/32 exact cases. Added code/main.py and an output validator; generated the root output.csv (518 rows, validation OK). No model calls are used at run time.
+
+Actions:
+* Added code/engine/{identity_resolver,evidence_matcher,request_classifier,state_reconstructor,policy_engine,ghost_detector,remediation_planner,verification_planner,case_analyzer,pipeline,validate_output}.py and code/evaluation/main.py
+* Tuned ownership rules, retained-category absence handling, peer-ordered activity inference, attachment categorisation
+* Wrote code/main.py and generated output.csv; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none

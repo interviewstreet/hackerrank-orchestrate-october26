@@ -26,6 +26,14 @@ TYPED_TABLES = {
 }
 
 
+def replica_label(table: str) -> str:
+    """Which copy of the data a table holds. Plain inventory tables and *_primary are the primary store."""
+    if table in TYPED_TABLES and "replica" not in table:
+        return "primary"
+    t = table.replace("customer_data_", "").replace("customer_profiles_", "")
+    return "primary" if t in ("primary", "customer_profiles") else t
+
+
 def _rows(con: sqlite3.Connection, table: str):
     cur = con.execute(f'SELECT * FROM "{table}"')
     cols = [c[0] for c in cur.description]
@@ -47,15 +55,16 @@ def parse_sql(evidence_id: str, captured_at: str, path: str) -> Tuple[List[Obser
     obs: List[Observation] = []
     cov: List[Coverage] = []
     covered = set()
+    label_of = {}
 
     for table in tables:
         cols = [r[1] for r in con.execute(f'PRAGMA table_info("{table}")')]
         if table == "snapshot_scope":
             for r in _rows(con, table):
-                key = (r["origin_system"], r["captured_at"])
+                key = (r["origin_system"], r["captured_at"], "primary")
                 if key not in covered:
                     covered.add(key)
-                    cov.append(Coverage(evidence_id, r["captured_at"], r["origin_system"], "", "sql", table))
+                    cov.append(Coverage(evidence_id, r["captured_at"], r["origin_system"], "", "sql", table, replica="primary"))
             continue
         if "record_json" in cols:
             for r in _rows(con, table):
@@ -64,15 +73,16 @@ def parse_sql(evidence_id: str, captured_at: str, path: str) -> Tuple[List[Obser
                 coll = r["collection_name"]
                 system, cat = COLLECTION_CATEGORY.get(coll, (r["origin_system"], ""))
                 system = r["origin_system"] or system
-                o = make_obs(evidence_id, snap_ts, rec, system_id=system, category=cat, observed_at=r["updated_at"],
+                o = make_obs(evidence_id, snap_ts, rec, system_id=system, category=cat, observed_at=snap_ts,
                              source_format="sql", locator=f"{table}/{r['resource_id']}",
-                             extra_attrs={"table": table, "topology": topology, "collection": coll})
+                             extra_attrs={"table": table, "topology": topology, "collection": coll,
+                                          "replica": replica_label(table)})
                 if o:
                     obs.append(o)
-                key = (system, snap_ts)
+                key = (system, snap_ts, replica_label(table))
                 if key not in covered:
                     covered.add(key)
-                    cov.append(Coverage(evidence_id, snap_ts, system, coll, "sql", table))
+                    cov.append(Coverage(evidence_id, snap_ts, system, coll, "sql", table, replica=replica_label(table)))
             continue
         if table in TYPED_TABLES:
             system, cat = TYPED_TABLES[table]
@@ -82,14 +92,14 @@ def parse_sql(evidence_id: str, captured_at: str, path: str) -> Tuple[List[Obser
                     # search entries carry the originating account in source_resource_id
                     rec["source_account"] = rec.get("source_resource_id")
                 o = make_obs(evidence_id, snap_ts, rec, system_id=system, category=cat,
-                             observed_at=r.get("updated_at") or r.get("indexed_at") or snap_ts,
+                             observed_at=snap_ts,
                              source_format="sql", locator=f"{table}/{r['resource_id']}",
-                             extra_attrs={"table": table, "topology": topology})
+                             extra_attrs={"table": table, "topology": topology, "replica": replica_label(table)})
                 if o:
                     obs.append(o)
-            key = (system, snap_ts)
+            key = (system, snap_ts, replica_label(table))
             if key not in covered:
                 covered.add(key)
-                cov.append(Coverage(evidence_id, snap_ts, system, "", "sql", table))
+                cov.append(Coverage(evidence_id, snap_ts, system, "", "sql", table, replica=replica_label(table)))
     con.close()
     return obs, cov

@@ -46,7 +46,9 @@ class Observation:
     phones: List[str] = field(default_factory=list)
     names: List[str] = field(default_factory=list)
     attrs: Dict[str, Any] = field(default_factory=dict)
+    links: Dict[str, List[str]] = field(default_factory=dict)   # identifiers used only to LINK the record to a subject
     source_format: str = ""          # sql | json | log | txt | pdf | image
+    file_captured_at: str = ""       # manifest capture time of the evidence FILE (governs usability and citation)
     locator: str = ""                # table / line / page reference for provenance
     confidence: float = 1.0          # <1 for OCR-derived facts
 
@@ -63,6 +65,8 @@ class Coverage:
     collection: str = ""
     source_format: str = ""
     locator: str = ""
+    replica: str = "primary"          # which copy this snapshot covers (primary, failover_replica, read_replica, ...)
+    file_captured_at: str = ""
 
 
 @dataclass

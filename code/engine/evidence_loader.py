@@ -37,11 +37,11 @@ class EvidenceStore:
         for o in self.observations:
             self.by_resource.setdefault(o.resource_id, []).append(o)
             self.by_system.setdefault(o.system_id, []).append(o)
-            for e in o.emails:
+            for e in dict.fromkeys(o.emails + o.links.get("emails", [])):
                 self.by_email.setdefault(e, []).append(o)
-            for u in o.user_refs:
+            for u in dict.fromkeys(o.user_refs + o.links.get("user_refs", [])):
                 self.by_user_ref.setdefault(u, []).append(o)
-            for h in o.hashes:
+            for h in dict.fromkeys(o.hashes + o.links.get("hashes", [])):
                 self.by_hash.setdefault(h, []).append(o)
         for c in self.coverage:
             self.coverage_by_system.setdefault(c.system_id, []).append(c)
@@ -73,11 +73,9 @@ def _link_observations(ctx: DatasetContext, store: "EvidenceStore") -> None:
             ids = extract_identifiers(act["details"])
             rid = act["resource_id"]
             system, cat = category_for_resource(rid)
-            if act["target_system"] == "object_storage":
-                cat = "SUPPORT_ATTACHMENT"
             store.observations.append(Observation(
                 evidence_id=fid, captured_at=ctx.manifest[fid]["captured_at"], system_id=system or act["target_system"],
-                resource_id=rid, data_category=cat or "", state="PRESENT",
+                resource_id=rid, data_category=cat or "", state="PRESENT", file_captured_at=ctx.manifest[fid]["captured_at"],
                 observed_at=ctx.manifest[fid]["captured_at"], emails=ids["emails"], user_refs=ids["user_refs"],
                 hashes=[], phones=[], names=[],
                 attrs={"link_activity_id": act["activity_id"], "details": act["details"]},
@@ -95,6 +93,10 @@ def load_evidence(ctx: DatasetContext) -> EvidenceStore:
             continue
         try:
             obs, cov = parser(fid, row["captured_at"], row["abs_path"])
+            for o in obs:
+                o.file_captured_at = row["captured_at"]
+            for c in cov:
+                c.file_captured_at = row["captured_at"]
             store.observations.extend(obs)
             store.coverage.extend(cov)
             store.status[fid] = "PROCESSED"
