@@ -76,15 +76,22 @@ class TestRunCase(unittest.TestCase):
 
     # --- P2 -> P3 contract (CONTRACTS.md, section 1) -----------------------
 
-    def test_placeholder_find_records_has_exactly_contract_keys(self):
+    def test_find_records_has_exactly_contract_keys(self):
+        """P2's real find_records() returns a dict with exactly the 5 keys.
+        The values are real evidence now, so only the shape is checked."""
         from evidence_search import find_records
         from models import EVIDENCE_KEYS
-        ev = find_records(self.resolver.resolve("oliver-bennett@gmail.com"), DELETION_CASE)
+        from utils import parse_ts
+        audit_at = parse_ts(DELETION_CASE["audit_at"])
+        # Same hand-over as main.process_case(): a copy with a parsed audit_at
+        evidence_case = dict(DELETION_CASE, audit_at=audit_at)
+        identity = self.resolver.resolve(DELETION_CASE["email"], audit_at=audit_at)
+        ev = find_records(identity, evidence_case)
+        self.assertIsInstance(ev, dict)
         self.assertEqual(set(ev), set(EVIDENCE_KEYS))
         self.assertEqual(set(EVIDENCE_KEYS), {"records", "latest_by_resource",
                                               "referenced_resources", "absence_proofs",
                                               "identifier_provenance"})
-        self.assertTrue(all(len(v) == 0 for v in ev.values()))
 
     def test_decide_receives_evidence_dict(self):
         seen = {}
