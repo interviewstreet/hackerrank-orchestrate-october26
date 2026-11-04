@@ -6,6 +6,30 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 
+# ---------------------------------------------------------------------------
+# P2 -> P3 contract: keys of the dict returned by evidence_search.find_records()
+# (see code/CONTRACTS.md, section 1)
+# ---------------------------------------------------------------------------
+EVIDENCE_KEYS: tuple[str, ...] = (
+    "records",                # list[ObservedRecord]
+    "latest_by_resource",     # dict[(system_id, resource_id, replica_or_table), ObservedRecord]
+    "referenced_resources",   # list[dict]: resources linked to the subject without a direct identifier
+    "absence_proofs",         # dict[(system_id, resource_id), list[AbsenceProof]]
+    "identifier_provenance",  # dict[str, list[str]]: subject identifier -> evidence/audit ids where it matched
+)
+
+
+def empty_evidence() -> dict:
+    """A P2 -> P3 dict with every key present and nothing found."""
+    return {
+        "records": [],
+        "latest_by_resource": {},
+        "referenced_resources": [],
+        "absence_proofs": {},
+        "identifier_provenance": {},
+    }
+
+
 @dataclass(frozen=True)
 class IdentityChange:
     """One row of user_audit_log.csv: a single identity-field change."""

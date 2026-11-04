@@ -458,3 +458,37 @@ branch=p1-identity
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T16:15:35Z] Person 1: team interfaces - P2->P3 dict, CONTRACTS.md, check of P2's audit_at cutoff
+
+User Prompt (verbatim, secrets redacted):
+Help me settle the team’s interfaces before I message them. Don’t change identity_resolver.py or request_classifier.py.
+
+P2 → P3: update the placeholder find_records(identity, case) in code/evidence_search.py so it returns a dict with exactly these keys: records, latest_by_resource, referenced_resources, absence_proofs, identifier_provenance (all empty for now). Update the placeholder decide() in policy_engine.py and main.py to accept this dict. Keep the crash safety. Run main.py and all tests.
+P3 → P4: create code/CONTRACTS.md. It should describe the P2 → P3 dict above, plus a proposed P3 output for P4 based on problem_statement.md: a dict with
+resources: list of {system_id, resource_id, category, required_treatment (DELETE/REDACT/ANONYMIZE/RETAIN/TOMBSTONE), state_at_audit, satisfied (bool), evidence_ids}
+flows: list of {system_id, resource_id, kind, active_at_audit (bool), evidence_id}
+restore_risks: list of {system_id, resource_id, active_at_audit (bool), evidence_id}
+timeline: list of {time, system_id, resource_id, event, state_after, evidence_id}
+Add one example showing how P4 turns this into steps_json, for example how a resource with required_treatment DELETE and satisfied=False becomes REPORT_REMAINING_RECORD → DELETE_RECORD → VERIFY_RECORD_ABSENT. Mark it “PROPOSAL, P3 and P4 to confirm”.
+Check P2’s branch: run git fetch, then search origin/feature/evidence-scanner with git grep -n "audit_at\|captured_at" origin/feature/evidence-scanner -- code/ and tell me in simple words whether P2’s scanner ignores evidence captured after audit_at.
+
+Agent Response Summary:
+Added models.EVIDENCE_KEYS and empty_evidence(); evidence_search.find_records() returns the 5-key dict (empty); policy_engine.decide(identity, evidence, case) returns INCOMPLETE plus empty resources/flows/restore_risks/timeline; main.py checks the evidence dict (non-dict or missing key -> case fails safely as INCOMPLETE []; extra key -> warning). Added 6 tests in test_main.py. Wrote code/CONTRACTS.md: P2->P3 table mapped to P2's EvidenceScanner methods, P3->P4 proposal, P4 mapping/selection/order rules checked against all 32 sample answers, and a case_06 example verified equal to sample_output.csv, plus open questions. P2's branch: every query applies captured_at <= audit_at and observed_at <= audit_at (inclusive), including link-following and absence proofs, and has tests for it; caveats: it rejects naive/offset-less audit_at and does not read system_activity.csv. identity_resolver.py and request_classifier.py unchanged. 114/114 tests pass; main.py 518 rows.
+
+Actions:
+* Ran: git fetch origin; git grep -n "audit_at\|captured_at" origin/feature/evidence-scanner -- code/
+* Read P2's code/evidence/scanner.py, models.py, tests/test_p3_contract.py, main.py on origin/feature/evidence-scanner
+* Analysed dataset/sample_output.csv step patterns
+* Modified code/models.py, code/evidence_search.py, code/policy_engine.py, code/main.py, code/test_main.py, code/README_identity.md
+* Created code/CONTRACTS.md
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -v -> 114 OK
+* Ran: python3 code/main.py -> 518 rows
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
