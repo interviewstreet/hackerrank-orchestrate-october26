@@ -155,3 +155,10 @@ Before submitting, confirm that:
 - `code.zip` includes your runnable code, `README.md`, `code/evaluation/evaluation_report.md`, and `code/evaluation/usage_report.md`;
 - `log.txt` follows the `AGENTS.md` turn format and is uploaded to the `chat_transcript` slot; and
 - no API keys, credentials, real personal data, or sensitive configuration values are included.
+
+
+## EraSight Phase 1: local Slack integration
+
+The local presentation and notification API is `python code/server.py`. It reuses Member Two's engine and reads `SLACK_WEBHOOK_URL` from the ignored root `.env`. Install the existing PDF/OCR requirements (`pdftotext` and `tesseract` on PATH) first; incomplete evidence processing prevents API startup. See [frontend setup and manual Slack verification](code/frontend/README.md#run-slack-phase-1) and the [endpoint contract](code/frontend/CONTRACT.md#phase-1-local-api-and-slack).
+
+Notification tests use mocked transport: `python -m pytest code/tests/test_slack.py`. The frontend checks are `npm.cmd test --prefix code/frontend` and `npm.cmd run build --prefix code/frontend`. The Slack delivery format and acknowledgment follow [Slack's Incoming Webhook documentation](https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/).

@@ -1,7 +1,7 @@
 import { demoCases } from './data';
 import type { CaseResult } from './types';
 export const isDemo = import.meta.env.VITE_DATA_MODE !== 'live';
-export const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, '');
+export const apiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 async function request(path: string, signal?: AbortSignal): Promise<unknown> {
   const response = await fetch(`${apiBase}${path}`, { signal });
   if (!response.ok) throw new Error(`API request failed (${response.status}). Check that the presentation API is running.`);

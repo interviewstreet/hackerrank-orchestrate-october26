@@ -553,3 +553,357 @@ branch=member-1-frontend-slack
 repo_root=C:\Users\Luzain Sara\Documents\EraSight
 worktree=C:\Users\Luzain Sara\Documents\EraSight
 parent_agent=none
+
+## [2026-11-04T20:54:58.569044+00:00] Phase 1 local Slack integration
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: .env
+
+## Open tabs:
+- .env: .env
+- .env.example: .env.example
+- data.test.ts: code/frontend/src/data.test.ts
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- data.ts: code/frontend/src/data.ts
+
+## My request:
+Implement EraSight Phase 1: Slack Integration.
+
+The Slack app, `#erasight-alerts` channel, and Incoming Webhook are already created.
+
+1. Inspect the merged backend and existing frontend Slack actions.
+2. Reuse Member 2's backend; add secure Slack delivery using `SLACK_WEBHOOK_URL` from `.env`.
+3. Create/reuse a protected case-specific notification endpoint.
+4. Send formatted Slack alerts with actual case status, severity, findings, affected systems, and remediation.
+5. Connect the existing frontend Slack button with loading, success, and error feedback.
+6. Handle invalid cases, missing configuration, and Slack failures. Never expose secrets or PII.
+7. Add mocked tests and run frontend/backend checks.
+
+**Do not change UI design, graphs, intelligence logic, Resend, or Git branches. Do not push.**
+
+Implement and report changed files, test results, and manual verification steps.
+
+Agent Response Summary:
+Added a loopback presentation API reusing Member Two's engine, an adapter for the existing frontend contract, and case-specific Slack delivery protected by local origin/Host validation, HttpOnly SameSite session cookies and CSRF tokens. Webhook configuration stays server-side; payloads allowlist case/system/operation fields and omit personal identifiers and raw evidence. Connected the existing button with pending, confirmed-success and safe-error feedback, while blocking demo sends and duplicate requests. All 26 new backend integration tests, 16 frontend tests and production build pass; full backend suite has 99 passes and the same case_07 sample-status failure verified against untouched HEAD. Fifteen evidence parsers fail on this machine because PDF/OCR commands are unavailable, so API startup now fails closed; setup/manual checks are documented and no live Slack message was sent.
+
+Actions:
+* Added code/server.py, code/presentation.py, code/notifications/slack.py and package initializer.
+* Added code/tests/test_slack.py and frontend Slack helper/tests; wired App.tsx, API base, Vite proxy and test command.
+* Updated environment examples, README files and endpoint contract; kept actual secrets out of output.
+* Ran mocked transport and HTTP protection tests, mini-engine integration, frontend tests/build and mocked browser feedback checks.
+* Verified unchanged engine/advisor/graph/style files, retained the current branch, and performed no push.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T21:16:43.882089+00:00] SESSION START
+
+tool=codex_vscode
+model=gpt-6.1-sol
+Repo Root: C:\Users\Luzain Sara\Documents\EraSight
+Branch: member-1-frontend-slack
+Worktree: C:\Users\Luzain Sara\Documents\EraSight
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T21:20:28.921913+00:00] Upgrade Slack Investigation Report
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: code/frontend/.env.local
+
+## Open tabs:
+- .env.local: code/frontend/.env.local
+- .env: .env
+
+## My request:
+Upgrade EraSight's existing Slack notification into a professional **Investigation Report**.
+When clicking "Send Slack report", send a structured Slack Block Kit report containing case ID, overall deletion status, risk severity, affected systems, evidence-backed findings, remediation recommendations, and verification status.
+Use only actual backend case data. Clearly distinguish verified, unresolved, and unknown findings. Never fabricate evidence or include PII.
+Keep the existing secure webhook, API endpoint, frontend styling, and error handling unchanged. Only improve the Slack report content and formatting.
+Run relevant tests and verify successful delivery. Do not push. [$ponytail:ponytail-review](<C:\Users\Luzain Sara\\.codex\plugins\cache\ponytail\ponytail\5.3.3\skills\ponytail-review\SKILL.md>)
+
+Agent Response Summary:
+Improved only the backend Slack report content and formatting, preserving webhook transport, endpoint, frontend and error handling. Added evidence references, verified/unresolved/unknown labels, ordered recommendations and bounded sections without personal data. Reviewed the connected engine and delivery code; 30 backend tests and 16 frontend tests passed, and the frontend production build succeeded. Slack accepted a real backend case_33 report with HTTP 200 and ok; no push was performed.
+
+Actions:
+* Edited code/notifications/slack.py and code/tests/test_slack.py.
+* Ran backend Slack tests, frontend tests, production build and a real webhook delivery check.
+* Read ponytail-review and ponytail skills; reviewed backend contracts and callers.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T21:34:25.566081+00:00] Secure HTML Slack report ready for live testing
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: code/frontend/.env.local
+
+## Open tabs:
+- .env.local: code/frontend/.env.local
+- .env: .env
+
+## My request:
+Update EraSight's existing Slack report integration.
+
+When the user clicks "Send Slack report", format the Slack message in this exact order:
+
+1. Header: "EraSight — Investigation Report"
+2. Case overview:
+   - Case ID
+   - Overall deletion status
+   - Risk severity
+   - Note: "Severity is derived from finding operations, not an independent risk assessment."
+3. Full HTML Investigation Report (accessible as a valid link or attachment).
+
+Generate the HTML report using actual investigation data, including findings, evidence, affected systems, and remediation recommendations where available.
+
+Important:
+
+- Use real backend data only; never invent findings.
+- Do not send a local Windows file path as a report link because Slack users cannot open it.
+- If the current Incoming Webhook cannot upload HTML files, investigate the smallest secure way to provide a downloadable report, such as an authenticated report endpoint or Slack file-upload API.
+- Never expose sensitive evidence, PII, webhook URLs, or credentials.
+- Preserve existing Slack integration, frontend design, Member 2's backend intelligence, and Resend functionality.
+- Add relevant tests and run them.
+- Do not commit or push.
+
+
+Agent Response Summary:
+Implemented a full sanitized HTML report from backend case results, using Slack file uploads and a private permalink after the exact header and overview in the existing webhook message. Updated upload configuration, validation, tests and setup documentation while preserving frontend design, engine intelligence and Resend. All 52 backend tests and 16 frontend tests passed, and HTML generation plus message ordering validated for 518 real backend cases. No live messages were sent this turn; live testing awaits user configuration, with no branch change, commit or push.
+
+Actions:
+* Updated code/notifications/slack.py, code/server.py, code/tests/test_slack.py, .env.example and Slack setup/contract documentation.
+* Read official Slack file-upload documentation and ran backend/frontend tests and full-dataset HTML validation.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T21:34:25.566121+00:00] Secure HTML Slack report ready for live testing
+
+User Prompt (verbatim, secrets redacted):
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_97744fab262043c58b1771f3f1754a68\",0]","question":"The HTML download needs Slack app credentials that aren’t currently configured. Please add SLACK_BOT_TOKEN (with files:write and files:read scopes) and SLACK_REPORT_CHANNEL_ID (the existing webhook’s channel; invite the bot there) to the ignored root .env, then tell me when ready. Do not paste the token here. I’ll continue implementation and tests meanwhile.","answer":"Continue implementing the HTML report generation, Slack message formatting, and tests.\nI will configure SLACK_BOT_TOKEN and SLACK_REPORT_CHANNEL_ID in the root .env file.\nKeep the existing Incoming Webhook integration working. Do not expose credentials, change branches, commit, or push. Let me know when the implementation is ready for live testing."}]
+</send_user_message_question_reply>
+
+
+Agent Response Summary:
+Implemented a full sanitized HTML report from backend case results, using Slack file uploads and a private permalink after the exact header and overview in the existing webhook message. Updated upload configuration, validation, tests and setup documentation while preserving frontend design, engine intelligence and Resend. All 52 backend tests and 16 frontend tests passed, and HTML generation plus message ordering validated for 518 real backend cases. No live messages were sent this turn; live testing awaits user configuration, with no branch change, commit or push.
+
+Actions:
+* Updated code/notifications/slack.py, code/server.py, code/tests/test_slack.py, .env.example and Slack setup/contract documentation.
+* Read official Slack file-upload documentation and ran backend/frontend tests and full-dataset HTML validation.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T21:43:47.596182+00:00] Verify live Slack HTML upload and diagnose channel access
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: code/frontend/.env.local
+
+## Open tabs:
+- .env.local: code/frontend/.env.local
+- .env: .env
+
+## My request:
+I've configured `SLACK_BOT_TOKEN` and `SLACK_REPORT_CHANNEL_ID` in the root `.env` and invited the EraSight bot to `#erasight-alerts`.
+Please finish the implementation, run relevant tests, and verify the HTML report upload functionality. Keep all credentials private. Do not commit or push.
+Report any remaining issues and the exact steps for live testing.
+
+
+Agent Response Summary:
+Moved the two report-upload settings from frontend .env.local to the ignored root .env without displaying their values. Live testing revealed Slack rejected JSON upload parameters; switched Slack API requests to form encoding and added regression checks and actionable permission errors. All 55 backend Slack tests and 16 frontend tests passed; Slack authenticated the bot and accepted HTML bytes, but final sharing repeatedly failed with not_in_channel and self-join lacked permission. No successful webhook report was posted in this turn; final live verification requires correct app membership and matching channel ID, with no commits or pushes performed.
+
+Actions:
+* Updated code/notifications/slack.py, code/tests/test_slack.py and Slack troubleshooting documentation.
+* Moved only the two server-side Slack upload settings between ignored environment files; no values logged.
+* Ran backend and frontend tests and authorized live upload checks using real backend case_33.
+* Checked bot authentication and attempted joining the configured channel; join returned missing_scope.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T21:43:47.596227+00:00] Verify live Slack HTML upload and diagnose channel access
+
+User Prompt (verbatim, secrets redacted):
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_1d71426e4d554006807d083b64bc382a\",0]","question":"Please save SLACK_BOT_TOKEN and SLACK_REPORT_CHANNEL_ID in C:\\Users\\Luzain Sara\\Documents\\EraSight\\.env, then reply “saved.” The live process currently reads both as missing or empty. Do not paste their values here.","answer":"saved"}]
+</send_user_message_question_reply>
+
+
+Agent Response Summary:
+Moved the two report-upload settings from frontend .env.local to the ignored root .env without displaying their values. Live testing revealed Slack rejected JSON upload parameters; switched Slack API requests to form encoding and added regression checks and actionable permission errors. All 55 backend Slack tests and 16 frontend tests passed; Slack authenticated the bot and accepted HTML bytes, but final sharing repeatedly failed with not_in_channel and self-join lacked permission. No successful webhook report was posted in this turn; final live verification requires correct app membership and matching channel ID, with no commits or pushes performed.
+
+Actions:
+* Updated code/notifications/slack.py, code/tests/test_slack.py and Slack troubleshooting documentation.
+* Moved only the two server-side Slack upload settings between ignored environment files; no values logged.
+* Ran backend and frontend tests and authorized live upload checks using real backend case_33.
+* Checked bot authentication and attempted joining the configured channel; join returned missing_scope.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T21:43:47.596239+00:00] Verify live Slack HTML upload and diagnose channel access
+
+User Prompt (verbatim, secrets redacted):
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_fe1d2fb6438248ebbcda7b198f7b9d83\",0]","question":"Slack returned not_in_channel. Please confirm that root SLACK_REPORT_CHANNEL_ID is #erasight-alerts’ channel ID, then invite the bot belonging to the exact Slack app that issued SLACK_BOT_TOKEN via channel Details → Integrations → Add apps. Reply “ready” after correcting membership. Do not share the token.","answer":"yes"}]
+</send_user_message_question_reply>
+
+
+Agent Response Summary:
+Moved the two report-upload settings from frontend .env.local to the ignored root .env without displaying their values. Live testing revealed Slack rejected JSON upload parameters; switched Slack API requests to form encoding and added regression checks and actionable permission errors. All 55 backend Slack tests and 16 frontend tests passed; Slack authenticated the bot and accepted HTML bytes, but final sharing repeatedly failed with not_in_channel and self-join lacked permission. No successful webhook report was posted in this turn; final live verification requires correct app membership and matching channel ID, with no commits or pushes performed.
+
+Actions:
+* Updated code/notifications/slack.py, code/tests/test_slack.py and Slack troubleshooting documentation.
+* Moved only the two server-side Slack upload settings between ignored environment files; no values logged.
+* Ran backend and frontend tests and authorized live upload checks using real backend case_33.
+* Checked bot authentication and attempted joining the configured channel; join returned missing_scope.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T22:00:05.757170+00:00] Trace old Slack message and verify HTML flow
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: .env
+
+## Open tabs:
+- .env: .env
+- .env.local: code/frontend/.env.local
+
+## My request:
+Debug the EraSight Slack HTML report delivery.
+
+Live test result: Clicking "Send Slack report" still posts the old text-only message titled "EraSight deletion audit" for case_35. There is no HTML report attachment or download link.
+
+The root `.env` contains `SLACK_WEBHOOK_URL`, `SLACK_BOT_TOKEN`, and `SLACK_REPORT_CHANNEL_ID`. The bot has been configured for the report channel.
+
+Please:
+
+1. Trace the frontend button through the backend endpoint, Slack webhook, and HTML upload flow.
+2. Determine whether the old message is coming from an outdated server, fallback logic, or a different endpoint.
+3. Check whether the backend actually loads the root `.env`.
+4. Diagnose Slack API errors, including missing channel membership or permissions, without exposing credentials.
+5. Ensure the Slack message displays the case overview first, followed by a real downloadable HTML report.
+6. Do not claim success unless the HTML upload is verified. Do not silently fall back to text-only success.
+7. Run relevant tests and report the root cause and exact live-test instructions.
+
+Preserve existing security, frontend styling, Member 2's backend, and Resend. Do not commit or push.
+
+
+Agent Response Summary:
+Traced the served Vite modules and proxy to port 8000 and the case-specific backend endpoint; case_35 returned HTTP 502 rather than claiming text-only success, and the old header was absent from the current path. Verified root .env loading and live Slack upload/sharing, but files.info returned missing_scope, blocking the private-link and authenticated-download checks. Added an HTML capability handshake to prevent older servers from sending obsolete reports, restarted the identified API, and verified the live proxy advertises html-v1. All 55 backend tests and 17 frontend tests passed and the production build succeeded; no successful HTML-download delivery is claimed, and no commits or pushes were performed.
+
+Actions:
+* Updated code/server.py, code/frontend/src/slack.ts, Slack regression tests and API contract documentation.
+* Ran real case upload checks and a case_35 request against the existing server with credentials kept private.
+* Restarted only the identified EraSight API on port 8000; confirmed HTML capability through Vite.
+* Ran backend tests, frontend tests, production build and git diff --check; restored generated build metadata.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T22:01:17.640198+00:00] Verify successful live HTML report delivery
+
+User Prompt (verbatim, secrets redacted):
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_3f4d943440d84040b3d1e6407bf72645\",0]","question":"The live upload now succeeds, but Slack rejects files.info with missing_scope. Please add the files:read bot scope to the Slack app that issued SLACK_BOT_TOKEN, reinstall the app to the workspace, update root .env if Slack issues a new token, and reply “ready.” Keep the token private.","answer":"I've added the files:read bot scope alongside files:write, reinstalled the EraSight Slack app, and updated the bot token in the root .env if necessary.\nPlease retry the live HTML report upload, verify files.info succeeds, and confirm that the downloadable HTML report appears in #erasight-alerts. Do not commit or push."}]
+</send_user_message_question_reply>
+
+
+Agent Response Summary:
+Retried real backend case_33 with the saved server-side credentials: upload ticket, HTML byte upload, channel sharing and files.info all succeeded. The existing webhook and protected case endpoint returned HTTP 200, public file sharing was disabled, and the authenticated HTML download matched the generated report byte for byte. Restarted the identified running API to load the updated root token for subsequent frontend sends. No credentials were printed, no application code changed, and no commits or pushes were performed.
+
+Actions:
+* Ran .cache/verify_slack_html.py for one authorized real-case upload, message and authenticated download.
+* Restarted only the identified EraSight API on port 8000 to load updated server credentials.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-04T22:04:17.077496+00:00] Space Slack Case Overview fields
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: .env
+
+## Open tabs:
+- .env: .env
+- .env.local: code/frontend/.env.local
+
+## My request:
+Format the Slack Investigation Report's Case Overview neatly, with each field (Case ID, Deletion Status, Risk Severity, and severity note) on a separate line with proper spacing. Keep the HTML report download link below the overview. Change formatting only; preserve all existing functionality, logic, security, and styling. Do not commit or push.
+
+
+Agent Response Summary:
+Changed only Slack overview presentation: each field and the severity note now have a separate line with blank-line spacing, and the HTML download link remains below the overview. Updated the formatting assertion; all 55 backend Slack tests passed and git diff --check passed. No new Slack report was sent, and no commit or push was performed.
+
+Actions:
+* Updated code/notifications/slack.py and its formatting assertion in code/tests/test_slack.py.
+* Ran backend Slack regression tests and requested a restart of the identified API to load formatting.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
