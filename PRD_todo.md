@@ -6,6 +6,14 @@ Rules for every chat: do not push without Rach's approval; append a `log.txt` en
 ## Sections A and B: DONE
 Evaluation/usage reports and the pytest suite are finished (see PRD_done.md, Sections 8 and 9). After any engine change, rerun `python3 code/main.py`, `pytest code/tests`, and `python3 code/evaluation/generate_reports.py`.
 
+## Section F: Live-model check of the advisory layer (needs Anthropic API key)
+**Goal:** confirm the built advisory layer works with the real API.
+- Put `ANTHROPIC_API_KEY` in `.env` (never commit). Export it in the shell, then run `python code/advise.py --model --limit 3`, inspect `explanations.json`, then run the full set.
+- Check rejected answers (`model_note` in `explanations.json`) and tune the prompt in `code/advisor/explain.py` if many are rejected.
+- Provide per-million-token prices in `ANTHROPIC_PRICE_INPUT_PER_MTOK` / `ANTHROPIC_PRICE_OUTPUT_PER_MTOK` so the usage report can estimate cost, then run `python code/evaluation/generate_reports.py`.
+- Optional: use the explanations in the Section C emails and Member 1's UI.
+- **Start prompt:** "Do Section F of PRD_todo.md."
+
 ## Section C: Resend email integration (P1/P2)
 **Goal:** `code/integrations/email/` with resend_client, email_service, draft_generator, templates, approval_service, webhook_handler.
 - Workflow states: DRAFT, PENDING_APPROVAL, APPROVED or REJECTED, SENDING, SENT or FAILED. Nothing is sent without explicit human approval; duplicate sends are prevented.
@@ -17,7 +25,7 @@ Evaluation/usage reports and the pytest suite are finished (see PRD_done.md, Sec
 
 ## Section D: Packaging, docs and handoff (P0, deliverable)
 **Goal:** the files needed for submission.
-- Add `pytest` to `requirements.txt`. `.env.example` (`SLACK_WEBHOOK_URL`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_WEBHOOK_SECRET`, all empty), `requirements.txt`, README setup and run instructions (include `pdftotext` and `tesseract`).
+- Add `pytest` to `requirements.txt`. `.env.example` already exists (Slack, Resend and Anthropic variables, all empty): review it, `requirements.txt`, README setup and run instructions (include `pdftotext` and `tesseract`).
 - Document the shared result contract for Member 1.
 - Read `agent_trace_instructions.md` and build `agent-trace.zip` as it directs; build `code.zip` from `code/` (no dataset, venvs, caches or nested archives).
 - Confirm `log.txt` is complete and root `output.csv` is current.

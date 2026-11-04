@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import sys
 import time
 from collections import Counter
@@ -144,33 +145,63 @@ Run with `python3 code/evaluation/custom_cases.py`; they are also enforced by `p
   cases" were derived from the 32 samples; they are the least-proven rules for the other cases.
 - `account_004`-style records that appear in no evidence or activity cannot be reported without guessing, so they are not.
 - Hidden-answer behaviour for an unresolved identity (we return `INCOMPLETE` with no steps) is our reasoned choice.
+- Optional advisory layer (`code/advisor/`): a language model may add a plain-language explanation and a review flag to cases that
+  deterministic triggers mark as ambiguous (unresolved identity, possible lookalike email, mixed wording, no attributable records).
+  It runs only with `python code/advise.py --model`, is checked so it cannot cite an id the engine did not produce, falls back to a
+  template on any problem, and never changes `output.csv`. Unit tests use a fake model; no live-model evaluation has been run yet.
 - The system has no learned component, so there is no training/test split; the samples were used to design rules, and the
   custom cases above plus the invariants are the independent checks.
 """
     (HERE / "evaluation_report.md").write_text(ev, encoding="utf-8")
 
     n = len(full)
+    adv_path = HERE / "advisor_usage.json"
+    adv = json.loads(adv_path.read_text(encoding="utf-8")) if adv_path.exists() else None
+    calls = adv["calls"] if adv else 0
+    tin = adv["input_tokens"] if adv else 0
+    tout = adv["output_tokens"] if adv else 0
+    pin = os.environ.get("ANTHROPIC_PRICE_INPUT_PER_MTOK", "")
+    pout = os.environ.get("ANTHROPIC_PRICE_OUTPUT_PER_MTOK", "")
+    if not adv or calls == 0:
+        cost, cost_req = "$0.00", "$0.00"
+    elif pin and pout:
+        total = tin / 1e6 * float(pin) + tout / 1e6 * float(pout)
+        cost, cost_req = f"${total:.4f}", f"${total / n:.6f}"
+    else:
+        cost = cost_req = "not computed (price per million tokens was not supplied)"
+    if not adv or calls == 0:
+        who = ("**The shipped agent makes zero model calls.** It is a deterministic pipeline (rules, parsers, local `pdftotext` and "
+               "`tesseract` OCR). The optional advisory layer (`python code/advise.py --model`) was not used for this run, so there "
+               "are no input or output tokens and no per-token cost.")
+        model_rows = "| Model providers and names used at run time | None |"
+        per_model = "No models were used, so there is no per-model table."
+    else:
+        who = (f"The decisions behind `output.csv` come from the deterministic engine and make **no model calls**. The optional advisory "
+               f"layer (`python code/advise.py --model`) asked **{adv['provider']} / {adv['model']}** for a second opinion on cases the "
+               f"deterministic triggers flagged. It only writes `explanations.json`; it cannot change `output.csv`.")
+        model_rows = f"| Model providers and names used at run time | {adv['provider']}: {adv['model']} (advisory layer only) |"
+        per_model = (f"| Model | Calls | Input tokens | Output tokens |\n|---|---|---|---|\n| {adv['provider']} {adv['model']} | "
+                     f"{calls} | {tin} | {tout} |\n| **Overall** | {calls} | {tin} | {tout} |")
     us = f"""# ERASIGHT Token Usage and Cost Report
 
 This report covers the final full-dataset run that produced `output.csv` ({n} requests).
 
 ## Summary
-**The shipped agent makes zero model calls.** It is a deterministic pipeline (rules, parsers, local `pdftotext` and `tesseract`
-OCR); it does not call any language-model API, so there are no input or output tokens and no per-token cost.
+{who}
 
 | Item | Value |
 |---|---|
-| Model providers and names used at run time | None |
-| Model calls | 0 |
-| Input tokens | 0 |
-| Output tokens | 0 |
-| Total tokens | 0 |
-| Average tokens per request | 0 |
-| Estimated total cost | $0.00 |
-| Estimated cost per request | $0.00 |
+{model_rows}
+| Model calls | {calls} |
+| Input tokens | {tin} |
+| Output tokens | {tout} |
+| Total tokens | {tin + tout} |
+| Average tokens per request | {(tin + tout) / n:.1f} |
+| Estimated total cost | {cost} |
+| Estimated cost per request | {cost_req} |
 
 ## Per-model breakdown
-No models were used, so there is no per-model table.
+{per_model}
 
 ## Run characteristics (measured)
 | Item | Value |
@@ -178,12 +209,12 @@ No models were used, so there is no per-model table.
 | Requests | {n} |
 | Dataset and evidence load | {t_load:.1f} s |
 | Analysis of all requests | {t_run:.1f} s ({1000 * t_run / n:.1f} ms per request) |
-| Network access during the run | None |
+| Network access by the decision pipeline | None |
 
 ## Note on development tooling
 The code was written with an AI coding assistant (Claude Code). That usage is development tooling, not part of the
 submitted agent's run, and is recorded in the session transcript (`log.txt`) rather than measured here.
-If a language-model layer is added later, this file must be regenerated with its real call and token counts.
+To refresh this file after a model run: `python code/advise.py --model` then `python code/evaluation/generate_reports.py`.
 """
     (HERE / "usage_report.md").write_text(us, encoding="utf-8")
     print("wrote evaluation_report.md and usage_report.md")

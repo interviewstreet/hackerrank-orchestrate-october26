@@ -139,3 +139,24 @@ branch=member-2-backend-resend
 repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T15:40:00Z] Advisory language-model layer
+
+User Prompt (verbatim, secrets redacted):
+ill give you an api key later can you build the rest of it
+
+Agent Response Summary:
+Built the optional advisory layer without needing a key: deterministic review triggers, template explanations for every case, an Anthropic client (stdlib, key from environment only), strict validation that rejects any model answer citing an id the engine did not produce, a CLI (code/advise.py), usage logging that feeds usage_report.md, .env.example and 11 tests with a fake model. Decisions and output.csv are unchanged; no live model call has been made.
+
+Actions:
+* Added code/advisor/*, code/advise.py, code/tests/test_advisor.py, .env.example
+* Extended generate_reports.py to report real model usage when advisor_usage.json exists
+* Updated PRD_done.md and PRD_todo.md; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none

@@ -84,5 +84,9 @@ Run with `python3 code/evaluation/custom_cases.py`; they are also enforced by `p
   cases" were derived from the 32 samples; they are the least-proven rules for the other cases.
 - `account_004`-style records that appear in no evidence or activity cannot be reported without guessing, so they are not.
 - Hidden-answer behaviour for an unresolved identity (we return `INCOMPLETE` with no steps) is our reasoned choice.
+- Optional advisory layer (`code/advisor/`): a language model may add a plain-language explanation and a review flag to cases that
+  deterministic triggers mark as ambiguous (unresolved identity, possible lookalike email, mixed wording, no attributable records).
+  It runs only with `python code/advise.py --model`, is checked so it cannot cite an id the engine did not produce, falls back to a
+  template on any problem, and never changes `output.csv`. Unit tests use a fake model; no live-model evaluation has been run yet.
 - The system has no learned component, so there is no training/test split; the samples were used to design rules, and the
   custom cases above plus the invariants are the independent checks.

@@ -77,3 +77,11 @@ Known remaining sample gaps (6 missing steps, no wrong steps): case_04 `account_
 - Worker activity after `audit_at` was used; now ignored.
 - A case with nothing attributable could return COMPLETE with no steps; COMPLETE now needs at least one proven-compliant resource.
 - Resources known only from evidence older than the request are not claimed (case_07/case_61 behaviour); `output.csv` regenerated (only case_61 changed).
+
+## Section 10: Advisory language-model layer: BUILT, not yet run against a live model
+Files: `code/advisor/{llm_client,review,explain,advisor}.py`, `code/advise.py`, `code/tests/test_advisor.py`, `.env.example`.
+- Decisions stay rule-based. The layer only adds a plain-language explanation and a "needs human review" flag; it never edits `output.csv`.
+- Deterministic triggers choose which cases get a model call (unresolved identity, possible lookalike email, mixed wording, no attributable records). On the 518 requests 6 are flagged; all others get a template explanation with no call.
+- Safety: the model's JSON is rejected if malformed or if it cites any resource/evidence id the engine did not produce; any failure falls back to the template. The API key is read from `ANTHROPIC_API_KEY` only and never logged.
+- Run: `python code/advise.py` (templates, no key) or `python code/advise.py --model [--limit N]` (writes `explanations.json` and `code/evaluation/advisor_usage.json`). `python code/evaluation/generate_reports.py` then reports the real calls and tokens in `usage_report.md`.
+- 11 unit tests use a fake model (41 tests pass in total). **Not yet tested with the real API: this needs the key.**
