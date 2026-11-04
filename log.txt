@@ -238,3 +238,22 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T18:19:00Z] Resend: do I need to buy a domain?
+
+User Prompt (verbatim, secrets redacted):
+own domain as in like my own website?? dont i need to buy a domain for that or is there any way i can have it for free
+
+Agent Response Summary:
+Explained that a sending domain is a domain you own and control DNS for, usually a small yearly purchase; free options are a student-pack domain or skipping the domain and using Resend's onboarding sender to your own email for a demo. No files changed except this log entry; nothing pushed.
+
+Actions:
+* Appended this log entry only
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
