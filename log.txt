@@ -430,3 +430,22 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T21:10:26Z] Demo script not found on laptop
+
+User Prompt (verbatim, secrets redacted):
+laptop terminal: python code/email_demo.py --to your-resend-signup-email@gmail.com --dry-run -> can't open file ...\EraSight\code\email_demo.py: [Errno 2] No such file or directory
+
+Agent Response Summary:
+Explained the file is missing because the demo commit has not been pushed yet and the push still needs Rach's explicit approval; reminded her to use her real Resend signup email instead of the placeholder. No files changed except this log entry; nothing pushed.
+
+Actions:
+* Appended this log entry only
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
