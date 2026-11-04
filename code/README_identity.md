@@ -103,10 +103,10 @@ dicts (it reads `email` and `audit_at` from each row) and returns
 ## Tests
 
 ```text
-python3 -m unittest discover -s code -p "test_*.py" -v   # all 100 tests
+python3 -m unittest discover -s code -p "test_*.py" -v   # all 108 tests
 
 python3 code/test_utils.py                # 13 tests
-python3 code/test_identity_resolver.py    # 58 tests
+python3 code/test_identity_resolver.py    # 66 tests
 python3 code/test_request_classifier.py   # 20 tests, 47 made-up sentences
 python3 code/test_main.py                 # 9 tests: one bad case never stops the run
 ```
@@ -278,3 +278,76 @@ all_email_hashes() -> ['5e3b9b92…bf89bd', '2e0aabf7…ef9515']
 Both emails (and both hashes) must be searched in evidence for this case.
 `audit_293` and `audit_294` (2026-05-28) are before `audit_at`
 (2026-09-26), so they are included.
+
+## For P2 and P3 – adapter
+
+`IdentityBundle.as_subject_kwargs()` turns the bundle into the keyword
+arguments of P2's `SubjectIdentifiers` (`code/evidence/models.py` on P2's
+branch). This branch does not import P2's code: the method returns a
+plain `dict`.
+
+### Usage for P2 (one line)
+
+```python
+subject = SubjectIdentifiers(**identity.as_subject_kwargs())
+```
+
+`identity` is the `IdentityBundle` that `main.py` passes to
+`find_records(identity, case)`.
+
+### Mapping
+
+| `SubjectIdentifiers` field | Type | Taken from `IdentityBundle` |
+|---|---|---|
+| `user_id` | `Optional[str]` | `user_id` |
+| `emails` | `frozenset[str]` | `all_emails()`: current + historical, lowercased |
+| `phones` | `frozenset[str]` | `all_phones()`: current + historical, exactly as written |
+| `email_hashes` | `frozenset[str]` | `all_email_hashes()`: current + historical SHA-256 |
+| `names` | `frozenset[str]` | `{current_name}`, or empty if there is no name |
+| `resource_ids` | `frozenset[str]` | always empty. P2 fills these from evidence |
+
+Every value is "as of `audit_at`": identifiers that only appeared after
+`audit_at` are not included. Empty strings are dropped, so a missing phone
+or name never becomes a search term that matches blank fields in evidence.
+
+### Note for P3: dates and evidence IDs
+
+`SubjectIdentifiers` has no `valid_from` / `valid_to`, so it can't tell you
+**when** an identifier was in use or **which audit row** proves it. For
+that, use `identity.history` (a list of `IdentityChange`, oldest first,
+only changes at or before `audit_at`):
+
+| Field | Use it for |
+|---|---|
+| `audit_id` | the `evidence_id` to cite for an identity change |
+| `old_value` | the identifier used **until** `event_time` |
+| `new_value` | the identifier used **from** `event_time` |
+| `event_time` | the date of the change (ISO-8601 UTC string; parse with `utils.parse_ts()`) |
+
+For example, an old email in `subject.emails` was in use until the
+`event_time` of the `history` entry whose `old_value` is that email.
+
+### Real example: case_43
+
+```python
+identity = resolver.resolve(case["email"], audit_at=audit_at,
+                            requested_at=requested_at, case_id="case_43")
+identity.as_subject_kwargs()
+```
+
+Actual output (sets shown sorted):
+
+```text
+{'user_id':      'user_41',
+ 'emails':       frozenset({'javier.r940897@outlook.com',      # old, used in the request
+                            'javier.r9408@outlook.com'}),      # current
+ 'phones':       frozenset({'+34 695 783 595'}),
+ 'email_hashes': frozenset({'2e0aabf7d2e6c922c1d59fe49b69d3d9874d2f83ccaf826538f48e84e0ef9515',   # old
+                            '5e3b9b928e5c07b78012b06e451a02a26789e1639766588b7b706b8bbecf89bd'}), # current
+ 'names':        frozenset({'Javier Ríos'}),
+ 'resource_ids': frozenset()}
+```
+
+Both the old and the current email and hash are included. The dates and
+evidence IDs for the change are in `identity.history`: `audit_293`
+(email) and `audit_294` (email_hash), both at `2026-05-28T19:48:13Z`.

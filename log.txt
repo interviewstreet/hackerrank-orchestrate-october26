@@ -379,3 +379,82 @@ branch=p1-identity
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T14:41:00Z] Person 1: IdentityBundle.as_subject_kwargs() adapter for P2 + README section
+
+User Prompt (verbatim, secrets redacted):
+My teammate P2 has this class in their branch (code/evidence/models.py, not in my branch):
+
+python
+@dataclass(frozen=True)
+class SubjectIdentifiers:
+    user_id: Optional[str] = None
+    emails: frozenset[str] = field(default_factory=frozenset)
+    phones: frozenset[str] = field(default_factory=frozenset)
+    email_hashes: frozenset[str] = field(default_factory=frozenset)
+    names: frozenset[str] = field(default_factory=frozenset)
+    resource_ids: frozenset[str] = field(default_factory=frozenset)
+
+Don’t import P2’s code. Instead:
+
+Add a method as_subject_kwargs() to IdentityBundle that returns a dict with exactly those 6 keys, using frozensets: user_id; emails = all_emails(); phones = all_phones(); email_hashes = all_email_hashes(); names = {current_name} if not empty; resource_ids = empty. P2 will call SubjectIdentifiers(**identity.as_subject_kwargs()).
+Add tests, including case_43 (both old and new emails and hashes must be included).
+Add a “For P2 and P3 – adapter” section to code/README_identity.md with: the mapping table, the one-line usage for P2, and a note that SubjectIdentifiers has no valid_from/valid_to, so P3 should use identity.history (audit_id, old_value, new_value, event_time) for dates and evidence IDs. Show a real example of as_subject_kwargs() for case_43.
+Run all tests and show me the results.
+
+Agent Response Summary:
+Added IdentityBundle.as_subject_kwargs() in models.py returning exactly user_id, emails, phones, email_hashes, names, resource_ids (frozensets; user_id str or None); empty strings are dropped from every set. P2's code is not imported; the test uses a local copy of SubjectIdentifiers to prove SubjectIdentifiers(**kwargs) works. Added TestAsSubjectKwargs (7 tests) and TestAsSubjectKwargsCase43 (old + new email and hash for user_41). Added the "For P2 and P3 – adapter" README section with mapping table, one-line usage, the history note for P3 and the real case_43 output. 108/108 tests pass; main.py unchanged at 518 rows.
+
+Actions:
+* Modified code/models.py (as_subject_kwargs)
+* Modified code/test_identity_resolver.py (8 new tests)
+* Modified code/README_identity.md (adapter section, test counts)
+* Ran as_subject_kwargs() on case_43
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -v -> 108 OK
+* Ran: python3 code/main.py -> 518 rows
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T14:48:49Z] Person 1: repeated adapter request - verified existing work, reran tests
+
+User Prompt (verbatim, secrets redacted):
+My teammate P2 has this class in their branch (code/evidence/models.py, not in my branch):
+
+python
+@dataclass(frozen=True)
+class SubjectIdentifiers:
+    user_id: Optional[str] = None
+    emails: frozenset[str] = field(default_factory=frozenset)
+    phones: frozenset[str] = field(default_factory=frozenset)
+    email_hashes: frozenset[str] = field(default_factory=frozenset)
+    names: frozenset[str] = field(default_factory=frozenset)
+    resource_ids: frozenset[str] = field(default_factory=frozenset)
+
+Don’t import P2’s code. Instead:
+
+Add a method as_subject_kwargs() to IdentityBundle that returns a dict with exactly those 6 keys, using frozensets: user_id; emails = all_emails(); phones = all_phones(); email_hashes = all_email_hashes(); names = {current_name} if not empty; resource_ids = empty. P2 will call SubjectIdentifiers(**identity.as_subject_kwargs()).
+Add tests, including case_43 (both old and new emails and hashes must be included).
+Add a “For P2 and P3 – adapter” section to code/README_identity.md with the mapping table, the one-line usage for P2, and a note that SubjectIdentifiers has no valid_from/valid_to, so P3 should use identity.history (audit_id, old_value, new_value, event_time) for dates and evidence IDs. Show a real example of as_subject_kwargs() for case_43.
+Run all tests with python3 -m unittest discover -s code -p "test_*.py" -v and show me the results.
+
+Agent Response Summary:
+Same request as the previous turn, already implemented. Verified on disk that as_subject_kwargs() (code/models.py), TestAsSubjectKwargs and TestAsSubjectKwargsCase43 (code/test_identity_resolver.py) and the "For P2 and P3 – adapter" README section are present and intact. Made no changes, to avoid duplicating code or sections. Reran the suite: 108/108 OK.
+
+Actions:
+* Checked git status and grepped models.py, test_identity_resolver.py, README_identity.md
+* Read the README adapter section
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -v -> 108 OK
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none

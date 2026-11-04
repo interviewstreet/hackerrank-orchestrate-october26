@@ -57,6 +57,28 @@ class IdentityBundle:
                 result.append(p)
         return result
 
+    def as_subject_kwargs(self) -> dict:
+        """
+        Keyword arguments for P2's SubjectIdentifiers (code/evidence/models.py):
+
+            SubjectIdentifiers(**identity.as_subject_kwargs())
+
+        Returns exactly the 6 fields, as frozensets (user_id as str or None).
+        Empty strings are dropped, so a missing phone or name never becomes
+        a search term that matches every blank field in the evidence.
+        """
+        def fs(values) -> frozenset[str]:
+            return frozenset(v for v in values if v and v.strip())
+
+        return {
+            "user_id": self.user_id or None,
+            "emails": fs(self.all_emails()),
+            "phones": fs(self.all_phones()),
+            "email_hashes": fs(self.all_email_hashes()),
+            "names": fs([self.current_name]),
+            "resource_ids": frozenset(),
+        }
+
 
 class ClassificationResult:
     """Result of classifying a deletion request text."""

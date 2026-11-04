@@ -421,6 +421,104 @@ class TestEmailOwnerAtRequestTime(unittest.TestCase):
         self.assertIsNone(b)
 
 
+from dataclasses import dataclass, field as dc_field
+from typing import Optional as _Optional
+
+
+@dataclass(frozen=True)
+class _SubjectIdentifiersCopy:
+    """Local copy of P2's SubjectIdentifiers (code/evidence/models.py on P2's
+    branch). Copied, not imported, so this branch stays independent."""
+    user_id: _Optional[str] = None
+    emails: frozenset = dc_field(default_factory=frozenset)
+    phones: frozenset = dc_field(default_factory=frozenset)
+    email_hashes: frozenset = dc_field(default_factory=frozenset)
+    names: frozenset = dc_field(default_factory=frozenset)
+    resource_ids: frozenset = dc_field(default_factory=frozenset)
+
+
+SUBJECT_KEYS = {"user_id", "emails", "phones", "email_hashes", "names", "resource_ids"}
+
+
+class TestAsSubjectKwargs(unittest.TestCase):
+    """IdentityBundle.as_subject_kwargs() feeds P2's SubjectIdentifiers."""
+
+    def setUp(self):
+        self.resolver = _make_resolver()
+
+    def test_exactly_six_keys(self):
+        kw = self.resolver.resolve("alice@example.com").as_subject_kwargs()
+        self.assertEqual(set(kw), SUBJECT_KEYS)
+
+    def test_types(self):
+        kw = self.resolver.resolve("alice@example.com").as_subject_kwargs()
+        self.assertIsInstance(kw["user_id"], str)
+        for k in SUBJECT_KEYS - {"user_id"}:
+            with self.subTest(key=k):
+                self.assertIsInstance(kw[k], frozenset)
+
+    def test_values_match_bundle(self):
+        b = self.resolver.resolve("alice@example.com")
+        kw = b.as_subject_kwargs()
+        self.assertEqual(kw["user_id"], "user_01")
+        self.assertEqual(kw["emails"], frozenset(b.all_emails()))
+        self.assertEqual(kw["phones"], frozenset(b.all_phones()))
+        self.assertEqual(kw["email_hashes"], frozenset(b.all_email_hashes()))
+        self.assertEqual(kw["names"], frozenset({"Alice Smith"}))
+        self.assertEqual(kw["resource_ids"], frozenset())
+
+    def test_includes_old_and_new_emails(self):
+        kw = self.resolver.resolve("alice-old1@example.com").as_subject_kwargs()
+        self.assertEqual(kw["emails"], frozenset(
+            {"alice@example.com", "alice-old1@example.com", "alice-old2@example.com"}))
+
+    def test_empty_name_and_phone_dropped(self):
+        ids = IDENTITIES_CSV + "user_04,,dan@example.com,,hash_dan,2026-01-01T00:00:00Z\n"
+        kw = _make_resolver(identities=ids).resolve("dan@example.com").as_subject_kwargs()
+        self.assertEqual(kw["names"], frozenset())
+        self.assertEqual(kw["phones"], frozenset())
+
+    def test_builds_subject_identifiers(self):
+        """P2's one-line usage works and the result is hashable (frozen)."""
+        s = _SubjectIdentifiersCopy(**self.resolver.resolve("bob@example.com").as_subject_kwargs())
+        self.assertEqual(s.user_id, "user_02")
+        self.assertIn("+1-555-9999", s.phones)
+        hash(s)
+
+    def test_respects_audit_at(self):
+        """Identifiers that only appeared after audit_at are not handed to P2."""
+        b = self.resolver.resolve("alice@example.com",
+                                  audit_at=datetime(2025, 9, 1, tzinfo=timezone.utc))
+        self.assertNotIn("alice@example.com", b.as_subject_kwargs()["emails"])
+
+
+@unittest.skipUnless((Path(__file__).parent.parent / "dataset" / "user_identities.csv").exists(),
+                     "Real dataset not present")
+class TestAsSubjectKwargsCase43(unittest.TestCase):
+    """case_43: request uses the OLD email javier.r940897@outlook.com."""
+
+    OLD_EMAIL = "javier.r940897@outlook.com"
+    NEW_EMAIL = "javier.r9408@outlook.com"
+    OLD_HASH = "2e0aabf7d2e6c922c1d59fe49b69d3d9874d2f83ccaf826538f48e84e0ef9515"
+    NEW_HASH = "5e3b9b928e5c07b78012b06e451a02a26789e1639766588b7b706b8bbecf89bd"
+
+    def test_case_43(self):
+        ds = Path(__file__).parent.parent / "dataset"
+        resolver = IdentityResolver(ds / "user_identities.csv", ds / "user_audit_log.csv")
+        with open(ds / "deletion_requests.csv", newline="", encoding="utf-8") as fh:
+            case = next(r for r in csv.DictReader(fh) if r["case_id"] == "case_43")
+        (_, b), = resolver.resolve_all([case])
+        kw = b.as_subject_kwargs()
+        self.assertEqual(kw["user_id"], "user_41")
+        self.assertEqual(kw["emails"], frozenset({self.OLD_EMAIL, self.NEW_EMAIL}))
+        self.assertEqual(kw["email_hashes"], frozenset({self.OLD_HASH, self.NEW_HASH}))
+        self.assertEqual(kw["phones"], frozenset({"+34 695 783 595"}))
+        self.assertEqual(kw["names"], frozenset({"Javier Ríos"}))
+        self.assertEqual(kw["resource_ids"], frozenset())
+        # hashes really are SHA-256 of the lowercased emails
+        self.assertEqual({_sha256(self.OLD_EMAIL), _sha256(self.NEW_EMAIL)}, set(kw["email_hashes"]))
+
+
 class TestHistory(unittest.TestCase):
     """bundle.history keeps the full audit row for each change up to audit_at."""
 
