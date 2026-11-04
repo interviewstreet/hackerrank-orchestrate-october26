@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.env.local
+.taste-skill/inspect/
+__pycache__/
+.venv/
