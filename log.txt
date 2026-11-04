@@ -334,3 +334,22 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T20:55:16Z] Git pull on laptop asks to retry deleting a .git object directory
+
+User Prompt (verbatim, secrets redacted):
+git pull output on the laptop ending with: Deletion of directory '.git/objects/01' failed. Should I try again? (y/n)
+
+Agent Response Summary:
+Explained that this is git's automatic cleanup being blocked by a file lock (the repo sits inside OneDrive), that answering n is safe, and that the pull only fetched Member 1's branch because the Section C commits have not been pushed. No files changed except this log entry; nothing pushed.
+
+Actions:
+* Appended this log entry only
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
