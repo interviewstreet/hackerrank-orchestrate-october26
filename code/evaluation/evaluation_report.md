@@ -4,7 +4,7 @@ Reproduce every number in this report with:
 
 ```bash
 python code/evaluation/main.py                 # pipeline on the 32 public samples + scoring
-cd code && python -m pytest -q tests test_*.py # 393 tests (+587 subtests) incl. the custom evaluation cases
+cd code && python -m pytest -q tests test_identity_resolver.py test_main.py test_request_classifier.py test_utils.py # 475 passed, 1 skipped, 592 subtests passed
 python code/main.py && python code/validate_output.py   # full 518-case run + contract check
 ```
 
@@ -79,8 +79,7 @@ All pass.
 | C9 | Tombstone (`test_tombstone_with_empty_pii_is_still_present_not_deleted`) | Tombstone with all direct identifiers null | Kept and `VERIFY_RECORD_REDACTED` with evidence; never treated as deleted | PASS |
 | C10 | All 15 rules (`test_each_rule_noncompliant_record`, `test_each_rule_compliant_record`) | One non-compliant and (where meaningful) one compliant record per CSV rule | Correct finding / remediation / verification per rule, rule id recorded | PASS |
 
-Full test inventory: 393 tests pass and 1 is skipped (P3: 106; P2 scanner: 179, plus 1 skipped
-live-OCR test; P1: 108 with 587 subtests).
+Full test inventory: 475 tests passed, 1 skipped, and 592 subtests passed.
 
 ## 4. Full evaluation set (518 requests, final run)
 
