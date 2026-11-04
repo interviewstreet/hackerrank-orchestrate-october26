@@ -97,3 +97,26 @@ def test_env_file_loads_without_overriding_real_variables(tmp_path, monkeypatch)
     import os
     assert os.environ["ANTHROPIC_API_KEY"] == "abc" and os.environ["KEEP"] == "fromshell" and "EMPTY" not in os.environ
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+
+
+def test_openai_compatible_client_needs_all_settings(monkeypatch):
+    from advisor.llm_client import OpenAICompatibleClient
+    for k in ("LLM_API_KEY", "LLM_BASE_URL", "LLM_MODEL"):
+        monkeypatch.delenv(k, raising=False)
+    assert not OpenAICompatibleClient().available
+    c = OpenAICompatibleClient(api_key="k", base_url="https://example.test/v1/", model="m")
+    assert c.available and c.base_url == "https://example.test/v1" and c.usage.provider == "example.test"
+
+
+def test_openai_compatible_client_parses_reply_and_usage(monkeypatch):
+    from advisor.llm_client import OpenAICompatibleClient
+    c = OpenAICompatibleClient(api_key="k", base_url="https://example.test/v1", model="m")
+    seen = {}
+
+    def fake_post(payload):
+        seen.update(payload)
+        return {"choices": [{"message": {"content": "hello"}}], "usage": {"prompt_tokens": 12, "completion_tokens": 3}}
+    monkeypatch.setattr(c, "_post", fake_post)
+    assert c.complete("case_x", "sys", "usr") == "hello"
+    assert c.usage.to_dict()["input_tokens"] == 12 and c.usage.to_dict()["output_tokens"] == 3
+    assert "temperature" not in seen and seen["messages"][0]["role"] == "system"

@@ -8,9 +8,9 @@ Evaluation/usage reports and the pytest suite are finished (see PRD_done.md, Sec
 
 ## Section F: Live-model check of the advisory layer (needs Anthropic API key)
 **Goal:** confirm the built advisory layer works with the real API.
-- Put `ANTHROPIC_API_KEY` in `.env` (never commit). Export it in the shell, then run `python code/advise.py --model --limit 3`, inspect `explanations.json`, then run the full set.
+- Fill `LLM_API_KEY`, `LLM_BASE_URL` (ends in /v1) and `LLM_MODEL` in `.env` (never commit; provider is an OpenAI-compatible gateway, AgentRouter), then run `python code/advise.py --model --limit 3`, inspect `explanations.json`, then run the full set.
 - Check rejected answers (`model_note` in `explanations.json`) and tune the prompt in `code/advisor/explain.py` if many are rejected.
-- Provide per-million-token prices in `ANTHROPIC_PRICE_INPUT_PER_MTOK` / `ANTHROPIC_PRICE_OUTPUT_PER_MTOK` so the usage report can estimate cost, then run `python code/evaluation/generate_reports.py`.
+- Provide per-million-token prices in `LLM_PRICE_INPUT_PER_MTOK` / `LLM_PRICE_OUTPUT_PER_MTOK` so the usage report can estimate cost, then run `python code/evaluation/generate_reports.py`.
 - Optional: use the explanations in the Section C emails and Member 1's UI.
 - **Start prompt:** "Do Section F of PRD_todo.md."
 
@@ -25,7 +25,7 @@ Evaluation/usage reports and the pytest suite are finished (see PRD_done.md, Sec
 
 ## Section D: Packaging, docs and handoff (P0, deliverable)
 **Goal:** the files needed for submission.
-- Add `pytest` to `requirements.txt`. `.env.example` already exists (Slack, Resend and Anthropic variables, all empty): review it, `requirements.txt`, README setup and run instructions (include `pdftotext` and `tesseract`).
+- Add `pytest` to `requirements.txt`. `.env.example` already exists (Slack, Resend and LLM variables, all empty): review it, `requirements.txt`, README setup and run instructions (include `pdftotext` and `tesseract`).
 - Document the shared result contract for Member 1.
 - Read `agent_trace_instructions.md` and build `agent-trace.zip` as it directs; build `code.zip` from `code/` (no dataset, venvs, caches or nested archives).
 - Confirm `log.txt` is complete and root `output.csv` is current.

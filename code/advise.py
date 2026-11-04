@@ -1,7 +1,7 @@
 """Write plain-language explanations and review flags to explanations.json (never touches output.csv).
 
     python code/advise.py                 # templates only, no model calls, no key needed
-    python code/advise.py --model         # model second opinion on flagged cases (needs ANTHROPIC_API_KEY in the environment)
+    python code/advise.py --model         # model second opinion on flagged cases (needs LLM_API_KEY, LLM_BASE_URL, LLM_MODEL in .env)
     python code/advise.py --model --limit 20
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ sys.path.insert(0, str(HERE))
 
 from advisor.envfile import load_env                       # noqa: E402
 from advisor.advisor import advise_all                     # noqa: E402
-from advisor.llm_client import AnthropicClient             # noqa: E402
+from advisor.llm_client import make_client             # noqa: E402
 from engine.case_analyzer import build_context             # noqa: E402
 
 
@@ -32,9 +32,9 @@ def main() -> int:
 
     load_env(root / ".env")
     ec = build_context(a.dataset)
-    client = AnthropicClient() if a.model else None
+    client = make_client() if a.model else None
     if a.model and not client.available:
-        print("ANTHROPIC_API_KEY is not set: continuing with template explanations only.")
+        print("LLM_API_KEY, LLM_BASE_URL and LLM_MODEL are not all set in .env: continuing with template explanations only.")
     advice = advise_all(ec.ctx.requests, ec, client, a.limit)
     Path(a.out).write_text(json.dumps(advice, indent=1, ensure_ascii=False), encoding="utf-8")
     flagged = sum(x["review_needed"] for x in advice)

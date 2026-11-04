@@ -82,6 +82,6 @@ Known remaining sample gaps (6 missing steps, no wrong steps): case_04 `account_
 Files: `code/advisor/{llm_client,review,explain,advisor}.py`, `code/advise.py`, `code/tests/test_advisor.py`, `.env.example`.
 - Decisions stay rule-based. The layer only adds a plain-language explanation and a "needs human review" flag; it never edits `output.csv`.
 - Deterministic triggers choose which cases get a model call (unresolved identity, possible lookalike email, mixed wording, no attributable records). On the 518 requests 6 are flagged; all others get a template explanation with no call.
-- Safety: the model's JSON is rejected if malformed or if it cites any resource/evidence id the engine did not produce; any failure falls back to the template. The API key is read from `ANTHROPIC_API_KEY` only and never logged.
+- Safety: the model's JSON is rejected if malformed or if it cites any resource/evidence id the engine did not produce; any failure falls back to the template. The client is provider-neutral: an OpenAI-compatible gateway (AgentRouter) via `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` in `.env`, or Anthropic if `LLM_PROVIDER=anthropic`. The key is never logged.
 - Run: `python code/advise.py` (templates, no key) or `python code/advise.py --model [--limit N]` (writes `explanations.json` and `code/evaluation/advisor_usage.json`). `python code/evaluation/generate_reports.py` then reports the real calls and tokens in `usage_report.md`.
-- 11 unit tests use a fake model (41 tests pass in total). **Not yet tested with the real API: this needs the key.**
+- 13 unit tests use a fake model (44 tests pass in total). **Not yet tested with the real API: this needs the key.**

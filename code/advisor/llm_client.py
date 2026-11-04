@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple
@@ -84,3 +85,66 @@ class FakeClient:
         self.prompts.append((system, user))
         self.usage.add(case_id, *self._tokens)
         return self._reply(system, user) if callable(self._reply) else self._reply
+
+
+class OpenAICompatibleClient:
+    """Chat-completions client for any OpenAI-style gateway (e.g. an LLM router).
+
+    Settings come from the environment / .env: LLM_API_KEY, LLM_BASE_URL (ending in /v1), LLM_MODEL.
+    The key is sent only in the Authorization header and is never logged or included in errors.
+    """
+
+    def __init__(self, model: Optional[str] = None, api_key: Optional[str] = None, base_url: Optional[str] = None,
+                 timeout: int = 90):
+        self._key = api_key or os.environ.get("LLM_API_KEY", "")
+        self.base_url = (base_url or os.environ.get("LLM_BASE_URL", "")).rstrip("/")
+        self.model = model or os.environ.get("LLM_MODEL", "")
+        self.timeout = timeout
+        host = urllib.parse.urlparse(self.base_url).netloc if self.base_url else "unknown"
+        self.usage = UsageLog(provider=os.environ.get("LLM_PROVIDER_NAME", host), model=self.model or "unset")
+        self.last_error = ""
+
+    @property
+    def available(self) -> bool:
+        return bool(self._key and self.base_url and self.model)
+
+    def _post(self, payload: dict) -> dict:
+        req = urllib.request.Request(self.base_url + "/chat/completions", data=json.dumps(payload).encode("utf-8"),
+                                     method="POST", headers={"content-type": "application/json",
+                                                             "authorization": "Bearer " + self._key})
+        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+
+    def complete(self, case_id: str, system: str, user: str, max_tokens: int = 600) -> str:
+        if not self.available:
+            raise ModelUnavailable("LLM_API_KEY, LLM_BASE_URL and LLM_MODEL must all be set")
+        payload = {"model": self.model, "messages": [{"role": "system", "content": system},
+                                                     {"role": "user", "content": user}]}
+        data = None
+        for token_param in ("max_tokens", "max_completion_tokens"):      # gateways differ on the parameter name
+            try:
+                data = self._post(dict(payload, **{token_param: max_tokens}))
+                break
+            except urllib.error.HTTPError as e:
+                self.last_error = f"HTTP {e.code}"
+                if e.code != 400:
+                    break
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                self.last_error = type(e).__name__
+                break
+        if data is None:
+            self.usage.failed_calls += 1
+            raise ModelUnavailable(f"model call failed ({self.last_error})")
+        u = data.get("usage") or {}
+        self.usage.add(case_id, int(u.get("prompt_tokens", 0)), int(u.get("completion_tokens", 0)))
+        try:
+            return data["choices"][0]["message"]["content"] or ""
+        except (KeyError, IndexError, TypeError):
+            self.usage.failed_calls += 1
+            raise ModelUnavailable("model reply had no content") from None
+
+
+def make_client(provider: Optional[str] = None):
+    """LLM_PROVIDER=openai (default; OpenAI-compatible gateway) or anthropic."""
+    provider = (provider or os.environ.get("LLM_PROVIDER", "openai")).lower()
+    return AnthropicClient() if provider == "anthropic" else OpenAICompatibleClient()

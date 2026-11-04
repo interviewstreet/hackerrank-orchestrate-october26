@@ -160,8 +160,8 @@ Run with `python3 code/evaluation/custom_cases.py`; they are also enforced by `p
     calls = adv["calls"] if adv else 0
     tin = adv["input_tokens"] if adv else 0
     tout = adv["output_tokens"] if adv else 0
-    pin = os.environ.get("ANTHROPIC_PRICE_INPUT_PER_MTOK", "")
-    pout = os.environ.get("ANTHROPIC_PRICE_OUTPUT_PER_MTOK", "")
+    pin = os.environ.get("LLM_PRICE_INPUT_PER_MTOK", "")
+    pout = os.environ.get("LLM_PRICE_OUTPUT_PER_MTOK", "")
     if not adv or calls == 0:
         cost, cost_req = "$0.00", "$0.00"
     elif pin and pout:
