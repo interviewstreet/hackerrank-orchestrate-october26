@@ -88,22 +88,23 @@ redacted, `RETAIN` → verify present only, and so on) is now applied inside
 
 - Phases are written in the order FINDING, then REMEDIATION, then VERIFICATION (`_PHASE_KEYS` in `step_builder.py`).
 - Inside each phase, P3 sorts by the position of the operation in the AGENTS.md §6.4 table, then by `system_id`, then by `resource_id`. Within REMEDIATION, this puts `DISABLE_DATA_FLOW` and `BLOCK_RESTORE` before `DELETE`, `REDACT` and `ANONYMIZE`.
+- **`resource_id` uses numeric natural ordering, not lexical ordering.** P3's `_rid_key()` in `policy_engine.py` splits the id into a prefix and a trailing number and compares the number as an integer, so `account_9` comes before `account_10`. This is existing P3 behaviour. `tests/test_policy_engine.py::test_resource_ids_use_numeric_natural_sorting` now covers it as a regression test.
 - P3 removes duplicate `(system_id, resource_id.lower(), operation)` entries.
 - `step_no` runs consecutively from 1 across the whole case. P4 assigns it, and any input `step_no` is ignored.
-- P4 keeps P3's order and does not re-sort.
+- P4 keeps P3's order, including the natural `resource_id` order, and does not re-sort.
 - The result is the same as the proposal's single global sort, because the operation table is already grouped by phase.
 
 ## 6. Ambiguities and open points that need P3's decision
 
 1. **Interface change.** `CONTRACTS.md` §2–3 still describes the old proposal (P4 maps resources to operations and sorts). The code uses pre-built step lists from P3. Section 1 of this document needs approval as the real contract, and `CONTRACTS.md` should then be updated.
-2. **`resource_id` tie-break.** The proposal says to sort by `resource_id`, which reads as lexical order. `_rid_key()` sorts by the trailing number (`account_9` before `account_10`). In the 32 public samples and the current 518-case output, these two orders never disagree, so the choice does not change any row today. P3 should still state which order is intended.
+2. **`resource_id` tie-break: documented as numeric natural ordering.** The `CONTRACTS.md` proposal says only "sort by `resource_id`", which could be read as lexical order. The implemented and tested behaviour is numeric natural ordering through P3's `_rid_key()` (`account_9` before `account_10`; see section 5). A regression test now covers it. In the 32 public samples and the current 518-case output, natural and lexical order never disagree, so no row depends on this today. P3 only needs to acknowledge the wording when `CONTRACTS.md` is updated.
 3. **Status mismatch guard.** If `decide()` ever returned a status other than `COMPLETE` or `INCOMPLETE`, `main.py` would write `INCOMPLETE`, but `build_steps()` would still apply the evidence rules for the original status. This cannot happen with the current `decide()`. P3 should confirm that `decide()` never returns `NOT_APPLICABLE` or any other value.
 4. **Requirement owned by P3.** An `INCOMPLETE` case must have at least one finding. This holds by construction in `decide()`, and `validate_output.py` checks it, but `build_steps()` does not enforce it. P3 should confirm that P3 owns this rule.
-5. **A missing retained record is silently ignored (possible gap against AGENTS.md §6.5).** `CONTRACTS.md` §4 Q3 asks what should happen when a `RETAIN` record is missing at `audit_at`. In `_assess()` (`policy_engine.py`, the "no copy present at audit_at" branch), a `RETAIN` or `ACCOUNT_TOMBSTONE` resource with no present copy returns `None`. It produces no step and does not affect the status. AGENTS.md §6.5 says a case is `COMPLETE` only when "every required retained record remains available". No allowed operation can restore such a record. Possible options:
+5. **OPEN TEAM QUESTION: a missing retained record is silently ignored (possible gap against AGENTS.md §6.5).** `CONTRACTS.md` §4 Q3 asks what should happen when a `RETAIN` record is missing at `audit_at`. In `_assess()` (`policy_engine.py`, the "no copy present at audit_at" branch), a `RETAIN` or `ACCOUNT_TOMBSTONE` resource with no present copy returns `None`. It produces no step and does not affect the status. AGENTS.md §6.5 says a case is `COMPLETE` only when "every required retained record remains available". No allowed operation can restore such a record. Possible options:
    - mark the case `INCOMPLETE` with a `VERIFY_RECORD_PRESENT` step;
    - keep the current behaviour and record the case in `notes` / `unverified`.
 
-   P3 needs to decide. P4 has not changed this.
+   This is still unresolved. The team (P3 first) needs to decide. P4 has not changed this policy.
 6. **The other open questions in `CONTRACTS.md` §4 are answered by the implementation, but nobody has confirmed the answers:**
    - Q1: `system_activity.csv` is read by `activity.py`, which P3 uses.
    - Q2: replica copies are kept separately inside a resource (`copies`). The strictest required action across the copies that are present decides the resource, and one step is emitted per `(system_id, resource_id)`. An absence is only verified when every copy that was ever seen present has a later proven absence.
@@ -111,8 +112,8 @@ redacted, `RETAIN` → verify present only, and so on) is now applied inside
 
 ## 7. Evidence that the implementation works
 
-- `tests/test_policy_engine.py::test_step_builder_numbers_phases_and_blanks_future_evidence`, `::test_step_builder_rejects_values_outside_contract`, and `::test_active_sync_and_restore_risks_and_safe_order`, plus the determinism and public-sample tests, all pass.
-- The full suite gives 475 passed, 1 skipped and 592 subtests passed. Command: `cd code && python -m pytest -q tests test_identity_resolver.py test_main.py test_request_classifier.py test_utils.py`.
+- `tests/test_policy_engine.py::test_step_builder_numbers_phases_and_blanks_future_evidence`, `::test_step_builder_rejects_values_outside_contract`, `::test_active_sync_and_restore_risks_and_safe_order` and `::test_resource_ids_use_numeric_natural_sorting`, plus the determinism and public-sample tests, all pass.
+- The full suite gives 476 passed, 1 skipped and 592 subtests passed. Command: `cd code && python -m pytest -q tests test_identity_resolver.py test_main.py test_request_classifier.py test_utils.py`.
 - `python code/main.py && python code/validate_output.py` gives **VALID** for 518 rows. The regenerated `output.csv` is byte-identical to the committed file after line-ending normalisation (SHA-256 `a215494b…97b6ef`).
 
 ## 8. Message to send to P3
@@ -126,15 +127,17 @@ redacted, `RETAIN` → verify present only, and so on) is now applied inside
 >    `{system_id, resource_id, operation, state, evidence_id}`. `build_steps()`
 >    only validates, applies the evidence-id rules and numbers the steps. Do
 >    you agree that we replace the §2–3 PROPOSAL in `CONTRACTS.md` with this?
-> 2. Within an operation and `system_id`, should `resource_id` be sorted
->    numerically (as `_rid_key()` does now) or lexically? No current row is
->    affected either way.
+> 2. I've documented that `resource_id` is sorted in numeric natural order by
+>    your `_rid_key()` (`account_9` before `account_10`), and I've added a
+>    regression test for it. P4 keeps that order. Please shout if lexical
+>    order was intended.
 > 3. Can you confirm that `decide()` only ever returns `COMPLETE` or
 >    `INCOMPLETE`, and that an `INCOMPLETE` decision always has at least one
 >    finding?
 > 4. When a `RETAIN` or tombstone record is missing at `audit_at`, `_assess()`
 >    currently drops it. It produces no step and does not change the status.
 >    AGENTS.md §6.5 says COMPLETE requires every retained record to remain
->    available. Should such a case be INCOMPLETE (`CONTRACTS.md` §4 Q3)?
+>    available. Should such a case be INCOMPLETE (`CONTRACTS.md` §4 Q3)? This
+>    is an open team question.
 >
 > Once you reply, I'll update `CONTRACTS.md` and remove the PROPOSAL labels.
