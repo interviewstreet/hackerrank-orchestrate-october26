@@ -17,7 +17,9 @@ Design decisions
 * audit_at: when supplied, only audit entries at or before that timestamp
   are included in the returned identifier bundle (§6.2 contract).  The
   email-lookup tables always use the full history to identify the user;
-  only the returned identifiers are time-filtered.
+  only the returned identifiers are time-filtered.  The snapshot's
+  email/phone/email_hash are rolled back through any audit changes after
+  audit_at, so an identifier that only became current later is excluded.
 * email_hash is SHA-256(lowercase_email) — verified against all 850 rows.
   We compute the hash for each historical email so the bundle's
   all_email_hashes() covers every address the subject ever used.
@@ -135,6 +137,31 @@ class IdentityResolver:
             return None
 
         uid = identity_row["user_id"]
+        audit_rows = self._audit_by_uid.get(uid, [])
+
+        # The snapshot reflects the latest state, which may postdate audit_at.
+        # Roll it back: undo every change after audit_at, newest first, so the
+        # "current" fields are the values the subject actually had at audit_at
+        # and no identifier that only appeared later leaks into the bundle.
+        cur_email = identity_row["email"]
+        cur_phone = identity_row["phone"]
+        cur_hash = identity_row["email_hash"]
+        if audit_at is not None:
+            later = [a for a in audit_rows if _parse_dt(a["event_time"]) > audit_at]
+            later.sort(key=lambda a: _parse_dt(a["event_time"]), reverse=True)
+            email_rolled = hash_rolled = False
+            for a in later:
+                old_val = a["old_value"].strip()
+                if not old_val:
+                    continue
+                if a["field_name"] == "email":
+                    cur_email, email_rolled = old_val, True
+                elif a["field_name"] == "phone":
+                    cur_phone = old_val
+                elif a["field_name"] == "email_hash":
+                    cur_hash, hash_rolled = old_val, True
+            if email_rolled and not hash_rolled:
+                cur_hash = _sha256(cur_email)
 
         # Collect history for this user, respecting audit_at cutoff
         hist_emails: list[str] = []
@@ -142,7 +169,7 @@ class IdentityResolver:
         # We collect hashes from stored audit entries …
         hist_hashes_stored: list[str] = []
 
-        for audit_row in self._audit_by_uid.get(uid, []):
+        for audit_row in audit_rows:
             # Time-filter: skip entries that occur after audit_at
             if audit_at is not None:
                 entry_time = _parse_dt(audit_row["event_time"])
@@ -175,10 +202,10 @@ class IdentityResolver:
 
         return IdentityBundle(
             user_id=uid,
-            current_email=identity_row["email"],
+            current_email=cur_email,
             current_name=identity_row["name"],
-            current_phone=identity_row["phone"],
-            current_email_hash=identity_row["email_hash"],
+            current_phone=cur_phone,
+            current_email_hash=cur_hash,
             historical_emails=hist_emails,
             historical_phones=hist_phones,
             historical_email_hashes=hist_hashes,

@@ -242,6 +242,52 @@ class TestAuditAtFiltering(unittest.TestCase):
         self.assertEqual(bundle.user_id, "user_01")
 
 
+class TestFutureIdentifiersExcluded(unittest.TestCase):
+    """
+    If the snapshot's current email/phone only became current after audit_at,
+    the bundle must report the value held at audit_at instead, and the
+    future value must not appear anywhere in the bundle.
+    """
+
+    # alice: old2 -> alice@example.com at 2025-12-01 (hash row too)
+    # bob:   +1-555-9999 -> +1-555-0002 at 2025-03-01
+    BEFORE_ALICE_CHANGE = datetime(2025, 9, 1, tzinfo=timezone.utc)
+    BEFORE_BOB_CHANGE = datetime(2025, 1, 1, tzinfo=timezone.utc)
+
+    def setUp(self):
+        self.resolver = _make_resolver()
+
+    def test_future_email_not_current(self):
+        b = self.resolver.resolve("alice@example.com", audit_at=self.BEFORE_ALICE_CHANGE)
+        self.assertEqual(b.current_email, "alice-old2@example.com")
+        self.assertNotIn("alice@example.com", b.all_emails())
+        self.assertIn("alice-old1@example.com", b.all_emails())
+
+    def test_future_email_hash_not_current(self):
+        b = self.resolver.resolve("alice@example.com", audit_at=self.BEFORE_ALICE_CHANGE)
+        self.assertEqual(b.current_email_hash, "hash_alice_old2")
+        self.assertNotIn("hash_alice_current", b.all_email_hashes())
+
+    def test_future_phone_not_current(self):
+        b = self.resolver.resolve("bob@example.com", audit_at=self.BEFORE_BOB_CHANGE)
+        self.assertEqual(b.current_phone, "+1-555-9999")
+        self.assertNotIn("+1-555-0002", b.all_phones())
+
+    def test_hash_recomputed_when_no_hash_row(self):
+        audit = AUDIT_CSV + (
+            "audit_06,user_03,2026-01-15T00:00:00Z,email,carol-old@example.com,carol@example.com\n"
+        )
+        r = _make_resolver(audit=audit)
+        b = r.resolve("carol@example.com", audit_at=datetime(2026, 1, 1, tzinfo=timezone.utc))
+        self.assertEqual(b.current_email, "carol-old@example.com")
+        self.assertEqual(b.current_email_hash, _sha256("carol-old@example.com"))
+
+    def test_no_audit_at_keeps_snapshot(self):
+        b = self.resolver.resolve("alice@example.com")
+        self.assertEqual(b.current_email, "alice@example.com")
+        self.assertEqual(b.current_email_hash, "hash_alice_current")
+
+
 class TestComputedEmailHashes(unittest.TestCase):
     """
     SHA-256 of each historical email is added to the bundle so that
