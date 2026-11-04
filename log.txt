@@ -326,3 +326,230 @@ branch=member-1-frontend-slack
 repo_root=C:\Users\Luzain Sara\Documents\EraSight
 worktree=C:\Users\Luzain Sara\Documents\EraSight
 parent_agent=none
+
+## [2026-11-04T13:07:38Z] SESSION START
+
+tool=Claude Code
+model=claude-sonnet-5-5
+Repo Root: C:\Users\Rachana\OneDrive\Desktop\EraSight
+Branch: main
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T13:07:38Z] Clone repo and begin PRD plan
+
+User Prompt (verbatim, secrets redacted):
+follow the plan, clone the repo in my local vscode
+(PRD attached as a text file: Member 2 backend + Resend email integration; referenced by path, not reproduced.)
+(Follow-up: user connected the Desktop EraSight folder.)
+
+Agent Response Summary:
+Cloned https://github.com/rachanashende/EraSight into the connected Desktop EraSight folder after the user approved deletion permission for git lock files. Read AGENTS.md, CLAUDE.md, README.md and problem_statement.md, and started inspecting the dataset per the PRD plan.
+
+Actions:
+* git clone into the EraSight folder (first attempt failed on lock files; removed partial .git and re-cloned)
+* Read AGENTS.md, CLAUDE.md, README.md, problem_statement.md
+* Created log.txt
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=main
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:08:18Z] Dataset inspection milestone
+
+User Prompt (verbatim, secrets redacted):
+(no new prompt; continuation of the clone-and-plan request)
+
+Agent Response Summary:
+Inspected dataset structure: 518 requests, 32 samples (22 INCOMPLETE, 10 COMPLETE, no NOT_APPLICABLE), 15 policy rules, 94 evidence files across SQL snapshots (primary, regional, read, reporting, failover replicas), JSON bundles, structured and readback logs, a text handover, 4 PDFs and 11 PNG screenshots. Local tools available: pdftotext and tesseract; pandas present, pydantic missing. No engine code written yet.
+
+Actions:
+* Listed dataset/ and evidence/ directories and read headers of every CSV
+* Read deletion_rules.csv and evidence_files.csv
+* Sampled one file of each evidence format
+* Counted operations in sample_output.csv
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=main
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:10:49Z] Role confirmed: Member 2; branch created
+
+User Prompt (verbatim, secrets redacted):
+(Pasted team coordination notes: shared CaseAuditResult contract, 20-hour schedule, branch workflow member-2-backend-resend, Slack/Resend env vars.) "im member 2 remember that"
+
+Agent Response Summary:
+Recorded that the user is Member 2 (backend engine and Resend). Created branch member-2-backend-resend and added .env and Python caches to .gitignore. Shared contract matches the PRD; will start sample evaluation as soon as the first end-to-end case works.
+
+Actions:
+* Saved role to project memory
+* git checkout -b member-2-backend-resend
+* Appended .env, __pycache__/, *.pyc, .venv/, venv/ to .gitignore
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:19:40Z] Engine foundation: loader and evidence parsers
+
+User Prompt (verbatim, secrets redacted):
+start and ask me any questions if needed
+
+Agent Response Summary:
+Built the foundation of the engine: shared contracts, dataset loader with email-history indexes, and parsers for SQL snapshots (all replica topologies), JSON bundles and exports, four log layouts, text handover files, PDFs (pdftotext) and screenshots (tesseract OCR cached under .cache). PDFs and screenshots without resource ids are tied to resources through data-catalog LINK_RESOURCE_IDENTITY events (written 7m01s after capture). All 94 evidence files parse (2901 observations); all 518 request emails resolve to exactly one user. No matching, policy or output logic yet.
+
+Actions:
+* Created code/engine/{contracts,util,dataset_loader,evidence_loader}.py and code/engine/parsers/*
+* Fixed log guard that dropped bracketed/pipe layouts
+* Added .cache/ to .gitignore; committed on branch member-2-backend-resend
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+
+## [2026-11-04T14:05:00Z] Core engine, accuracy tuning and output.csv generation
+
+User Prompt (verbatim, secrets redacted):
+do whatever you think is best, let me know at the end of each step before we push any changes. ask any questions if needed i can clarify
+
+Agent Response Summary:
+Completed the deterministic audit engine (identity resolution, evidence matching, state reconstruction, policy, findings, remediation and verification planners, case analyzer, pipeline) and tuned it against the 32 sample cases: deletion_status 32/32, step F1 about 0.98, 26/32 exact cases. Added code/main.py and an output validator; generated the root output.csv (518 rows, validation OK). No model calls are used at run time.
+
+Actions:
+* Added code/engine/{identity_resolver,evidence_matcher,request_classifier,state_reconstructor,policy_engine,ghost_detector,remediation_planner,verification_planner,case_analyzer,pipeline,validate_output}.py and code/evaluation/main.py
+* Tuned ownership rules, retained-category absence handling, peer-ordered activity inference, attachment categorisation
+* Wrote code/main.py and generated output.csv; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T14:50:00Z] Evaluation reports, custom cases, invariants and tests
+
+User Prompt (verbatim, secrets redacted):
+can you fill out these gaps in the first 2 sections, later we can move onto section c in a new chat
+
+Agent Response Summary:
+Wrote the evaluation and usage reports (generated from a fresh run), six team-written evaluation cases, a policy/time invariant checker and a 30-test pytest suite. The new cases exposed real defects (missed Spanish deletion wording, use of worker activity after audit_at, vacuous COMPLETE) which were fixed; sample status accuracy stays 32/32 with step precision 100% and recall 96.9%. output.csv regenerated (only case_61 changed).
+
+Actions:
+* Added code/evaluation/{custom_cases,invariants,generate_reports}.py, evaluation_report.md, usage_report.md
+* Added code/tests/* (30 tests)
+* Fixed classifier lexicon, activity time gate, COMPLETE guard, pre-request evidence gate
+* Updated PRD_done.md and PRD_todo.md; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T15:40:00Z] Advisory language-model layer
+
+User Prompt (verbatim, secrets redacted):
+ill give you an api key later can you build the rest of it
+
+Agent Response Summary:
+Built the optional advisory layer without needing a key: deterministic review triggers, template explanations for every case, an Anthropic client (stdlib, key from environment only), strict validation that rejects any model answer citing an id the engine did not produce, a CLI (code/advise.py), usage logging that feeds usage_report.md, .env.example and 11 tests with a fake model. Decisions and output.csv are unchanged; no live model call has been made.
+
+Actions:
+* Added code/advisor/*, code/advise.py, code/tests/test_advisor.py, .env.example
+* Extended generate_reports.py to report real model usage when advisor_usage.json exists
+* Updated PRD_done.md and PRD_todo.md; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T17:10:00Z] Gap-closing round: mini dataset, unit tests, advisor checks, CI
+
+User Prompt (verbatim, secrets redacted):
+fix all these errors if you want the dataset/ file i can share if or you can extract it from the github repo attached
+
+Agent Response Summary:
+Closed the gaps found in the audit of Sections A, B and F that can be closed without guessing: a self-contained mini dataset with hand-derived full answers (6/6 exact), parser and engine unit tests with inline fixtures, dataset-bound tests skip when dataset/ is missing, coverage measured (about 91%), CI workflow, requirements files, a status-consistency check on model wording, a --demo advisor run on the lookalike case, and advisor example outputs. Tried and reverted one reconstruction rule (it fixed case_24 but broke case_31). Remaining sample gaps are documented in PRD_done.md.
+
+Actions:
+* Added code/tests/{minidata,test_mini_dataset,test_parsers,test_engine_units}.py, .github/workflows/tests.yml, requirements*.txt
+* Extended advisor validation and CLI (--demo, advisor_examples.json); regenerated reports; updated PRDs; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T17:43:36.550665+00:00] Resolve frontend/backend merge conflicts
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: code/frontend/src/data.test.ts
+
+## Open tabs:
+- data.test.ts: code/frontend/src/data.test.ts
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- data.ts: code/frontend/src/data.ts
+- GlobeScene.tsx: code/frontend/src/GlobeScene.tsx
+- Graph.tsx: code/frontend/src/Graph.tsx
+
+## My request:
+My Git merge is paused because `.gitignore` and `log.txt` have conflicts.
+
+Resolve both conflicts safely:
+
+- Combine `.gitignore` rules from both branches. Keep secrets and generated files ignored.
+- For `log.txt`, preserve important content if needed; otherwise stop tracking generated logs.
+- Remove all conflict markers.
+- Preserve Member 1 frontend and Member 2 backend code.
+- Stage resolved files and complete the merge commit.
+- Verify `git status` shows a clean working tree.
+
+Do not push, delete application code, or change functionality. Execute the commands yourself and report the result.
+
+Agent Response Summary:
+Combined all ignore rules from both branches and added environment-file protection with an example-file exception. Preserved both original log histories because the repository requires the transcript, removing the merge markers through reconstruction from the original Git blobs. Resolved files are being staged and the existing merge completed; application blobs are verified unchanged, and the final working-tree status is checked before responding. No push is performed.
+
+Actions:
+* Resolved .gitignore and log.txt from both merge stages.
+* Stage resolved files, complete merge commit, and verify both parents and clean status.
+* Preserve all already-staged application files and both branches' code.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none

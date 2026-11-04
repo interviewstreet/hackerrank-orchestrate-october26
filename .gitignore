@@ -7,9 +7,14 @@ dist/
 *.tsbuildinfo
 __pycache__/
 .venv/
-
 .taste-skill/blue-refinement/
-
 .taste-skill/final-correction/
-
 .taste-skill/pixel-reference/
+*.pyc
+venv/
+.cache/
+explanations.json
+.coverage
+.pytest_cache/
+.env.*
+!.env.example

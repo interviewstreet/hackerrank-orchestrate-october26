@@ -1,0 +1,9 @@
+{
+ "provider": "Groq",
+ "model": "openai/gpt-oss-120b",
+ "calls": 6,
+ "failed_calls": 0,
+ "input_tokens": 1514,
+ "output_tokens": 1757,
+ "per_case": {}
+}
