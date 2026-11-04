@@ -92,8 +92,18 @@ Files: `code/advisor/{llm_client,review,explain,advisor}.py`, `code/advise.py`, 
 - Tests that need the real `dataset/` skip themselves when it is absent. `.github/workflows/tests.yml` runs the suite and `main.py` on every push (installs poppler and tesseract). `requirements.txt` / `requirements-dev.txt` added.
 - Advisor: model wording that contradicts the engine's status is rejected (`contradicts_status`); `python code/advise.py --demo` runs the advisor on the mini dataset (includes the lookalike case) and writes `code/evaluation/advisor_demo.json`; flagged real cases are saved to `code/evaluation/advisor_examples.json`.
 
+## Section 12: Resend email integration (TODO Section C): DONE (needs Rach's keys for a live send)
+Files: `code/integrations/email/*` (config, models/state machine, SQLite store, resend_client, draft_generator, templates, approval_service, email_service, webhook_handler, router, README), tests `code/tests/test_email_*.py` + `emailkit.py`.
+- Workflow DRAFT -> PENDING_APPROVAL -> APPROVED/REJECTED -> SENDING -> SENT/FAILED; approval is the only way to APPROVED; content hash checked at send; audit event per change.
+- Duplicate sends prevented by one email per case+recipient+kind, an atomic APPROVED->SENDING claim, and a Resend `Idempotency-Key`.
+- Webhooks: Svix signature verified on the raw body (checked against the official Svix test vector), 5-minute replay window, duplicate message ids ignored, secret required.
+- `create_email_router(service, dependencies=..., case_provider=...)` for Member 1 to mount; documented in `code/integrations/email/README.md`.
+- Advisory explanations can be the draft body (`audience="internal"`); the default customer-facing draft never contains internal ids.
+- 76 new tests, all with a fake Resend (no real email); email package coverage about 97%. A live send has NOT been tried: it needs `RESEND_API_KEY`, a verified `RESEND_FROM_EMAIL` and `RESEND_WEBHOOK_SECRET` in `.env`.
+- Note: regenerating `output.csv` on the Linux sandbox changed one row (case_34) with no engine change, probably an OCR/tool-version difference; the committed `output.csv` was left as is.
+
 ## Still open after this round (be honest in the interview)
 - Sample cases 04, 18, 20, 23, 24: 6 steps missing. Cases 04, 18, 20 reference ids (`account_004`, `audit_record_6645`, `audit_record_5569`) that appear in no evidence or activity, so they cannot be derived without guessing. Case 23 (`account_410`) has 3 equally plausible worker activities. Case 24 (`account_5334`) depends on whether an empty JSON snapshot outranks a live lookup: switching rules fixed case 24 but broke case 31, so the original rule stays.
 - The other 486 requests have no answer key; behaviour there is checked only by invariants and by the mini dataset.
 - Live-model runs: only the 6 mixed-wording cases ran live. The lookalike demo (`python code/advise.py --demo --model`) has not been run live yet. Cost is not computed until Groq prices are set in `.env`.
-- Explanations are not yet wired into emails or the UI (Section C / Member 1).
+- Explanations can now be used as an internal email draft body (Section 12); the UI wiring is Member 1's.

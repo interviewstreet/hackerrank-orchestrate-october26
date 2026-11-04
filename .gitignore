@@ -7,3 +7,5 @@ venv/
 explanations.json
 .coverage
 .pytest_cache/
+email_outbox.db
+email_outbox.db-*

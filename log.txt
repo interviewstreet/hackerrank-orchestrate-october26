@@ -180,3 +180,38 @@ branch=member-2-backend-resend
 repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T17:50:00Z] SESSION START
+
+tool=Claude Code
+model=claude-sonnet-5-5
+Repo Root: /home/claude/erasight
+Branch: member-2-backend-resend
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T17:43:31Z] Section C: Resend email integration
+
+User Prompt (verbatim, secrets redacted):
+check prd of what needs to be done and move onto next section - section c
+we will fix the other bugs in section a and b later
+
+follow prd for section c
+
+Agent Response Summary:
+Read PRD_todo_final.md and built Section C under code/integrations/email: state machine with a human approval gate, SQLite outbox with atomic send claim and audit events, Resend client (stdlib, injectable transport, Idempotency-Key), Svix webhook verification (checked against the official test vector), draft generator (customer-safe by default, advisory explanation for internal drafts), and a FastAPI router factory for Member 1. Added 76 tests with a fake Resend; no real email was sent and Member 1's files were not touched. No live Resend call was made because no key was provided.
+
+Actions:
+* Added code/integrations/email/* and code/tests/{emailkit,test_email_workflow,test_email_webhook,test_email_draft,test_email_router,test_email_client}.py
+* Edited code/tests/conftest.py (close test stores), .env.example (EMAIL_DB_PATH), requirements*.txt, .gitignore, PRD_done.md
+* Ran pytest code/tests (150 passed); regenerated output.csv once, found a one-row environment difference (case_34), restored the committed file; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none

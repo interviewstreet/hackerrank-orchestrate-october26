@@ -22,3 +22,10 @@ def root():
     if not (ROOT / "dataset" / "deletion_requests.csv").exists() or not (ROOT / "output.csv").exists():
         pytest.skip("real dataset/ or output.csv not present")
     return ROOT
+
+
+@pytest.fixture(autouse=True)
+def _close_email_test_stores():
+    yield
+    import emailkit
+    emailkit.close_open_stores()
