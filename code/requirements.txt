@@ -1,0 +1,8 @@
+# Evidence discovery module (code/evidence/)
+pypdf==6.21.4                 # PDF text extraction
+rapidocr_onnxruntime==1.2.3   # PNG OCR (pip-only, no system binary); only needed to (re)build code/evidence/ocr_cache/
+onnxruntime==1.31.1           # runtime for rapidocr
+Pillow==13.0.0                # image handling (also used by tests)
+
+# Tests
+pytest==9.2.0

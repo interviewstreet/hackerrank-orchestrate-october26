@@ -458,3 +458,231 @@ branch=p1-identity
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T11:26:30Z] SESSION START
+
+tool=Cursor
+model=Cursor Grok 4.6
+Repo Root: C:/Users/charv/OneDrive/Desktop/trace/TRACE
+Branch: feature/evidence-scanner
+Worktree: C:/Users/charv/OneDrive/Desktop/trace/TRACE
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T11:35:00Z] Inspect evidence formats and scanner interface
+
+User Prompt (verbatim, secrets redacted):
+Read the complete AGENTS.md and follow every applicable instruction.
+
+I am responsible for Developer 2: Evidence Discovery and Evidence Reading.
+
+Before coding:
+1. Inspect the existing repository structure.
+2. Read problem_statement.md.
+3. Inspect code/main.py.
+4. Inspect dataset/evidence_files.csv.
+5. Identify all actual evidence formats and their structures.
+6. Explain how the evidence scanner should integrate with the existing main.py.
+
+Do not modify any files yet.
+
+Give me:
+- A complete inventory of evidence formats.
+- The manifest schema.
+- The proposed evidence scanner architecture.
+- The exact function interface needed by the main auditor.
+- Potential technical challenges in scanning the supplied evidence.
+
+Wait for my next instruction before implementing.
+
+Agent Response Summary:
+Inspected the repo, problem statement, empty code/main.py, and the 94-row evidence manifest. Catalogued six on-disk formats (JSON, SQL, LOG, PNG, PDF, TXT) and their internal dialects, then proposed a parser-plus-index scanner that the auditor can query by identifiers and audit_at. No solution files were changed; only log.txt was created to satisfy AGENTS.md logging.
+
+Actions:
+* Read problem_statement.md, README.md, code/main.py, dataset/evidence_files.csv, deletion_rules.csv, sample_output.csv
+* Sampled records, databases, logs, documents, and images under dataset/evidence/
+* Counted manifest vs on-disk files (94/94 match)
+* Appended SESSION START and this turn to log.txt
+
+Context:
+tool=Cursor
+model=Cursor Grok 4.6
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+parent_agent=none
+
+## [2026-11-04T11:42:19Z] SESSION START
+
+tool=Claude Code
+model=claude-opus-5-5
+Repo Root: C:/Users/charv/OneDrive/Desktop/trace/TRACE
+Branch: feature/evidence-scanner
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T12:36:24Z] Review understanding check (yes/no)
+
+User Prompt (verbatim, secrets redacted):
+in a simple yes or no: tell me can you understand the review of the project structure that cursor groq 4.6 medium did for me?
+
+Agent Response Summary:
+Answered no: the Cursor review had not been shared with this session, and asked the user to paste it or save it to a file.
+
+Actions:
+* none
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T12:36:24Z] Acknowledge pasted evidence-scanner review
+
+User Prompt (verbatim, secrets redacted):
+here is the review: [pasted Cursor review of evidence formats, manifest schema, proposed code/evidence/ architecture and scanner interface - omitted for length] do not do anything with it yet, wll give you further instructions. this is merely for your understanding and nothing else
+
+Agent Response Summary:
+Confirmed understanding of the proposed scanner library (parse all 94 files once, normalise to ObservedRecord, index by identifiers, query by audit_at; policy stays in the auditor). No files changed.
+
+Actions:
+* none
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T12:36:24Z] Implement Evidence Discovery module (phases 1-7)
+
+User Prompt (verbatim, secrets redacted):
+The dataset inspection is complete. Proceed with implementing my Evidence Discovery module. Follow AGENTS.md and the architecture from your previous review. [Full prompt: 10 implementation requirements (code/evidence/ architecture, EvidenceFile/SubjectIdentifiers/ObservedRecord, latest key (system_id, resource_id, replica_or_table), load/files/find_for_subject/latest_by_resource/get_file, load once, captured_at+observed_at cutoffs, claim-only vs store state, keep tombstones/empty PII, never discard replica or retained records), 7 phases, testing requirements, no deletion_status/steps, do not modify code/main.py, document deps in requirements.txt, do not claim untested passes.]
+
+Agent Response Summary:
+Implemented code/evidence/ (models, manifest, normalize, index, scanner, parsers for JSON/SQL/logs/PDF/PNG/TXT) plus a full-corpus scan CLI and an OCR cache builder. All 94 manifest files parse with zero issues (2929 observations, 386 snapshot scopes, ~0.45s load). PNG OCR uses pip-only RapidOCR with a SHA-256-keyed JSON cache because live OCR takes ~5s per image. Added SnapshotScope/absence_proofs because several sample verifications prove absence from a snapshot that never mentions the resource. Tests: 63 passed, 1 opt-in live-OCR test passed separately; code/main.py untouched.
+
+Actions:
+* Created code/evidence/** , code/tests/** , code/pytest.ini, code/requirements.txt, .gitignore, code/evidence/ocr_cache/*.json
+* Created .venv at repo root; pip install pytest pypdf pillow rapidocr_onnxruntime
+* Ran python code/evidence/__main__.py --per-file; pytest (63 passed, 1 skipped); RUN_OCR_TESTS=1 pytest -m ocr (1 passed)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T12:57:52Z] Final code review of evidence module
+
+User Prompt (verbatim, secrets redacted):
+The seven implementation phases are complete. Before I commit this module, perform a final code review. Do not rewrite working code unnecessarily. [Review areas 1-10: absence_proofs scope, identity preservation, captured_at/observed_at cutoffs, claim_only, tombstones with empty PII, resource-id retrieval, OCR cache invalidation/recovery, no organizer-only data, valid evidence IDs, documented API. Then run tests, run the 94-file scan, show git diff/status, list limitations, give a minimal integration example. Do not modify code/main.py. Do not commit or push.]
+
+Agent Response Summary:
+Reviewed all ten areas and fixed five defects with targeted edits: absence_proofs used scopes of every category when a resource's category was unknown (now exact-category only, no proof when unknown); resource_ids were lowercased (original casing now preserved, indexes case-insensitive); a corrupt OCR cache entry failed the image instead of re-running OCR (now treated as a miss, atomic writes, unwritable cache tolerated); manifest paths were not confined to dataset/evidence/; SQL dumps could ATTACH files (now denied). Added 13 regression tests and an integration example. 76 passed, 1 skipped; live OCR test passed separately; full scan 94/94 with no issues. Nothing committed; code/main.py untouched.
+
+Actions:
+* Edited code/evidence/scanner.py, index.py, manifest.py, models.py, parsers/common.py, parsers/images.py, parsers/sql_snapshots.py
+* Created code/tests/test_review_fixes.py, code/evidence/example_integration.py
+* Ran pytest (76 passed, 1 skipped), RUN_OCR_TESTS=1 pytest -m ocr (1 passed), python code/evidence/__main__.py, git status / git diff
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:46:17Z] Independent validation of Evidence Discovery module
+
+User Prompt (verbatim, secrets redacted):
+Act as a senior Python engineer reviewing my Evidence Discovery module. I want to independently validate the module without depending on any other team member. [Checks 1-13: public API/return types, each SubjectIdentifiers field incl. resource_ids alone, case-insensitive matching with preserved casing, audit_at on captured_at and observed_at, primary vs replica drift, PRESENT/ABSENT/UNKNOWN, claim_only vs store state, absence_proofs structure and validity, tombstones with empty PII, evidence IDs vs manifest, full pytest, 94-file scan, integration example. Use isolated fixtures; do not modify code/main.py, implement policy, duplicate parsers, change production code to pass tests, stage/commit/push; preserve log.txt. Report PASS/FAIL/NOT TESTED with evidence.]
+
+Agent Response Summary:
+Added code/tests/test_independent_validation.py (42 tests) that build isolated real-format datasets in tmp_path and drive them through the existing parsers and scanner, plus read-only real-corpus checks. One first-run failure was a fixture defect (non platform-shaped id 'account_c' in a TXT row, which the parser correctly reported as a warning); fixed the fixture and added a test pinning that behaviour. No production code changed. Full suite 118 passed, 1 skipped; live OCR test passed; scan 94/94 with no issues; integration example ran.
+
+Actions:
+* Created code/tests/test_independent_validation.py (not staged)
+* Ran pytest (validation file 42 passed; full suite 118 passed, 1 skipped), RUN_OCR_TESTS=1 pytest -m ocr (1 passed), code/evidence/__main__.py (exit 0), code/evidence/example_integration.py (exit 0)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:49:57Z] P2 identity-evidence integration plan
+
+User Prompt (verbatim, secrets redacted):
+I am working on Person 2 – Identity Resolution & Evidence Investigation for the TRACE / Ghost Data Still Exists hackathon. [Responsibilities: integrate P1 identity module, match current/historical emails, phones, hashes and resource IDs, normalise identifiers, investigate evidence with the existing Evidence Discovery implementation, return structured findings for P3. P1 instructed use of identity.all_emails(), all_phones(), all_email_hashes() from the p1-identity branch. Inspect: existing identity files, whether p1-identity exists locally/remotely, accessibility without switching branches, code/evidence/ API, missing P2 components, how system_activity.csv contributes resource IDs, expected P3 output. Do not duplicate Evidence Discovery, modify code/main.py, overwrite files, stage, commit or push. First give a clear implementation plan.]
+
+Agent Response Summary:
+Planning only, no code written. Found p1-identity only on origin; fetched it (remote-tracking ref only) and inspected it with git show: IdentityBundle/IdentityResolver in code/models.py and code/identity_resolver.py, a find_records(identity, case) -> list[dict] placeholder in code/evidence_search.py, placeholder P3/P4 stages, and a full main.py. Profiled system_activity.csv against the 32 sample answers: only 12 LINK_RESOURCE_IDENTITY rows carry identifiers, and timing relative to requested_at/reported_at does not uniquely identify a subject's resources, so activity must be anchored on evidence-linked resources. Proposed an adapter-based P2 plan and listed decisions for the user.
+
+Actions:
+* git fetch origin p1-identity; git show origin/p1-identity:code/{models,identity_resolver,evidence_search,main,policy_engine,step_builder}.py and README_identity.md
+* Read-only analysis of system_activity.csv vs sample_output.csv (scratchpad scripts)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T14:13:58Z] Align evidence API with P3 contract
+
+User Prompt (verbatim, secrets redacted):
+We are continuing implementation of P2 (Evidence Discovery / Evidence Reader) for the TRACE hackathon project. P3 has accepted the API contract. [Contract: find_records(identifiers, audit_at) -> list[ObservedRecord] returning every observation uncollapsed; absence_proofs(system_id, resource_id, audit_at) -> list[AbsenceProof] preserving scope, completeness, verification timestamp, errors and limitations and never treating incomplete/out-of-scope evidence as proof; latest_by_resource returning the latest authoritative observation per (system_id, resource_id, replica_or_table) with claims kept in find_records. Tasks: inspect current code, check dataclass fields, timestamp validation and audit-time filtering, replica/conflict preservation, find_for_subject backward compatibility, add/update tests; no deletion rules, no invented IdentityBundle fields (adapter pending), no unrelated changes, follow AGENTS.md logging; report files, dataclasses, signatures, tests, gaps; do not commit or push.]
+
+Agent Response Summary:
+Added EvidenceScanner.find_records (find_for_subject kept as an identical alias); latest_by_resource now excludes claim_only observations by default (include_claims=True opt-in); absence_proofs now returns only COMPLETE proofs by default and each AbsenceProof carries scope_source, completeness, scope_record_count, limitations, errors and contradicted_by, with SQL coverage inferred from sibling tables marked INFERRED and scopes with skipped records or file parse issues marked INCOMPLETE; audit_at must now be timezone-aware (naive/offset-less rejected). Six existing tests failed for these intended contract changes and were updated; added tests/test_p3_contract.py (61 tests). Full suite 179 passed, 1 skipped; live OCR passed; scan 94/94 no issues; example ran. IdentityBundle adapter left pending.
+
+Actions:
+* Edited code/evidence/{models.py,scanner.py,__init__.py,README.md,example_integration.py,parsers/json_records.py,parsers/sql_snapshots.py}, code/tests/{test_scanner.py,test_independent_validation.py}
+* Created code/tests/test_p3_contract.py
+* Ran pytest (179 passed, 1 skipped), RUN_OCR_TESTS=1 pytest -m ocr (1 passed), code/evidence/__main__.py (exit 0), code/evidence/example_integration.py (exit 0)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T14:28:41Z] Stage, commit and push P2 evidence scanner
+
+User Prompt (verbatim, secrets redacted):
+Continue the P2 Evidence Scanner work in the TRACE repository. The scanner implementation has already been completed and the latest reported tests are 179 passed, 1 skipped. Do not rewrite or redesign the scanner. I need to prepare the current P2 implementation for P3 integration. [Tasks: confirm branch feature/evidence-scanner, inspect staged/unstaged changes and AM files; include only P2 files, no P1/P3 changes, no code/main.py change, no IdentityBundle adapter; verify code/evidence/, code/tests/, code/requirements.txt, log.txt, AGENTS.md; check .gitignore (no .venv, __pycache__, OCR temp or generated caches unless required); run cd code && python -m pytest; if passing stage current P2 files incl. P3 contract tests and log.txt, inspect git diff --cached, confirm no unrelated files or secrets; commit "feat(p2): finalize evidence scanner API for p3 integration"; git push -u origin feature/evidence-scanner. No force push, no amend, no merge into main, no changes to other branches; stop and report on auth/remote/conflict problems; do not claim success unless Git confirms. Report branch, files, tests, hash, push result, remote URL, blockers.]
+
+Agent Response Summary:
+Confirmed branch feature/evidence-scanner; 8 files were AM (outdated staged copies) and 2 test files plus log.txt untracked. Kept the 11 OCR cache JSON files because the test suite runs in cache_only mode and requires them; added code/evidence/ocr_cache/*.tmp to .gitignore. Full suite 179 passed, 1 skipped. Staged the current versions of the P2 paths only, reviewed git diff --cached and scanned it for secrets, then committed and pushed as instructed (hash and push result reported to the user).
+
+Actions:
+* git status / git diff --cached --name-status / git diff --name-status
+* Edited .gitignore (ignore OCR cache *.tmp)
+* cd code && python -m pytest (179 passed, 1 skipped)
+* git add .gitignore code/evidence code/tests code/pytest.ini code/requirements.txt log.txt; git commit; git push -u origin feature/evidence-scanner
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
