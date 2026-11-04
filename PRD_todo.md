@@ -6,13 +6,11 @@ Rules for every chat: do not push without Rach's approval; append a `log.txt` en
 ## Sections A and B: DONE
 Evaluation/usage reports and the pytest suite are finished (see PRD_done.md, Sections 8 and 9). After any engine change, rerun `python3 code/main.py`, `pytest code/tests`, and `python3 code/evaluation/generate_reports.py`.
 
-## Section F: Live-model check of the advisory layer (needs Anthropic API key)
-**Goal:** confirm the built advisory layer works with the real API.
-- Fill `LLM_API_KEY`, `LLM_BASE_URL` (ends in /v1) and `LLM_MODEL` in `.env` (never commit; provider is an OpenAI-compatible gateway, AgentRouter), then run `python code/advise.py --model --limit 3`, inspect `explanations.json`, then run the full set.
-- Check rejected answers (`model_note` in `explanations.json`) and tune the prompt in `code/advisor/explain.py` if many are rejected.
-- Provide per-million-token prices in `LLM_PRICE_INPUT_PER_MTOK` / `LLM_PRICE_OUTPUT_PER_MTOK` so the usage report can estimate cost, then run `python code/evaluation/generate_reports.py`.
-- Optional: use the explanations in the Section C emails and Member 1's UI.
-- **Start prompt:** "Do Section F of PRD_todo.md."
+## Section F: Live-model check of the advisory layer: MOSTLY DONE
+- Working setup (Groq, OpenAI-compatible): `LLM_BASE_URL=https://api.groq.com/openai/v1`, `LLM_MODEL=openai/gpt-oss-120b`, `LLM_PROVIDER_NAME=Groq`, key in `.env`. A 3-call test succeeded (753 input / 825 output tokens); outputs were accurate and passed validation.
+- Remaining: run the full `python code/advise.py --model` (6 flagged cases) on Rach's machine, then `python code/evaluation/generate_reports.py` so `usage_report.md` shows the final calls and tokens. Optionally set `LLM_PRICE_INPUT_PER_MTOK` / `LLM_PRICE_OUTPUT_PER_MTOK` from Groq's pricing page for a cost estimate.
+- Confirmed by reading the texts: all 10 NOT_APPLICABLE classifications (case_533-542) are correct.
+- Note: the agent sandbox cannot reach Groq, so model runs happen on Rach's machine.
 
 ## Section C: Resend email integration (P1/P2)
 **Goal:** `code/integrations/email/` with resend_client, email_service, draft_generator, templates, approval_service, webhook_handler.
