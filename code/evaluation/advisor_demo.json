@@ -1,0 +1,71 @@
+[
+ {
+  "case_id": "mini_01",
+  "deletion_status": "INCOMPLETE",
+  "source": "template",
+  "explanation": "Deletion is incomplete. Data still exists or can reappear in 2 place(s): backup_300, search_100. 2 remediation step(s) are planned: backup_300, search_100, followed by verification checks.",
+  "review_needed": false,
+  "review_reason": "",
+  "triggers": [],
+  "model_note": ""
+ },
+ {
+  "case_id": "mini_02",
+  "deletion_status": "INCOMPLETE",
+  "source": "template",
+  "explanation": "Deletion is incomplete. Data still exists or can reappear in 1 place(s): data_flow_200. 1 remediation step(s) are planned: data_flow_200, followed by verification checks.",
+  "review_needed": false,
+  "review_reason": "",
+  "triggers": [],
+  "model_note": ""
+ },
+ {
+  "case_id": "mini_03",
+  "deletion_status": "INCOMPLETE",
+  "source": "template",
+  "explanation": "The customer could not be matched to exactly one account, so deletion cannot be proven. No records were attributed to this request; a person should confirm the identity first.",
+  "review_needed": true,
+  "review_reason": "identity is UNRESOLVED; email closely resembles a different known customer address (possible lookalike); no records could be tied to this customer",
+  "triggers": [
+   "identity is UNRESOLVED",
+   "email closely resembles a different known customer address (possible lookalike)",
+   "no records could be tied to this customer"
+  ],
+  "model_note": ""
+ },
+ {
+  "case_id": "mini_04",
+  "deletion_status": "NOT_APPLICABLE",
+  "source": "template",
+  "explanation": "The request does not ask for deletion, so no audit steps are needed.",
+  "review_needed": true,
+  "review_reason": "request wording mixes deletion language with limiting language; classified as not a deletion request although deletion words appear",
+  "triggers": [
+   "request wording mixes deletion language with limiting language",
+   "classified as not a deletion request although deletion words appear"
+  ],
+  "model_note": ""
+ },
+ {
+  "case_id": "mini_05",
+  "deletion_status": "COMPLETE",
+  "source": "template",
+  "explanation": "Deletion is complete. 2 verification checks across 2 systems confirm the data is gone or properly handled at audit time.",
+  "review_needed": false,
+  "review_reason": "",
+  "triggers": [],
+  "model_note": ""
+ },
+ {
+  "case_id": "mini_06",
+  "deletion_status": "INCOMPLETE",
+  "source": "template",
+  "explanation": "No records tied to this customer could be proven removed, so the deletion is treated as incomplete.",
+  "review_needed": true,
+  "review_reason": "no records could be tied to this customer",
+  "triggers": [
+   "no records could be tied to this customer"
+  ],
+  "model_note": ""
+ }
+]

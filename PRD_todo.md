@@ -10,6 +10,7 @@ Evaluation/usage reports and the pytest suite are finished (see PRD_done.md, Sec
 - Working setup (Groq, OpenAI-compatible): `LLM_BASE_URL=https://api.groq.com/openai/v1`, `LLM_MODEL=openai/gpt-oss-120b`, `LLM_PROVIDER_NAME=Groq`, key in `.env`. A 3-call test succeeded (753 input / 825 output tokens); outputs were accurate and passed validation.
 - Remaining: run the full `python code/advise.py --model` (6 flagged cases) on Rach's machine, then `python code/evaluation/generate_reports.py` so `usage_report.md` shows the final calls and tokens. Optionally set `LLM_PRICE_INPUT_PER_MTOK` / `LLM_PRICE_OUTPUT_PER_MTOK` from Groq's pricing page for a cost estimate.
 - Confirmed by reading the texts: all 10 NOT_APPLICABLE classifications (case_533-542) are correct.
+- Also run `python code/advise.py --demo --model` on Rach's machine to exercise the lookalike case live, then `python code/evaluation/generate_reports.py`.
 - Note: the agent sandbox cannot reach Groq, so model runs happen on Rach's machine.
 
 ## Section C: Resend email integration (P1/P2)

@@ -60,6 +60,13 @@ def main():
 
     custom = custom_cases.run_all(ec)
 
+    import tempfile
+    sys.path.insert(0, str(ROOT / "code" / "tests"))
+    from minidata import EXPECTED as mini_expected, build_mini_dataset
+    mec = build_context(build_mini_dataset(tempfile.mkdtemp()))
+    mini_got = {r["case_id"]: analyze_case(r, mec) for r in mec.ctx.requests}
+    mini_ok = sum(mini_got[c].deletion_status == st and mini_got[c].steps == steps for c, (st, steps) in mini_expected.items())
+
     audit, captured = {}, {}
     for name in ("deletion_requests.csv", "sample_deletion_requests.csv"):
         with open(ROOT / "dataset" / name, encoding="utf-8", newline="") as fh:
@@ -123,6 +130,20 @@ Each is derived from a public sample by a perturbation whose correct outcome fol
                 for i, (c, ok, detail) in enumerate(custom, 1)) + f"""
 
 Run with `python3 code/evaluation/custom_cases.py`; they are also enforced by `pytest code/tests`.
+
+### 7b. Self-contained mini dataset with hand-derived full answers
+`code/tests/minidata.py` builds a tiny invented dataset (4 customers, 3 evidence files, 6 requests) and `test_mini_dataset.py`
+checks every step of every case against an answer written by hand from `deletion_rules.csv` *before* the engine was run on it:
+| Case | Situation | Expected |
+|---|---|---|
+| mini_01 | Leftover search entry, restorable backup, retained audit record | INCOMPLETE; report both, block restore, delete the entry, verify absent / present / blocked |
+| mini_02 | Active data flow | INCOMPLETE; report, disable, verify disabled |
+| mini_03 | Lookalike address `examp1e` of a real customer | INCOMPLETE, no steps invented |
+| mini_04 | Request that declines deletion | NOT_APPLICABLE, no steps |
+| mini_05 | Profile present in an old snapshot, absent from a later full snapshot | COMPLETE; cites the later snapshot (absent) and the retained audit record |
+| mini_06 | Audit before any evidence existed | INCOMPLETE, no steps (nothing provable) |
+
+Result: **{mini_ok}/{len(mini_expected)} exact** (`pytest code/tests/test_mini_dataset.py`).
 
 ## 8. Failures found and improvements made
 | Failure found | Improvement |

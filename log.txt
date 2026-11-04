@@ -160,3 +160,23 @@ branch=member-2-backend-resend
 repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T17:10:00Z] Gap-closing round: mini dataset, unit tests, advisor checks, CI
+
+User Prompt (verbatim, secrets redacted):
+fix all these errors if you want the dataset/ file i can share if or you can extract it from the github repo attached
+
+Agent Response Summary:
+Closed the gaps found in the audit of Sections A, B and F that can be closed without guessing: a self-contained mini dataset with hand-derived full answers (6/6 exact), parser and engine unit tests with inline fixtures, dataset-bound tests skip when dataset/ is missing, coverage measured (about 91%), CI workflow, requirements files, a status-consistency check on model wording, a --demo advisor run on the lookalike case, and advisor example outputs. Tried and reverted one reconstruction rule (it fixed case_24 but broke case_31). Remaining sample gaps are documented in PRD_done.md.
+
+Actions:
+* Added code/tests/{minidata,test_mini_dataset,test_parsers,test_engine_units}.py, .github/workflows/tests.yml, requirements*.txt
+* Extended advisor validation and CLI (--demo, advisor_examples.json); regenerated reports; updated PRDs; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none

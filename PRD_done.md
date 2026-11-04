@@ -85,3 +85,15 @@ Files: `code/advisor/{llm_client,review,explain,advisor}.py`, `code/advise.py`, 
 - Safety: the model's JSON is rejected if malformed or if it cites any resource/evidence id the engine did not produce; any failure falls back to the template. The client is provider-neutral: an OpenAI-compatible gateway (AgentRouter) via `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` in `.env`, or Anthropic if `LLM_PROVIDER=anthropic`. The key is never logged.
 - Run: `python code/advise.py` (templates, no key) or `python code/advise.py --model [--limit N]` (writes `explanations.json` and `code/evaluation/advisor_usage.json`). `python code/evaluation/generate_reports.py` then reports the real calls and tokens in `usage_report.md`.
 - 13 unit tests use a fake model (44 tests pass in total). **Not yet tested with the real API: this needs the key.**
+
+## Section 11: Gap-closing round (tests, mini dataset, advisor checks): DONE
+- `code/tests/minidata.py` + `test_mini_dataset.py`: a tiny invented dataset (4 customers, 3 evidence files, 6 requests) with fully hand-derived expected steps (lookalike, restore risk, active flow, negated request, absence proven by a later snapshot, audit before evidence). 6/6 exact. No dependency on `dataset/`.
+- `test_parsers.py` (SQL, JSON lookup, log layouts, txt) and `test_engine_units.py` (state reconstruction, replica logic, time gates, policy decisions) use inline fixtures. 74 tests pass; coverage of `code/engine` + `code/advisor` is about 91% (measure with `pytest --cov=code/engine --cov=code/advisor`).
+- Tests that need the real `dataset/` skip themselves when it is absent. `.github/workflows/tests.yml` runs the suite and `main.py` on every push (installs poppler and tesseract). `requirements.txt` / `requirements-dev.txt` added.
+- Advisor: model wording that contradicts the engine's status is rejected (`contradicts_status`); `python code/advise.py --demo` runs the advisor on the mini dataset (includes the lookalike case) and writes `code/evaluation/advisor_demo.json`; flagged real cases are saved to `code/evaluation/advisor_examples.json`.
+
+## Still open after this round (be honest in the interview)
+- Sample cases 04, 18, 20, 23, 24: 6 steps missing. Cases 04, 18, 20 reference ids (`account_004`, `audit_record_6645`, `audit_record_5569`) that appear in no evidence or activity, so they cannot be derived without guessing. Case 23 (`account_410`) has 3 equally plausible worker activities. Case 24 (`account_5334`) depends on whether an empty JSON snapshot outranks a live lookup: switching rules fixed case 24 but broke case 31, so the original rule stays.
+- The other 486 requests have no answer key; behaviour there is checked only by invariants and by the mini dataset.
+- Live-model runs: only the 6 mixed-wording cases ran live. The lookalike demo (`python code/advise.py --demo --model`) has not been run live yet. Cost is not computed until Groq prices are set in `.env`.
+- Explanations are not yet wired into emails or the UI (Section C / Member 1).

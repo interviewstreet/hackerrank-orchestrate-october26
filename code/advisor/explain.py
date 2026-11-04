@@ -54,6 +54,22 @@ def build_prompt(result: CaseAuditResult, request: Dict[str, str], reasons: List
     return json.dumps(payload, ensure_ascii=False)
 
 
+CLAIMS_COMPLETE = re.compile(r"\b(?:is|was|has been|fully|now) (?:fully |now )?(?:complete|completed|deleted|erased)\b|\bdeletion (?:is|was) complete\b", re.I)
+CLAIMS_INCOMPLETE = re.compile(r"\b(?:incomplete|not (?:yet )?(?:complete|completed|deleted|erased)|still exists?|remains?|remaining)\b", re.I)
+NEGATED_CONTEXT = re.compile(r"\bnot (?:a |an )?(?:deletion|erasure)\b|\bno deletion\b|\bnot applicable\b", re.I)
+
+
+def contradicts_status(text: str, status: str) -> bool:
+    """True if the model's wording claims an outcome that contradicts the engine's status."""
+    if status == "INCOMPLETE":
+        return bool(CLAIMS_COMPLETE.search(text)) and not CLAIMS_INCOMPLETE.search(text)
+    if status == "COMPLETE":
+        return bool(CLAIMS_INCOMPLETE.search(text)) and not CLAIMS_COMPLETE.search(text)
+    if status == "NOT_APPLICABLE":
+        return bool(CLAIMS_COMPLETE.search(text)) and not NEGATED_CONTEXT.search(text)
+    return False
+
+
 def parse_and_validate(raw: str, result: CaseAuditResult) -> Optional[Dict[str, Any]]:
     """Accept the model's JSON only if it is well-formed and cites nothing the engine did not produce."""
     m = re.search(r"\{.*\}", raw or "", re.DOTALL)
@@ -73,4 +89,6 @@ def parse_and_validate(raw: str, result: CaseAuditResult) -> Optional[Dict[str, 
         return None                                                    # invented identifier -> reject the whole answer
     if len(data["summary"].split()) > 140:
         return None
+    if contradicts_status(data["summary"], result.deletion_status):
+        return None                                                    # wording disagrees with the engine -> reject
     return {"summary": data["summary"].strip(), "review_needed": data["review_needed"], "review_reason": reason.strip()}

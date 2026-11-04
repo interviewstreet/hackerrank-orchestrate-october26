@@ -26,8 +26,8 @@ The decisions behind `output.csv` come from the deterministic engine and make **
 | Item | Value |
 |---|---|
 | Requests | 518 |
-| Dataset and evidence load | 1.2 s |
-| Analysis of all requests | 1.4 s (2.7 ms per request) |
+| Dataset and evidence load | 0.9 s |
+| Analysis of all requests | 1.2 s (2.4 ms per request) |
 | Network access by the decision pipeline | None |
 
 ## Note on development tooling

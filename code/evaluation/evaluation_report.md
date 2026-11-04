@@ -58,6 +58,20 @@ Each is derived from a public sample by a perturbation whose correct outcome fol
 
 Run with `python3 code/evaluation/custom_cases.py`; they are also enforced by `pytest code/tests`.
 
+### 7b. Self-contained mini dataset with hand-derived full answers
+`code/tests/minidata.py` builds a tiny invented dataset (4 customers, 3 evidence files, 6 requests) and `test_mini_dataset.py`
+checks every step of every case against an answer written by hand from `deletion_rules.csv` *before* the engine was run on it:
+| Case | Situation | Expected |
+|---|---|---|
+| mini_01 | Leftover search entry, restorable backup, retained audit record | INCOMPLETE; report both, block restore, delete the entry, verify absent / present / blocked |
+| mini_02 | Active data flow | INCOMPLETE; report, disable, verify disabled |
+| mini_03 | Lookalike address `examp1e` of a real customer | INCOMPLETE, no steps invented |
+| mini_04 | Request that declines deletion | NOT_APPLICABLE, no steps |
+| mini_05 | Profile present in an old snapshot, absent from a later full snapshot | COMPLETE; cites the later snapshot (absent) and the retained audit record |
+| mini_06 | Audit before any evidence existed | INCOMPLETE, no steps (nothing provable) |
+
+Result: **6/6 exact** (`pytest code/tests/test_mini_dataset.py`).
+
 ## 8. Failures found and improvements made
 | Failure found | Improvement |
 |---|---|

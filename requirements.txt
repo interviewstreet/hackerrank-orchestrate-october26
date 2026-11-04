@@ -1,0 +1,2 @@
+# The agent itself uses only the Python standard library (Python 3.10+).
+# System tools needed for PDF and screenshot evidence: poppler-utils (pdftotext) and tesseract-ocr.

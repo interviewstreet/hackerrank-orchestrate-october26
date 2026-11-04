@@ -150,3 +150,24 @@ def test_list_models_parses_ids(monkeypatch):
         def read(self): return b'{"data":[{"id":"b-model"},{"id":"a-model"}]}'
     monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=0: R())
     assert OpenAICompatibleClient(api_key="k", base_url="https://x.test/v1", model="m").list_models() == ["a-model", "b-model"]
+
+
+def test_model_wording_that_contradicts_the_engine_is_rejected(ec):
+    from advisor.explain import contradicts_status
+    assert contradicts_status("The deletion is complete and all data was erased.", "INCOMPLETE")
+    assert not contradicts_status("Deletion is incomplete: a search entry still exists.", "INCOMPLETE")
+    assert contradicts_status("Data still exists in the index and deletion is incomplete.", "COMPLETE")
+    assert not contradicts_status("Deletion is complete; all checks passed.", "COMPLETE")
+    assert not contradicts_status("This is not a deletion request, so nothing was deleted.", "NOT_APPLICABLE")
+    r, res = _lookalike(ec)
+    bad = json.dumps({"summary": "The deletion is complete.", "review_needed": False, "review_reason": ""})
+    assert parse_and_validate(bad, res) is None
+
+
+def test_advisor_flags_the_mini_dataset_lookalike(tmp_path):
+    from engine.case_analyzer import build_context
+    from minidata import build_mini_dataset
+    ec = build_context(build_mini_dataset(tmp_path))
+    out = {a["case_id"]: a for a in advise_all(ec.ctx.requests, ec)}
+    assert out["mini_03"]["review_needed"] and any("lookalike" in t for t in out["mini_03"]["triggers"])
+    assert not out["mini_01"]["review_needed"]

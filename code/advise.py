@@ -27,6 +27,7 @@ def main() -> int:
     ap.add_argument("--out", default=str(root / "explanations.json"))
     ap.add_argument("--usage-out", default=str(root / "code" / "evaluation" / "advisor_usage.json"))
     ap.add_argument("--model", action="store_true", help="use the language model on flagged cases")
+    ap.add_argument("--demo", action="store_true", help="run the advisor on the built-in mini dataset (includes a lookalike-email case)")
     ap.add_argument("--list-models", action="store_true", help="print the model ids your key can use, then exit")
     ap.add_argument("--limit", type=int, default=None, help="maximum number of model calls")
     a = ap.parse_args()
@@ -41,12 +42,21 @@ def main() -> int:
             print("could not list models:", e)
             return 1
         return 0
+    if a.demo:
+        import tempfile
+        sys.path.insert(0, str(HERE / "tests"))
+        from minidata import build_mini_dataset
+        a.dataset = str(build_mini_dataset(tempfile.mkdtemp()))
+        a.out = str(root / "code" / "evaluation" / "advisor_demo.json")
     ec = build_context(a.dataset)
     client = make_client() if a.model else None
     if a.model and not client.available:
         print("LLM_API_KEY, LLM_BASE_URL and LLM_MODEL are not all set in .env: continuing with template explanations only.")
     advice = advise_all(ec.ctx.requests, ec, client, a.limit)
     Path(a.out).write_text(json.dumps(advice, indent=1, ensure_ascii=False), encoding="utf-8")
+    if not a.demo:
+        Path(root / "code" / "evaluation" / "advisor_examples.json").write_text(
+            json.dumps([x for x in advice if x["triggers"]], indent=1, ensure_ascii=False), encoding="utf-8")
     flagged = sum(x["review_needed"] for x in advice)
     used = sum(x["source"] == "model" for x in advice)
     print(f"wrote {a.out}: {len(advice)} cases, {flagged} flagged for review, {used} explained by the model")
