@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple
 
 API_URL = "https://api.anthropic.com/v1/messages"
+USER_AGENT = "erasight-advisor/1.0 (+deletion-audit hackathon project)"     # default Python-urllib is blocked by some gateways
 DEFAULT_MODEL = "claude-sonnet-5-5"
 
 
@@ -59,7 +60,8 @@ class AnthropicClient:
         body = json.dumps({"model": self.model, "max_tokens": max_tokens, "temperature": 0, "system": system,
                            "messages": [{"role": "user", "content": user}]}).encode("utf-8")
         req = urllib.request.Request(API_URL, data=body, method="POST", headers={
-            "content-type": "application/json", "x-api-key": self._key, "anthropic-version": "2023-06-01"})
+            "content-type": "application/json", "x-api-key": self._key, "anthropic-version": "2023-06-01",
+            "user-agent": USER_AGENT})
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
@@ -111,7 +113,8 @@ class OpenAICompatibleClient:
     def _post(self, payload: dict) -> dict:
         req = urllib.request.Request(self.base_url + "/chat/completions", data=json.dumps(payload).encode("utf-8"),
                                      method="POST", headers={"content-type": "application/json",
-                                                             "authorization": "Bearer " + self._key})
+                                                             "authorization": "Bearer " + self._key,
+                                                             "user-agent": USER_AGENT})
         with urllib.request.urlopen(req, timeout=self.timeout) as resp:
             return json.loads(resp.read().decode("utf-8"))
 

@@ -1,8 +1,8 @@
 {
- "provider": "AgentRouter",
- "model": "gpt-6-astra",
+ "provider": "Groq",
+ "model": "llama-3.3-70b-versatile",
  "calls": 0,
- "failed_calls": 6,
+ "failed_calls": 3,
  "input_tokens": 0,
  "output_tokens": 0,
  "per_case": {}

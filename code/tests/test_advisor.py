@@ -120,3 +120,21 @@ def test_openai_compatible_client_parses_reply_and_usage(monkeypatch):
     assert c.complete("case_x", "sys", "usr") == "hello"
     assert c.usage.to_dict()["input_tokens"] == 12 and c.usage.to_dict()["output_tokens"] == 3
     assert "temperature" not in seen and seen["messages"][0]["role"] == "system"
+
+
+def test_requests_carry_a_descriptive_user_agent(monkeypatch):
+    import urllib.request
+    from advisor.llm_client import OpenAICompatibleClient, USER_AGENT
+    seen = {}
+
+    class R:
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def read(self): return b'{"choices":[{"message":{"content":"x"}}],"usage":{}}'
+
+    def fake_urlopen(req, timeout=0):
+        seen.update({k.lower(): v for k, v in req.header_items()})
+        return R()
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    OpenAICompatibleClient(api_key="k", base_url="https://example.test/v1", model="m").complete("c", "s", "u")
+    assert seen["user-agent"] == USER_AGENT and seen["authorization"] == "Bearer k"
