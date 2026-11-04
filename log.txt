@@ -410,3 +410,23 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T21:09:37Z] Demo script for sending a test email
+
+User Prompt (verbatim, secrets redacted):
+how to send demo mail
+
+Agent Response Summary:
+Added code/email_demo.py: loads .env, shows a draft, and sends one email through the real approval workflow only after the user types a name to approve; --dry-run shows the flow without contacting Resend. Added 6 tests with a fake Resend (156 tests pass) and a README note. No real email was sent and no key was used here.
+
+Actions:
+* Added code/email_demo.py and code/tests/test_email_demo.py; edited code/integrations/email/README.md
+* Ran pytest code/tests (156 passed) and a dry run; nothing pushed
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none

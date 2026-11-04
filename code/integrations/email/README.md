@@ -58,5 +58,8 @@ app.include_router(create_email_router(
 - If a send times out the outcome is unknown: the email is `FAILED`, and a re-approved retry reuses the same key (safe for 24 hours).
 - The SQLite outbox contains email bodies (it is gitignored); do not commit `email_outbox.db`.
 
+## Try it from the terminal (no API needed)
+`python code/email_demo.py --to you@example.com --dry-run` shows the whole flow without sending. Drop `--dry-run` to send one real demo email (needs `RESEND_API_KEY` and `RESEND_FROM_EMAIL` in `.env`); it sends only after you type your name to approve.
+
 ## Tests
 `pytest code/tests/test_email_*.py` uses a fake Resend transport (and a localhost-only server for the real HTTP path). Real email is never sent.
