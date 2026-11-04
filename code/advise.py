@@ -14,6 +14,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from advisor.envfile import load_env                       # noqa: E402
 from advisor.advisor import advise_all                     # noqa: E402
 from advisor.llm_client import AnthropicClient             # noqa: E402
 from engine.case_analyzer import build_context             # noqa: E402
@@ -29,6 +30,7 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=None, help="maximum number of model calls")
     a = ap.parse_args()
 
+    load_env(root / ".env")
     ec = build_context(a.dataset)
     client = AnthropicClient() if a.model else None
     if a.model and not client.available:

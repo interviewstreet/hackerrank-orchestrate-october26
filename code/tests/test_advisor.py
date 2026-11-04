@@ -84,3 +84,16 @@ def test_usage_log_counts_tokens(ec):
     advise_case(res, r, ec, client)
     u = client.usage.to_dict()
     assert u["calls"] == 1 and u["input_tokens"] == 321 and u["output_tokens"] == 45
+
+
+def test_env_file_loads_without_overriding_real_variables(tmp_path, monkeypatch):
+    from advisor.envfile import load_env
+    f = tmp_path / ".env"
+    f.write_text("# c\nANTHROPIC_API_KEY=abc\nEMPTY=\nKEEP=fromfile\n", encoding="utf-8")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setenv("KEEP", "fromshell")
+    monkeypatch.delenv("EMPTY", raising=False)
+    assert load_env(f) == 1
+    import os
+    assert os.environ["ANTHROPIC_API_KEY"] == "abc" and os.environ["KEEP"] == "fromshell" and "EMPTY" not in os.environ
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
