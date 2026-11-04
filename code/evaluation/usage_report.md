@@ -8,26 +8,29 @@ The decisions behind `output.csv` come from the deterministic engine and make **
 | Item | Value |
 |---|---|
 | Model providers and names used at run time | Groq: openai/gpt-oss-120b (advisory layer only) |
-| Model calls | 6 |
-| Input tokens | 1514 |
-| Output tokens | 1757 |
-| Total tokens | 3271 |
-| Average tokens per request | 6.3 |
-| Estimated total cost | not computed (price per million tokens was not supplied) |
-| Estimated cost per request | not computed (price per million tokens was not supplied) |
+| Model calls | 9 |
+| Input tokens | 2429 |
+| Output tokens | 2427 |
+| Total tokens | 4856 |
+| Average tokens per request | 9.4 |
+| Estimated total cost | not reported (no price supplied) |
+| Estimated cost per request | not reported (no price supplied) |
 
 ## Per-model breakdown
-| Model | Calls | Input tokens | Output tokens |
+Model: Groq openai/gpt-oss-120b
+
+| Run | Calls | Input tokens | Output tokens |
 |---|---|---|---|
-| Groq openai/gpt-oss-120b | 6 | 1514 | 1757 |
-| **Overall** | 6 | 1514 | 1757 |
+| full dataset run (flagged requests) | 6 | 1514 | 1757 |
+| lookalike demo on the mini dataset | 3 | 915 | 670 |
+| **Overall** | 9 | 2429 | 2427 |
 
 ## Run characteristics (measured)
 | Item | Value |
 |---|---|
 | Requests | 518 |
-| Dataset and evidence load | 0.9 s |
-| Analysis of all requests | 1.2 s (2.4 ms per request) |
+| Dataset and evidence load | 1.2 s |
+| Analysis of all requests | 1.4 s (2.8 ms per request) |
 | Network access by the decision pipeline | None |
 
 ## Note on development tooling

@@ -48,6 +48,7 @@ def main() -> int:
         from minidata import build_mini_dataset
         a.dataset = str(build_mini_dataset(tempfile.mkdtemp()))
         a.out = str(root / "code" / "evaluation" / "advisor_demo.json")
+        a.usage_out = str(root / "code" / "evaluation" / "advisor_usage_demo.json")
     ec = build_context(a.dataset)
     client = make_client() if a.model else None
     if a.model and not client.available:

@@ -1,0 +1,25 @@
+{
+ "provider": "Groq",
+ "model": "openai/gpt-oss-120b",
+ "calls": 3,
+ "failed_calls": 0,
+ "input_tokens": 915,
+ "output_tokens": 670,
+ "per_case": {
+  "mini_03": {
+   "calls": 1,
+   "input_tokens": 289,
+   "output_tokens": 216
+  },
+  "mini_04": {
+   "calls": 1,
+   "input_tokens": 246,
+   "output_tokens": 241
+  },
+  "mini_06": {
+   "calls": 1,
+   "input_tokens": 380,
+   "output_tokens": 213
+  }
+ }
+}

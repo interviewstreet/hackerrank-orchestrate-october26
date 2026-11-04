@@ -22,10 +22,10 @@
  {
   "case_id": "mini_03",
   "deletion_status": "INCOMPLETE",
-  "source": "template",
-  "explanation": "The customer could not be matched to exactly one account, so deletion cannot be proven. No records were attributed to this request; a person should confirm the identity first.",
+  "source": "model",
+  "explanation": "The deletion request could not be automatically processed because the system could not match the requester to any known identity. No personal records were found, and the email address is similar to another customer's, suggesting a possible look‑alike. Because the identity remains unresolved, a human must verify the request before proceeding.",
   "review_needed": true,
-  "review_reason": "identity is UNRESOLVED; email closely resembles a different known customer address (possible lookalike); no records could be tied to this customer",
+  "review_reason": "Identity is UNRESOLVED; possible email look‑alike; no matching records found.",
   "triggers": [
    "identity is UNRESOLVED",
    "email closely resembles a different known customer address (possible lookalike)",
@@ -36,10 +36,10 @@
  {
   "case_id": "mini_04",
   "deletion_status": "NOT_APPLICABLE",
-  "source": "template",
-  "explanation": "The request does not ask for deletion, so no audit steps are needed.",
+  "source": "model",
+  "explanation": "The request was marked NOT_APPLICABLE; the system saw no deletion request despite the presence of deletion words because the user wants to keep the account and only change a phone number. No action steps were taken.",
   "review_needed": true,
-  "review_reason": "request wording mixes deletion language with limiting language; classified as not a deletion request although deletion words appear",
+  "review_reason": "The wording mixes deletion language with a request to update information, triggering a flag for a second look.",
   "triggers": [
    "request wording mixes deletion language with limiting language",
    "classified as not a deletion request although deletion words appear"
@@ -59,10 +59,10 @@
  {
   "case_id": "mini_06",
   "deletion_status": "INCOMPLETE",
-  "source": "template",
-  "explanation": "No records tied to this customer could be proven removed, so the deletion is treated as incomplete.",
+  "source": "model",
+  "explanation": "The user asked to permanently delete their account and all personal data. The audit engine could not find any records linked to the user and returned an INCOMPLETE status with no deletion steps performed.",
   "review_needed": true,
-  "review_reason": "no records could be tied to this customer",
+  "review_reason": "Engine status is INCOMPLETE and indicates no records could be tied to this customer, so a manual review is required.",
   "triggers": [
    "no records could be tied to this customer"
   ],

@@ -176,21 +176,27 @@ Result: **{mini_ok}/{len(mini_expected)} exact** (`pytest code/tests/test_mini_d
     (HERE / "evaluation_report.md").write_text(ev, encoding="utf-8")
 
     n = len(full)
-    adv_path = HERE / "advisor_usage.json"
-    adv = json.loads(adv_path.read_text(encoding="utf-8")) if adv_path.exists() else None
-    calls = adv["calls"] if adv else 0
-    tin = adv["input_tokens"] if adv else 0
-    tout = adv["output_tokens"] if adv else 0
+    def _load(name):
+        f = HERE / name
+        return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+
+    main_run, demo_run = _load("advisor_usage.json"), _load("advisor_usage_demo.json")
+    runs = [(label, u) for label, u in (("full dataset run (flagged requests)", main_run), ("lookalike demo on the mini dataset", demo_run))
+            if u and u["calls"]]
+    calls = sum(u["calls"] for _, u in runs)
+    tin = sum(u["input_tokens"] for _, u in runs)
+    tout = sum(u["output_tokens"] for _, u in runs)
+    adv = runs[0][1] if runs else None
     pin = os.environ.get("LLM_PRICE_INPUT_PER_MTOK", "")
     pout = os.environ.get("LLM_PRICE_OUTPUT_PER_MTOK", "")
-    if not adv or calls == 0:
+    if not runs:
         cost, cost_req = "$0.00", "$0.00"
     elif pin and pout:
         total = tin / 1e6 * float(pin) + tout / 1e6 * float(pout)
         cost, cost_req = f"${total:.4f}", f"${total / n:.6f}"
     else:
-        cost = cost_req = "not computed (price per million tokens was not supplied)"
-    if not adv or calls == 0:
+        cost = cost_req = "not reported (no price supplied)"
+    if not runs:
         who = ("**The shipped agent makes zero model calls.** It is a deterministic pipeline (rules, parsers, local `pdftotext` and "
                "`tesseract` OCR). The optional advisory layer (`python code/advise.py --model`) was not used for this run, so there "
                "are no input or output tokens and no per-token cost.")
@@ -201,8 +207,9 @@ Result: **{mini_ok}/{len(mini_expected)} exact** (`pytest code/tests/test_mini_d
                f"layer (`python code/advise.py --model`) asked **{adv['provider']} / {adv['model']}** for a second opinion on cases the "
                f"deterministic triggers flagged. It only writes `explanations.json`; it cannot change `output.csv`.")
         model_rows = f"| Model providers and names used at run time | {adv['provider']}: {adv['model']} (advisory layer only) |"
-        per_model = (f"| Model | Calls | Input tokens | Output tokens |\n|---|---|---|---|\n| {adv['provider']} {adv['model']} | "
-                     f"{calls} | {tin} | {tout} |\n| **Overall** | {calls} | {tin} | {tout} |")
+        rows = "\n".join(f"| {label} | {u['calls']} | {u['input_tokens']} | {u['output_tokens']} |" for label, u in runs)
+        per_model = (f"Model: {adv['provider']} {adv['model']}\n\n| Run | Calls | Input tokens | Output tokens |\n|---|---|---|---|\n{rows}\n"
+                     f"| **Overall** | {calls} | {tin} | {tout} |")
     us = f"""# ERASIGHT Token Usage and Cost Report
 
 This report covers the final full-dataset run that produced `output.csv` ({n} requests).
