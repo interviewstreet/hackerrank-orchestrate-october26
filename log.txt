@@ -1,0 +1,98 @@
+## [2026-11-04T13:07:38Z] SESSION START
+
+tool=Claude Code
+model=claude-sonnet-5-5
+Repo Root: C:\Users\Rachana\OneDrive\Desktop\EraSight
+Branch: main
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T13:07:38Z] Clone repo and begin PRD plan
+
+User Prompt (verbatim, secrets redacted):
+follow the plan, clone the repo in my local vscode
+(PRD attached as a text file: Member 2 backend + Resend email integration; referenced by path, not reproduced.)
+(Follow-up: user connected the Desktop EraSight folder.)
+
+Agent Response Summary:
+Cloned https://github.com/rachanashende/EraSight into the connected Desktop EraSight folder after the user approved deletion permission for git lock files. Read AGENTS.md, CLAUDE.md, README.md and problem_statement.md, and started inspecting the dataset per the PRD plan.
+
+Actions:
+* git clone into the EraSight folder (first attempt failed on lock files; removed partial .git and re-cloned)
+* Read AGENTS.md, CLAUDE.md, README.md, problem_statement.md
+* Created log.txt
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=main
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:08:18Z] Dataset inspection milestone
+
+User Prompt (verbatim, secrets redacted):
+(no new prompt; continuation of the clone-and-plan request)
+
+Agent Response Summary:
+Inspected dataset structure: 518 requests, 32 samples (22 INCOMPLETE, 10 COMPLETE, no NOT_APPLICABLE), 15 policy rules, 94 evidence files across SQL snapshots (primary, regional, read, reporting, failover replicas), JSON bundles, structured and readback logs, a text handover, 4 PDFs and 11 PNG screenshots. Local tools available: pdftotext and tesseract; pandas present, pydantic missing. No engine code written yet.
+
+Actions:
+* Listed dataset/ and evidence/ directories and read headers of every CSV
+* Read deletion_rules.csv and evidence_files.csv
+* Sampled one file of each evidence format
+* Counted operations in sample_output.csv
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=main
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:10:49Z] Role confirmed: Member 2; branch created
+
+User Prompt (verbatim, secrets redacted):
+(Pasted team coordination notes: shared CaseAuditResult contract, 20-hour schedule, branch workflow member-2-backend-resend, Slack/Resend env vars.) "im member 2 remember that"
+
+Agent Response Summary:
+Recorded that the user is Member 2 (backend engine and Resend). Created branch member-2-backend-resend and added .env and Python caches to .gitignore. Shared contract matches the PRD; will start sample evaluation as soon as the first end-to-end case works.
+
+Actions:
+* Saved role to project memory
+* git checkout -b member-2-backend-resend
+* Appended .env, __pycache__/, *.pyc, .venv/, venv/ to .gitignore
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
+## [2026-11-04T13:19:40Z] Engine foundation: loader and evidence parsers
+
+User Prompt (verbatim, secrets redacted):
+start and ask me any questions if needed
+
+Agent Response Summary:
+Built the foundation of the engine: shared contracts, dataset loader with email-history indexes, and parsers for SQL snapshots (all replica topologies), JSON bundles and exports, four log layouts, text handover files, PDFs (pdftotext) and screenshots (tesseract OCR cached under .cache). PDFs and screenshots without resource ids are tied to resources through data-catalog LINK_RESOURCE_IDENTITY events (written 7m01s after capture). All 94 evidence files parse (2901 observations); all 518 request emails resolve to exactly one user. No matching, policy or output logic yet.
+
+Actions:
+* Created code/engine/{contracts,util,dataset_loader,evidence_loader}.py and code/engine/parsers/*
+* Fixed log guard that dropped bracketed/pipe layouts
+* Added .cache/ to .gitignore; committed on branch member-2-backend-resend
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=C:\Users\Rachana\OneDrive\Desktop\EraSight
+worktree=main
+parent_agent=none
+
