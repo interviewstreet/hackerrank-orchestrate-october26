@@ -44,3 +44,10 @@ The upload must complete and return a safe, non-public Slack permalink before th
 
 
 The session response advertises `slack_report_format: "html-v1"`. The frontend checks it before posting a case; a missing or different format requires a backend restart and blocks older text-only senders. The backend loads root `.env` once at startup, resolved relative to `code/server.py`, with process environment variables taking precedence. Restart the API after editing server settings; refreshing Vite alone does not reload Python modules or server credentials.
+
+
+## Phase 2 shared page data
+
+`GET /api/cases` is the single existing data source for Overview, Investigations, Evidence and Analytics. The server joins each engine result to `dataset/deletion_requests.csv` by `case_id`, adding `request.requested_at`, `request.reported_status`, `request.reported_at` and `request.audit_at`. It does not add raw request email/text or identity values. The engine's `deletion_status`, summary, ordered steps and graph relationships are preserved. Without optional request metadata, older responses show the existing ?Not supplied? state.
+
+Live mode is the default and requires a valid response for every supplied case: the client checks nested render fields and unique case IDs before displaying them. A live response containing demo IDs is rejected. A failed or aborted refresh cannot replace current results with fixtures or publish an older aborted response; loading and retry/error states remain. Empty responses remain empty. `VITE_DATA_MODE=demo` explicitly opts into isolated fixtures. No new case, evidence or analytics endpoints are introduced.

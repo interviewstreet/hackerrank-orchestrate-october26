@@ -5,8 +5,11 @@ Run: python code/server.py --dataset dataset
 from __future__ import annotations
 
 import argparse
+import csv
 import hmac
 import json
+import os
+import socket
 import secrets
 import threading
 import time
@@ -27,11 +30,19 @@ ORIGINS = {'http://127.0.0.1:5173', 'http://localhost:5173',
 
 class ApiServer(ThreadingHTTPServer):
     daemon_threads = True
+    allow_reuse_address = os.name != 'nt'
 
-    def __init__(self, address, results):
+    def server_bind(self):
+        # Windows SO_REUSEADDR can route requests to an older server on the same port.
+        if os.name == 'nt':
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+    def __init__(self, address, results, requests=()):
         if address[0] != '127.0.0.1':
             raise ValueError('This local API must bind to 127.0.0.1.')
         self.results = {r.case_id: r for r in results}
+        self.requests = {r["case_id"]: r for r in requests}
         self.sessions = {}
         self.lock = threading.Lock()
         self.delivery_lock = threading.Lock()
@@ -116,7 +127,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(200, {'csrf_token': csrf, 'slack_configured': configured, 'slack_report_format': 'html-v1'},
                               f'erasight_session={sid}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=3600')
         if self.path == '/api/cases':
-            return self.reply(200, [present(r) for r in self.server.results.values()])
+            return self.reply(200, [present(r, self.server.requests.get(r.case_id)) for r in self.server.results.values()])
         return self.reply(404, {'error': 'Endpoint not found.'})
 
     def do_POST(self):
@@ -179,7 +190,9 @@ def main():
     args = parser.parse_args()
     try:
         results = load_results(args.dataset)
-        with ApiServer(('127.0.0.1', args.port), results) as server:
+        with (args.dataset / 'deletion_requests.csv').open(encoding='utf-8', newline='') as request_file:
+            requests = list(csv.DictReader(request_file))
+        with ApiServer(('127.0.0.1', args.port), results, requests) as server:
             print(f'EraSight local API: http://127.0.0.1:{args.port} ({len(results)} engine cases)')
             server.serve_forever()
     except KeyboardInterrupt:

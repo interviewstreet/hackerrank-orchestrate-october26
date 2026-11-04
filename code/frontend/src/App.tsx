@@ -33,8 +33,8 @@ export default function App() {
   useEffect(() => { let active = true; getSlackSession(apiBase).then(s => { if (active) setSlackConfigured(s.slack_configured); }).catch(() => {}); return () => { active = false; }; }, []);
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true); setError('');
-    loadCases(controller.signal).then(data => { setCases(data); setSelectedId(previous => data.some(c => c.case_id === previous) ? previous : data[0]?.case_id || ''); }).catch(e => { if (e.name !== 'AbortError') setError(e.message); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    setLoading(true); setError(''); setCases([]);
+    loadCases(controller.signal).then(data => { if (controller.signal.aborted) return; setCases(data); setSelectedId(previous => data.some(c => c.case_id === previous) ? previous : data[0]?.case_id || ''); }).catch(e => { if (!controller.signal.aborted) setError(e instanceof Error ? e.message : 'Unable to load investigations.'); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [reload]);
   const selected = cases.find(c => c.case_id === selectedId);

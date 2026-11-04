@@ -11,5 +11,5 @@ export interface CaseResult {
   findings: Finding[]; steps: Step[];
   evidence: { id: string; label: string; captured_at: string }[];
   graph_data: { nodes: GraphNode[]; edges: GraphEdge[] };
-  request?: { email: string; requested_at: string; audit_at: string; reported_status: string; request_text: string };
+  request?: { email?: string; requested_at: string; audit_at: string; reported_status: string; reported_at?: string; request_text?: string };
 }

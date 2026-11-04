@@ -18,7 +18,7 @@ npm.cmd run build
 npm.cmd run preview
 ```
 
-The default is a clearly labeled demonstration workspace with six fictional cases, including complete and incomplete outcomes. Navigation, search, result filters, case selection, 3D globe rotation/zoom, node inspection, finding-path highlighting, recommended actions, evidence capture history, analytics, and per-case JSON download work locally. The canvas has a keyboard-accessible node list. No graph relationship is inferred from live data.
+Live backend results are the default. Set `VITE_DATA_MODE=demo` explicitly for the clearly labeled demonstration workspace with six fictional cases, including complete and incomplete outcomes. Navigation, search, result filters, case selection, 3D globe rotation/zoom, node inspection, finding-path highlighting, recommended actions, evidence capture history, analytics, and per-case JSON download work locally. The canvas has a keyboard-accessible node list. No graph relationship is inferred from live data.
 
 To use Member Two's results, copy `.env.example` to `.env.local`, set `VITE_DATA_MODE=live`, set the API base URL and restart Vite. See [CONTRACT.md](./CONTRACT.md). Live API failures remain visible with Retry. The local presentation API and Slack route are available through code/server.py. Slack delivery requires live engine data; demo sends are disabled. Email routes remain a separate Member Two integration milestone.
 
@@ -58,3 +58,19 @@ Live check after configuration: open a real case in live mode, send once, verify
 
 
 If upload sharing returns `not_in_channel`, open the destination channel's Details, copy its channel ID into root `SLACK_REPORT_CHANNEL_ID`, and add the **EraSight** app that owns the configured bot token through Details > Integrations > Add apps. A successful webhook post does not prove the upload bot is a channel member. The integration does not require `channels:join`; invite it manually when self-join is unavailable. Save server credentials in the root `.env`, not `code/frontend/.env.local`, and restart the API after changing them.
+
+
+## Phase 2: backend API connectivity
+
+Run `python code/server.py` from the repository root with the existing Python dependencies and PDF/OCR tools installed. The server computes Member Two's latest merged engine results once at startup. Keep `VITE_DATA_MODE=live` and `VITE_API_BASE_URL=` in `code/frontend/.env.local`; Vite forwards `/api` to `http://127.0.0.1:8000`. Start Vite with `npm.cmd run dev --prefix code/frontend`. Restart the API after backend or dataset changes, and restart Vite after frontend environment changes.
+
+All four pages share the existing `GET /api/cases` response:
+
+- Overview: engine status totals, applicable-request completion rate, selected-case findings and the 3D graph.
+- Investigations: real case rows, status filtering, audit/request timestamps, workflow claims, ordered actions and verification.
+- Evidence: the selected case's actual resource nodes, supplied edges, evidence references and capture metadata.
+- Analytics: outcome counts and finding counts per system derived from the same loaded cases.
+
+The server adds only operational request metadata to the presentation adapter. Raw email, request text, identity values and evidence paths remain excluded. Audit decisions and remediation order stay unchanged. Live failures, invalid data and empty responses never load demo fixtures; errors remain visible with Retry. Demo mode requires an explicit setting. Refresh preserves a selected case when it still exists and ignores aborted responses.
+
+Checks: `python -m pytest code/tests/test_slack.py`, `npm.cmd test --prefix code/frontend`, and `npm.cmd run build --prefix code/frontend`. The tests cover live loading, all four consumers, malformed/duplicate responses, empty results, network failures and cancellation. Existing Slack HTML report/security tests remain included. Resend's approval and delivery package is unchanged; mounting its router and adding email approval controls remain a separate integration task.

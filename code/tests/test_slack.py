@@ -415,3 +415,37 @@ def test_upload_errors_are_actionable_without_upstream_details(monkeypatch, resu
         slack.deliver(result)
     assert expected in str(error.value) and 'xoxb-private-secret' not in str(error.value)
     assert opener.open.call_count==1
+
+
+
+def test_presentation_adds_only_actual_operational_request_metadata(result):
+    request = {'case_id': result.case_id, 'email': 'private@example.invalid', 'request_text': 'Private Person',
+               'requested_at': '2026-07-16T08:00:00Z', 'reported_at': '2026-07-18T08:00:00Z',
+               'audit_at': '2026-07-19T13:00:00Z', 'reported_status': 'COMPLETE'}
+    before = copy.deepcopy(result)
+    value = present(result, request)
+    assert value['request'] == {k: request[k] for k in ['requested_at', 'reported_status', 'reported_at', 'audit_at']}
+    assert value['deletion_status'] == 'INCOMPLETE'  # Workflow claims never replace the engine result.
+    assert value['steps'] == result.steps
+    assert value['summary'] == result.summary
+    assert 'Private Person' not in json.dumps(value) and 'private@example.invalid' not in json.dumps(value)
+    assert result == before
+
+
+def test_case_endpoint_serves_shared_live_data_and_metadata(api, result):
+    app, call = api
+    app.requests[result.case_id] = {'case_id': result.case_id, 'audit_at': '2026-07-19T13:00:00Z',
+        'requested_at': '2026-07-16T08:00:00Z', 'reported_at': '2026-07-18T08:00:00Z',
+        'reported_status': 'COMPLETE', 'email': 'private@example.invalid'}
+    status, headers, data = call('GET', '/api/cases')
+    assert status == 200 and headers['Cache-Control'] == 'no-store'
+    assert data == [present(result, app.requests[result.case_id])]
+    assert 'private@example.invalid' not in json.dumps(data)
+    assert data[0]['graph_data']['edges'][0]['source'] == 'subject'
+
+
+
+def test_api_refuses_a_second_server_on_the_same_port(api, result):
+    app, _ = api
+    with pytest.raises(OSError):
+        server.ApiServer(('127.0.0.1', app.server_port), [result])

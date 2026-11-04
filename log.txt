@@ -1367,3 +1367,42 @@ branch=member-1-frontend-slack
 repo_root=C:\Users\Luzain Sara\Documents\EraSight
 worktree=C:\Users\Luzain Sara\Documents\EraSight
 parent_agent=none
+
+## [2026-11-04T22:28:10.695555+00:00] Complete Phase 2 backend API connectivity
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: .env.example
+
+## Open tabs:
+- .env.example: .env.example
+- .env: .env
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.local: code/frontend/.env.local
+
+## My request:
+Implement Phase 2 — Backend API Connectivity on `member-1-frontend-slack`.
+Connect the existing Overview, Investigations, Evidence, and Analytics pages to Member 2's latest merged backend using real API data.
+Reuse existing endpoints, preserve the entire frontend design, 3D graphs, Slack HTML reports, Resend integration, and backend intelligence. Keep loading/error states and prevent mock-data fallback in live mode.
+Run relevant tests and the frontend production build. Report completed connections and remaining issues. Do not commit, push, or change branches.
+
+
+Agent Response Summary:
+Connected all four existing page consumers to the merged backend through the existing /api/cases endpoint, adding actual operational request metadata while preserving audit decisions, ordered steps, graph relationships and PII exclusions. Hardened the live loader against malformed/duplicate/demo responses and aborted refreshes; live is now the default and never falls back to fixtures. Found overlapping old/current checkout servers on Windows port 8000, replaced them with one current instance and added exclusive socket binding plus a regression test. Verified 518 live cases through Vite using frontend loading/metrics/graph helpers; 140 backend regression tests and 30 frontend tests passed, and the production build passed with its existing bundle-size warning. Design, 3D rendering, Slack HTML reporting, Resend code and engine intelligence remain unchanged; no commits, pushes or branch changes were performed.
+
+Actions:
+* Updated code/server.py and code/presentation.py to attach only operational request metadata to the existing endpoint.
+* Updated frontend API validation, explicit demo opt-in, abort handling, types, setup documentation and regression tests.
+* Installed existing requirements-dev.txt dependencies into .venv to execute the previously skipped Resend router tests.
+* Ran 131 backend Slack/presentation/Resend tests, 9 additional Resend router tests, 30 frontend tests, production build, git diff --check and live proxy validation.
+* Verified live totals: 518 cases, 712 findings, 2281 graph nodes and 540 case evidence references; no Slack or email messages sent.
+* Replaced only verified overlapping checkout API instances and restored generated build metadata.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none

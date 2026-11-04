@@ -2,7 +2,7 @@
 from notifications.slack import FINDINGS
 
 
-def present(result):
+def present(result, request=None):
     raw = result.to_dict()
     findings = []
     for i, f in enumerate(result.findings):
@@ -23,4 +23,8 @@ def present(result):
                evidence=[{'id': e['evidence_id'], 'label': 'Audit evidence', 'captured_at': e['captured_at']} for e in result.evidence],
                graph_data={'nodes': nodes, 'edges': [{'id': f'edge-{i}', 'source': e['source'], 'target': e['target'],
                             'relationship': e['relation'], 'status': 'CONNECTED'} for i, e in enumerate(result.graph_data['edges'])]})
+    if request is not None:
+        # Only operational metadata crosses the presentation boundary, never request PII or free text.
+        raw['request'] = {key: request[key] for key in
+                          ('requested_at', 'reported_status', 'reported_at', 'audit_at') if key in request}
     return raw
