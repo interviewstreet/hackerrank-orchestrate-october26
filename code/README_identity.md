@@ -103,12 +103,12 @@ dicts (it reads `email` and `audit_at` from each row) and returns
 ## Tests
 
 ```text
-python3 -m unittest discover -s code -p "test_*.py" -v   # all 114 tests
+python3 -m unittest discover -s code -p "test_*.py" -v   # all 117 tests
 
 python3 code/test_utils.py                # 13 tests
 python3 code/test_identity_resolver.py    # 66 tests
 python3 code/test_request_classifier.py   # 20 tests, 47 made-up sentences
-python3 code/test_main.py                 # 15 tests: one bad case never stops the run, P2 -> P3 contract
+python3 code/test_main.py                 # 18 tests: one bad case never stops the run, P2 -> P3 contract, audit_at hand-over
 ```
 
 ## For P3

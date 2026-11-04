@@ -76,7 +76,10 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
 
     audit_at = parse_ts(case.get("audit_at"), context=f"{case_id} audit_at")
     if audit_at is None:
-        warn(f"{case_id}: no audit_at, so identifiers are not time-filtered")
+        # No cut-off means we cannot tell which evidence is allowed, so we
+        # never search without one (P2's request).
+        warn(f"{case_id}: no audit_at, so evidence cannot be time-filtered; output INCOMPLETE []")
+        return "INCOMPLETE", [], cls.label
 
     # Empty requested_at -> warning; the resolver then looks up the owner at audit_at
     requested_at = parse_ts(case.get("requested_at"), context=f"{case_id} requested_at")
@@ -87,7 +90,11 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
         warn(f"{case_id}: email could not be resolved to a user; output INCOMPLETE []")
         return "INCOMPLETE", [], cls.label
 
-    evidence = find_records(identity, case)
+    # P2 needs audit_at as an aware UTC datetime, not the CSV string.
+    # Copy the case so the original row is not changed.
+    evidence_case = dict(case)
+    evidence_case["audit_at"] = audit_at
+    evidence = find_records(identity, evidence_case)
     _check_evidence(evidence, case_id)
 
     decision = decide(identity, evidence, case)

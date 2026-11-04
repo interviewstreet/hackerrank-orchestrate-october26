@@ -134,11 +134,61 @@ class TestRunCase(unittest.TestCase):
         (status, _, _, failed), _ = self._run(case)
         self.assertEqual((status, failed), ("INCOMPLETE", False))
 
-    def test_empty_audit_at_warns_but_runs(self):
-        case = dict(DELETION_CASE, audit_at="")
-        (status, _, _, failed), err = self._run(case)
-        self.assertEqual((status, failed), ("INCOMPLETE", False))
-        self.assertIn("empty timestamp (case_test audit_at)", err)
+    def test_empty_audit_at_gives_incomplete_without_search(self):
+        """No cut-off -> INCOMPLETE [] and find_records() is never called."""
+        for value in ("", "   "):
+            with self.subTest(audit_at=value):
+                case = dict(DELETION_CASE, audit_at=value)
+                with mock.patch.object(main, "find_records") as fr:
+                    (status, steps_json, label, failed), err = self._run(case)
+                fr.assert_not_called()
+                self.assertEqual((status, steps_json, failed), ("INCOMPLETE", "[]", False))
+                self.assertEqual(label, "IS_DELETION")
+                self.assertIn("empty timestamp (case_test audit_at)", err)
+                self.assertIn("case_test: no audit_at", err)
+
+    def test_missing_audit_at_column_gives_incomplete_without_search(self):
+        case = {k: v for k, v in DELETION_CASE.items() if k != "audit_at"}
+        with mock.patch.object(main, "find_records") as fr:
+            (status, steps_json, _, failed), _ = self._run(case)
+        fr.assert_not_called()
+        self.assertEqual((status, steps_json, failed), ("INCOMPLETE", "[]", False))
+
+    def test_find_records_receives_aware_utc_datetime(self):
+        """Including when the CSV value has no timezone (assumed UTC)."""
+        from datetime import datetime, timezone
+        from models import empty_evidence
+        values = {
+            "2026-10-01T00:00:00Z": datetime(2026, 10, 1, tzinfo=timezone.utc),
+            "2026-10-01 00:00:00": datetime(2026, 10, 1, tzinfo=timezone.utc),
+            "2026-10-01T02:00:00+02:00": datetime(2026, 10, 1, tzinfo=timezone.utc),
+        }
+        for raw, expected in values.items():
+            with self.subTest(audit_at=raw):
+                case = dict(DELETION_CASE, audit_at=raw)
+                with mock.patch.object(main, "find_records",
+                                       return_value=empty_evidence()) as fr:
+                    (_, _, _, failed), _ = self._run(case)
+                self.assertFalse(failed)
+                passed = fr.call_args.args[1]["audit_at"]
+                self.assertIsInstance(passed, datetime)
+                self.assertIsNotNone(passed.tzinfo)
+                self.assertEqual(passed.utcoffset().total_seconds(), 0)
+                self.assertEqual(passed, expected)
+
+    def test_original_case_dict_not_changed(self):
+        from models import empty_evidence
+        case = dict(DELETION_CASE, audit_at="2026-10-01 00:00:00")
+        before = dict(case)
+        with mock.patch.object(main, "find_records",
+                               return_value=empty_evidence()) as fr:
+            self._run(case)
+        self.assertEqual(case, before)
+        self.assertIsNot(fr.call_args.args[1], case)
+        # The other fields reach P2 unchanged
+        passed = dict(fr.call_args.args[1])
+        del passed["audit_at"]
+        self.assertEqual(passed, {k: v for k, v in before.items() if k != "audit_at"})
 
     def test_bad_audit_at_gives_incomplete(self):
         case = dict(DELETION_CASE, audit_at="not a date")

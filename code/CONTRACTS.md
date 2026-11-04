@@ -21,6 +21,13 @@ All times are aware UTC `datetime`s. Parse CSV/evidence strings with
 
 ## 1. P2 → P3: `find_records(identity, case) -> dict`
 
+**Input.** `main.py` passes a *copy* of the CSV row in which
+`case["audit_at"]` is already an aware UTC `datetime` (from
+`utils.parse_ts()`), never the raw string. A CSV value without a timezone
+becomes UTC. If `audit_at` is empty, `main.py` writes `INCOMPLETE, []` and
+does **not** call `find_records()` at all, so P2 never has to search
+without a cut-off. The other fields stay strings.
+
 **Status: agreed shape, enforced by `main.py`.** The keys live in
 `models.EVIDENCE_KEYS`, and `models.empty_evidence()` returns an empty
 example. A missing key makes the case fail (`INCOMPLETE, []`). An extra key

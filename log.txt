@@ -492,3 +492,34 @@ branch=p1-identity
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T17:31:25Z] P2 request: skip search without audit_at, pass aware audit_at
+
+User Prompt (verbatim, secrets redacted):
+My teammate P2 asked for two changes in process_case() in code/main.py:
+
+After parsing audit_at, if it is None, keep the existing warning and return INCOMPLETE with [] immediately, without calling find_records(). Use the same return format process_case() already uses.
+Before calling find_records(), copy the case and replace its audit_at with the parsed timezone-aware UTC datetime:
+python
+evidence_case = dict(case)
+evidence_case["audit_at"] = audit_at
+evidence = find_records(identity, evidence_case)
+Don’t change the original case dict. Don’t touch any of P2’s files.
+
+Add tests: an empty audit_at gives INCOMPLETE [] and find_records() is never called; find_records() receives a timezone-aware datetime, not a string, including when the CSV value has no timezone. Update any existing test that expected the old “run without cut-off” behaviour. Run all tests and main.py and show me the results.
+
+Agent Response Summary:
+process_case() now returns ("INCOMPLETE", [], label) right after parsing when audit_at is None (parse_ts warning kept, plus a "no audit_at ... output INCOMPLETE []" warning), before resolve/find_records. find_records() now receives a copy of the case whose audit_at is the parsed aware UTC datetime; the original dict is unchanged. Replaced the old "empty audit_at warns but runs" test with tests for empty/blank/missing audit_at (find_records not called), aware UTC datetime for Z, no-timezone and +02:00 inputs, and the original dict being unchanged. Updated CONTRACTS.md section 1 and README test counts; P2's files and evidence_search.py untouched. 117/117 tests pass; main.py 518 rows, unchanged counts.
+
+Actions:
+* Modified code/main.py, code/test_main.py, code/CONTRACTS.md, code/README_identity.md
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -> 117 OK
+* Ran: python3 code/main.py -> 518 rows (0 COMPLETE, 508 INCOMPLETE, 10 NOT_APPLICABLE, 0 UNCERTAIN, 0 errors)
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=p1-identity
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
