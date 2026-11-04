@@ -138,3 +138,15 @@ def test_requests_carry_a_descriptive_user_agent(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
     OpenAICompatibleClient(api_key="k", base_url="https://example.test/v1", model="m").complete("c", "s", "u")
     assert seen["user-agent"] == USER_AGENT and seen["authorization"] == "Bearer k"
+
+
+def test_list_models_parses_ids(monkeypatch):
+    import urllib.request
+    from advisor.llm_client import OpenAICompatibleClient
+
+    class R:
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def read(self): return b'{"data":[{"id":"b-model"},{"id":"a-model"}]}'
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=0: R())
+    assert OpenAICompatibleClient(api_key="k", base_url="https://x.test/v1", model="m").list_models() == ["a-model", "b-model"]

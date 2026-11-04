@@ -27,10 +27,20 @@ def main() -> int:
     ap.add_argument("--out", default=str(root / "explanations.json"))
     ap.add_argument("--usage-out", default=str(root / "code" / "evaluation" / "advisor_usage.json"))
     ap.add_argument("--model", action="store_true", help="use the language model on flagged cases")
+    ap.add_argument("--list-models", action="store_true", help="print the model ids your key can use, then exit")
     ap.add_argument("--limit", type=int, default=None, help="maximum number of model calls")
     a = ap.parse_args()
 
     load_env(root / ".env")
+    if a.list_models:
+        from advisor.llm_client import ModelUnavailable
+        try:
+            for m in make_client().list_models():
+                print(m)
+        except ModelUnavailable as e:
+            print("could not list models:", e)
+            return 1
+        return 0
     ec = build_context(a.dataset)
     client = make_client() if a.model else None
     if a.model and not client.available:

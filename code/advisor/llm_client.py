@@ -131,6 +131,21 @@ class OpenAICompatibleClient:
             return ""
         return body.replace(self._key, "***")[:200]
 
+    def list_models(self) -> list:
+        """Model ids this key can use (GET {base}/models)."""
+        if not (self._key and self.base_url):
+            raise ModelUnavailable("LLM_API_KEY and LLM_BASE_URL must be set")
+        req = urllib.request.Request(self.base_url + "/models", headers={
+            "authorization": "Bearer " + self._key, "user-agent": USER_AGENT})
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            raise ModelUnavailable(f"HTTP {e.code}: {self._provider_message(e)}") from None
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            raise ModelUnavailable(type(e).__name__) from None
+        return sorted(m.get("id", "") for m in data.get("data", []))
+
     def complete(self, case_id: str, system: str, user: str, max_tokens: int = 600) -> str:
         if not self.available:
             raise ModelUnavailable("LLM_API_KEY, LLM_BASE_URL and LLM_MODEL must all be set")
