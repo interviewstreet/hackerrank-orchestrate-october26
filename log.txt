@@ -1406,3 +1406,57 @@ branch=member-1-frontend-slack
 repo_root=C:\Users\Luzain Sara\Documents\EraSight
 worktree=C:\Users\Luzain Sara\Documents\EraSight
 parent_agent=none
+
+## [2026-11-04T22:52:10.756714+00:00] Complete Phase 3 investigation review workflow
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: .env.example
+
+## Open tabs:
+- .env.example: .env.example
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env: .env
+- .env.local: code/frontend/.env.local
+
+## My request:
+Implement Phase 3 — Investigation Workflow on `member-1-frontend-slack`.
+
+First inspect the existing frontend, `code/server.py`, `code/presentation.py`, `code/CONTRACT.md`, and `code/integrations/email/INTEGRATION_PLAN.md`.
+
+Complete and verify the investigation experience using real backend data: selecting cases, reviewing deletion status, findings, steps, evidence, graph details, and sending Slack HTML reports.
+
+Strict Member 2 guidelines:
+
+- Preserve the existing `CaseAuditResult` schema; do not change its shape.
+- Modify only Member 1-owned frontend, presentation, server, and Slack code as necessary.
+- All 518 cases must remain available in live mode.
+- Preserve the existing UI design and 3D graphs.
+- Keep email controls visibly unavailable until Member 2 provides the secure adapter.
+- Do NOT add `/api/email/*` endpoints or implement Resend integration yet.
+- Do NOT modify Member 2's backend intelligence or email package.
+- Keep secrets server-side; never put tokens in Vite configuration.
+- Only append to `log.txt` if updating it.
+- Preserve all existing Slack HTML reporting functionality.
+
+Run relevant backend/frontend tests and production build. Report completed features, validation results, and remaining work. Do not commit, push, or change branches.
+
+
+Agent Response Summary:
+Inspected the existing frontend, server, presentation and shared contract; the requested email INTEGRATION_PLAN.md was absent, so the existing package README was read without modifying it. Added detail-view case switching, per-case Evidence review, explicit pending verification labels, graph-node verification checks and a visibly disabled email approval control using existing UI components. Preserved the CaseAuditResult shape, all 518 live cases, engine intelligence, email package, graph rendering and Slack HTML upload functionality; no email endpoints were added. Validation passed: 58 backend Slack/API tests, 33 frontend tests, production build, all-case live evidence/graph checks and a real case_33 Slack upload/link/download byte comparison. Browser inspection confirmed the live detail view and disabled email state, though broader click-through was limited by browser automation availability; no commits, pushes or branch changes were performed.
+
+Actions:
+* Updated Member One frontend App.tsx, Graph.tsx, graphModel.ts, workflow helpers/tests, test script and frontend README.
+* Ran relevant backend/frontend tests, production build, git diff --check and live checks against all 518 cases.
+* Verified one authorized real Slack report upload, files.info, webhook acknowledgment and exact authenticated HTML download.
+* Read the computer-use skill and inspected the live Edge overview/detail view; no sensitive window contents were logged.
+* Checked Member Two files remained unchanged and frontend environment files contain no server credential keys; restored generated build metadata.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
