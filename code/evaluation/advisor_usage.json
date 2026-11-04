@@ -1,9 +1,40 @@
 {
  "provider": "Groq",
- "model": "llama-3.3-70b-versatile",
- "calls": 0,
- "failed_calls": 3,
- "input_tokens": 0,
- "output_tokens": 0,
- "per_case": {}
+ "model": "openai/gpt-oss-120b",
+ "calls": 6,
+ "failed_calls": 0,
+ "input_tokens": 1514,
+ "output_tokens": 1757,
+ "per_case": {
+  "case_534": {
+   "calls": 1,
+   "input_tokens": 254,
+   "output_tokens": 222
+  },
+  "case_536": {
+   "calls": 1,
+   "input_tokens": 248,
+   "output_tokens": 261
+  },
+  "case_537": {
+   "calls": 1,
+   "input_tokens": 251,
+   "output_tokens": 233
+  },
+  "case_538": {
+   "calls": 1,
+   "input_tokens": 249,
+   "output_tokens": 219
+  },
+  "case_539": {
+   "calls": 1,
+   "input_tokens": 255,
+   "output_tokens": 443
+  },
+  "case_542": {
+   "calls": 1,
+   "input_tokens": 257,
+   "output_tokens": 379
+  }
+ }
 }
