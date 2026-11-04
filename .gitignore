@@ -1,0 +1,7 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# partially written OCR cache entries (atomic-write temp files)
+code/evidence/ocr_cache/*.tmp
