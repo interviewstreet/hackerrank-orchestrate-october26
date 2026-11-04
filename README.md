@@ -1,3 +1,69 @@
+# TRACE — Ghost Data Still Exists (deletion-audit agent)
+
+## Setup and run
+
+Requires Python 3.11+ (developed on 3.13). Run every command from the repository root.
+
+```bash
+python -m venv .venv
+# Windows:        .venv\Scripts\activate
+# macOS / Linux:  source .venv/bin/activate
+pip install pypdf==6.21.4 pytest==9.2.0 Pillow==13.0.0
+# optional, only to rebuild the OCR cache: pip install -r code/requirements.txt
+
+python code/main.py                   # 518 requests -> output.csv at the repo root (~5 s)
+python code/validate_output.py        # checks output.csv against the AGENTS.md contract
+python code/evaluation/main.py        # runs the 32 public samples and scores them
+cd code && python -m pytest -q tests test_identity_resolver.py test_request_classifier.py test_utils.py test_main.py
+```
+
+`code/main.py --requests sample_deletion_requests.csv --output <file>` runs any request file in
+`dataset/`. No API keys or network access are needed: the pipeline makes no model calls, and
+screenshot text is read from the committed OCR cache (`code/evidence/ocr_cache/`). Output is
+deterministic.
+
+## Architecture
+
+```text
+deletion_requests.csv
+   │
+   ├─ P1 request_classifier.py   does the text authorise deletion?  (no -> NOT_APPLICABLE, [])
+   ├─ P1 identity_resolver.py    IdentityBundle: current + historical identifiers at audit_at
+   ├─ P2 evidence/ (scanner)     parses all 94 evidence files once; find_records(SubjectIdentifiers, audit_at)
+   │     evidence_search.py      adapter: SubjectIdentifiers(**identity.as_subject_kwargs())
+   ├─ P3 policy_engine.py        state at audit_at per resource copy + deletion_rules.csv -> decision
+   │     rules.py                rule book loaded from deletion_rules.csv (conditions matched by wording)
+   │     activity.py             system_activity.csv: catalog links, recreation risks, workflow linkage
+   └─ P4 step_builder.py         numbers and validates FINDING -> REMEDIATION -> VERIFICATION steps
+```
+
+Policy engine (P3) in short:
+
+* Every observation is re-checked: it must be timezone-aware, and both its `observed_at` and its
+  file's `captured_at` must be at or before `audit_at`. A name-only match is weak and is used only
+  when a stable reference confirms it. Records that a strong identifier ties to a different person
+  are dropped.
+* Copies (primary, replica, table) are assessed separately. A copy's state is its latest
+  *authoritative* observation; same-instant PRESENT/ABSENT conflicts are reported and resolved as
+  PRESENT. Ledger claims can show a record or risk still exists, but never prove it is gone.
+* Absence proofs are re-validated: COMPLETE, no parse errors, the same system, category, collection
+  and copy, captured at or before `audit_at`, not contradicted in-window, and newer than the last
+  sighting.
+* `deletion_rules.csv` decides each record's required action. Retained, redacted, anonymised and
+  tombstone records are verified as such, never reported as deletion failures.
+* Activity is used only for explicit catalog links (including document/file aliases), observed
+  risks (a connector still enabled, an archive still restorable, a job that repopulated the
+  subject's data), and to attribute de-identified workflow resources (deleted accounts, anonymised
+  analytics). Success messages are never accepted as proof.
+* Remediation order: disable data flows → block restores → delete → redact → anonymise. Within each
+  step type, items are sorted by `system_id` and then `resource_id`. Verification covers the
+  required final state of every relevant resource.
+
+Evaluation and usage: [`code/evaluation/evaluation_report.md`](code/evaluation/evaluation_report.md),
+[`code/evaluation/usage_report.md`](code/evaluation/usage_report.md).
+
+---
+
 # HackerRank Orchestrate - October 2026
 
 ## Ghost Data Still Exists

@@ -686,3 +686,527 @@ branch=feature/evidence-scanner
 repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T15:10:00Z] SESSION START
+
+tool=Claude Code
+model=claude-opus-5-5
+Repo Root: C:/Users/Admin/aiml/TRACE
+Branch: P3
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T16:55:00Z] P3 policy engine: integrate P1+P2, implement, test, package
+
+User Prompt (verbatim, secrets redacted):
+# ROLE: P3 DEVELOPER – TRACE PROJECT (RULE CHECKER & EVIDENCE VALIDATOR)
+
+You are my senior Python developer. I am Person 3 (P3) in the TRACE project, titled "Ghost Data Still Exists", for the HackerRank Orchestrate challenge.
+
+Your responsibility is to complete my entire P3 implementation, integrate it correctly with P1 (Identity Resolution) and P2 (Evidence Scanner), test the implementation, and prepare the project for final execution.
+
+I want you to do the actual coding, not just explain what I should do.
+
+## 1. PROJECT CONTEXT
+
+GitHub repository:
+https://github.com/shutupzunaira/TRACE
+
+The project has three relevant components:
+
+**P1 – Identity Resolution**
+- Branch: `p1-identity`
+- Provides `IdentityBundle`.
+- Identity model is in `code/models.py`.
+- Identity documentation is in `code/README_identity.md`.
+- Adapter: `identity.as_subject_kwargs()`.
+- P1 identity history contains audit IDs and identity-change information.
+- History entries contain fields such as `audit_id`, `field_name`, `old_value`, `new_value`, and `event_time`.
+
+**P2 – Evidence Scanner**
+- Branch: `feature/evidence-scanner`
+- Latest commit shared by P2: `6730d748cef10bfabbcec751328b001f85f27b73`.
+- Provides:
+  - `code/evidence/scanner.py`
+  - `code/evidence/models.py`
+  - `code/evidence/__init__.py`
+  - `code/evidence/README.md`
+
+P2's scanner API:
+
+```python
+scanner.find_records(identifiers, audit_at)
+
+scanner.absence_proofs(
+    system_id,
+    resource_id,
+    audit_at,
+    include_unverified=False
+)
+
+scanner.latest_by_resource(
+    identifiers,
+    audit_at,
+    include_claims=False
+)
+```
+
+P2's adapter:
+
+```python
+SubjectIdentifiers(**identity.as_subject_kwargs())
+```
+
+P2 is responsible for evidence discovery, parsing, normalization and provenance. Do not duplicate these responsibilities.
+
+**P3 – My responsibility**
+- Main file: `code/policy_engine.py`
+- Implement the actual deletion-policy and evidence-validation logic.
+- Evaluate evidence against `dataset/deletion_rules.csv`.
+- Detect incomplete deletion and recreation risks.
+- Produce structured findings, remediation and verification information for P4.
+
+**P4 – Step Builder**
+- File: `code/step_builder.py`
+- Converts policy results into the required ordered output steps.
+
+## 2. FIRST: INSPECT THE PROJECT AND BOTH BRANCHES
+
+Before modifying any files:
+
+1. Read the entire root `AGENTS.md`.
+2. Inspect the current Git branch and working tree.
+3. Inspect both `p1-identity` and `feature/evidence-scanner`.
+4. Compare their files and identify the correct integration points.
+5. Inspect:
+   - `code/policy_engine.py`
+   - `code/main.py`
+   - `code/step_builder.py`
+   - `code/models.py`
+   - `code/identity_resolver.py`
+   - `code/evidence/`
+   - `code/utils.py`
+   - `dataset/deletion_rules.csv`
+   - `dataset/system_activity.csv`
+   - `dataset/deletion_requests.csv`
+   - `dataset/user_identities.csv`
+   - `dataset/user_audit_log.csv`
+   - `dataset/evidence_files.csv`
+   - `AGENTS.md`
+
+Important:
+- The P1 and P2 branches have been maintained separately.
+- Do not assume they are already integrated.
+- Do not overwrite either teammate's branch.
+- Create a separate working branch for P3, preserving both original branches.
+- Integrate the required P1 and P2 code safely into the P3 working branch.
+- Do not delete or overwrite existing work.
+- If there are conflicts, inspect and resolve them carefully.
+- Keep a record of the integration decisions.
+
+If a required file is missing, report exactly which file is missing instead of inventing its contents.
+
+## 3. P3 IMPLEMENTATION REQUIREMENTS
+
+Implement the real logic in `code/policy_engine.py`.
+
+The existing function signature is:
+
+```python
+def decide(
+    identity: IdentityBundle,
+    records: list[dict],
+    case: dict
+) -> dict:
+```
+
+Inspect the actual implementation and preserve compatibility with the existing project wherever possible.
+
+The function must:
+
+1. Resolve the current and historical identifiers of the subject.
+2. Use P2's `EvidenceScanner` to obtain evidence.
+3. Validate identity-to-resource linkage.
+4. Evaluate each record against the actual `deletion_rules.csv`.
+5. Determine the true state at the case's `audit_at`.
+6. Identify incomplete deletion.
+7. Detect active synchronization and restore risks.
+8. Generate evidence-backed findings.
+9. Generate safe, ordered remediation operations.
+10. Generate appropriate verification operations.
+11. Return the exact structure expected by `step_builder.py`.
+
+Do not make the final output format incompatible with `main.py` or P4.
+
+## 4. IDENTITY VALIDATION
+
+Use P1's `IdentityBundle`.
+
+Use the adapter:
+
+```python
+SubjectIdentifiers(**identity.as_subject_kwargs())
+```
+
+Important requirements:
+
+- Recover current and historical identifiers.
+- Use `identity.history` for historical identifier changes and audit IDs.
+- Respect `event_time` and the case's `audit_at`.
+- Do not use identity information that becomes available after `audit_at`.
+- A name-only match is weak evidence.
+- Confirm a name-only match with email, phone, hash or user ID before treating it as a reliable identity link.
+- Do not duplicate P1's identity-resolution logic.
+
+## 5. EVIDENCE VALIDATION
+
+Use the actual P2 `EvidenceScanner` implementation.
+
+Use these models:
+
+- `ObservedRecord`
+- `AbsenceProof`
+- `SubjectIdentifiers`
+
+Important evidence rules:
+
+**Observation history**
+- Use `find_records()` when full history is required.
+- Do not rely only on `latest_by_resource()`.
+- Preserve and inspect conflicting observations.
+- Same-timestamp authoritative conflicts must be detected and reported.
+- Do not allow a claim-only record to override authoritative evidence.
+
+**Claim-only evidence**
+- Claim-only observations cannot independently prove deletion or absence.
+- A `NOT_FOUND` lookup claim does not automatically mean ABSENT.
+- Retain claim-only evidence for correlation where useful.
+
+**Timestamps**
+- Validate timezone-aware timestamps.
+- Both `observed_at` and `captured_at` must be within the audit cutoff.
+- Never use evidence created after `audit_at`.
+- Handle equivalent instants with different timezone offsets correctly.
+
+**Absence proofs**
+- Only COMPLETE proofs with appropriate scope can establish absence.
+- Check `completeness`, `errors`, `limitations`, `contradicted_by`, timestamps and resource identity.
+- Do not rely only on `AbsenceProof.is_valid_proof`.
+- Validate system, resource, category, collection and replica/table scope.
+- A primary-copy absence proof does not prove replica absence.
+- A later contradiction after `audit_at` must not affect a historical audit.
+
+**Other**
+- A tombstone with empty PII is still PRESENT.
+- Empty PII alone does not prove deletion.
+- Keep primary and replica observations separate.
+
+## 6. DELETION RULES
+
+Read the actual:
+
+`dataset/deletion_rules.csv`
+
+It has these columns:
+
+```text
+rule_id,data_category,condition,required_action
+```
+
+There are 15 rules.
+
+Never hardcode the rules or invent replacement conditions. Load and evaluate the actual CSV.
+
+The four possible actions are:
+
+- DELETE: Remove the entire record.
+- REDACT: Preserve the record but remove prohibited identifying fields.
+- ANONYMIZE: Preserve the record but irreversibly unlink it from the user.
+- RETAIN: Preserve the record when the specified retention condition applies.
+
+Handle these categories carefully:
+
+1. SUPPORT_MESSAGE: Redact only when shared customer, agent or order context must be retained.
+2. SUPPORT_ATTACHMENT: Delete when the attachment belongs only to the deletion subject.
+3. ANALYTICS_PROFILE: Anonymize when still attributable to the user.
+4. PRODUCT_TELEMETRY: Anonymize when still attributable to the user.
+5. EMAIL_DELIVERY_LOG: Redact when it contains the user's email address.
+6. SECURITY_AUDIT_LOG: Retain when within the supplied retention period.
+7. LEGAL_HOLD_RECORD: Retain when a supplied legal hold is active.
+8. BACKUP_ARCHIVE: Retain when restore access can be blocked.
+9. ACCOUNT_TOMBSTONE: Preserve stable internal `user_id`, but remove direct identifiers including name, email, phone and email hash.
+
+Evaluate all 15 rules from the actual CSV, not just the examples above.
+
+A record that is correctly retained under policy must not be reported as a deletion failure.
+
+## 7. SYSTEM ACTIVITY AND RECREATION RISKS
+
+Inspect:
+
+`dataset/system_activity.csv`
+
+Use actual activity and evidence to reconstruct state at `audit_at`.
+
+Do not trust:
+- `reported_status`
+- Workflow completion claims
+- Activity success messages alone
+- Unverified deletion claims
+
+Check for:
+- Active synchronization
+- Data imports
+- Replication
+- Export jobs
+- Search indexing
+- Backup and restore operations
+- Other processes capable of recreating prohibited data
+
+If a process can recreate deleted data, report it.
+
+Remediation order must be safe:
+
+1. Disable active data flows.
+2. Block unsafe restore paths.
+3. Remediate dependent downstream copies.
+4. Remediate source records where appropriate.
+5. Verify all required final states.
+
+Do not assume every activity event is related to the deletion subject. Establish relevance using identifiers, resources, systems and timestamps.
+
+## 8. STRICT OUTPUT CONTRACT
+
+Read `AGENTS.md` and follow its allowed values exactly.
+
+Allowed deletion statuses:
+
+- `COMPLETE`
+- `INCOMPLETE`
+- `NOT_APPLICABLE`
+
+Allowed phases:
+
+- `FINDING`
+- `REMEDIATION`
+- `VERIFICATION`
+
+Allowed finding operations:
+
+- `REPORT_REMAINING_RECORD`
+- `REPORT_EXPOSED_PII`
+- `REPORT_ACTIVE_DATA_FLOW`
+- `REPORT_RESTORE_RISK`
+
+Allowed finding states:
+
+- `PRESENT`
+- `ACTIVE`
+
+Allowed remediation operations:
+
+- `DISABLE_DATA_FLOW`
+- `BLOCK_RESTORE`
+- `DELETE_RECORD`
+- `REDACT_RECORD`
+- `ANONYMIZE_RECORD`
+
+Allowed remediation states:
+
+- `DISABLED`
+- `BLOCKED`
+- `ABSENT`
+- `REDACTED`
+- `ANONYMIZED`
+
+Allowed verification operations:
+
+- `VERIFY_RECORD_ABSENT`
+- `VERIFY_RECORD_PRESENT`
+- `VERIFY_RECORD_REDACTED`
+- `VERIFY_RECORD_ANONYMIZED`
+- `VERIFY_DATA_FLOW_DISABLED`
+- `VERIFY_RESTORE_BLOCKED`
+
+Allowed verification states:
+
+- `ABSENT`
+- `PRESENT`
+- `REDACTED`
+- `ANONYMIZED`
+- `DISABLED`
+- `BLOCKED`
+
+Every final step must contain exactly:
+
+```python
+{
+    "step_no": 1,
+    "phase": "FINDING",
+    "system_id": "account_service",
+    "resource_id": "account_005",
+    "operation": "REPORT_REMAINING_RECORD",
+    "state": "PRESENT",
+    "evidence_id": "evidence_01"
+}
+```
+
+Requirements:
+- Number steps consecutively from 1.
+- Order phases: FINDING, REMEDIATION, VERIFICATION.
+- A COMPLETE case must contain only evidence-backed verification steps.
+- An INCOMPLETE case must contain findings, complete ordered remediation and future verification.
+- Proposed remediation and future verification must use an empty `evidence_id`.
+- Findings and completed-case verification must cite actual participant-visible evidence.
+- Never invent evidence IDs.
+- Do not invent phases, operations or states.
+- NOT_APPLICABLE cases must have `steps_json=[]`.
+
+The final `output.csv` must have exactly these columns:
+
+```text
+case_id,deletion_status,steps_json
+```
+
+Produce exactly one sorted output row for every case in `dataset/deletion_requests.csv` (518 requests).
+
+## 9. TESTING REQUIREMENTS
+
+Create or update tests for:
+
+1. DELETE action.
+2. REDACT action.
+3. ANONYMIZE action.
+4. RETAIN action.
+5. SUPPORT_MESSAGE shared-context condition.
+6. SUPPORT_ATTACHMENT subject-only condition.
+7. Analytics and telemetry attribution.
+8. Email address redaction.
+9. Security audit retention period.
+10. Active legal hold.
+11. Backup restore blocking.
+12. Account tombstone identifier removal.
+13. Historical identity matching.
+14. Name-only weak matching.
+15. Claim-only evidence.
+16. Invalid absence proof.
+17. Conflicting authoritative observations.
+18. Primary versus replica differences.
+19. Evidence after `audit_at`.
+20. Active sync and restore risks.
+21. NOT_APPLICABLE request.
+22. Correctly retained records.
+
+Run all existing tests before and after implementation.
+
+Add tests for all 15 CSV rules, not merely the four action types.
+
+Do not alter existing tests just to make them pass. Fix the implementation.
+
+## 10. INTEGRATION WITH P4 AND MAIN
+
+Inspect `code/step_builder.py` and `code/main.py` carefully.
+
+Determine:
+- The exact data format P4 expects.
+- How P3's `decide()` result is passed to P4.
+- How P1 identity data reaches P3.
+- How P2's scanner is initialized and called.
+- Which files and paths are expected.
+
+Update integration code only when necessary.
+
+Avoid unnecessary architectural changes.
+
+Do not leave placeholder implementations in the final working solution.
+
+## 11. LOGGING AND PROJECT RULES
+
+Follow `AGENTS.md` completely.
+
+- Append logs; never overwrite previous log entries.
+- Do not log real personal data, secrets or credentials.
+- Use only participant-facing dataset files.
+- Do not access organizer-only truth or hidden golden answers.
+- Keep the solution deterministic where possible.
+- Use paths relative to the repository root.
+- Preserve original P1 and P2 branches.
+- Do not commit secrets.
+- Do not package the dataset or virtual environments in the final code ZIP.
+
+## 12. FINAL EXECUTION AND DELIVERABLES
+
+After implementation:
+
+1. Run the complete test suite.
+2. Fix all implementation failures.
+3. Run the solution against all 518 deletion requests.
+4. Generate `output.csv` at the repository root.
+5. Validate that it contains exactly 518 rows, with no missing or duplicate case IDs.
+6. Validate every `steps_json` as a JSON array.
+7. Validate all operation, state and phase values against `AGENTS.md`.
+8. Confirm deterministic ordering.
+9. Prepare clear setup and run instructions in `README.md`.
+10. Prepare:
+   - `evaluation/evaluation_report.md`
+   - `evaluation/usage_report.md`
+11. Include at least three additional participant-created evaluation cases.
+12. Prepare the final `code.zip` without dataset files, caches, virtual environments or secrets.
+
+Do not invent evaluation metrics, model-call counts, token usage or costs. If something cannot be measured, explicitly report that limitation.
+
+## 13. HOW I WANT YOU TO WORK
+
+I want you to complete the actual implementation, not just give me suggestions.
+
+Work in this order:
+
+PHASE 1: Inspect both branches and project structure.
+
+PHASE 2: Safely create the P3 working branch and integrate P1 and P2.
+
+PHASE 3: Understand P4's expected interface.
+
+PHASE 4: Implement P3's policy engine.
+
+PHASE 5: Integrate P1, P2, P3 and P4.
+
+PHASE 6: Write and run tests.
+
+PHASE 7: Generate and validate output.csv.
+
+PHASE 8: Prepare evaluation reports and final packaging.
+
+After each phase:
+- Tell me what you completed.
+- List the files you created or modified.
+- Report tests and results.
+- Tell me about any unresolved issues.
+- Continue to the next phase unless you encounter a genuine blocker.
+
+Do not stop after merely inspecting the project. Continue with implementation and testing.
+
+If you encounter missing files, ambiguous policy conditions, incompatible interfaces or Git conflicts, explain the exact issue and ask only for the information needed to resolve it.
+
+**FINAL GOAL: Deliver a fully working, tested TRACE project with P3 implemented correctly and integrated with P1, P2 and P4, ready for evaluation and submission.**
+
+Agent Response Summary:
+Merged origin/p1-identity and origin/feature/evidence-scanner (@6730d74) into the local P3 branch without touching either remote branch; add/add conflicts in .gitignore (union) and log.txt (both teammates' logs kept verbatim, P1 then P2) were resolved by hand. Implemented the P3 policy engine (policy_engine.py, rules.py loaded from deletion_rules.csv, activity.py for catalog links / recreation risks / workflow linkage), wired P2's scanner through evidence_search.py, and replaced the empty P4 step_builder placeholder with a numbering/contract-validating builder. Added 106 P3 tests (all 15 rules, identity, claims, absence proofs, conflicts, replicas, cutoff, risks, ordering); the full suite is 393 passed, 1 skipped (live OCR). The final run wrote a valid, deterministic output.csv (518 rows: 153 COMPLETE, 355 INCOMPLETE, 10 NOT_APPLICABLE); on the 32 public samples status accuracy is 1.000 and step F1 is 0.921. Two P1 test_main assertions that encoded placeholder output were changed to the tests' stated intent; this was flagged to the user.
+
+Actions:
+* git merge origin/p1-identity and origin/feature/evidence-scanner into P3; resolved .gitignore and log.txt conflicts
+* created .venv; pip install pypdf==6.21.4 Pillow==13.0.0 pytest==9.2.0
+* created code/rules.py, code/activity.py, code/evaluate.py, code/validate_output.py, code/tests/test_policy_engine.py, code/evaluation/evaluation_report.md, code/evaluation/usage_report.md
+* rewrote code/policy_engine.py, code/step_builder.py, code/evidence_search.py, code/evaluation/main.py; edited code/main.py, code/test_main.py, README.md
+* ran pytest (P1, P2, P3), python code/main.py, code/validate_output.py, code/evaluation/main.py
+* built code.zip (61 files: README.md + code/, no dataset/caches/venv); committed on local branch P3 (not pushed)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=P3
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none

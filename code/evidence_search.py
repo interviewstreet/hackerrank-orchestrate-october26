@@ -1,30 +1,51 @@
 """
-evidence_search.py — Stage 2 (owner: Person 2).
+evidence_search.py — Stage 2 adapter to P2's evidence scanner (code/evidence/).
 
-PLACEHOLDER. Replace the body of find_records() with the real search.
+P2 owns discovery, parsing, normalisation and provenance; this module only
+connects P1's IdentityBundle to it:
+
+    SubjectIdentifiers(**identity.as_subject_kwargs())  ->  scanner.find_records()
+
+The scanner is loaded once per process (``get_scanner``) and shared with the
+policy engine.
 """
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Optional
+
+from evidence import EvidenceScanner, ObservedRecord, SubjectIdentifiers
 from models import IdentityBundle
+from utils import parse_ts
+
+DATASET_DIR = Path(__file__).resolve().parent.parent / "dataset"
+
+_SCANNER: Optional[EvidenceScanner] = None
 
 
-def find_records(identity: IdentityBundle, case: dict) -> list[dict]:
+def get_scanner(dataset_dir: Path | str = DATASET_DIR) -> EvidenceScanner:
+    """Process-wide scanner. ``cache_only`` OCR: screenshots are read from the
+    committed OCR cache, so a run needs no OCR engine and is deterministic."""
+    global _SCANNER
+    if _SCANNER is None:
+        _SCANNER = EvidenceScanner(dataset_dir, ocr_mode="cache_only")
+        _SCANNER.load()
+    return _SCANNER
+
+
+def set_scanner(scanner: EvidenceScanner) -> None:
+    global _SCANNER
+    _SCANNER = scanner
+
+
+def find_records(identity: IdentityBundle, case: dict) -> list[ObservedRecord]:
+    """Every observation of the subject available at the case's audit_at.
+
+    Returns P2 ObservedRecord objects (all copies, conflicts and claim-only
+    observations preserved, deterministic order).
     """
-    Find every record, data flow and restore path that concerns this subject.
-
-    Parameters
-    ----------
-    identity : IdentityBundle
-        From IdentityResolver.resolve(). Search with identity.all_emails(),
-        all_phones(), all_email_hashes() and user_id.
-    case : dict
-        The deletion_requests.csv row (case_id, email, requested_at,
-        reported_status, reported_at, audit_at, request_text).
-        Only use evidence captured at or before case["audit_at"].
-
-    Returns
-    -------
-    list[dict]
-        One dict per relevant record or process. Placeholder: empty list.
-    """
-    return []
+    audit_at = parse_ts(case.get("audit_at"), context=f"{case.get('case_id')} audit_at")
+    if audit_at is None:
+        return []
+    ids = SubjectIdentifiers(**identity.as_subject_kwargs())
+    return get_scanner().find_records(ids, audit_at)

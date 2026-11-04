@@ -7,6 +7,7 @@ Run from the repo root with:
 from __future__ import annotations
 
 import io
+import json
 import sys
 import unittest
 from contextlib import redirect_stderr
@@ -46,8 +47,14 @@ class TestRunCase(unittest.TestCase):
         return result, err.getvalue()
 
     def test_normal_case(self):
+        # P3 note: originally asserted the placeholder result ("INCOMPLETE", "[]").
+        # With the real policy engine the case is decided from evidence, so this
+        # checks the test's intent: it runs, is not an error, and yields a
+        # contract status with a JSON step array.
         (status, steps_json, label, failed), _ = self._run(DELETION_CASE)
-        self.assertEqual((status, steps_json, failed), ("INCOMPLETE", "[]", False))
+        self.assertFalse(failed)
+        self.assertIn(status, ("COMPLETE", "INCOMPLETE"))
+        self.assertIsInstance(json.loads(steps_json), list)
         self.assertEqual(label, "IS_DELETION")
 
     def test_not_applicable(self):
@@ -75,9 +82,13 @@ class TestRunCase(unittest.TestCase):
         self.assertIn("build_steps() must return a list", err)
 
     def test_naive_audit_at_does_not_crash(self):
+        # P3 note: originally expected the placeholder status INCOMPLETE. A naive
+        # audit_at is read as UTC, so it must give the same decision as "...Z".
         case = dict(DELETION_CASE, audit_at="2026-10-01 00:00:00")
-        (status, _, _, failed), _ = self._run(case)
-        self.assertEqual((status, failed), ("INCOMPLETE", False))
+        (status, steps, _, failed), _ = self._run(case)
+        (status_z, steps_z, _, _), _ = self._run(dict(DELETION_CASE, audit_at="2026-10-01T00:00:00Z"))
+        self.assertFalse(failed)
+        self.assertEqual((status, steps), (status_z, steps_z))
 
     def test_empty_audit_at_warns_but_runs(self):
         case = dict(DELETION_CASE, audit_at="")
