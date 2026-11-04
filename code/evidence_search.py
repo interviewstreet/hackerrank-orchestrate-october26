@@ -1,38 +1,46 @@
-"""
-evidence_search.py — Stage 2 (owner: Person 2).
+"""P2 evidence-search adapter for P1's main pipeline."""
 
-PLACEHOLDER. Replace the body of find_records() with the real search
-(e.g. a call into P2's EvidenceScanner). The return shape is the P2 -> P3
-contract in code/CONTRACTS.md, section 1.
-"""
 from __future__ import annotations
 
-from models import EVIDENCE_KEYS, IdentityBundle, empty_evidence  # noqa: F401
+from models import EVIDENCE_KEYS, IdentityBundle
+from evidence.integration import find_case_evidence
 
 
 def find_records(identity: IdentityBundle, case: dict) -> dict:
-    """
-    Find every record, data flow and restore path that concerns this subject.
+    """Return evidence in the P1 -> P2 -> P3 contract format."""
 
-    Parameters
-    ----------
-    identity : IdentityBundle
-        From IdentityResolver.resolve(). Build P2's SubjectIdentifiers with
-        SubjectIdentifiers(**identity.as_subject_kwargs()).
-    case : dict
-        The deletion_requests.csv row (case_id, email, requested_at,
-        reported_status, reported_at, audit_at, request_text).
-        Only use evidence captured at or before case["audit_at"].
+    findings = find_case_evidence(identity, case)
 
-    Returns
-    -------
-    dict with exactly the keys in models.EVIDENCE_KEYS:
-        records               list[ObservedRecord]
-        latest_by_resource    dict[(system_id, resource_id, replica_or_table), ObservedRecord]
-        referenced_resources  list[dict]
-        absence_proofs        dict[(system_id, resource_id), list[AbsenceProof]]
-        identifier_provenance dict[str, list[str]]
-    main.py rejects the case (INCOMPLETE, []) if a key is missing.
-    Placeholder: every key present, all empty.
-    """
-    return empty_evidence()
+    # Convert P2 ResourceReference objects into P1's dictionary format.
+    referenced_resources = [
+        {
+            "system_id": ref.system_id,
+            "resource_id": ref.resource_id,
+            "via": "linked_record",
+            "source_id": ref.source_evidence_id,
+        }
+        for ref in findings["referenced_resources"]
+    ]
+
+    # Convert P2's detailed provenance into P1's expected format.
+    identifier_provenance = {}
+
+    for record in findings["records"]:
+        for identifier in record.identifiers_matched:
+            evidence_ids = identifier_provenance.setdefault(identifier, [])
+
+            if record.evidence_id not in evidence_ids:
+                evidence_ids.append(record.evidence_id)
+
+    result = {
+        "records": findings["records"],
+        "latest_by_resource": findings["latest_by_resource"],
+        "referenced_resources": referenced_resources,
+        "absence_proofs": findings["absence_proofs"],
+        "identifier_provenance": identifier_provenance,
+    }
+
+    if set(result.keys()) != set(EVIDENCE_KEYS):
+        raise RuntimeError("P2 evidence output does not match EVIDENCE_KEYS")
+
+    return result
