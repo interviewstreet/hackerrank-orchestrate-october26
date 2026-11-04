@@ -626,6 +626,55 @@ def test_public_sample_cases_match_published_answers(real_ctx, case_id):
     assert [key(s) for s in steps] == [key(s) for s in expected]
 
 
+_OP_INDEX = {op: i for i, op in enumerate((
+    "REPORT_REMAINING_RECORD", "REPORT_EXPOSED_PII", "REPORT_ACTIVE_DATA_FLOW", "REPORT_RESTORE_RISK",
+    "DISABLE_DATA_FLOW", "BLOCK_RESTORE", "DELETE_RECORD", "REDACT_RECORD", "ANONYMIZE_RECORD",
+    "VERIFY_RECORD_ABSENT", "VERIFY_RECORD_PRESENT", "VERIFY_RECORD_REDACTED", "VERIFY_RECORD_ANONYMIZED",
+    "VERIFY_DATA_FLOW_DISABLED", "VERIFY_RESTORE_BLOCKED"))}
+# operations a resource may receive, by its deletion_rules.csv treatment
+_ALLOWED_FOR = {
+    "RETAIN_RECORD": {"VERIFY_RECORD_PRESENT"},                    # rule_12, rule_13
+    "BACKUP_ARCHIVE": {"REPORT_RESTORE_RISK", "BLOCK_RESTORE", "VERIFY_RESTORE_BLOCKED"},  # rule_14
+    "ACCOUNT_TOMBSTONE": {"REPORT_EXPOSED_PII", "REDACT_RECORD", "VERIFY_RECORD_REDACTED"},  # rule_15
+}
+
+
+@pytest.mark.parametrize("case_id", [f"case_{i:02d}" for i in range(1, 33)])
+def test_p3_p4_contract_invariants_on_public_samples(real_ctx, case_id):
+    """P3 confirmation of the P3 -> P4 hand-over (code/P4_CONTRACT_CONFIRMATION.md):
+    decide() returns only COMPLETE / INCOMPLETE, INCOMPLETE <=> at least one
+    finding, every finding has a remediation, retained records / backups /
+    tombstones are never deleted, and steps follow the canonical order
+    (phase, operation table, system_id). The resource_id tie-break is left
+    out on purpose: numeric vs lexical is still a team question."""
+    case = _sample(case_id)
+    identity = real_ctx.resolver.resolve(case["email"], audit_at=ts(case["audit_at"]),
+                                         requested_at=ts(case["requested_at"]), case_id=case_id)
+    d = decide(identity, [], case, context=real_ctx)
+    assert d["deletion_status"] in ("COMPLETE", "INCOMPLETE")
+    assert (d["deletion_status"] == "INCOMPLETE") == bool(d["findings"])
+    if d["deletion_status"] == "COMPLETE":
+        assert d["remediation"] == []
+    remediated = {(s["system_id"], s["resource_id"]) for s in d["remediation"]}
+    assert {(s["system_id"], s["resource_id"]) for s in d["findings"]} == remediated
+
+    steps = build_steps(d)
+    treatment = {}
+    for r in d["resources"]:
+        if r["category"] in ("BACKUP_ARCHIVE", "ACCOUNT_TOMBSTONE"):
+            treatment[(r["system_id"], r["resource_id"])] = r["category"]
+        elif r["action"] == "RETAIN":
+            treatment[(r["system_id"], r["resource_id"])] = "RETAIN_RECORD"
+    for s in steps:
+        kind = treatment.get((s["system_id"], s["resource_id"]))
+        if kind:
+            assert s["operation"] in _ALLOWED_FOR[kind], (kind, s)
+
+    keys = [(_OP_INDEX[s["operation"]], s["system_id"]) for s in steps]
+    assert keys == sorted(keys)
+    assert len({(s["system_id"], s["resource_id"].lower(), s["operation"]) for s in steps}) == len(steps)
+
+
 def test_not_applicable_request_has_no_steps():
     import main
     resolver = IdentityResolver(REAL_DATASET / "user_identities.csv", REAL_DATASET / "user_audit_log.csv")

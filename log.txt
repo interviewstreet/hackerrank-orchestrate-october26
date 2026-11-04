@@ -1581,3 +1581,129 @@ branch=p3-review-person-4
 repo_root=C:/Users/fz376/OneDrive/Documents/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T23:10:14Z] P3 review of P4 handoff (person-4) and contract confirmation
+
+User Prompt (verbatim, secrets redacted):
+[Pasted request "TRACE – P3 Review of P4 Handoff and Contract Confirmation".] Inspect AGENTS.md, CONTRACTS.md, code/P4_CONTRACT_CONFIRMATION.md, branch state and person-4 vs P3. Review policy_engine.py, step_builder.py, main.py, evidence_search.py, models and evaluation files. Verify (A) decision ownership, (B) retained-record handling, (C) resource sorting and remediation order, and the P3-P4 interface (schema, phases, numbering, operations, states, statuses). Fix issues with only the necessary changes and tests; report unresolved contract questions without guessing. Run python -m pytest, python code/main.py, python code/validate_output.py, and the evaluation against dataset/sample_output.csv. Produce a final report with PASS/FAIL for each area, files reviewed and changed, actual test results, remaining questions and merge readiness. Update P4_CONTRACT_CONFIRMATION.md and mark P3 confirmation. Git: no push or merge to main, do not merge person-4 into P3, do not overwrite work, do not commit or push unless asked.
+
+Agent Response Summary:
+person-4 (f5eaf6d) is cafd103 plus two documentation-only commits; no code changed. Every claim in P4_CONTRACT_CONFIRMATION.md §1-§7 was verified in code and measured on the 518 + 32 cases. Findings: decide() returns only COMPLETE/INCOMPLETE, and INCOMPLETE holds exactly when there is a finding. RETAIN categories only get VERIFY_RECORD_PRESENT (311 steps). All 32 golden rows follow the canonical sort. The missing-retained-record branch is reached 0 times, and numeric vs lexical resource_id order never disagrees (14 pairs). Added a P3 invariant test (32 parametrized cases), appended a P3 confirmation (§9) to the document leaving 2 team questions open, and updated the test counts in evaluation_report.md. Results: 507 passed, 1 skipped; output.csv VALID and byte-identical across two runs (sha256 a215494b...97b6ef); sample metrics unchanged. Changes are uncommitted on the new local branch p3-review-person-4, created from origin/person-4. P3, person-4 and main are untouched.
+
+Actions:
+* git fetch; git diff P3 origin/person-4; git switch --no-track -c p3-review-person-4 origin/person-4
+* Scratch probes (scratchpad only) over all decisions: retained ops, dropped retained records, sort order, unverified states
+* Edited code/tests/test_policy_engine.py (+test_p3_p4_contract_invariants_on_public_samples)
+* Edited code/P4_CONTRACT_CONFIRMATION.md (status line + §9) and code/evaluation/evaluation_report.md (test counts)
+* Ran pytest (root and code/), code/main.py twice, code/validate_output.py, code/evaluation/main.py
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-review-person-4
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T23:27:37Z] Final P3 review of origin/p3-review-person-4 (e72909a)
+
+User Prompt (verbatim, secrets redacted):
+[Pasted request "TRACE – Final P3 Review of P4 Handoff Branch".] Fetch and inspect branches and the working tree. Diff origin/p3-review-person-4 (e72909a) against origin/P3: expect only test_policy_engine.py, P4_CONTRACT_CONFIRMATION.md, evaluation_report.md and log.txt, and no implementation code, sample_predictions.csv, dataset, caches or secrets. Review the numeric natural-sorting test, the contract document against the code and specs, and the evaluation report. Run python -m pytest, the 518-case pipeline, validate_output.py, a determinism check and the sample evaluation. Produce a review table and exactly one recommendation (APPROVE or REQUEST CHANGES). Do not merge, push, commit, delete or overwrite branches, or modify files without authorisation.
+
+Agent Response Summary:
+Reviewed e72909a without switching branches. The local uncommitted review work is preserved, and the commit was exported with git archive to the scratchpad for test runs and mutation checks. Exactly the 4 expected files changed, and log.txt is append-only. e72909a: 476 passed, 1 skipped; 518-case output VALID and byte-identical across 2 runs and to the committed file (a215494b...97b6ef); sample metrics unchanged (status 1.000, F1 0.921). The natural-sort test fails under a lexical mutation but does not cover build_steps(); 14 other tests do. The contract document's header still says "AWAITING P3 CONFIRMATION", and §6 items 3-4 are unanswered. Recommendation: REQUEST CHANGES (documentation only).
+
+Actions:
+* git fetch --all --prune; git log / diff / show on origin refs
+* git archive e72909a into the scratchpad; pytest (root and code/), mutation checks there only, code/main.py twice, validate_output.py, evaluation/main.py
+* Appended this entry to log.txt (AGENTS.md requirement); no other file changed
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-review-person-4
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T23:37:12Z] Final P3 approval review of p3-review-person-4 (2266419)
+
+User Prompt (verbatim, secrets redacted):
+[Pasted request "TRACE – Final P3 Approval Review (Commit 2266419)".] Fetch; inspect origin/P3 and origin/p3-review-person-4; verify 2266419 is present; compare the full PR diff with origin/P3; check for unrelated changes or uncommitted work. Verify the P4_CONTRACT_CONFIRMATION.md corrections (header, ownership, natural sort, status ownership, INCOMPLETE has a finding, §6 items 3-4 answered, §6.2 sample description, missing-retained question still open) against the implementation. Verify the regression test (account_9 before account_10, decide() order, build_steps() preserves order, no weakened assertions) and the changed files. Run python -m pytest, code/main.py and validate_output.py, and check determinism. Give a PASS/FAIL table and exactly one recommendation. Do not merge, push, commit or modify files without authorisation.
+
+Agent Response Summary:
+2266419 is the tip of origin/p3-review-person-4. The PR vs origin/P3 touches only the 4 expected files, with no implementation code, sample_predictions.csv, dataset or caches. The document corrections match the code. The §6.2 claim was recomputed: 10 multi-resource groups in the 518-case output, 0 ordering differences, 0 such groups in the samples. The test now asserts the order in both decide() and build_steps() and fails under a mutation that reverses build_steps(); no assertion was weakened. Results on a git-archive export of 2266419: 476 passed, 1 skipped; 518 rows VALID; SHA-256 identical across 2 runs and the committed file (a215494b...97b6ef). Recommendation: APPROVE.
+
+Actions:
+* git fetch --all --prune; git log / diff / show / merge-base on origin refs
+* git archive 2266419 into the scratchpad; pytest (root and code/), code/main.py twice, validate_output.py, sha256sum, build_steps mutation check (scratch only)
+* Appended this entry to log.txt (AGENTS.md requirement); no other file changed
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-review-person-4
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T23:39:11Z] Plan safe sync of local p3-review-person-4 with approved 2266419
+
+User Prompt (verbatim, secrets redacted):
+The final review of commit 2266419 has passed. It is approved for merging into P3. Before doing anything, inspect my current Git status and local branches. My local branch p3-review-person-4 is at f5eaf6d and contains earlier uncommitted edits to four files. There is also an untracked code/evaluation/sample_predictions.csv. I want to preserve the approved remote branch and avoid losing useful work. 1. Identify all local uncommitted changes. 2. Compare them with origin/p3-review-person-4. 3. Determine which changes are already included in commit 2266419. 4. Preserve any useful changes that are not included. 5. Do not delete or overwrite sample_predictions.csv. 6. Do not reset, clean or force-push anything. 7. Do not merge into main. First explain the safest way to synchronize my local branch with the approved remote branch. Do not execute destructive Git commands.
+
+Agent Response Summary:
+Read-only inspection. There are 4 local modified files on top of f5eaf6d; sample_predictions.csv is untracked, untracked on the remote and not ignored. Superseded by 2266419: the local P4_CONTRACT_CONFIRMATION.md status/§9 edits and the 507 test count in evaluation_report.md. Not included in 2266419: test_p3_p4_contract_invariants_on_public_samples (its patch applies cleanly on 2266419; 139 passed in a scratch check) and 4 P3 log.txt entries. Proposed plan: stash the 4 files, fast-forward to origin/p3-review-person-4, then re-add the test and log entries on a separate follow-up branch. Nothing was executed.
+
+Actions:
+* git fetch; git status / branch -vv / stash list / diff (read-only)
+* git apply --check plus a pytest run on the scratchpad export of 2266419 only
+* Appended this entry to log.txt
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-review-person-4
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T23:42:31Z] Sync to approved 2266419; restore invariant test on p3-contract-invariants
+
+User Prompt (verbatim, secrets redacted):
+Yes, proceed with steps 1–3. Please follow the proposed safe synchronization plan with these additional conditions: 1. Fetch the latest remote references first. 2. Stash only the four specified tracked files. Do not include or modify sample_predictions.csv. 3. Fast-forward p3-review-person-4 to origin/p3-review-person-4 using --ff-only. 4. Create p3-contract-invariants from the approved commit 2266419. 5. Restore the additional invariant test and the four P3 log entries carefully. 6. Do not restore the outdated contract confirmation or evaluation report blindly. 7. Recalculate the actual test count after restoring the test. Do not assume it is 508. 8. Run the full tests, pipeline and output validation. 9. Keep the stash until I verify everything. STOP before committing, pushing or merging anything. Show me: current branch and commit, git status, files changed, test results, output validation, and confirmation that P3, main and sample_predictions.csv remain untouched. I will review the result before authorizing the next step.
+
+Agent Response Summary:
+Fetched, then stashed only the 4 tracked files (stash@{0}). Fast-forwarded p3-review-person-4 f5eaf6d -> 2266419 (--ff-only) and created p3-contract-invariants at 2266419. Applied the invariant-test patch from the stash (clean apply) and appended the 4 stashed P3 log entries after the approved log, which was kept unchanged as the prefix. Did not restore the stashed contract doc; updated only the 2 evaluation-report count lines to the measured value. Measured: 508 passed, 1 skipped, 592 subtests. output.csv VALID, 518 rows, SHA-256 identical across 2 runs and to 2266419. Nothing committed, pushed or merged; stash kept.
+
+Actions:
+* git fetch; git stash push -- <4 files>; git merge --ff-only origin/p3-review-person-4; git switch -c p3-contract-invariants 2266419
+* git apply of the stash diff for code/tests/test_policy_engine.py; appended 4 log entries; edited 2 lines in code/evaluation/evaluation_report.md
+* pytest (root and code/), code/main.py twice, code/validate_output.py, sha256sum
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-contract-invariants
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T23:44:41Z] Commit P3-P4 contract invariant test on p3-contract-invariants
+
+User Prompt (verbatim, secrets redacted):
+Proceed with committing the changes on p3-contract-invariants. Before committing: 1. Confirm the current branch is p3-contract-invariants at 2266419. 2. Review the diffs for code/tests/test_policy_engine.py, code/evaluation/evaluation_report.md and log.txt. 3. Stage only these three files. Do not stage code/evaluation/sample_predictions.csv or any other file. 4. Verify the staged diff and confirm it contains only the intended invariant test, corrected measured test counts, and P3 log entries. 5. Commit with message: test: add P3 P4 contract invariants. After committing: show the commit hash and changed files; confirm sample_predictions.csv remains untracked and untouched; confirm the stash "P3 local review edits on f5eaf6d" is still present; confirm no push, merge, or changes to P3/main occurred. Do not push or merge anything. Stop and report the results.
+
+Agent Response Summary:
+Confirmed p3-contract-invariants at 2266419 and reviewed the 3 diffs, which are additions only apart from the 2 count lines. Staged exactly those 3 files and verified the staged diff (invariant test, measured 476 -> 508 counts, P3 log entries including this one). Committed "test: add P3 P4 contract invariants". No push or merge; P3, main, the stash and sample_predictions.csv are unchanged.
+
+Actions:
+* git diff review; git add on the 3 files; git diff --cached check; git commit
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-contract-invariants
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
