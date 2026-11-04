@@ -1,0 +1,140 @@
+# P3 → P4 contract confirmation (P4)
+
+**Status: AWAITING P3 CONFIRMATION.** This document records what the code
+does today (`policy_engine.decide()` → `step_builder.build_steps()`) and how
+that compares with the proposal in `CONTRACTS.md` sections 2 and 3, which are
+still marked "PROPOSAL, P3 and P4 to confirm". Nothing here has been approved
+by P3 yet. `CONTRACTS.md` has not been changed.
+
+Checked against: `AGENTS.md` §6.3–6.6, `code/CONTRACTS.md`,
+`code/policy_engine.py`, `code/step_builder.py`, `code/main.py`,
+`code/validate_output.py`, `code/tests/test_policy_engine.py`,
+`code/test_main.py`. Implementation at commit `cafd103`.
+
+## 1. Input and output
+
+The implemented interface is **not** the one in the `CONTRACTS.md` §2 proposal.
+
+| | `CONTRACTS.md` proposal | Implemented |
+|---|---|---|
+| Who chooses operations | P4 maps `resources` / `flows` / `restore_risks` to operations | P3 (`decide()`) chooses every operation |
+| Who orders steps | P4 sorts | P3 orders inside each phase (`_ordered()`) |
+| What P4 reads | `resources`, `flows`, `restore_risks` | `deletion_status`, `findings`, `remediation`, `verification` |
+| What P4 does | Maps, filters, sorts, numbers | Validates, fills in `evidence_id` rules, numbers |
+
+`decide()` returns a dict. `build_steps()` reads only these keys:
+
+```python
+{
+  "deletion_status": "COMPLETE" | "INCOMPLETE",   # NOT_APPLICABLE is also accepted
+  "findings":     [{system_id, resource_id, operation, state, evidence_id}, ...],
+  "remediation":  [...same shape...],
+  "verification": [...same shape...],
+}
+```
+
+The other keys (`resources`, `flows`, `restore_risks`, `timeline`,
+`conflicts`, `unverified`, `identity`, `notes`, `case_id`) are for the audit
+trail and the evaluation report. P4 ignores them. Their shapes differ from the
+proposal. For example, `resources` items carry `rule_id`, `action`, `finding`,
+`remediation`, `verification` and `copies` instead of `required_treatment`,
+`state_at_audit` and `satisfied`. `timeline` is always `[]`.
+
+`build_steps()` returns `list[dict]`. Each dict has exactly the AGENTS.md §6.3
+fields: `step_no, phase, system_id, resource_id, operation, state, evidence_id`.
+`main.py` serialises the list with `json.dumps(..., ensure_ascii=False, separators=(",", ":"))`.
+
+## 2. Operation and state mappings
+
+P3 sets the operation. `build_steps()` checks that it belongs to the phase
+and that its state matches. If `state` is missing, it fills it in. If the
+state is wrong, it raises `ValueError`.
+
+| Phase | Operation → required state |
+|---|---|
+| FINDING | `REPORT_REMAINING_RECORD`→`PRESENT`, `REPORT_EXPOSED_PII`→`PRESENT`, `REPORT_ACTIVE_DATA_FLOW`→`ACTIVE`, `REPORT_RESTORE_RISK`→`ACTIVE` |
+| REMEDIATION | `DISABLE_DATA_FLOW`→`DISABLED`, `BLOCK_RESTORE`→`BLOCKED`, `DELETE_RECORD`→`ABSENT`, `REDACT_RECORD`→`REDACTED`, `ANONYMIZE_RECORD`→`ANONYMIZED` |
+| VERIFICATION | `VERIFY_RECORD_ABSENT`→`ABSENT`, `VERIFY_RECORD_PRESENT`→`PRESENT`, `VERIFY_RECORD_REDACTED`→`REDACTED`, `VERIFY_RECORD_ANONYMIZED`→`ANONYMIZED`, `VERIFY_DATA_FLOW_DISABLED`→`DISABLED`, `VERIFY_RESTORE_BLOCKED`→`BLOCKED` |
+
+This matches AGENTS.md §6.4 exactly. No other phases, operations or states
+are possible.
+
+The proposal's treatment table (`DELETE` → `REPORT_REMAINING_RECORD` /
+`DELETE_RECORD` / `VERIFY_RECORD_ABSENT`, `TOMBSTONE` → redact and verify
+redacted, `RETAIN` → verify present only, and so on) is now applied inside
+`policy_engine.py` rather than in P4.
+
+## 3. Which steps are written
+
+| Status | FINDING | REMEDIATION | VERIFICATION |
+|---|---|---|---|
+| `INCOMPLETE` | One per unsatisfied record or active flow/restore. **Must** cite evidence | One per finding. `evidence_id=""` | One per assessed item, including items that were already compliant. `evidence_id=""` |
+| `COMPLETE` | None (`build_steps()` raises if any) | None (raises if any) | Only items whose compliant state is proven at `audit_at`. **Must** cite evidence |
+| `NOT_APPLICABLE` | — | — | — (`build_steps()` returns `[]`) |
+
+- `decide()` sets `INCOMPLETE` when there is at least one finding, and `COMPLETE` otherwise.
+- For a `COMPLETE` case, a required state that no evidence proves is left out of the steps and listed in `decision["unverified"]`, so it never produces an unbacked step.
+- `NOT_APPLICABLE` is decided by P1's classifier in `main.py`. `decide()` is not called and the row is written as `NOT_APPLICABLE, []`. `build_steps()` also returns `[]` for that status, as a safeguard.
+- If `audit_at` is empty or the email cannot be resolved, `main.py` writes `INCOMPLETE, []` without calling P3 or P4. In the current 518-case run this happens 0 times.
+
+## 4. Evidence ID rules
+
+- **FINDING**: a non-empty `evidence_id` is required (the `file_id`, `activity_id` or `audit_id` that P3 chose). If it is empty, `ValueError` is raised.
+- **REMEDIATION and VERIFICATION in an `INCOMPLETE` case**: P4 forces `evidence_id=""` even if P3 supplied one, because these steps describe future work.
+- **VERIFICATION in a `COMPLETE` case**: a non-empty `evidence_id` is required. If it is empty, `ValueError` is raised.
+- P4 does **not** re-check that a cited id exists or was captured at or before `audit_at`. P3 selects only evidence available at `audit_at`. `validate_output.py` checks the existence and capture time of every cited id across the whole `output.csv`.
+
+## 5. Ordering and step numbering
+
+- Phases are written in the order FINDING, then REMEDIATION, then VERIFICATION (`_PHASE_KEYS` in `step_builder.py`).
+- Inside each phase, P3 sorts by the position of the operation in the AGENTS.md §6.4 table, then by `system_id`, then by `resource_id`. Within REMEDIATION, this puts `DISABLE_DATA_FLOW` and `BLOCK_RESTORE` before `DELETE`, `REDACT` and `ANONYMIZE`.
+- P3 removes duplicate `(system_id, resource_id.lower(), operation)` entries.
+- `step_no` runs consecutively from 1 across the whole case. P4 assigns it, and any input `step_no` is ignored.
+- P4 keeps P3's order and does not re-sort.
+- The result is the same as the proposal's single global sort, because the operation table is already grouped by phase.
+
+## 6. Ambiguities and open points that need P3's decision
+
+1. **Interface change.** `CONTRACTS.md` §2–3 still describes the old proposal (P4 maps resources to operations and sorts). The code uses pre-built step lists from P3. Section 1 of this document needs approval as the real contract, and `CONTRACTS.md` should then be updated.
+2. **`resource_id` tie-break.** The proposal says to sort by `resource_id`, which reads as lexical order. `_rid_key()` sorts by the trailing number (`account_9` before `account_10`). In the 32 public samples and the current 518-case output, these two orders never disagree, so the choice does not change any row today. P3 should still state which order is intended.
+3. **Status mismatch guard.** If `decide()` ever returned a status other than `COMPLETE` or `INCOMPLETE`, `main.py` would write `INCOMPLETE`, but `build_steps()` would still apply the evidence rules for the original status. This cannot happen with the current `decide()`. P3 should confirm that `decide()` never returns `NOT_APPLICABLE` or any other value.
+4. **Requirement owned by P3.** An `INCOMPLETE` case must have at least one finding. This holds by construction in `decide()`, and `validate_output.py` checks it, but `build_steps()` does not enforce it. P3 should confirm that P3 owns this rule.
+5. **A missing retained record is silently ignored (possible gap against AGENTS.md §6.5).** `CONTRACTS.md` §4 Q3 asks what should happen when a `RETAIN` record is missing at `audit_at`. In `_assess()` (`policy_engine.py`, the "no copy present at audit_at" branch), a `RETAIN` or `ACCOUNT_TOMBSTONE` resource with no present copy returns `None`. It produces no step and does not affect the status. AGENTS.md §6.5 says a case is `COMPLETE` only when "every required retained record remains available". No allowed operation can restore such a record. Possible options:
+   - mark the case `INCOMPLETE` with a `VERIFY_RECORD_PRESENT` step;
+   - keep the current behaviour and record the case in `notes` / `unverified`.
+
+   P3 needs to decide. P4 has not changed this.
+6. **The other open questions in `CONTRACTS.md` §4 are answered by the implementation, but nobody has confirmed the answers:**
+   - Q1: `system_activity.csv` is read by `activity.py`, which P3 uses.
+   - Q2: replica copies are kept separately inside a resource (`copies`). The strictest required action across the copies that are present decides the resource, and one step is emitted per `(system_id, resource_id)`. An absence is only verified when every copy that was ever seen present has a later proven absence.
+   - Q4: `rule_id` and replica details are included in `resources`.
+
+## 7. Evidence that the implementation works
+
+- `tests/test_policy_engine.py::test_step_builder_numbers_phases_and_blanks_future_evidence`, `::test_step_builder_rejects_values_outside_contract`, and `::test_active_sync_and_restore_risks_and_safe_order`, plus the determinism and public-sample tests, all pass.
+- The full suite gives 475 passed, 1 skipped and 592 subtests passed. Command: `cd code && python -m pytest -q tests test_identity_resolver.py test_main.py test_request_classifier.py test_utils.py`.
+- `python code/main.py && python code/validate_output.py` gives **VALID** for 518 rows. The regenerated `output.csv` is byte-identical to the committed file after line-ending normalisation (SHA-256 `a215494b…97b6ef`).
+
+## 8. Message to send to P3
+
+> Hi P3, P4 here. I've checked the P3→P4 hand-over against the code at
+> `cafd103`. The details are in `code/P4_CONTRACT_CONFIRMATION.md`. Could you
+> confirm or correct these points?
+>
+> 1. The real contract is: `decide()` returns `deletion_status` plus ordered
+>    `findings` / `remediation` / `verification` lists of
+>    `{system_id, resource_id, operation, state, evidence_id}`. `build_steps()`
+>    only validates, applies the evidence-id rules and numbers the steps. Do
+>    you agree that we replace the §2–3 PROPOSAL in `CONTRACTS.md` with this?
+> 2. Within an operation and `system_id`, should `resource_id` be sorted
+>    numerically (as `_rid_key()` does now) or lexically? No current row is
+>    affected either way.
+> 3. Can you confirm that `decide()` only ever returns `COMPLETE` or
+>    `INCOMPLETE`, and that an `INCOMPLETE` decision always has at least one
+>    finding?
+> 4. When a `RETAIN` or tombstone record is missing at `audit_at`, `_assess()`
+>    currently drops it. It produces no step and does not change the status.
+>    AGENTS.md §6.5 says COMPLETE requires every retained record to remain
+>    available. Should such a case be INCOMPLETE (`CONTRACTS.md` §4 Q3)?
+>
+> Once you reply, I'll update `CONTRACTS.md` and remove the PROPOSAL labels.
