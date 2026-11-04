@@ -41,6 +41,6 @@ def advise_all(requests: Iterable[Dict[str, str]], ec: EngineContext, client: Op
         res = analyze_case(r, ec)
         use = client if (limit is None or calls < limit) else None
         a = advise_case(res, r, ec, use)
-        calls += a["source"] == "model"
+        calls += bool(a["source"] == "model" or a["model_note"] or (use is not None and a["triggers"]))   # attempts, not just successes
         out.append(a)
     return out

@@ -115,6 +115,19 @@ class OpenAICompatibleClient:
         with urllib.request.urlopen(req, timeout=self.timeout) as resp:
             return json.loads(resp.read().decode("utf-8"))
 
+    def _provider_message(self, e: "urllib.error.HTTPError") -> str:
+        """The gateway's own error text (never the key), to make failures diagnosable."""
+        try:
+            body = e.read().decode("utf-8", "replace")[:400]
+            try:
+                j = json.loads(body)
+                body = str((j.get("error") or {}).get("message") or j.get("message") or body)
+            except (json.JSONDecodeError, AttributeError):
+                pass
+        except Exception:
+            return ""
+        return body.replace(self._key, "***")[:200]
+
     def complete(self, case_id: str, system: str, user: str, max_tokens: int = 600) -> str:
         if not self.available:
             raise ModelUnavailable("LLM_API_KEY, LLM_BASE_URL and LLM_MODEL must all be set")
@@ -126,7 +139,7 @@ class OpenAICompatibleClient:
                 data = self._post(dict(payload, **{token_param: max_tokens}))
                 break
             except urllib.error.HTTPError as e:
-                self.last_error = f"HTTP {e.code}"
+                self.last_error = f"HTTP {e.code}: {self._provider_message(e)}"
                 if e.code != 400:
                     break
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:

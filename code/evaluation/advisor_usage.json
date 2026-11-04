@@ -1,0 +1,9 @@
+{
+ "provider": "AgentRouter",
+ "model": "gpt-6-astra",
+ "calls": 0,
+ "failed_calls": 6,
+ "input_tokens": 0,
+ "output_tokens": 0,
+ "per_case": {}
+}

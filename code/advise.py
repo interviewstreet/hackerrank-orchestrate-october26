@@ -42,7 +42,10 @@ def main() -> int:
     print(f"wrote {a.out}: {len(advice)} cases, {flagged} flagged for review, {used} explained by the model")
     if client is not None and client.usage.calls + client.usage.failed_calls:
         Path(a.usage_out).write_text(json.dumps(client.usage.to_dict(), indent=1), encoding="utf-8")
-        print(f"model usage: {client.usage.calls} calls, {client.usage.input_tokens} in / {client.usage.output_tokens} out tokens")
+        print(f"model usage: {client.usage.calls} calls ({client.usage.failed_calls} failed), "
+              f"{client.usage.input_tokens} in / {client.usage.output_tokens} out tokens")
+        for note in sorted({x["model_note"] for x in advice if x["model_note"]}):
+            print("  note:", note)
     return 0
 
 
