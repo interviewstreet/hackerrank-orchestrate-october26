@@ -449,3 +449,22 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T21:11:16Z] git pull says up to date, demo script still missing
+
+User Prompt (verbatim, secrets redacted):
+laptop terminal: git pull -> Already up to date. Then python code/email_demo.py --to rachanashende09@gmail.com --dry-run -> can't open file ...\code\email_demo.py: [Errno 2] No such file or directory
+
+Agent Response Summary:
+Explained that "up to date" is correct because the demo commit is still only in the session clone; the push has not happened since Rach has not said push. No files changed except this log entry; nothing pushed.
+
+Actions:
+* Appended this log entry only
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
