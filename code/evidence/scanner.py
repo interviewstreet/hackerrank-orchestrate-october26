@@ -27,7 +27,11 @@ from .models import (
     ABSENT,
     COMPLETE,
     INCOMPLETE,
+    LINKED,
     PRESENT,
+    STRONG,
+    WEAK,
+    ResourceReference,
     UNKNOWN,
     AbsenceProof,
     EvidenceFile,
@@ -36,7 +40,15 @@ from .models import (
     SnapshotScope,
     SubjectIdentifiers,
 )
-from .normalize import default_category_for_resource, norm_resource_id, parse_ts
+from .normalize import (
+    default_category_for_resource,
+    norm_email,
+    norm_hash,
+    norm_phone,
+    norm_resource_id,
+    parse_ts,
+    system_for_resource,
+)
 from .parsers import parse_file
 
 TimeLike = Union[datetime, str]
@@ -189,10 +201,19 @@ class EvidenceScanner:
 
         Direct matches use the subject's emails, phones, user_id, email hashes,
         exact full names and known resource ids. With ``expand_links`` (default)
-        the resource ids of direct matches (plus resource ids / attachment file
-        names they reference) are followed so that later, de-identified copies
-        of the same resource (e.g. an anonymised analytics row) are included.
-        Links are followed only through records available at ``audit_at``.
+        the resource ids of confirmed direct matches (plus resource ids /
+        attachment file names they reference) are followed so that later,
+        de-identified copies of the same resource (e.g. an anonymised analytics
+        row) are included. Links are followed only through records available at
+        ``audit_at``.
+
+        Every returned copy carries an identity assessment:
+        ``match_strength`` (STRONG / LINKED / WEAK), ``identity_conflict`` with
+        ``conflict_details``, and ``linked_via``. Only confirmed observations
+        (STRONG or LINKED, no conflict) seed link expansion: a name-only (WEAK)
+        match, a conflicting record, and a claim-only record's cross-references
+        are never followed. WEAK and conflicting records are still returned so
+        that nothing is hidden, but they are not confirmed as the subject's.
 
         ``audit_at`` must be timezone-aware (an ISO string with an explicit
         offset is also accepted); see :func:`_as_utc`.
@@ -212,46 +233,80 @@ class EvidenceScanner:
     def _find(self, identifiers: SubjectIdentifiers, audit_at: TimeLike, *, expand_links: bool) -> list[ObservedRecord]:
         self._require_loaded()
         cutoff = _as_utc(audit_at)
-        terms = identifiers.terms()
+        subject = identifiers.normalized()
+        terms = subject.terms()
         recs = self._index.records
         matched: dict[int, set[str]] = {}
+        strength: dict[int, str] = {}
+        via: dict[int, set[str]] = {}
+        conflicts: dict[int, tuple[str, ...]] = {}
+
+        def conflict_of(i: int) -> tuple[str, ...]:
+            if i not in conflicts:
+                conflicts[i] = identity_conflicts(recs[i], subject)
+            return conflicts[i]
 
         for term in terms:
             for i in self._index.by_term(term):
                 if self._available(recs[i], cutoff):
                     matched.setdefault(i, set()).add(f"{term[0]}:{term[1]}")
+        for i, labels in matched.items():
+            strength[i] = STRONG if any(not m.startswith("name:") for m in labels) else WEAK
 
         if expand_links:
-            frontier_rids = {recs[i].resource_id.lower() for i in matched} | {
-                v for k, v in terms if k == "resource_id"}
-            frontier_files: set[str] = set()
-            for i in list(matched):
-                for k, v in recs[i].linked_terms:
+            # rid / file name -> provenance of the confirmed observations it came from
+            rid_via: dict[str, set[str]] = {}
+            file_via: dict[str, set[str]] = {}
+            for v in (v for k, v in terms if k == "resource_id"):
+                rid_via.setdefault(v, set()).add("supplied:resource_ids")
+
+            def seed_from(i: int) -> None:
+                rec = recs[i]
+                prov = f"{rec.evidence_id}@{rec.locator}"
+                rid_via.setdefault(rec.resource_id.lower(), set()).add(prov)
+                if rec.claim_only:
+                    return  # a claim may point at its own resource, never at others
+                for k, v in rec.linked_terms:
                     if k == "resource_id":
-                        frontier_rids.add(v)
+                        rid_via.setdefault(v, set()).add(prov)
                     elif k == "file_name":
-                        frontier_files.add(v)
+                        file_via.setdefault(v, set()).add(prov)
+
+            for i in list(matched):
+                if strength[i] == STRONG and not conflict_of(i):
+                    seed_from(i)
+            frontier = list(rid_via)
             seen_rids: set[str] = set()
-            while frontier_rids:
-                rid = frontier_rids.pop()
+            while frontier:
+                rid = frontier.pop()
                 if rid in seen_rids:
                     continue
                 seen_rids.add(rid)
                 for i in self._index.by_resource(rid):
-                    if not self._available(recs[i], cutoff):
+                    if i in matched or not self._available(recs[i], cutoff):
                         continue
-                    if i not in matched:
-                        matched[i] = {f"linked_resource_id:{rid}"}
-                        # follow cross-references carried by newly linked records
-                        for k, v in recs[i].linked_terms:
-                            if k == "resource_id" and v not in seen_rids:
-                                frontier_rids.add(v)
-            for fn in frontier_files:
+                    matched[i] = {f"linked_resource_id:{rid}"}
+                    strength[i] = LINKED
+                    via[i] = set(rid_via[rid])
+                    if not conflict_of(i):
+                        before = set(rid_via)
+                        seed_from(i)
+                        frontier.extend(r for r in set(rid_via) - before if r not in seen_rids)
+            for fn, provs in sorted(file_via.items()):
                 for i in self._index.by_term(("file_name", fn)):
-                    if self._available(recs[i], cutoff) and i not in matched:
-                        matched[i] = {f"linked_file_name:{fn}"}
+                    if i in matched or not self._available(recs[i], cutoff):
+                        continue
+                    matched[i] = {f"linked_file_name:{fn}"}
+                    strength[i] = LINKED
+                    via[i] = set(provs)
 
-        out = [dataclasses.replace(recs[i], identifiers_matched=sorted(m)) for i, m in matched.items()]
+        out = []
+        for i, labels in matched.items():
+            details = conflict_of(i)
+            out.append(dataclasses.replace(
+                recs[i], identifiers_matched=sorted(labels), match_strength=strength[i],
+                identity_conflict=bool(details), conflict_details=details,
+                linked_via=tuple(sorted(via.get(i, ())))))
         out.sort(key=_record_sort_key)
         return out
 
@@ -261,14 +316,20 @@ class EvidenceScanner:
         audit_at: datetime,
         *,
         include_claims: bool = False,
+        include_unconfirmed: bool = False,
     ) -> dict[tuple[str, str, Optional[str]], ObservedRecord]:
-        """Latest **authoritative** in-window observation per
+        """Latest **authoritative, confirmed** in-window observation per
         (system_id, resource_id, replica_or_table).
 
         Claim-only observations (lookup ledgers, handovers) are excluded, so a
         key whose only evidence is a claim does not appear here; those claims
         stay available through :meth:`find_records`. ``include_claims=True``
         restores the old behaviour (claims compete, losing ties to store state).
+
+        Unconfirmed observations (name-only WEAK matches and records with an
+        ``identity_conflict``) are excluded too, because a "latest state" must
+        not be attributed to the subject on that basis; ``include_unconfirmed``
+        lets them compete. Both stay visible in :meth:`find_records`.
 
         Replica copies are separate keys, so primary/replica drift is never
         collapsed. Ordering: observed_at, then manifest captured_at. An
@@ -278,7 +339,53 @@ class EvidenceScanner:
         hits = self._find(identifiers, audit_at, expand_links=True)
         if not include_claims:
             hits = [h for h in hits if not h.claim_only]
+        if not include_unconfirmed:
+            hits = [h for h in hits if h.is_confirmed]
         return latest_of(hits)
+
+    def referenced_resources(
+        self,
+        identifiers: SubjectIdentifiers,
+        audit_at: datetime,
+    ) -> list[ResourceReference]:
+        """Resource ids named inside the subject's confirmed observations.
+
+        A reference is reported only when the referencing observation is
+        in-window (both cutoffs), authoritative (not ``claim_only``) and
+        confirmed for this subject (STRONG or LINKED, no identity conflict).
+        Name-only matches, conflicting records, claims, other subjects'
+        records and future-dated evidence never contribute. The referenced
+        resource is returned as a pointer with full provenance; no
+        observation is fabricated for it (see ``has_observations``).
+        """
+        cutoff = _as_utc(audit_at)
+        refs: dict[tuple[str, str, str], ResourceReference] = {}
+        for h in self._find(identifiers, cutoff, expand_links=True):
+            if h.claim_only or not h.is_confirmed:
+                continue
+            own = h.resource_id.lower()
+            for kind, value in h.linked_terms:
+                if kind != "resource_id" or value == own:
+                    continue
+                field_name, original = _field_holding(h.raw_state, value)
+                key = (value, h.evidence_id, h.locator)
+                if key in refs:
+                    continue
+                refs[key] = ResourceReference(
+                    resource_id=original or value,
+                    system_id=system_for_resource(value),
+                    source_evidence_id=h.evidence_id,
+                    source_locator=h.locator,
+                    source_system_id=h.system_id,
+                    source_resource_id=h.resource_id,
+                    source_field=field_name,
+                    source_observed_at=h.observed_at,
+                    source_captured_at=h.captured_at,
+                    has_observations=bool(self._index.by_resource(value)) and any(
+                        self._available(self._index.records[i], cutoff) for i in self._index.by_resource(value)),
+                )
+        return sorted(refs.values(), key=lambda r: (r.resource_id.lower(), r.source_observed_at,
+                                                    r.source_evidence_id, r.source_locator))
 
     def records_for_resource(self, resource_id: str, audit_at: TimeLike,
                              system_id: Optional[str] = None) -> list[ObservedRecord]:
@@ -372,6 +479,66 @@ class EvidenceScanner:
         proofs.sort(key=lambda p: (p.captured_at, p.evidence_id, p.replica_or_table or "", p.collection or ""),
                     reverse=True)
         return proofs
+
+
+# Payload fields that name the record's *owner* (used for conflict checks only;
+# free text and query keys such as lookup_key are not ownership signals).
+_OWNER_EMAIL_FIELDS = {"email", "owner_email", "customer_email", "requester_email", "uploaded_by", "subject_selector"}
+_OWNER_PHONE_FIELDS = {"phone", "owner_phone", "requester_phone", "customer_phone"}
+_OWNER_HASH_FIELDS = {"email_hash"}
+
+
+def _owner_values(rec: ObservedRecord, fields: set[str], norm) -> set[str]:
+    out = set()
+    for k, v in rec.pii_fields.items():
+        if k in fields:
+            for item in (v if isinstance(v, list) else [v]):
+                n = norm(item) if isinstance(item, str) else None
+                if n:
+                    out.add(n)
+    return out
+
+
+def identity_conflicts(rec: ObservedRecord, subject: SubjectIdentifiers) -> tuple[str, ...]:
+    """Disagreements between a record's own identity signals and ``subject``.
+
+    ``subject`` must be normalised. Only stable ownership signals are
+    compared: the record's stored ``user_*`` reference, and (when that
+    reference is the subject's) its owner email / phone / email_hash fields.
+    A kind is only compared when the subject supplies that kind, so missing
+    information is never reported as a conflict.
+    """
+    out: list[str] = []
+    ref = rec.subject_reference
+    uid = subject.user_id
+    if uid and ref and ref != uid:
+        out.append(f"record references {ref}, subject is {uid}")
+    if uid and ref == uid:
+        for kind, fields, norm, known in (
+            ("email", _OWNER_EMAIL_FIELDS, norm_email, subject.emails),
+            ("phone", _OWNER_PHONE_FIELDS, norm_phone, subject.phones),
+            ("email_hash", _OWNER_HASH_FIELDS, norm_hash, subject.email_hashes),
+        ):
+            values = _owner_values(rec, fields, norm)
+            if values and known and not (values & known):
+                out.append(f"record carries subject's user_id but a different {kind}: {', '.join(sorted(values))}")
+    return tuple(out)
+
+
+def _field_holding(payload: dict, value_lower: str) -> tuple[Optional[str], Optional[str]]:
+    """(field name, original value) of the first payload field equal to the id."""
+    stack = [payload]
+    while stack:
+        cur = stack.pop()
+        if isinstance(cur, dict):
+            for k, v in cur.items():
+                if isinstance(v, str) and v.strip().lower() == value_lower:
+                    return k, v.strip()
+                if isinstance(v, (dict, list)):
+                    stack.append(v)
+        elif isinstance(cur, list):
+            stack.extend(cur)
+    return None, None
 
 
 def _record_sort_key(r: ObservedRecord):

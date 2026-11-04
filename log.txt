@@ -225,3 +225,165 @@ branch=feature/evidence-scanner
 repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T14:45:07Z] Audit subject-to-resource linking (no code changes)
+
+User Prompt (verbatim, secrets redacted):
+Continue P2 – Evidence Discovery work in the TRACE repository. Current P2 branch: feature/evidence-scanner. Current committed version: 6730d748cef10bfabbcec751328b001f85f27b73. [Objective: investigate whether resource-ID discovery and subject-to-resource linking can be improved without false identity matches. Inspect system_activity.csv, user_identities.csv, user_audit_log.csv, evidence_files.csv and code/evidence/; determine which activity rows carry resource IDs and identifiers, which resources are verifiably linkable or not, effects of historical identifiers and audit timestamps, multi-subject matches; propose only evidence-backed linking rules (no timestamp-only, same-system, claim-as-authoritative, organizer data, invented IDs); validate SubjectIdentifiers matching incl. user_id, historical email, phone, hash, name, resource_ids, multiple and conflicting matches, audit_at cutoff; report counts, examples, whether code needs changes, proposed tests. Do not modify P1's branch, main.py, the committed scanner; no adapter; no commit/push; follow AGENTS.md; report first, no implementation.]
+
+Agent Response Summary:
+Read-only audit via scratchpad scripts using the committed scanner API. 4011 activity rows all carry a resource_id (3948 distinct, 653 not platform-shaped); only the 12 LINK_RESOURCE_IDENTITY rows carry identifiers, all internally consistent, 8 corroborated by evidence, 1 contradicted (marketing_001), 3 uncorroborated. Of activity resource ids, 931 link to exactly one user via authoritative evidence (155 only via historical identifiers), 170 via claim-only evidence, 0 ambiguous; 2847 cannot be linked from evidence. No email/phone/hash is shared or reassigned across users; 3 full names are shared. Against the 32 sample answers, identifiers recover 76/111 resources at audit_at, cross-references add 1; the rest are activity-only, identifier-less, after audit_at, or absent from participant data. Found a gap: a record with conflicting identities is returned to both subjects without a flag. No repository files changed apart from this log entry.
+
+Actions:
+* Read-only analysis scripts in the session scratchpad (resource_link_audit.py, resource_link_audit2.py, multi_conflict_check.py)
+* Ran 21 existing pytest tests covering the requested matching and cutoff behaviours (21 passed)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T15:02:45Z] Add cross-references, identity conflicts and weak name matches
+
+User Prompt (verbatim, secrets redacted):
+Continue my P2 work in TRACE — Ghost Data Still Exists. I am Person 2: Evidence Discovery / Evidence Reader. [Read AGENTS.md; inspect P2 implementation, tests, branch and status first. Preserve P2 functionality and append-only log.txt incl. unstaged changes; do not modify P1/P3 code or code/main.py; no commit/push. Implement A explicit resource cross-references (authoritative, in-window, same subject; provenance; no future, claim-only or unrelated references; no fabricated ObservedRecords; available to P3), B identity conflict detection (explicit indicator and details, provenance preserved, no silent confirmation, no confidence scores), C name-only matches weak (name alone never establishes ownership, name plus strong identifier accepted, shared names safe), D regression tests incl. historical identity and audit_at. Run full suite; report files, design decisions, tests, results, limitations, git status.]
+
+Agent Response Summary:
+Added match_strength (STRONG/LINKED/WEAK), identity_conflict, conflict_details and linked_via to returned ObservedRecords (defaults keep the stored records and constructors compatible), a ResourceReference dataclass and EvidenceScanner.referenced_resources(); link expansion now seeds only from confirmed observations and never follows claim-only cross-references; latest_by_resource ignores WEAK/conflicting records unless include_unconfirmed=True. The conflict check exposed an existing false-link bug: archive paths created file-name terms such as "31.tar.zst" that joined unrelated users' backups (27 of 28 file-name links); file-name linking now uses only file_name/file fields and whole tokens. Added tests/test_identity_linking.py (25 tests); full suite 204 passed, 1 skipped; live OCR passed; scan 94/94 with no issues.
+
+Actions:
+* Edited code/evidence/{models.py,scanner.py,normalize.py,__init__.py,README.md}
+* Created code/tests/test_identity_linking.py
+* Ran pytest (204 passed, 1 skipped), RUN_OCR_TESTS=1 pytest -m ocr (1 passed), code/evidence/__main__.py (exit 0), code/evidence/example_integration.py (exit 0); prototype analyses in the session scratchpad
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T15:11:18Z] P1-P2 identity adapter integration audit
+
+User Prompt (verbatim, secrets redacted):
+We need to complete P1–P2 integration in TRACE. P1 has confirmed that the identity adapter is ready on branch p1-identity. Read code/README_identity.md completely before making changes. [Contract: SubjectIdentifiers(**identity.as_subject_kwargs()); no shared imports; no valid_from/valid_to in SubjectIdentifiers; historical validity dates and audit IDs from identity.history; names can match several people and must be confirmed by email, phone, email_hash or user_id. Review evidence models/scanner/normalize/__init__/README. Tasks A-F: adapter output to SubjectIdentifiers; historical identifiers valid at audit_at; preserve audit IDs/provenance; name-only stays WEAK; compatibility with referenced_resources, conflict detection and tests; correct integration point without confusing P1's find_records with EvidenceScanner.find_records. No duplicate resolver, no changes to P1's branch, P3 code or main.py; preserve tests and log; no commit/push/merge; no guessing. Audit first; wait for approval before changes.]
+
+Agent Response Summary:
+Audit only; no source files changed. Fetched origin/p1-identity (2adebeb), read README_identity.md, models.py, evidence_search.py, main.py and utils.py via git show, and ran P1's committed resolver from a scratch export together with P2's scanner on all 550 requests: adapter keys match SubjectIdentifiers exactly, 0 problems, every historical identifier maps to an audit row at or before audit_at, name-only probes stay WEAK, 0 conflicts. All 214 historical-identifier matches are observations after the identifier was changed (11 cited in sample answers), so validity windows must be provenance, not a match filter. Found integration gaps: audit_at=None from P1's main raises in P2, find_records naming/return-type mismatch, and add/add merge conflicts on .gitignore and log.txt. Proposed changes await approval.
+
+Actions:
+* git fetch origin p1-identity; git show origin/p1-identity:code/{README_identity.md,models.py,evidence_search.py,main.py,utils.py}
+* git archive 2adebeb code into the session scratchpad; ran P1's unittest suite there (108 ran, OK, 26 skipped)
+* Scratchpad scripts p1_p2_integration_check.py and a validity-window count; git merge-tree simulation (read-only)
+* cd code && python -m pytest (204 passed, 1 skipped)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T15:18:43Z] Propose EvidenceFindings interface for P3
+
+User Prompt (verbatim, secrets redacted):
+Finalize the P1–P2–P3 EvidenceFindings interface. P3 has approved the richer EvidenceFindings object and the following interface: def decide(identity: IdentityBundle, findings: EvidenceFindings, case: dict) -> dict: Keep EvidenceScanner.find_records() unchanged. [Before implementation: inspect ObservedRecord, ResourceReference, AbsenceProof, SubjectIdentifiers, identity.history and README_identity.md; verify exact types and names; define typed EvidenceFindings (audit_at, records, latest_by_resource, referenced_resources, absence_proofs, identifier_provenance) and IdentifierProvenance (kind, normalized value, CURRENT/HISTORICAL, optional audit_id and event_time); historical identifiers by change event at or before audit_at without filtering later evidence; audit_at respected everywhere; weak/conflicting kept in records but excluded from confirmed latest and expansion; absence proofs for referenced resources; ValueError for missing or naive audit_at. Do not modify P1's branch, main.py or P3's policy; no commit/push/merge. First return exact proposed dataclass and method signatures with field-by-field explanation; wait for approval.]
+
+Agent Response Summary:
+Design only; no source changes. Introspected the working-copy P2 models and scanner signatures and P1's IdentityChange/IdentityBundle.as_subject_kwargs at origin/p1-identity 2adebeb plus README_identity.md history semantics (event_time is a string and may be empty; historical hashes may be computed from old emails; old_value is valid until event_time, new_value from it). Proposed IdentifierProvenance, EvidenceFindings and builder functions in a new code/evidence/integration.py, with validation rules and open decisions, awaiting approval.
+
+Actions:
+* Introspected code/evidence models and scanner (python -c); git fetch origin p1-identity; git show origin/p1-identity:code/{models.py,README_identity.md,identity_resolver.py}
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T15:24:16Z] Hold dict findings interface pending P3 approval
+
+User Prompt (verbatim, secrets redacted):
+Continue P2 integration in TRACE. P1's identity adapter is ready on p1-identity. P3 is being asked to approve a simple dictionary-based findings interface instead of EvidenceFindings dataclasses. Do not implement until the agreed interface is confirmed. [Once approved: read README_identity.md; SubjectIdentifiers(**identity.as_subject_kwargs()); identity.history for provenance and audit IDs; respect audit_at; one minimal integration function returning records, latest_by_resource, referenced_resources, absence_proofs, identifier_provenance; keep EvidenceScanner.find_records unchanged; load scanner once; keep WEAK/conflict safeguards; no changes to P1's branch, main.py or P3; add integration tests and run the suite; no commit/push/merge; report files, tests, git status.]
+
+Agent Response Summary:
+Did not implement, because P3 has not yet confirmed the dictionary interface. Wrote out the exact proposed find_evidence(identity, audit_at) signature and returned-dict schema (five keys, provenance entry shape, validation rules) and listed the four points P3 must confirm. No source files changed.
+
+Actions:
+* None besides this log entry
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T15:31:57Z] Implement P2 integration layer (find_evidence)
+
+User Prompt (verbatim, secrets redacted):
+Continue P2 integration work in TRACE. P1 and P3 have now confirmed the integration contract. Read AGENTS.md and code/README_identity.md completely before implementation. [Create code/evidence/integration.py using SubjectIdentifiers(**identity.as_subject_kwargs()); return exactly records, latest_by_resource, referenced_resources, absence_proofs, identifier_provenance (keyed by (kind, normalized_value) with source, audit_id, event_time); document in code/evidence/README.md; keep scanner APIs unchanged; historical identity per README_identity.md (audit_id, event_time, changes at or before audit_at, keep evidence captured after a change, computed hashes without invented audit IDs, ValueError for history after audit_at); audit_at validation (missing/naive ValueError, non-datetime TypeError, one aware cutoff); absence proofs for referenced resources and confirmed observations with known system_id, deduplicated, no claims, only valid COMPLETE uncontradicted proofs; WEAK/conflict safeguards; get_scanner cached per resolved dataset dir and OCR mode; integration tests listed; no changes to P1's branch, main.py, evidence_search.py, P3; no commit/push/merge; preserve uncommitted work and append-only log; run full suite and live OCR; report.]
+
+Agent Response Summary:
+Created code/evidence/integration.py with find_evidence(identity, audit_at, *, scanner=None, dataset_dir=None, ocr_mode="auto") -> dict (exactly the five keys), identifier_provenance(...) and get_scanner(...), using only P1's documented attributes and the unchanged scanner APIs. Added tests/test_integration.py (31 tests) and appended the dictionary contract to code/evidence/README.md. Smoke run with P1's committed resolver from a scratch export: all 550 requests, 0 errors, scanner loaded once. Full suite 235 passed, 1 skipped; live OCR passed; scan and example exit 0. Earlier uncommitted A-C work verified unchanged by SHA-256 (README changed only by appended lines).
+
+Actions:
+* Created code/evidence/integration.py, code/tests/test_integration.py
+* Edited code/evidence/README.md (appended integration section and one layout-table row)
+* Ran pytest (235 passed, 1 skipped), RUN_OCR_TESTS=1 pytest -m ocr (1 passed), code/evidence/__main__.py (exit 0), example_integration.py (exit 0); smoke script in the session scratchpad against P1's exported resolver
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T16:14:37Z] Add case-row entry point to P2 integration layer
+
+User Prompt (verbatim, secrets redacted):
+Implement the P2 integration layer in this repository, following the agreed P1/P2/P3 contract. [Before editing: inspect branch and tree; preserve uncommitted changes especially log.txt; no reset, stash, discard, commit or push; do not modify code/main.py, P1's code/evidence_search.py or P1's branch. Create code/evidence/integration.py with a minimal function that accepts P1's IdentityBundle and the case dictionary, uses SubjectIdentifiers(**identity.as_subject_kwargs()), validates audit_at (missing/naive ValueError, non-datetime TypeError), uses EvidenceScanner unchanged, returns exactly records, latest_by_resource, referenced_resources, absence_proofs, identifier_provenance; historical identifiers at or before audit_at without filtering by when they stopped being current; audit IDs and event times in provenance; weak/conflicting kept but unconfirmed; confirmed latest; references without fabricated observations; absence proofs only for references or confirmed observations with known system_id, deduplicated, COMPLETE by default, no claims; cache scanner by resolved dataset dir and OCR mode. Add focused tests; run suite; report commands, counts, files, failures.]
+
+Agent Response Summary:
+integration.py already existed (uncommitted) from the previous turn with find_evidence(identity, audit_at); it was preserved and extended additively. Asked two clarifying questions: string case["audit_at"] values are parsed only with an explicit offset (user chose this), and absence proofs stay COMPLETE and uncontradicted (user chose this). Added case_audit_at(case) and find_case_evidence(identity, case), 17 new tests in tests/test_integration.py and a README note. Full suite 252 passed, 1 skipped; integration tests 48 passed; live OCR passed; all 550 raw CSV rows run through P1's exported resolver and find_case_evidence with 0 errors.
+
+Actions:
+* Edited code/evidence/integration.py (added case_audit_at, find_case_evidence; no existing lines removed)
+* Edited code/tests/test_integration.py (added 17 tests), code/evidence/README.md (added case entry-point note)
+* Ran cd code && python -m pytest -q -rs (252 passed, 1 skipped); pytest tests/test_integration.py (48 passed); RUN_OCR_TESTS=1 pytest -m ocr (1 passed); scratch real-data run with P1's exported resolver
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-04T17:19:05Z] Describe pytest errors and failures
+
+User Prompt (verbatim, secrets redacted):
+give a description of all the pytest errors and failures just encountered
+
+Agent Response Summary:
+Re-ran every relevant test invocation after finding the branch now includes merge commit e10a80c (origin/main with P1's files) on top of 6730d74. No errors or failures in any run: P2 suite 252 passed 1 skipped; repo-root pytest 366 passed 1 skipped 587 subtests with one PytestUnknownMarkWarning for pytest.mark.ocr; P1 unittest discover 114 OK; live OCR 1 passed. Noted that P1's updated evidence_search.find_records docstring specifies referenced_resources as list[dict] and identifier_provenance as dict[str, list[str]], which differs from P2's current integration output; no test covers that.
+
+Actions:
+* git status / git log; cd code && pytest -q -rs; repo-root pytest -q and pytest -q code; python -m unittest discover -s code -p "test_*.py"; RUN_OCR_TESTS=1 pytest -m ocr; read code/evidence_search.py
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=feature/evidence-scanner
+repo_root=C:/Users/charv/OneDrive/Desktop/trace/TRACE
+worktree=main
+parent_agent=none

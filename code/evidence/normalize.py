@@ -134,7 +134,9 @@ _prefix_alt = "|".join(re.escape(p) for p, _ in RESOURCE_PREFIX_SYSTEM)
 # "1data_flow_9846" still match. A trailing letter/underscore rejects
 # file names like "support_7731_thumb".
 RESOURCE_ID_RE = re.compile(rf"(?<![A-Za-z_])(?:{_prefix_alt})\d+(?![A-Za-z_])", re.I)
-FILE_NAME_RE = re.compile(r"(?<![\w/])[A-Za-z0-9][\w\-]*\.(?:pdf|zip|jpg|jpeg|png|csv|tar\.zst)(?![\w])", re.I)
+# Whole file-name tokens only: the lookbehind also rejects '-' and '.', so a
+# fragment such as "31.tar.zst" is never cut out of "segment-31.tar.zst".
+FILE_NAME_RE = re.compile(r"(?<![\w/\-.])[A-Za-z0-9][\w\-]*\.(?:pdf|zip|jpg|jpeg|png|csv|tar\.zst)(?![\w])", re.I)
 
 CANONICAL_SYSTEMS = {s for _, s in RESOURCE_PREFIX_SYSTEM}
 
@@ -232,7 +234,11 @@ QUERY_KEY_FIELDS = {
     "correlation_key", "lookup_value", "query",
 }
 FREE_TEXT_FIELDS = {"message_text", "message_excerpt", "detail", "details"}
-FILE_FIELDS = {"file_name", "file", "archive_path", "archive_key", "object_key"}
+# Fields whose value is a subject-specific file name (attachments, exports).
+# Storage locations (archive_path, archive_key, object_key) are deliberately
+# excluded: backup segments and generic object names ("segment-31.tar.zst",
+# "customer_data.zip") are shared, so linking on them joins unrelated people.
+FILE_FIELDS = {"file_name", "file"}
 
 # Collection / table name -> data category.
 COLLECTION_CATEGORY: dict[str, str] = {
