@@ -74,3 +74,19 @@ All four pages share the existing `GET /api/cases` response:
 The server adds only operational request metadata to the presentation adapter. Raw email, request text, identity values and evidence paths remain excluded. Audit decisions and remediation order stay unchanged. Live failures, invalid data and empty responses never load demo fixtures; errors remain visible with Retry. Demo mode requires an explicit setting. Refresh preserves a selected case when it still exists and ignores aborted responses.
 
 Checks: `python -m pytest code/tests/test_slack.py`, `npm.cmd test --prefix code/frontend`, and `npm.cmd run build --prefix code/frontend`. The tests cover live loading, all four consumers, malformed/duplicate responses, empty results, network failures and cancellation. Existing Slack HTML report/security tests remain included. Resend's approval and delivery package is unchanged; mounting its router and adding email approval controls remain a separate integration task.
+
+
+## Phase 3: investigation review
+
+Open any real case from Overview or Investigations. The detail-view case selector retains access to all loaded cases and resets the finding focus and active tab when switching cases. Review the workflow claim beside the backend audit status and audit cutoff.
+
+- Findings focus the supplied resource in the existing 3D graph. Empty findings do not imply deletion is complete.
+- Actions and Verification retain backend step order and show the required state. Future checks are labeled pending; evidence-cited checks for COMPLETE results are labeled as verification at the audit cutoff.
+- Evidence lists the case's evidence IDs, available capture times, related findings and cited steps. Missing metadata is explicitly marked unavailable; no artifact paths or raw evidence are exposed.
+- Graph node details include the corresponding findings, citations, recommendations and verification checks. Existing graph rendering and controls remain intact.
+- Send Slack report continues to use the existing protected route and private HTML upload workflow. Feedback remains tied to the case sent, including when another case is selected during delivery.
+- Email approval is visibly disabled until Member Two supplies the secure adapter. No email API routes or Resend integration have been added.
+
+The requested `code/integrations/email/INTEGRATION_PLAN.md` was absent from this checkout; the existing shared contract and package README were inspected, and the strict email boundary above takes precedence. The engine's CaseAuditResult and the email package are unchanged.
+
+Verification: `npm.cmd test --prefix code/frontend`, `npm.cmd run build --prefix code/frontend`, and `python -m pytest code/tests/test_slack.py`. Check a COMPLETE, INCOMPLETE and NOT_APPLICABLE case in live mode, switch cases after reviewing evidence, and confirm the case header, tabs, graph and communication feedback stay aligned. A real Slack check must include both successful upload/link retrieval and authenticated HTML download; text-only success is not a valid verification.

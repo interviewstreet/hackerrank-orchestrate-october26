@@ -50,5 +50,5 @@ export function nodeDetails(result: CaseResult, node: GraphNode) {
   const findings = result.findings.filter(f => f.resource_id === node.id || (['SYSTEM', 'BACKUP'].includes(node.type) && f.system_id === node.system_id));
   const evidenceIds = new Set([...(node.evidence_ids || []), ...findings.map(f => f.evidence_id)].filter(Boolean));
   const resources = new Set([node.id, ...findings.map(f => f.resource_id)]);
-  return { findings, evidence: result.evidence.filter(e => evidenceIds.has(e.id)), evidenceIds: [...evidenceIds], actions: result.steps.filter(s => s.phase === 'REMEDIATION' && resources.has(s.resource_id)) };
+  return { findings, evidence: result.evidence.filter(e => evidenceIds.has(e.id)), evidenceIds: [...evidenceIds], actions: result.steps.filter(s => s.phase === 'REMEDIATION' && resources.has(s.resource_id)), verification: result.steps.filter(s => s.phase === 'VERIFICATION' && resources.has(s.resource_id)) };
 }
