@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from evidence_search import find_records, get_scanner
 from identity_resolver import IdentityResolver
-from models import ClassificationResult
+from models import EVIDENCE_KEYS, ClassificationResult
 from policy_engine import PolicyContext, configure, decide
 from request_classifier import classify_request
 from step_builder import build_steps
@@ -48,6 +48,19 @@ def _case_sort_key(case_id: str) -> tuple:
     return (m.group(1), int(m.group(2))) if m else (case_id, -1)
 
 
+def _check_evidence(evidence, case_id: str) -> None:
+    """Enforce the P2 -> P3 contract (CONTRACTS.md, section 1)."""
+    if not isinstance(evidence, dict):
+        raise TypeError(f"find_records() must return a dict, got {type(evidence).__name__}")
+    missing = [k for k in EVIDENCE_KEYS if k not in evidence]
+    if missing:
+        raise KeyError(f"find_records() result is missing key(s): {', '.join(missing)}")
+    extra = sorted(set(evidence) - set(EVIDENCE_KEYS))
+    if extra:
+        warn(f"{case_id}: find_records() returned extra key(s) {', '.join(extra)}; "
+             "add them to CONTRACTS.md if P3 should use them")
+
+
 def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str]:
     """
     Return (deletion_status, steps, classifier_label) for one request row.
@@ -63,7 +76,10 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
 
     audit_at = parse_ts(case.get("audit_at"), context=f"{case_id} audit_at")
     if audit_at is None:
-        warn(f"{case_id}: no audit_at, so identifiers are not time-filtered")
+        # No cut-off means we cannot tell which evidence is allowed, so we
+        # never search without one (P2's request).
+        warn(f"{case_id}: no audit_at, so evidence cannot be time-filtered; output INCOMPLETE []")
+        return "INCOMPLETE", [], cls.label
 
     # Empty requested_at -> warning; the resolver then looks up the owner at audit_at
     requested_at = parse_ts(case.get("requested_at"), context=f"{case_id} requested_at")
@@ -74,9 +90,14 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
         warn(f"{case_id}: email could not be resolved to a user; output INCOMPLETE []")
         return "INCOMPLETE", [], cls.label
 
-    records = find_records(identity, case)
+    # P2 needs audit_at as an aware UTC datetime, not the CSV string.
+    # Copy the case so the original row is not changed.
+    evidence_case = dict(case)
+    evidence_case["audit_at"] = audit_at
+    evidence = find_records(identity, evidence_case)
+    _check_evidence(evidence, case_id)
 
-    decision = decide(identity, records, case)
+    decision = decide(identity, evidence, case)
     if not isinstance(decision, dict):
         raise TypeError(f"decide() must return a dict, got {type(decision).__name__}")
     status = decision.get("deletion_status")

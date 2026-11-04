@@ -2,16 +2,19 @@
 policy_engine.py — Stage 3: deletion-policy and evidence validation
 (owner: Person 3).
 
-    decide(identity, records, case) -> dict
+    decide(identity, evidence, case) -> dict
 
-Inputs
+Inputs (code/CONTRACTS.md, section 1)
 ------
 identity  P1's IdentityBundle (current + historical identifiers at audit_at).
-records   P2's ObservedRecord list from evidence_search.find_records()
-          (scanner.find_records(SubjectIdentifiers(**identity.as_subject_kwargs()),
-          audit_at)). An empty list is fine: decide() queries the scanner
-          itself for resources it links through catalog and workflow
-          activity.
+          None (unresolved subject) gives INCOMPLETE with nothing verified.
+evidence  The P2 -> P3 dict from evidence_search.find_records(), keys
+          models.EVIDENCE_KEYS. decide() uses evidence["records"]
+          (P2's ObservedRecord list at audit_at). It re-derives copy state
+          and re-validates absence proofs itself (see 3. below), and it also
+          queries the scanner for resources that activity links (catalog,
+          workflow). An ObservedRecord list is still accepted for direct
+          unit-test calls.
 case      the deletion_requests.csv row.
 
 What it does
@@ -44,6 +47,9 @@ Decision dict
   "remediation":  [...],
   "verification": [...],
   "resources":    [per-resource assessment, for audit trail / debugging],
+  "flows":        [CONTRACTS.md section 2 proposal: data-flow resources],
+  "restore_risks":[CONTRACTS.md section 2 proposal: backup / restore resources],
+  "timeline":     [CONTRACTS.md section 2 proposal; not built yet, always []],
   "conflicts":    [same-instant authoritative conflicts],
   "unverified":   [required states that evidence could not prove],
   "notes":        [str],
@@ -561,20 +567,52 @@ def _facts(category: str, r: Optional[ObservedRecord], audit_at: datetime, reque
 # ==========================================================================
 # decide()
 # ==========================================================================
-def decide(identity: IdentityBundle, records: list, case: dict,
+def _undecidable(case_id: str, identity: Optional[IdentityBundle], note: str) -> dict:
+    """INCOMPLETE with nothing verified: the state at audit_at cannot be
+    established, so nothing may be claimed complete."""
+    return {"case_id": case_id, "deletion_status": "INCOMPLETE", "findings": [], "remediation": [],
+            "verification": [], "resources": [], "flows": [], "restore_risks": [], "timeline": [],
+            "conflicts": [], "unverified": [],
+            "identity": {"user_id": getattr(identity, "user_id", None), "history_audit_ids": []},
+            "notes": [note]}
+
+
+def _evidence_records(evidence: Any) -> list:
+    """ObservedRecords from the P2 -> P3 dict (CONTRACTS.md section 1), or
+    from a plain record list (direct unit-test calls)."""
+    if evidence is None:
+        return []
+    if isinstance(evidence, dict):
+        return list(evidence.get("records") or [])
+    return list(evidence)
+
+
+def _process_entry(a: "Assessment", kind: str) -> dict:
+    """CONTRACTS.md section 2 flow / restore-risk entry for one assessment."""
+    entry = {"system_id": a.system_id, "resource_id": a.resource_id,
+             "active_at_audit": a.finding is not None,
+             "evidence_id": a.finding_evidence or a.verification_evidence}
+    if kind:
+        entry = {**entry, "kind": kind}
+    return entry
+
+
+def decide(identity: Optional[IdentityBundle], evidence: Any, case: dict,
            context: Optional[PolicyContext] = None) -> dict:
-    """Apply deletion_rules.csv to every record of the subject and decide the case."""
-    ctx = context or get_context()
+    """Apply deletion_rules.csv to every record of the subject and decide the case.
+
+    ``evidence`` is the P2 -> P3 dict from evidence_search.find_records()
+    (an ObservedRecord list is also accepted)."""
     case_id = case.get("case_id", "")
+    if identity is None:
+        warn(f"{case_id}: no resolved identity; deletion cannot be verified")
+        return _undecidable(case_id, None, "identity unresolved: subject's records cannot be established")
     audit_at = parse_ts(case.get("audit_at"), context=f"{case_id} audit_at")
     if audit_at is None or not _aware(audit_at):
-        # Without a cutoff the state "at audit_at" cannot be established, so
-        # nothing can be verified and nothing may be claimed complete.
         warn(f"{case_id}: no usable audit_at; deletion cannot be verified")
-        return {"case_id": case_id, "deletion_status": "INCOMPLETE", "findings": [], "remediation": [],
-                "verification": [], "resources": [], "conflicts": [], "unverified": [],
-                "identity": {"user_id": identity.user_id, "history_audit_ids": []},
-                "notes": ["audit_at missing: state at the cutoff cannot be established"]}
+        return _undecidable(case_id, identity, "audit_at missing: state at the cutoff cannot be established")
+    ctx = context or get_context()
+    records = _evidence_records(evidence)
     requested_at = parse_ts(case.get("requested_at"), context=f"{case_id} requested_at") or audit_at
     notes: list[str] = []
     conflicts: list[dict] = []
@@ -702,6 +740,9 @@ def decide(identity: IdentityBundle, records: list, case: dict,
         "remediation": _ordered(remediation, REMEDIATION_OPS),
         "verification": _ordered(verification, VERIFICATION_OPS),
         "resources": [a.as_dict() for a in assessments],
+        "flows": [_process_entry(a, DATA_FLOW) for a in assessments if a.category == DATA_FLOW],
+        "restore_risks": [_process_entry(a, "") for a in assessments if a.category == BACKUP],
+        "timeline": [],
         "conflicts": conflicts,
         "unverified": unverified,
         "identity": {"user_id": identity.user_id, "history_audit_ids": [h.audit_id for h in history]},

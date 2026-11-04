@@ -23,6 +23,12 @@ INFERRED = "INFERRED"      # coverage inferred (e.g. from sibling tables); not p
 INCOMPLETE = "INCOMPLETE"  # the file had parse issues; never proof by default
 COMPLETENESS_VALUES = (COMPLETE, INFERRED, INCOMPLETE)
 
+# Match strength of a query result (ObservedRecord.match_strength)
+STRONG = "STRONG"  # direct match on email / phone / email_hash / user_id / supplied resource_id
+LINKED = "LINKED"  # reached from a confirmed observation via resource id / attachment file name
+WEAK = "WEAK"      # exact full-name match only; never establishes ownership
+MATCH_STRENGTHS = (STRONG, LINKED, WEAK)
+
 
 @dataclass(frozen=True)
 class EvidenceFile:
@@ -114,6 +120,23 @@ class ObservedRecord:
                         scans, documents, screenshots).
       source_format, locator, subject_reference, linked_terms: provenance and
                         linking data (``linked_terms`` are normalised index terms).
+
+    Query-time fields (set on the copies returned by find_records; empty on
+    the stored corpus records):
+      match_strength    STRONG  matched directly by email / phone / email_hash /
+                                user_id / supplied resource_id;
+                        LINKED  reached by following a resource id or attachment
+                                file name from a confirmed (STRONG, non-conflicting,
+                                non-claim) observation; see ``linked_via``;
+                        WEAK    matched by an exact full name only. A name alone
+                                never establishes ownership.
+      identity_conflict True when the record's own identity signals disagree
+                        with the subject (e.g. the subject's email but another
+                        user_id). The record is still returned, unconfirmed.
+      conflict_details  human-readable description of each disagreement.
+      linked_via        for LINKED records: "evidence_id@locator" of the
+                        observation(s) the link was followed from, or
+                        "supplied:resource_ids" for caller-supplied ids.
     """
 
     evidence_id: str
@@ -134,10 +157,53 @@ class ObservedRecord:
     locator: str = ""  # line number / table / JSON path inside the file
     subject_reference: Optional[str] = None  # stable user_id when exposed
     linked_terms: frozenset[tuple[str, str]] = field(default_factory=frozenset)
+    # --- query-time identity assessment (see docstring) --------------------
+    match_strength: str = ""
+    identity_conflict: bool = False
+    conflict_details: tuple[str, ...] = ()
+    linked_via: tuple[str, ...] = ()
 
     @property
     def latest_key(self) -> tuple[str, str, Optional[str]]:
         return (self.system_id, self.resource_id, self.replica_or_table)
+
+    @property
+    def is_confirmed(self) -> bool:
+        """STRONG or LINKED, and no identity conflict."""
+        return self.match_strength in (STRONG, LINKED) and not self.identity_conflict
+
+
+@dataclass(frozen=True)
+class ResourceReference:
+    """A resource id named *inside* a confirmed, authoritative, in-window
+    observation of the subject (e.g. ``source_resource_id``).
+
+    It is a pointer, not an observation: the referenced resource may have no
+    observation at all (``has_observations`` is False). Use
+    ``EvidenceScanner.records_for_resource`` / ``absence_proofs`` on it.
+
+    Fields:
+      resource_id          the referenced id, as written in the evidence.
+      system_id            owning system inferred from the id prefix (or None).
+      source_evidence_id   manifest file_id of the referencing observation.
+      source_locator       locator of the referencing observation in that file.
+      source_system_id, source_resource_id   the referencing observation.
+      source_field         payload field holding the reference, if identifiable.
+      source_observed_at, source_captured_at timestamps of the referencing observation.
+      has_observations     whether the referenced resource has any in-window
+                           observation in the corpus (subject-independent).
+    """
+
+    resource_id: str
+    system_id: Optional[str]
+    source_evidence_id: str
+    source_locator: str
+    source_system_id: str
+    source_resource_id: str
+    source_field: Optional[str]
+    source_observed_at: datetime
+    source_captured_at: datetime
+    has_observations: bool
 
 
 @dataclass(frozen=True)
