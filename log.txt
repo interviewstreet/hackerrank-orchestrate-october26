@@ -525,3 +525,36 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-04T21:24:29Z] SESSION START
+
+tool=Claude Code
+model=claude-sonnet-5-5
+Repo Root: /home/claude/rachanashende/erasight
+Branch: member-2-backend-resend
+Worktree: main
+Parent Agent: none
+Language: py
+Time Remaining: not configured
+
+## [2026-11-04T21:24:29Z] Section D: packaging, docs and handoff
+
+User Prompt (verbatim, secrets redacted):
+c track done, d track from prd (attached: PRD_todo_final.md)
+
+Agent Response Summary:
+Treated Section C as done (verified: 156 tests pass with fastapi installed, 147 plus 1 skip without) and did Section D. Rewrote README.md (it was still the starter text), added code/CONTRACT.md for Member 1, built code.zip (88 files, no dataset, caches, archives or secrets), fixed stale numbers in PRD_done.md and replaced PRD_todo.md with PRD_todo_final.md. output.csv and the two reports were not regenerated because the engine did not change; regenerating on this Linux sandbox flips case_34 (COMPLETE to INCOMPLETE), so the committed laptop-generated output.csv was kept. agent-trace.zip was not built because the earlier session traces are not in this sandbox; added build_agent_trace.py to collect and secret-scan them on the laptop. Nothing was pushed.
+
+Actions:
+* Cloned rachanashende/erasight (read-only) on branch member-2-backend-resend; ran pytest and python code/main.py (output.csv restored with git checkout after the case_34 difference)
+* Wrote README.md, code/CONTRACT.md, PRD_todo_final.md, build_agent_trace.py; edited PRD_done.md and .gitignore; git rm PRD_todo.md
+* Built code.zip with zip and verified it by unpacking with dataset/ beside it (main.py validation OK, tests pass)
+* Tested build_agent_trace.py on fake session folders (clean run, secret blocked, rescan, no match)
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/rachanashende/erasight
+worktree=main
+parent_agent=none

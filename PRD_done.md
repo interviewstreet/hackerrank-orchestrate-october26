@@ -11,7 +11,7 @@ Sections are independent; each one lists its files and how to check it.
 ## Section 1: Repo, logging, git: DONE
 - Repo at `Desktop/EraSight`, branch `member-2-backend-resend`.
 - `.gitignore` covers `.env`, caches, venvs.
-- `log.txt` has entries up to "Core engine, accuracy tuning and output.csv generation". Each new session must append its own entry (tool=Claude Code, model=claude-sonnet-5-5).
+- `log.txt` is append-only and holds an entry for every session and turn (it is the `chat_transcript` submission). Each new session must append its own entry (tool=Claude Code, model=claude-sonnet-5-5).
 - Commits carry the `Co-Authored-By` and `Claude-Session` trailers.
 
 ## Section 2: Dataset loader and evidence parsers: DONE
@@ -45,16 +45,15 @@ Files: `code/main.py`, `engine/pipeline.py`, `engine/validate_output.py`, root `
 ## Section 7: Evaluator: DONE
 File: `code/evaluation/main.py`.
 
-Latest sample results (32 cases):
+Latest sample results (32 cases; measured values from `code/evaluation/evaluation_report.md`):
 | Metric | Value |
 |---|---|
 | deletion_status accuracy | 32/32 |
-| Exact-case match | 26/32 |
-| Step precision / recall / F1 | about 0.99 / 0.97 / 0.98 |
-| Evidence-id accuracy | about 0.97 |
-| Sequence similarity | about 0.97 |
+| Exact-case match | 27/32 |
+| Step precision / recall / F1 | 100.0% / 96.9% / 98.4% (187 matched of 187 predicted, 193 expected) |
+| Field accuracy (phase, system, resource, operation, state, evidence id) | 96.9% each |
+| Sequence similarity | 97.9% |
 
-Sample results above are from the latest run (exact-case 27/32, step precision 100%, recall 96.9%).
 Known remaining sample gaps (6 missing steps, no wrong steps): case_04 `account_004` (appears in no evidence), cases 18 and 20 missing an audit record, case_23 `account_410`, case_24 `account_5334` (remediation for it).
 
 ## Assumptions to mention in the evaluation report
@@ -70,7 +69,7 @@ Known remaining sample gaps (6 missing steps, no wrong steps): case_04 `account_
 
 ## Section 9: Tests: DONE (was TODO Section B)
 - `pytest code/tests` runs 30 tests (classifier, identity incl. lookalikes, pipeline accuracy floors and determinism, policy/time invariants, output validation, custom cases). Install with `pip install pytest`. No network used.
-- Email tests are not written yet (they belong to Section C).
+- Email tests were added later in Section 12. Current total with `fastapi` and `httpx` installed: 156 tests pass (147 pass and 1 skips without `fastapi`).
 
 ## Fixes made while building Sections 8 and 9 (found by the new cases)
 - Spanish/other-language deletion verbs were missed; vocabulary broadened.
@@ -78,13 +77,13 @@ Known remaining sample gaps (6 missing steps, no wrong steps): case_04 `account_
 - A case with nothing attributable could return COMPLETE with no steps; COMPLETE now needs at least one proven-compliant resource.
 - Resources known only from evidence older than the request are not claimed (case_07/case_61 behaviour); `output.csv` regenerated (only case_61 changed).
 
-## Section 10: Advisory language-model layer: BUILT, not yet run against a live model
+## Section 10: Advisory language-model layer: BUILT and live-tested on Groq
 Files: `code/advisor/{llm_client,review,explain,advisor}.py`, `code/advise.py`, `code/tests/test_advisor.py`, `.env.example`.
 - Decisions stay rule-based. The layer only adds a plain-language explanation and a "needs human review" flag; it never edits `output.csv`.
 - Deterministic triggers choose which cases get a model call (unresolved identity, possible lookalike email, mixed wording, no attributable records). On the 518 requests 6 are flagged; all others get a template explanation with no call.
 - Safety: the model's JSON is rejected if malformed or if it cites any resource/evidence id the engine did not produce; any failure falls back to the template. The client is provider-neutral: an OpenAI-compatible gateway (AgentRouter) via `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` in `.env`, or Anthropic if `LLM_PROVIDER=anthropic`. The key is never logged.
 - Run: `python code/advise.py` (templates, no key) or `python code/advise.py --model [--limit N]` (writes `explanations.json` and `code/evaluation/advisor_usage.json`). `python code/evaluation/generate_reports.py` then reports the real calls and tokens in `usage_report.md`.
-- 13 unit tests use a fake model (44 tests pass in total). **Not yet tested with the real API: this needs the key.**
+- 13 unit tests use a fake model. A live Groq run was done later (6 flagged cases plus the 3-call lookalike demo); see `code/evaluation/usage_report.md` for the real calls and tokens.
 
 ## Section 11: Gap-closing round (tests, mini dataset, advisor checks): DONE
 - `code/tests/minidata.py` + `test_mini_dataset.py`: a tiny invented dataset (4 customers, 3 evidence files, 6 requests) with fully hand-derived expected steps (lookalike, restore risk, active flow, negated request, absence proven by a later snapshot, audit before evidence). 6/6 exact. No dependency on `dataset/`.
@@ -102,8 +101,19 @@ Files: `code/integrations/email/*` (config, models/state machine, SQLite store, 
 - 76 new tests, all with a fake Resend (no real email); email package coverage about 97%. A live send has NOT been tried: it needs `RESEND_API_KEY`, a verified `RESEND_FROM_EMAIL` and `RESEND_WEBHOOK_SECRET` in `.env`.
 - Note: regenerating `output.csv` on the Linux sandbox changed one row (case_34) with no engine change, probably an OCR/tool-version difference; the committed `output.csv` was left as is.
 
+## Section 13: Packaging, docs and handoff (TODO Section D): DONE except the agent trace, which needs Rach's laptop
+- `README.md` rewritten (it was the HackerRank starter text): requirements (Python 3.10+, `pdftotext`, `tesseract`), setup, run commands, environment-variable table, tests, reports, advisory layer, email integration, layout and known limits.
+- `code/CONTRACT.md`: shared contract for Member 1 (output.csv format, `run_all_cases` result shape with graph data, email router interface and error codes).
+- `code.zip` built at the repo root (88 files, about 123 KB): `README.md`, `requirements*.txt`, `.env.example` and `code/`. Checked: no dataset, caches (`code/.cache/` holds OCR text of dataset evidence and is excluded), `__pycache__`, databases, archives or secrets. Unpacked with `dataset/` beside it, `main.py` validates and the tests pass. Rebuild with the rebuild command below if anything under `code/` changes.
+- `output.csv` and the two reports were deliberately NOT regenerated: the engine did not change, and regenerating here changes `case_34` (see Section 12 note), which would make the committed output and reports disagree. `output.csv` still validates: 518 rows, 156 COMPLETE, 352 INCOMPLETE, 10 NOT_APPLICABLE.
+- Agent trace: `agent-trace.zip` has NOT been built. The session files live on the machines where the earlier sessions ran, not in this sandbox. `build_agent_trace.py` (repo root, not in `code.zip`) collects `~/.claude/projects/*erasight*`, scans for secrets and zips; add `/export` transcripts and the Claude web-app export by hand.
+- Older PRDs: stale numbers fixed in this file; `PRD_todo.md` replaced by `PRD_todo_final.md`.
+
+Rebuild command (from the repo root):
+`zip -r code.zip README.md requirements.txt requirements-dev.txt .env.example code -x "*/__pycache__/*" "*/.cache/*" "*/.pytest_cache/*" "*/.venv/*" "*/venv/*" "*/.git/*" "*/.DS_Store" "*.pyc" "*/.coverage" "*.db" "*.db-*" "*.zip" "*.tar" "*.gz" "*.tgz" "*.7z" "*.rar"`
+
 ## Still open after this round (be honest in the interview)
 - Sample cases 04, 18, 20, 23, 24: 6 steps missing. Cases 04, 18, 20 reference ids (`account_004`, `audit_record_6645`, `audit_record_5569`) that appear in no evidence or activity, so they cannot be derived without guessing. Case 23 (`account_410`) has 3 equally plausible worker activities. Case 24 (`account_5334`) depends on whether an empty JSON snapshot outranks a live lookup: switching rules fixed case 24 but broke case 31, so the original rule stays.
 - The other 486 requests have no answer key; behaviour there is checked only by invariants and by the mini dataset.
-- Live-model runs: only the 6 mixed-wording cases ran live. The lookalike demo (`python code/advise.py --demo --model`) has not been run live yet. Cost is not computed until Groq prices are set in `.env`.
+- Live-model runs: the 6 flagged cases and the 3-call lookalike demo both ran live on Groq (`usage_report.md`). Cost is not computed until Groq prices are set in `.env`.
 - Explanations can now be used as an internal email draft body (Section 12); the UI wiring is Member 1's.
