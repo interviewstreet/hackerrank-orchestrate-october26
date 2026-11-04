@@ -1,10 +1,22 @@
 # P3 → P4 contract confirmation (P4)
 
-**Status: AWAITING P3 CONFIRMATION.** This document records what the code
-does today (`policy_engine.decide()` → `step_builder.build_steps()`) and how
-that compares with the proposal in `CONTRACTS.md` sections 2 and 3, which are
-still marked "PROPOSAL, P3 and P4 to confirm". Nothing here has been approved
-by P3 yet. `CONTRACTS.md` has not been changed.
+**Status: P3 CONFIRMATION COMPLETE.** P3 reviewed commit `e72909a` and
+approved the implementation and tests. One item is still an **OPEN TEAM
+QUESTION**: a retained record missing at `audit_at` (§6 item 5).
+
+This document records what the code does today
+(`policy_engine.decide()` → `step_builder.build_steps()`) and how that
+compares with the proposal in `CONTRACTS.md` sections 2 and 3. Those sections
+are still marked "PROPOSAL, P3 and P4 to confirm" because `CONTRACTS.md` has
+not been changed yet.
+
+### Decisions confirmed by P3
+
+1. **`decide()` owns all policy decisions.** It decides which records, flows and restore paths are relevant, which operation each one gets, the `deletion_status`, the evidence cited, and the order inside each phase.
+2. **`build_steps()` only constructs, validates and numbers steps.** It must not make policy decisions or independently reorder policy results.
+3. **Numeric natural sorting of `resource_id` is confirmed.** For example, `account_9` comes before `account_10`.
+4. **`decide()` returns only `COMPLETE` or `INCOMPLETE`.** `NOT_APPLICABLE` comes from P1's classifier in `main.py`. `decide()` is not called for those requests.
+5. **Every `INCOMPLETE` case has at least one finding.**
 
 Checked against: `AGENTS.md` §6.3–6.6, `code/CONTRACTS.md`,
 `code/policy_engine.py`, `code/step_builder.py`, `code/main.py`,
@@ -88,18 +100,18 @@ redacted, `RETAIN` → verify present only, and so on) is now applied inside
 
 - Phases are written in the order FINDING, then REMEDIATION, then VERIFICATION (`_PHASE_KEYS` in `step_builder.py`).
 - Inside each phase, P3 sorts by the position of the operation in the AGENTS.md §6.4 table, then by `system_id`, then by `resource_id`. Within REMEDIATION, this puts `DISABLE_DATA_FLOW` and `BLOCK_RESTORE` before `DELETE`, `REDACT` and `ANONYMIZE`.
-- **`resource_id` uses numeric natural ordering, not lexical ordering.** P3's `_rid_key()` in `policy_engine.py` splits the id into a prefix and a trailing number and compares the number as an integer, so `account_9` comes before `account_10`. This is existing P3 behaviour. `tests/test_policy_engine.py::test_resource_ids_use_numeric_natural_sorting` now covers it as a regression test.
+- **`resource_id` uses numeric natural ordering, not lexical ordering.** P3's `_rid_key()` in `policy_engine.py` splits the id into a prefix and a trailing number and compares the number as an integer, so `account_9` comes before `account_10`. This is existing P3 behaviour, and P3 has confirmed it. `tests/test_policy_engine.py::test_resource_ids_use_numeric_natural_sorting` covers it as a regression test. The test checks both `decide()`'s findings and the FINDING steps that `build_steps()` produces.
 - P3 removes duplicate `(system_id, resource_id.lower(), operation)` entries.
 - `step_no` runs consecutively from 1 across the whole case. P4 assigns it, and any input `step_no` is ignored.
 - P4 keeps P3's order, including the natural `resource_id` order, and does not re-sort.
 - The result is the same as the proposal's single global sort, because the operation table is already grouped by phase.
 
-## 6. Ambiguities and open points that need P3's decision
+## 6. Ambiguities and open points, with P3's answers
 
-1. **Interface change.** `CONTRACTS.md` §2–3 still describes the old proposal (P4 maps resources to operations and sorts). The code uses pre-built step lists from P3. Section 1 of this document needs approval as the real contract, and `CONTRACTS.md` should then be updated.
-2. **`resource_id` tie-break: documented as numeric natural ordering.** The `CONTRACTS.md` proposal says only "sort by `resource_id`", which could be read as lexical order. The implemented and tested behaviour is numeric natural ordering through P3's `_rid_key()` (`account_9` before `account_10`; see section 5). A regression test now covers it. In the 32 public samples and the current 518-case output, natural and lexical order never disagree, so no row depends on this today. P3 only needs to acknowledge the wording when `CONTRACTS.md` is updated.
-3. **Status mismatch guard.** If `decide()` ever returned a status other than `COMPLETE` or `INCOMPLETE`, `main.py` would write `INCOMPLETE`, but `build_steps()` would still apply the evidence rules for the original status. This cannot happen with the current `decide()`. P3 should confirm that `decide()` never returns `NOT_APPLICABLE` or any other value.
-4. **Requirement owned by P3.** An `INCOMPLETE` case must have at least one finding. This holds by construction in `decide()`, and `validate_output.py` checks it, but `build_steps()` does not enforce it. P3 should confirm that P3 owns this rule.
+1. **Interface change: CONFIRMED by P3.** `decide()` owns all policy decisions, and `build_steps()` only constructs, validates and numbers steps (see "Decisions confirmed by P3"). Section 1 of this document describes the real contract. `CONTRACTS.md` §2–3 still describes the old proposal (P4 maps resources to operations and sorts), so it should be updated to match.
+2. **`resource_id` tie-break: CONFIRMED by P3 as numeric natural ordering.** The `CONTRACTS.md` proposal says only "sort by `resource_id`", which could be read as lexical order. The confirmed behaviour is numeric natural ordering through P3's `_rid_key()` (`account_9` before `account_10`; see section 5). A regression test covers it. The 32 samples contain no ordering comparison where numeric natural sorting and alphabetical sorting would produce different results: no sample case has two steps with the same operation and `system_id`. In the current 518-case output, 10 such groups have more than one `resource_id`, and none of them orders differently under the two methods. So no current row depends on this choice.
+3. **Status mismatch guard: ANSWERED by P3, confirmation complete.** P3 confirmed that `decide()` returns only `COMPLETE` or `INCOMPLETE`, and that `NOT_APPLICABLE` comes from P1's classifier. The theoretical case where `main.py` replaces an unexpected status with `INCOMPLETE` while `build_steps()` still sees the original status therefore cannot occur under the confirmed contract. P4 needs no change.
+4. **At least one finding per `INCOMPLETE` case: ANSWERED by P3, confirmation complete.** P3 confirmed that every `INCOMPLETE` case has at least one finding. `decide()` guarantees this by construction (status is `INCOMPLETE` only when findings exist), and `validate_output.py` checks it across `output.csv`. As agreed, `build_steps()` does not make this policy decision.
 5. **OPEN TEAM QUESTION: a missing retained record is silently ignored (possible gap against AGENTS.md §6.5).** `CONTRACTS.md` §4 Q3 asks what should happen when a `RETAIN` record is missing at `audit_at`. In `_assess()` (`policy_engine.py`, the "no copy present at audit_at" branch), a `RETAIN` or `ACCOUNT_TOMBSTONE` resource with no present copy returns `None`. It produces no step and does not affect the status. AGENTS.md §6.5 says a case is `COMPLETE` only when "every required retained record remains available". No allowed operation can restore such a record. Possible options:
    - mark the case `INCOMPLETE` with a `VERIFY_RECORD_PRESENT` step;
    - keep the current behaviour and record the case in `notes` / `unverified`.
@@ -117,6 +129,8 @@ redacted, `RETAIN` → verify present only, and so on) is now applied inside
 - `python code/main.py && python code/validate_output.py` gives **VALID** for 518 rows. The regenerated `output.csv` is byte-identical to the committed file after line-ending normalisation (SHA-256 `a215494b…97b6ef`).
 
 ## 8. Message to send to P3
+
+*Sent to P3. P3's answers are recorded in "Decisions confirmed by P3" and §6. Question 4 is still an open team question. The original message is kept below for reference.*
 
 > Hi P3, P4 here. I've checked the P3→P4 hand-over against the code at
 > `cafd103`. The details are in `code/P4_CONTRACT_CONFIRMATION.md`. Could you
