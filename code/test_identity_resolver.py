@@ -21,7 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from identity_resolver import IdentityResolver, _sha256
-from models import IdentityBundle
+from models import IdentityBundle, IdentityChange
 
 # ---------------------------------------------------------------------------
 # Helpers — build small in-memory CSV strings for unit tests
@@ -286,6 +286,49 @@ class TestFutureIdentifiersExcluded(unittest.TestCase):
         b = self.resolver.resolve("alice@example.com")
         self.assertEqual(b.current_email, "alice@example.com")
         self.assertEqual(b.current_email_hash, "hash_alice_current")
+
+
+class TestHistory(unittest.TestCase):
+    """bundle.history keeps the full audit row for each change up to audit_at."""
+
+    def setUp(self):
+        self.resolver = _make_resolver()
+
+    def test_history_has_full_audit_rows_oldest_first(self):
+        b = self.resolver.resolve("alice@example.com")
+        self.assertEqual(
+            b.history,
+            [
+                IdentityChange("audit_01", "email", "alice-old1@example.com",
+                               "alice-old2@example.com", "2025-06-01T00:00:00Z"),
+                IdentityChange("audit_04", "email_hash", "hash_alice_old1",
+                               "hash_alice_old2", "2025-06-01T00:00:00Z"),
+                IdentityChange("audit_02", "email", "alice-old2@example.com",
+                               "alice@example.com", "2025-12-01T00:00:00Z"),
+                IdentityChange("audit_03", "email_hash", "hash_alice_old2",
+                               "hash_alice_current", "2025-12-01T00:00:00Z"),
+            ],
+        )
+
+    def test_history_excludes_changes_after_audit_at(self):
+        b = self.resolver.resolve("alice@example.com",
+                                  audit_at=datetime(2025, 9, 1, tzinfo=timezone.utc))
+        self.assertEqual([c.audit_id for c in b.history], ["audit_01", "audit_04"])
+
+    def test_history_includes_change_exactly_at_audit_at(self):
+        b = self.resolver.resolve("alice@example.com",
+                                  audit_at=datetime(2025, 12, 1, tzinfo=timezone.utc))
+        self.assertEqual([c.audit_id for c in b.history],
+                         ["audit_01", "audit_04", "audit_02", "audit_03"])
+
+    def test_history_empty_without_changes(self):
+        b = self.resolver.resolve("carol@example.com")
+        self.assertEqual(b.history, [])
+
+    def test_history_old_values_match_historical_lists(self):
+        b = self.resolver.resolve("bob@example.com")
+        self.assertEqual(b.history[0].field_name, "phone")
+        self.assertIn(b.history[0].old_value, b.historical_phones)
 
 
 class TestComputedEmailHashes(unittest.TestCase):

@@ -32,7 +32,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from models import IdentityBundle
+from models import IdentityBundle, IdentityChange
 
 
 def _parse_dt(ts: str) -> datetime:
@@ -168,6 +168,7 @@ class IdentityResolver:
         hist_phones: list[str] = []
         # We collect hashes from stored audit entries …
         hist_hashes_stored: list[str] = []
+        history: list[IdentityChange] = []
 
         for audit_row in audit_rows:
             # Time-filter: skip entries that occur after audit_at
@@ -175,6 +176,14 @@ class IdentityResolver:
                 entry_time = _parse_dt(audit_row["event_time"])
                 if entry_time > audit_at:
                     continue
+
+            history.append(IdentityChange(
+                audit_id=audit_row["audit_id"],
+                field_name=audit_row["field_name"],
+                old_value=audit_row["old_value"],
+                new_value=audit_row["new_value"],
+                event_time=audit_row["event_time"],
+            ))
 
             field = audit_row["field_name"]
             old_val = audit_row["old_value"].strip()
@@ -199,6 +208,7 @@ class IdentityResolver:
             if _sha256(e) not in hist_hashes_stored
         ]
         hist_hashes = hist_hashes_stored + hist_hashes_computed
+        history.sort(key=lambda c: (_parse_dt(c.event_time), c.audit_id))
 
         return IdentityBundle(
             user_id=uid,
@@ -210,6 +220,7 @@ class IdentityResolver:
             historical_phones=hist_phones,
             historical_email_hashes=hist_hashes,
             request_email=request_email,
+            history=history,
         )
 
     def resolve_all(

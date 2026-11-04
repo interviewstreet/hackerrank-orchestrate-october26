@@ -6,6 +6,16 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 
+@dataclass(frozen=True)
+class IdentityChange:
+    """One row of user_audit_log.csv: a single identity-field change."""
+    audit_id: str       # e.g. "audit_123" — cite this as evidence_id
+    field_name: str     # "email" | "phone" | "email_hash"
+    old_value: str
+    new_value: str
+    event_time: str     # ISO-8601 UTC string exactly as in the CSV, e.g. "2025-06-01T00:00:00Z"
+
+
 @dataclass
 class IdentityBundle:
     """All current and historical identifiers resolved for one deletion subject."""
@@ -20,6 +30,9 @@ class IdentityBundle:
     historical_email_hashes: list[str] = field(default_factory=list)
     # The email that was supplied with the request (before normalisation)
     request_email: str = ""
+    # Every audit-log change for this user at or before audit_at,
+    # oldest first (ties broken by audit_id)
+    history: list[IdentityChange] = field(default_factory=list)
 
     def all_emails(self) -> list[str]:
         """Return all known email addresses (current + historical), lower-cased."""

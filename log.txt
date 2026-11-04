@@ -248,3 +248,40 @@ branch=main
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-04T13:38:16Z] Person 1: IdentityChange history in IdentityBundle + "For P3" README section
+
+User Prompt (verbatim, secrets redacted):
+My teammate P3 needs to use IdentityBundle. Do two things:
+
+Check whether IdentityBundle keeps the audit_id, field_name, old_value, new_value and event_time of each identity change. If not, add a field history: list[IdentityChange], where IdentityChange is a dataclass in code/models.py with fields audit_id, field_name, old_value, new_value and event_time, containing only changes at or before audit_at. Add a test for it. Don’t break the existing tests.
+Then write a reply to P3 in code/README_identity.md under a heading “For P3”, answering exactly:
+The exact IdentityBundle structure: every field and its data type.
+How current and historical identifiers are represented.
+How historical changes link to audit_id, old_value, new_value and event_time.
+How identifiers are resolved as of audit_at, including the roll-back of later changes.
+The function to call for a deletion request, with a code example.
+One real sample input and output: run resolve() on case_43 from deletion_requests.csv and print the actual resulting object.
+
+Run all the tests and show me the results and the new README section.
+
+Agent Response Summary:
+IdentityBundle did not keep audit_id, new_value or event_time (only old values). Added frozen dataclass IdentityChange (audit_id, field_name, old_value, new_value, event_time as the CSV ISO string) to models.py and a history: list[IdentityChange] field (last field, default empty) to IdentityBundle; resolve() fills it with changes at or before audit_at, sorted oldest first then by audit_id. Added TestHistory (5 tests). Wrote the "For P3" section in code/README_identity.md answering the six points, with the real resolve() output for case_43 (user_41, two history entries audit_293/audit_294). Tests: 45/45 identity, 12/12 classifier; main.py still writes 518 rows.
+
+Actions:
+* Modified code/models.py: added IdentityChange, IdentityBundle.history
+* Modified code/identity_resolver.py: populate history
+* Modified code/test_identity_resolver.py: added TestHistory (5 tests)
+* Modified code/README_identity.md: test count 40->45, added "For P3" section
+* Ran resolve() on case_43
+* Ran: python3 code/test_identity_resolver.py -> 45/45 OK
+* Ran: python3 code/test_request_classifier.py -> 12/12 OK
+* Ran: python3 code/main.py -> 518 rows (0 / 508 / 10)
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
