@@ -40,7 +40,7 @@ Files: `policy_engine.py`, `ghost_detector.py`, `remediation_planner.py`, `verif
 ## Section 6: Output generation: DONE
 Files: `code/main.py`, `engine/pipeline.py`, `engine/validate_output.py`, root `output.csv`.
 - `run_all_cases(dataset_dir)` returns the structured results for Member 1's API.
-- `output.csv`: 518 rows (156 COMPLETE, 352 INCOMPLETE, 10 NOT_APPLICABLE); the validator passes.
+- `output.csv`: 518 rows (155 COMPLETE, 353 INCOMPLETE, 10 NOT_APPLICABLE, as in `evaluation_report.md`); the validator passes. (An earlier version of this line said 156/352; that was stale.)
 
 ## Section 7: Evaluator: DONE
 File: `code/evaluation/main.py`.
@@ -99,13 +99,13 @@ Files: `code/integrations/email/*` (config, models/state machine, SQLite store, 
 - `create_email_router(service, dependencies=..., case_provider=...)` for Member 1 to mount; documented in `code/integrations/email/README.md`.
 - Advisory explanations can be the draft body (`audience="internal"`); the default customer-facing draft never contains internal ids.
 - 76 new tests, all with a fake Resend (no real email); email package coverage about 97%. A live send has NOT been tried: it needs `RESEND_API_KEY`, a verified `RESEND_FROM_EMAIL` and `RESEND_WEBHOOK_SECRET` in `.env`.
-- Note: regenerating `output.csv` on the Linux sandbox changed one row (case_34) with no engine change, probably an OCR/tool-version difference; the committed `output.csv` was left as is.
+- Note: regenerating `output.csv` on the Linux sandbox changed one row (case_34) with no engine change. Status is INCOMPLETE either way, but the sandbox run misses one remaining record (`support_9538`; 4 steps instead of 7), probably an OCR/tool-version difference. The committed (laptop-generated) `output.csv` was left as is.
 
 ## Section 13: Packaging, docs and handoff (TODO Section D): DONE except the agent trace, which needs Rach's laptop
 - `README.md` rewritten (it was the HackerRank starter text): requirements (Python 3.10+, `pdftotext`, `tesseract`), setup, run commands, environment-variable table, tests, reports, advisory layer, email integration, layout and known limits.
 - `code/CONTRACT.md`: shared contract for Member 1 (output.csv format, `run_all_cases` result shape with graph data, email router interface and error codes).
 - `code.zip` built at the repo root (88 files, about 123 KB): `README.md`, `requirements*.txt`, `.env.example` and `code/`. Checked: no dataset, caches (`code/.cache/` holds OCR text of dataset evidence and is excluded), `__pycache__`, databases, archives or secrets. Unpacked with `dataset/` beside it, `main.py` validates and the tests pass. Rebuild with the rebuild command below if anything under `code/` changes.
-- `output.csv` and the two reports were deliberately NOT regenerated: the engine did not change, and regenerating here changes `case_34` (see Section 12 note), which would make the committed output and reports disagree. `output.csv` still validates: 518 rows, 156 COMPLETE, 352 INCOMPLETE, 10 NOT_APPLICABLE.
+- `output.csv` and the two reports were deliberately NOT regenerated: the engine did not change, and regenerating here changes `case_34` (see Section 12 note: same INCOMPLETE status, one record fewer), so the sandbox output would not match the laptop-generated one. Checked: the committed `output.csv` is byte-identical in content to the one on Rach's laptop and matches `evaluation_report.md`: 518 rows, 155 COMPLETE, 353 INCOMPLETE, 10 NOT_APPLICABLE; the validator passes.
 - Agent trace: `agent-trace.zip` has NOT been built. The session files live on the machines where the earlier sessions ran, not in this sandbox. `build_agent_trace.py` (repo root, not in `code.zip`) collects `~/.claude/projects/*erasight*`, scans for secrets and zips; add `/export` transcripts and the Claude web-app export by hand.
 - Older PRDs: stale numbers fixed in this file; `PRD_todo.md` replaced by `PRD_todo_final.md`.
 
