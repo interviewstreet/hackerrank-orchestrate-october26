@@ -223,12 +223,11 @@ def main():
     parser.add_argument('--dataset', type=Path, default=root / 'dataset')
     parser.add_argument('--port', type=int, default=8000)
     args = parser.parse_args()
-        try:
+            try:
         results = load_results(args.dataset)
         with (args.dataset / 'deletion_requests.csv').open(encoding='utf-8', newline='') as request_file:
             requests = list(csv.DictReader(request_file))
 
-        # Render sets PORT; use 0.0.0.0 there, keep 127.0.0.1 for local runs
         host = '0.0.0.0' if os.environ.get('PORT') else '127.0.0.1'
         port = int(os.environ.get('PORT', args.port))
 
