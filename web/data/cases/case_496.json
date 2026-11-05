@@ -77,7 +77,34 @@
       "origin": "customer_data_inventory_capture"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_275",
+      "event_time": "2026-01-23T09:05:44Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_6391",
+      "target_system": "support_platform",
+      "target_resource_id": "support_6391",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_6391 from support_platform."
+    },
+    {
+      "activity_id": "activity_276",
+      "event_time": "2026-01-23T09:24:14Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_3169",
+      "target_system": "search_service",
+      "target_resource_id": "search_3169",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_3169 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -145,6 +172,71 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-20T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-23T09:05:44Z",
+      "system_id": "support_platform",
+      "resource_id": "support_6391",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_275"
+    },
+    {
+      "time": "2026-01-23T09:24:14Z",
+      "system_id": "search_service",
+      "resource_id": "search_3169",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_276"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_3169",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_6391",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "search_service",
+      "resource_id": "search_3169",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "support_platform",
+      "resource_id": "support_6391",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-13T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

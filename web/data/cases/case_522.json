@@ -93,7 +93,34 @@
       "origin": "central_observability_export"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_290",
+      "event_time": "2026-01-26T04:59:48Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_1096",
+      "target_system": "account_service",
+      "target_resource_id": "account_1096",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_1096 to account_service."
+    },
+    {
+      "activity_id": "activity_296",
+      "event_time": "2026-01-26T06:44:40Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_8538",
+      "target_system": "support_platform",
+      "target_resource_id": "support_8538",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_8538 from support_platform."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -183,6 +210,79 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-04-08T23:36:49Z",
+      "system_id": "identity",
+      "resource_id": "phone",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_15"
+    },
+    {
+      "time": "2026-01-24T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-26T04:59:48Z",
+      "system_id": "account_service",
+      "resource_id": "account_1096",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_290"
+    },
+    {
+      "time": "2026-01-26T06:44:40Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8538",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_296"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_1096",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_49"
+    },
+    {
+      "time": "2026-02-03T05:59:42Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5513",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "time": "2026-02-03T05:59:42Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8538",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "time": "2026-02-03T05:59:42Z",
+      "system_id": "account_service",
+      "resource_id": "account_1096",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "time": "2026-02-03T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

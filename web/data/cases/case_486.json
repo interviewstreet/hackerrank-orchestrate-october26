@@ -101,7 +101,21 @@
       "origin": "service_readback_logs"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_443",
+      "event_time": "2026-02-06T07:52:14Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_9031",
+      "target_system": "account_service",
+      "target_resource_id": "account_9031",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_9031 to account_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -169,6 +183,95 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-10-20T21:41:54Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_76"
+    },
+    {
+      "time": "2025-10-20T21:41:54Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_77"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_9031",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_49"
+    },
+    {
+      "time": "2026-02-04T09:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-06T07:52:14Z",
+      "system_id": "account_service",
+      "resource_id": "account_9031",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_443"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_9031",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5451",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "account_service",
+      "resource_id": "account_9031",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5451",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "account_service",
+      "resource_id": "account_9031",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T09:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

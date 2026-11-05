@@ -206,6 +206,19 @@
       "target_resource_id": "search_496",
       "reported_result": "SUCCESS",
       "details": "Active connector repopulated downstream resource search_496."
+    },
+    {
+      "activity_id": "activity_1201",
+      "event_time": "2026-03-29T09:03:42Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_496",
+      "target_system": "search_service",
+      "target_resource_id": "search_496",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_496 from search_service."
     }
   ],
   "lineage": {
@@ -446,6 +459,159 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7587",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3052",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7587",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3052",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-26T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-03-29T08:44:13Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_1198"
+    },
+    {
+      "time": "2026-03-29T09:03:42Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_1201"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7587",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7587",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7587",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3052",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3052",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3052",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

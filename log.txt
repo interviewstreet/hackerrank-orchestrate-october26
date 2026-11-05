@@ -672,3 +672,71 @@ branch=main
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-05T06:23:22Z] Time-travel slider + lie detector by system
+
+User Prompt (verbatim, secrets redacted):
+Your lineage map is built, and it found three great demo stories. In simple words:
+
+- **case_37, the "ghost" story:** the person changed email twice and asked using the oldest one. The shop said "deleted", but 3 weeks before the audit, a connector **copied the data again** into the search system. That's your $2.4M problem in one picture.
+- **case_390:** the activity log says the shop **switched off** the data flow and **blocked** the backup restore, but the evidence still finds the person's data in **6 systems**. It shows why you don't trust claims.
+- **case_91:** a **replica** appears only in the log, and no evidence file covers it, so it's a copy nobody can verify.
+
+It also caught and fixed a **privacy leak** before publishing. Mention that in your presentation.
+
+## Step 1: Save, deploy, tell people
+
+```bash
+cd /Users/admin/Documents/TRACE/TRACE
+git add code/ web/ log.txt
+git commit -m "P1: lineage map and identity trail"
+git push
+git checkout main
+git pull --no-rebase
+git merge p1-identity
+git push
+git checkout p1-identity
+```
+
+**Tell P4:** "I added 4 small lineage lines to main.py, all inside the existing try/except. Please pull main before editing it."
+
+**Tell your frontend teammate:** "Third demo case for `/demo`: case_37, the ghost story: the shop said deleted, but a connector copied the data again 3 weeks before the audit."
+
+## Step 2: Prompt 5, time travel + lie detector
+
+This version works **without P3**, because it uses the dates you already have: identity changes, activity claims and evidence captures. It switches to P3's data automatically once that exists.
+
+> Build the last two innovation features. Use only data we already have, and switch to P3's timeline, flows and restore_risks automatically once they exist.
+>
+> 1. **Time-travel slider** on the case page (below the lineage map):
+>    - Build a per-case timeline from what we have: identity changes (audit_id), request time (requested_at), activity rows about this case's resources (claims), evidence captures (file_id, captured_at = proof) and the audit time (audit_at). Save it in the existing `timeline` table and include it in the case JSON. If P3's timeline exists, use it instead.
+>    - Add a slider from the earliest event to audit_at. As it moves, show which systems had proof of the person's data at that moment (based on the latest evidence capture before that time), and highlight them on the lineage map. List the events up to that moment underneath, marking each one "claim" or "proof".
+>    - Add a Play button that animates the slider from start to finish.
+> 2. **Lie detector by system** on the Overview page, as a new component in `web/components/LieDetector.tsx`:
+>    - For the cases where the shop reported COMPLETE, count per system how many still had evidence of the person's data captured after requested_at.
+>    - Show it as a ranked bar list: "Systems where data was still found after deletion was reported".
+>    - Word it carefully: some kept data may be allowed by policy, so add a note saying the final verdict comes from the policy engine.
+>    - Only add one line to `web/app/page.tsx` to place the component, because my teammate is editing that file.
+> 3. Add Python tests, rerun main.py and export_web_data.py, and run `npm run build` with no errors.
+> 4. Tell me what happens when I play the slider on case_37, and which 3 systems top the lie detector.
+>
+> Don't change identity_resolver.py, request_classifier.py, P2's files or the API response shapes.
+
+Paste the result here. After that comes **Prompt 6** (polish + README), plus connecting P3's results when they merge.
+
+Agent Response Summary:
+Did Step 2 only; did not run the Step 1 git commands (the user runs them; noted the checkout is on main, not p1-identity). Added code/case_timeline.py: a derived per-case timeline (identity changes, request, all activity rows about the case's resources as claims, P2 evidence as EVIDENCE_PROOF vs EVIDENCE_CLAIM using P2's claim_only flag, absence proofs, audit) saved in the timeline table only when P3's decide() gives none (9,109 rows, 508 cases). lineage.py now keeps non-movement activity rows as kind "status" (timeline only, never on the map); evidence_hits gained presence and claim_only. Found that all evidence in the earlier demo cases (case_37, case_390, case_91) is P2 claim_only (second-hand ledgers), so earlier wording overstated them; the UI separates proof from claims. Frontend: LineageExplorer (slider + Play + event list marked proof/claim/record, highlights boxes on the map) and LieDetector (new /api/lie-detector route + web/data/lie_detector.json; existing API shapes unchanged); page.tsx got the import plus one placement line. Lie detector top 3 of 254 reported-COMPLETE: security_service 133, search_service 113, support_platform 77. 209 Python tests pass; npm run build passes.
+
+Actions:
+* Created code/case_timeline.py, code/test_case_timeline.py, web/components/LineageExplorer.tsx, web/components/LieDetector.tsx, web/app/api/lie-detector/route.ts
+* Modified code/audit_db.py, code/lineage.py, code/export_web_data.py, code/test_audit_db.py, code/test_export_web_data.py, code/test_lineage.py, web/components/LineageMap.tsx, web/lib/types.ts, web/lib/data.ts, web/app/cases/[id]/page.tsx, web/app/page.tsx (2 lines)
+* Ran: python3 code/main.py (518 rows, 0/508/10); python3 code/export_web_data.py; python3 -m unittest discover -s code -p "test_*.py" -> 209 OK; npm run build (OK)
+* Ran: headless Chrome screenshots via DevTools (scratchpad only)
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none

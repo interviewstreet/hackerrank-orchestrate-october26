@@ -84,7 +84,21 @@
       "origin": "analytics_platform"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_4003",
+      "event_time": "2026-07-13T10:07:01Z",
+      "event_type": "LINK_RESOURCE_IDENTITY",
+      "kind": "status",
+      "label": "link resource identity",
+      "source_system": "data_catalog",
+      "source_resource_id": "analytics_7438",
+      "target_system": "analytics_platform",
+      "target_resource_id": "analytics_7438",
+      "reported_result": "SUCCESS",
+      "details": "Data catalog linked analytics_7438 (analytics_7438) to da****@icloud.com and user_20."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -131,6 +145,103 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-07-01T19:16:29Z",
+      "system_id": "identity",
+      "resource_id": "phone",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_34"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_24"
+    },
+    {
+      "time": "2026-07-08T09:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "time": "2026-07-11T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-07-13T10:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_19"
+    },
+    {
+      "time": "2026-07-13T10:07:01Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7438",
+      "event": "LINK_RESOURCE_IDENTITY",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_4003"
+    },
+    {
+      "time": "2026-07-14T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

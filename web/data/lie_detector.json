@@ -1,0 +1,68 @@
+{
+  "reported_complete_cases": 254,
+  "systems": [
+    {
+      "system_id": "security_service",
+      "proof_cases": 133,
+      "claim_only_cases": 23,
+      "share_with_proof": 0.5236
+    },
+    {
+      "system_id": "search_service",
+      "proof_cases": 113,
+      "claim_only_cases": 14,
+      "share_with_proof": 0.4449
+    },
+    {
+      "system_id": "support_platform",
+      "proof_cases": 77,
+      "claim_only_cases": 9,
+      "share_with_proof": 0.3031
+    },
+    {
+      "system_id": "integration_service",
+      "proof_cases": 61,
+      "claim_only_cases": 5,
+      "share_with_proof": 0.2402
+    },
+    {
+      "system_id": "backup_service",
+      "proof_cases": 26,
+      "claim_only_cases": 2,
+      "share_with_proof": 0.1024
+    },
+    {
+      "system_id": "account_service",
+      "proof_cases": 25,
+      "claim_only_cases": 6,
+      "share_with_proof": 0.0984
+    },
+    {
+      "system_id": "analytics_platform",
+      "proof_cases": 22,
+      "claim_only_cases": 2,
+      "share_with_proof": 0.0866
+    },
+    {
+      "system_id": "export_service",
+      "proof_cases": 16,
+      "claim_only_cases": 2,
+      "share_with_proof": 0.063
+    },
+    {
+      "system_id": "identity_service",
+      "proof_cases": 5,
+      "claim_only_cases": 0,
+      "share_with_proof": 0.0197
+    },
+    {
+      "system_id": "legal_service",
+      "proof_cases": 1,
+      "claim_only_cases": 1,
+      "share_with_proof": 0.0039
+    }
+  ],
+  "basis": "evidence captured after the request, showing the person's data as present",
+  "note": "Some of this data may be kept on purpose (for example audit logs or legal holds). The final verdict for each case comes from the policy engine.",
+  "policy_engine_connected": false
+}

@@ -220,7 +220,34 @@
       "origin": "customer_data_regional_replicas_capture"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_1200",
+      "event_time": "2026-03-29T09:00:27Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "export_350",
+      "target_system": "export_service",
+      "target_resource_id": "export_350",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for export_350 from export_service."
+    },
+    {
+      "activity_id": "activity_1203",
+      "event_time": "2026-03-29T09:19:56Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_957",
+      "target_system": "search_service",
+      "target_resource_id": "search_957",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for search_957 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -448,6 +475,167 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-12-24T17:35:12Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_136"
+    },
+    {
+      "time": "2025-12-24T17:35:12Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_137"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-27T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-03-29T09:00:27Z",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_1200"
+    },
+    {
+      "time": "2026-03-29T09:19:56Z",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_1203"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

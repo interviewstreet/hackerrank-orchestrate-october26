@@ -139,7 +139,21 @@
       "origin": "customer_data_read_replica_capture"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2240",
+      "event_time": "2026-06-06T11:41:12Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_2228",
+      "target_system": "search_service",
+      "target_resource_id": "search_2228",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_2228 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -255,6 +269,151 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-11-24T18:16:29Z",
+      "system_id": "identity",
+      "resource_id": "phone",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_107"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-06-03T11:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-06-06T11:41:12Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_2240"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_24"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_24"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_24"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_24"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

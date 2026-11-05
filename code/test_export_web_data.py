@@ -104,7 +104,7 @@ class TestExport(unittest.TestCase):
     def test_files_written(self):
         names = sorted(p.relative_to(self.out).as_posix() for p in self.out.rglob("*.json"))
         self.assertEqual(names, ["cases.json", "cases/case_t1.json", "cases/case_t10.json",
-                                 "cases/case_t2.json", "summary.json"])
+                                 "cases/case_t2.json", "lie_detector.json", "summary.json"])
 
     def test_summary(self):
         s = self.load("summary.json")
@@ -158,6 +158,46 @@ class TestExport(unittest.TestCase):
         self.assertEqual([s["step_no"] for s in c["steps"]], [1, 2])
         self.assertEqual(set(c["steps"][0]), {"step_no", "phase", "system_id", "resource_id",
                                               "operation", "state", "evidence_id"})
+
+    def test_lie_detector(self):
+        d = self.load("lie_detector.json")
+        # 2 cases reported COMPLETE and IS_DELETION (case_t1, case_t2); only case_t1
+        # has evidence, captured 2026-09-20 > requested 2026-09-01, direct proof
+        self.assertEqual(d["reported_complete_cases"], 2)
+        self.assertEqual(d["systems"], [{"system_id": "account_service", "proof_cases": 1,
+                                         "claim_only_cases": 0, "share_with_proof": 0.5}])
+        self.assertIn("policy engine", d["note"])
+
+    def test_lie_detector_rules(self):
+        """Counts only PRESENT evidence captured after the request, proof vs claim."""
+        from types import SimpleNamespace as NS
+        db = Path(self.tmp.name) / "ld.db"
+        conn = audit_db.connect(db)
+        def rec(eid, sys_, captured, presence="PRESENT", claim=False):
+            return NS(evidence_id=eid, system_id=sys_, resource_id=f"{sys_}_1",
+                      identifiers_matched=["user_id:u"], captured_at=captured,
+                      presence=presence, claim_only=claim)
+        from datetime import datetime, timezone
+        after = datetime(2026, 9, 20, tzinfo=timezone.utc)
+        before = datetime(2026, 8, 1, tzinfo=timezone.utc)
+        ev = {"records": [rec("e1", "search_service", after),
+                          rec("e2", "support_platform", after, claim=True),
+                          rec("e3", "backup_service", after, presence="ABSENT"),
+                          rec("e4", "analytics_platform", before)]}
+        audit_db.save_case(conn, CASE, our_status="INCOMPLETE", classification="IS_DELETION",
+                           evidence=ev)
+        audit_db.save_case(conn, dict(CASE, case_id="case_x", reported_status="NOT_STARTED"),
+                           our_status="INCOMPLETE", classification="IS_DELETION", evidence=ev)
+        d = ex.build_lie_detector(conn)
+        conn.close()
+        self.assertEqual(d["reported_complete_cases"], 1)          # case_x not reported COMPLETE
+        self.assertEqual({r["system_id"]: (r["proof_cases"], r["claim_only_cases"])
+                          for r in d["systems"]},
+                         {"search_service": (1, 0), "support_platform": (0, 1)})
+
+    def test_case_timeline_exported(self):
+        tl = self.load("cases/case_t1.json")["timeline"]
+        self.assertEqual([t["event"] for t in tl], ["DELETE", "SYNC"])   # P3's timeline
 
     def test_identity_trail(self):
         trail = self.load("cases/case_t1.json")["identity_trail"]

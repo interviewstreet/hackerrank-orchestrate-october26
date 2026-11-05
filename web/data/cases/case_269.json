@@ -114,6 +114,58 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_2010",
+      "event_time": "2026-05-23T08:52:40Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_7699",
+      "target_system": "account_service",
+      "target_resource_id": "account_7699",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_7699 to account_service."
+    },
+    {
+      "activity_id": "activity_2017",
+      "event_time": "2026-05-23T10:44:32Z",
+      "event_type": "ANONYMIZE_RECORD",
+      "kind": "status",
+      "label": "anonymize",
+      "source_system": "deletion_worker",
+      "source_resource_id": "analytics_6766",
+      "target_system": "analytics_platform",
+      "target_resource_id": "analytics_6766",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for analytics_6766 from analytics_platform."
+    },
+    {
+      "activity_id": "activity_2020",
+      "event_time": "2026-05-23T11:03:02Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_1730",
+      "target_system": "search_service",
+      "target_resource_id": "search_1730",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_1730 from search_service."
+    },
+    {
+      "activity_id": "activity_2023",
+      "event_time": "2026-05-23T11:22:31Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_8301",
+      "target_system": "support_platform",
+      "target_resource_id": "support_8301",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_8301 from support_platform."
+    },
+    {
       "activity_id": "activity_2025",
       "event_time": "2026-05-23T11:41:01Z",
       "event_type": "CHECK_DATA_FLOW",
@@ -290,6 +342,439 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_49"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4534",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_45"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4534",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-10T05:38:48Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_66"
+    },
+    {
+      "time": "2026-03-22T08:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_40"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4534",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-04-04T10:04:19Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_69"
+    },
+    {
+      "time": "2026-04-16T06:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_35"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4534",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-05-04T09:41:47Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_72"
+    },
+    {
+      "time": "2026-05-11T11:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_31"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4534",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-05-22T10:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-05-23T08:52:40Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_2010"
+    },
+    {
+      "time": "2026-05-23T10:44:32Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "ANONYMIZE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_2017"
+    },
+    {
+      "time": "2026-05-23T11:03:02Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_2020"
+    },
+    {
+      "time": "2026-05-23T11:22:31Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_2023"
+    },
+    {
+      "time": "2026-05-23T11:41:01Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "CHECK_DATA_FLOW",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_2025"
+    },
+    {
+      "time": "2026-05-24T06:39:55Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_75"
+    },
+    {
+      "time": "2026-06-03T09:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_26"
+    },
+    {
+      "time": "2026-06-08T09:58:28Z",
+      "system_id": "account_service",
+      "resource_id": "account_7699",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "time": "2026-06-08T09:58:28Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6766",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "time": "2026-06-08T09:58:28Z",
+      "system_id": "search_service",
+      "resource_id": "search_1730",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "time": "2026-06-08T09:58:28Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8612",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "time": "2026-06-08T09:58:28Z",
+      "system_id": "support_platform",
+      "resource_id": "support_8301",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "time": "2026-06-08T09:58:28Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4534",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "time": "2026-06-08T10:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

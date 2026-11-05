@@ -139,7 +139,47 @@
       "origin": "records_assurance_snapshot_bundle"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_410",
+      "event_time": "2026-02-03T09:31:01Z",
+      "event_type": "RETAIN_RECORD",
+      "kind": "status",
+      "label": "retain",
+      "source_system": "deletion_worker",
+      "source_resource_id": "legal_hold_4743",
+      "target_system": "legal_service",
+      "target_resource_id": "legal_hold_4743",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for legal_hold_4743."
+    },
+    {
+      "activity_id": "activity_418",
+      "event_time": "2026-02-03T10:46:41Z",
+      "event_type": "ANONYMIZE_RECORD",
+      "kind": "status",
+      "label": "anonymize",
+      "source_system": "deletion_worker",
+      "source_resource_id": "analytics_8577",
+      "target_system": "analytics_platform",
+      "target_resource_id": "analytics_8577",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for analytics_8577 from analytics_platform."
+    },
+    {
+      "activity_id": "activity_421",
+      "event_time": "2026-02-03T11:05:11Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_7375",
+      "target_system": "search_service",
+      "target_resource_id": "search_7375",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_7375 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -256,6 +296,111 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-02T10:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-03T09:31:01Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4743",
+      "event": "RETAIN_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_410"
+    },
+    {
+      "time": "2026-02-03T10:46:41Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "event": "ANONYMIZE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_418"
+    },
+    {
+      "time": "2026-02-03T11:05:11Z",
+      "system_id": "search_service",
+      "resource_id": "search_7375",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_421"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_519",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4743",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_7375",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_45"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_519",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_45"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4743",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_45"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_7375",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_45"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

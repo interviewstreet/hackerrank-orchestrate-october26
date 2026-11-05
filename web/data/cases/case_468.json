@@ -76,7 +76,34 @@
       "origin": "service_resource_export"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_569",
+      "event_time": "2026-02-14T11:57:22Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "export_9399",
+      "target_system": "export_service",
+      "target_resource_id": "export_9399",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for export_9399 from export_service."
+    },
+    {
+      "activity_id": "activity_571",
+      "event_time": "2026-02-14T12:16:51Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_9827",
+      "target_system": "search_service",
+      "target_resource_id": "search_9827",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for search_9827 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -144,6 +171,71 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_9399",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_9827",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-12T11:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-14T11:57:22Z",
+      "system_id": "export_service",
+      "resource_id": "export_9399",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_569"
+    },
+    {
+      "time": "2026-02-14T12:16:51Z",
+      "system_id": "search_service",
+      "resource_id": "search_9827",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_571"
+    },
+    {
+      "time": "2026-02-28T10:36:37Z",
+      "system_id": "export_service",
+      "resource_id": "export_9399",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_65"
+    },
+    {
+      "time": "2026-02-28T10:36:37Z",
+      "system_id": "search_service",
+      "resource_id": "search_9827",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_65"
+    },
+    {
+      "time": "2026-02-28T11:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

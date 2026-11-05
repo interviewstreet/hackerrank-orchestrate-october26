@@ -131,6 +131,32 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_3617",
+      "event_time": "2026-09-03T10:49:04Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_4051",
+      "target_system": "account_service",
+      "target_resource_id": "account_4051",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_4051 to account_service."
+    },
+    {
+      "activity_id": "activity_3621",
+      "event_time": "2026-09-03T11:38:14Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_2667",
+      "target_system": "support_platform",
+      "target_resource_id": "support_2667",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for support_2667."
+    },
+    {
       "activity_id": "activity_3622",
       "event_time": "2026-09-03T11:45:43Z",
       "event_type": "DISABLE_DATA_FLOW",
@@ -306,6 +332,111 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-06-02T19:46:59Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_301"
+    },
+    {
+      "time": "2026-06-02T19:46:59Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_302"
+    },
+    {
+      "time": "2026-09-02T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-09-03T10:49:04Z",
+      "system_id": "account_service",
+      "resource_id": "account_4051",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_3617"
+    },
+    {
+      "time": "2026-09-03T11:38:14Z",
+      "system_id": "support_platform",
+      "resource_id": "support_2667",
+      "event": "REDACT_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_3621"
+    },
+    {
+      "time": "2026-09-03T11:45:43Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2901",
+      "event": "DISABLE_DATA_FLOW",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_3622"
+    },
+    {
+      "time": "2026-09-03T11:52:13Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_706",
+      "event": "BLOCK_RESTORE",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_3623"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_4051",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7814",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_706",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2901",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_2667",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

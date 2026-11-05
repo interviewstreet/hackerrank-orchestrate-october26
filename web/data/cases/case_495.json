@@ -135,6 +135,47 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-21T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-23T08:39:28Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_5061",
+      "event": "CHECK_RESTORE_ACCESS",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_274"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_5061",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_5061",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-13T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

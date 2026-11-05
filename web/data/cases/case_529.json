@@ -90,6 +90,19 @@
       "target_resource_id": "search_3382",
       "reported_result": "SUCCESS",
       "details": "Active connector repopulated downstream resource search_3382."
+    },
+    {
+      "activity_id": "activity_141",
+      "event_time": "2026-01-15T13:06:29Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_3382",
+      "target_system": "search_service",
+      "target_resource_id": "search_3382",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_3382 from search_service."
     }
   ],
   "lineage": {
@@ -170,6 +183,55 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-12T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-15T12:47:59Z",
+      "system_id": "search_service",
+      "resource_id": "search_3382",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_138"
+    },
+    {
+      "time": "2026-01-15T13:06:29Z",
+      "system_id": "search_service",
+      "resource_id": "search_3382",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_141"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6588",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "search_service",
+      "resource_id": "search_3382",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

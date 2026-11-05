@@ -94,7 +94,47 @@
       "origin": "downstream_delivery_service"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_684",
+      "event_time": "2026-02-22T06:15:34Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_3078",
+      "target_system": "account_service",
+      "target_resource_id": "account_3078",
+      "reported_result": "FAILED",
+      "details": "Deletion worker submitted primary profile account_3078 to account_service."
+    },
+    {
+      "activity_id": "activity_692",
+      "event_time": "2026-02-22T07:40:26Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_165",
+      "target_system": "support_platform",
+      "target_resource_id": "support_165",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_165 from support_platform."
+    },
+    {
+      "activity_id": "activity_696",
+      "event_time": "2026-02-22T07:59:55Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_6599",
+      "target_system": "search_service",
+      "target_resource_id": "search_6599",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_6599 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -206,6 +246,79 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-19T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-22T06:15:34Z",
+      "system_id": "account_service",
+      "resource_id": "account_3078",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_684"
+    },
+    {
+      "time": "2026-02-22T07:40:26Z",
+      "system_id": "support_platform",
+      "resource_id": "support_165",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_692"
+    },
+    {
+      "time": "2026-02-22T07:59:55Z",
+      "system_id": "search_service",
+      "resource_id": "search_6599",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_696"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_3078",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2748",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_6599",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_165",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

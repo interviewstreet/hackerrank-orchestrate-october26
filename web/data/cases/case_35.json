@@ -77,7 +77,34 @@
       "origin": "search_index_admin"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3436",
+      "event_time": "2026-08-25T13:00:08Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_428",
+      "target_system": "search_service",
+      "target_resource_id": "search_428",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_428 from search_service."
+    },
+    {
+      "activity_id": "activity_4001",
+      "event_time": "2026-09-01T06:07:01Z",
+      "event_type": "LINK_RESOURCE_IDENTITY",
+      "kind": "status",
+      "label": "link resource identity",
+      "source_system": "data_catalog",
+      "source_resource_id": "search_428",
+      "target_system": "search_service",
+      "target_resource_id": "search_428",
+      "reported_result": "SUCCESS",
+      "details": "Data catalog linked search_428 (search_428) to g.****@gmail.com and user_13."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -124,6 +151,119 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-06-13T11:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_24"
+    },
+    {
+      "time": "2026-07-08T09:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "time": "2026-08-02T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_15"
+    },
+    {
+      "time": "2026-08-25T13:00:08Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_3436"
+    },
+    {
+      "time": "2026-08-27T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_10"
+    },
+    {
+      "time": "2026-08-30T03:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-09-01T06:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_09"
+    },
+    {
+      "time": "2026-09-01T06:07:01Z",
+      "system_id": "search_service",
+      "resource_id": "search_428",
+      "event": "LINK_RESOURCE_IDENTITY",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_4001"
+    },
+    {
+      "time": "2026-09-02T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

@@ -14,9 +14,12 @@ For one case:
         resource named in its details ("... repopulated downstream resource
         search_1934"), and
       - happened at or before the case's audit_at, and
-      - are a movement (sync, index, export, cache refresh, restore) or a
+      - are a movement (sync, index, export, cache refresh, restore), a
         claim about a flow / backup (flow check, flow disabled, restore
-        blocked, restore-access check).
+        blocked, restore-access check), or any other status claim about the
+        resource (delete, redact, anonymize, retain ...). The map draws only
+        movements (arrows) and flow / backup claims (badges); the time-travel
+        timeline uses every row.
 """
 from __future__ import annotations
 
@@ -83,7 +86,7 @@ class LineageEdge:
     activity_id: str
     event_time: str
     event_type: str
-    kind: str                 # "movement" or "control"
+    kind: str                 # "movement", "control" or "status"
     label: str                # e.g. "sync", "flow check"
     source_system: str
     source_resource_id: str
@@ -104,12 +107,16 @@ def _mentions(row: dict) -> set[str]:
 def edge_from_row(row: dict, case_resources: set[str]) -> Optional[LineageEdge]:
     """Turn one activity row into an edge for a case, or None if not relevant."""
     etype = row.get("event_type", "")
+    if not etype:
+        return None
     if etype in MOVEMENT_EVENTS:
         kind, label = "movement", MOVEMENT_EVENTS[etype]
     elif etype in CONTROL_EVENTS:
         kind, label = "control", CONTROL_EVENTS[etype]
     else:
-        return None
+        # e.g. DELETE_RECORD -> "delete": a workflow *says* it did this
+        kind = "status"
+        label = etype.lower().removesuffix("_record").replace("_", " ")
     rid = (row.get("resource_id") or "").strip()
     named = sorted(_mentions(row) - {rid.lower()})
     if rid.lower() not in case_resources and not (set(named) & case_resources):

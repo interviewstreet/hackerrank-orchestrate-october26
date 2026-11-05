@@ -78,6 +78,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_1078",
+      "event_time": "2026-03-21T04:51:05Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_6246",
+      "target_system": "account_service",
+      "target_resource_id": "account_6246",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_6246 to account_service."
+    },
+    {
       "activity_id": "activity_1083",
       "event_time": "2026-03-21T06:55:56Z",
       "event_type": "SYNC_RECORD",
@@ -89,6 +102,19 @@
       "target_resource_id": "account_6246",
       "reported_result": "SUCCESS",
       "details": "Replication worker reported its final checkpoint for account_6246."
+    },
+    {
+      "activity_id": "activity_1084",
+      "event_time": "2026-03-21T07:14:26Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_9124",
+      "target_system": "search_service",
+      "target_resource_id": "search_9124",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker received the final result for search_9124 from search_service."
     }
   ],
   "lineage": {
@@ -185,6 +211,111 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6246",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_9124",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6246",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_9124",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-18T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-03-21T04:51:05Z",
+      "system_id": "account_service",
+      "resource_id": "account_6246",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_1078"
+    },
+    {
+      "time": "2026-03-21T06:55:56Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_6246",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_1083"
+    },
+    {
+      "time": "2026-03-21T07:14:26Z",
+      "system_id": "search_service",
+      "resource_id": "search_9124",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_1084"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6246",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_9124",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-04-14T05:40:07Z",
+      "system_id": "account_service",
+      "resource_id": "account_6246",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_70"
+    },
+    {
+      "time": "2026-04-14T05:40:07Z",
+      "system_id": "search_service",
+      "resource_id": "search_9124",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_70"
+    },
+    {
+      "time": "2026-04-14T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

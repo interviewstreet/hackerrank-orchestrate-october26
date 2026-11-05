@@ -96,6 +96,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_588",
+      "event_time": "2026-02-16T06:02:37Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_790",
+      "target_system": "account_service",
+      "target_resource_id": "account_790",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_790 to account_service."
+    },
+    {
       "activity_id": "activity_590",
       "event_time": "2026-02-16T07:45:29Z",
       "event_type": "CHECK_DATA_FLOW",
@@ -107,6 +120,19 @@
       "target_resource_id": "data_flow_5967",
       "reported_result": "SUCCESS",
       "details": "Connector status check confirmed that data flow data_flow_5967 remains enabled."
+    },
+    {
+      "activity_id": "activity_592",
+      "event_time": "2026-02-16T08:04:58Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_2922",
+      "target_system": "search_service",
+      "target_resource_id": "search_2922",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_2922 from search_service."
     }
   ],
   "lineage": {
@@ -228,6 +254,79 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-15T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-16T06:02:37Z",
+      "system_id": "account_service",
+      "resource_id": "account_790",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_588"
+    },
+    {
+      "time": "2026-02-16T07:45:29Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5967",
+      "event": "CHECK_DATA_FLOW",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_590"
+    },
+    {
+      "time": "2026-02-16T08:04:58Z",
+      "system_id": "search_service",
+      "resource_id": "search_2922",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_592"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_790",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5488",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5967",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_2922",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

@@ -95,7 +95,60 @@
       "origin": "service_resource_export"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_137",
+      "event_time": "2026-01-15T12:40:15Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "export_9388",
+      "target_system": "export_service",
+      "target_resource_id": "export_9388",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for export_9388 from export_service."
+    },
+    {
+      "activity_id": "activity_140",
+      "event_time": "2026-01-15T12:59:44Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_1429",
+      "target_system": "search_service",
+      "target_resource_id": "search_1429",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for search_1429 from search_service."
+    },
+    {
+      "activity_id": "activity_143",
+      "event_time": "2026-01-15T13:18:14Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_193",
+      "target_system": "support_platform",
+      "target_resource_id": "support_193",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for support_193 from support_platform."
+    },
+    {
+      "activity_id": "activity_145",
+      "event_time": "2026-01-15T13:37:43Z",
+      "event_type": "ANONYMIZE_RECORD",
+      "kind": "status",
+      "label": "anonymize",
+      "source_system": "deletion_worker",
+      "source_resource_id": "analytics_8476",
+      "target_system": "analytics_platform",
+      "target_resource_id": "analytics_8476",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for analytics_8476 from analytics_platform."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -207,6 +260,87 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-13T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-15T12:40:15Z",
+      "system_id": "export_service",
+      "resource_id": "export_9388",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_137"
+    },
+    {
+      "time": "2026-01-15T12:59:44Z",
+      "system_id": "search_service",
+      "resource_id": "search_1429",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_140"
+    },
+    {
+      "time": "2026-01-15T13:18:14Z",
+      "system_id": "support_platform",
+      "resource_id": "support_193",
+      "event": "REDACT_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_143"
+    },
+    {
+      "time": "2026-01-15T13:37:43Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8476",
+      "event": "ANONYMIZE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_145"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "export_service",
+      "resource_id": "export_9388",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8476",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "support_platform",
+      "resource_id": "support_193",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "search_service",
+      "resource_id": "search_1429",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

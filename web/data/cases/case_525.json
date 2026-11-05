@@ -94,6 +94,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_197",
+      "event_time": "2026-01-18T10:57:37Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_4974",
+      "target_system": "account_service",
+      "target_resource_id": "account_4974",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_4974 to account_service."
+    },
+    {
       "activity_id": "activity_201",
       "event_time": "2026-01-18T12:42:29Z",
       "event_type": "SYNC_RECORD",
@@ -179,6 +192,63 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-09-30T21:50:27Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_59"
+    },
+    {
+      "time": "2025-09-30T21:50:27Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_60"
+    },
+    {
+      "time": "2026-01-16T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-18T10:57:37Z",
+      "system_id": "account_service",
+      "resource_id": "account_4974",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_197"
+    },
+    {
+      "time": "2026-01-18T12:42:29Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_4974",
+      "event": "SYNC_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_201"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "account_service",
+      "resource_id": "account_4974",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

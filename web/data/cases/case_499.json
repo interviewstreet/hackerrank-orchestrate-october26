@@ -94,6 +94,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_229",
+      "event_time": "2026-01-20T07:04:40Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_3626",
+      "target_system": "account_service",
+      "target_resource_id": "account_3626",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_3626 to account_service."
+    },
+    {
       "activity_id": "activity_234",
       "event_time": "2026-01-20T08:44:32Z",
       "event_type": "SYNC_RECORD",
@@ -179,6 +192,71 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-10-15T19:24:25Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_71"
+    },
+    {
+      "time": "2025-10-15T19:24:25Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_72"
+    },
+    {
+      "time": "2026-01-17T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-20T07:04:40Z",
+      "system_id": "account_service",
+      "resource_id": "account_3626",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_229"
+    },
+    {
+      "time": "2026-01-20T08:44:32Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_3626",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_234"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_3626",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "account_service",
+      "resource_id": "account_3626",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-13T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

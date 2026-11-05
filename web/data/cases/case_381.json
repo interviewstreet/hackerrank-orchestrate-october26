@@ -69,6 +69,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_1031",
+      "event_time": "2026-03-18T05:00:07Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_6784",
+      "target_system": "account_service",
+      "target_resource_id": "account_6784",
+      "reported_result": "FAILED",
+      "details": "Deletion worker submitted primary profile account_6784 to account_service."
+    },
+    {
       "activity_id": "activity_1034",
       "event_time": "2026-03-18T06:46:58Z",
       "event_type": "SYNC_RECORD",
@@ -154,6 +167,71 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6784",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6784",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-16T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-03-18T05:00:07Z",
+      "system_id": "account_service",
+      "resource_id": "account_6784",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_1031"
+    },
+    {
+      "time": "2026-03-18T06:46:58Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_6784",
+      "event": "SYNC_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_1034"
+    },
+    {
+      "time": "2026-03-30T10:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6784",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_38"
+    },
+    {
+      "time": "2026-04-14T05:40:07Z",
+      "system_id": "account_service",
+      "resource_id": "account_6784",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_70"
+    },
+    {
+      "time": "2026-04-14T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

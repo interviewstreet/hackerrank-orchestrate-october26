@@ -20,8 +20,10 @@ Tables (one row per item, every row keyed by case_id):
     timeline       P3 decision["timeline"]
     steps          P4 build_steps() output
 
-resources / flows / restore_risks / timeline stay empty until P3's decide()
-returns them.
+resources / flows / restore_risks stay empty until P3's decide() returns
+them. timeline holds P3's timeline when it exists; until then a timeline
+built from identity changes, activity claims and evidence captures
+(case_timeline.py) so the website's time-travel slider works.
 
 Re-running is safe: save_case() deletes the case's old rows in every table
 before writing, all in one transaction. If an existing audit.db was made
@@ -33,6 +35,8 @@ from __future__ import annotations
 import json
 import re
 import sqlite3
+
+import case_timeline
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable, Optional
@@ -73,7 +77,9 @@ CREATE TABLE IF NOT EXISTS evidence_hits (
     matched_identifier TEXT NOT NULL,
     captured_at        TEXT NOT NULL,
     replica_or_table   TEXT NOT NULL,      -- '' = primary copy
-    origin             TEXT NOT NULL       -- evidence_files.csv origin of file_id
+    origin             TEXT NOT NULL,      -- evidence_files.csv origin of file_id
+    presence           TEXT NOT NULL,      -- PRESENT / ABSENT (P2)
+    claim_only         INTEGER NOT NULL    -- 1 = second-hand lookup ledger, 0 = direct proof
 );
 CREATE TABLE IF NOT EXISTS resources (
     case_id            TEXT NOT NULL,
@@ -278,7 +284,9 @@ def evidence_rows(case_id: str, evidence: Optional[dict],
             row = (case_id, _s(rec.evidence_id), _s(rec.system_id), _s(rec.resource_id),
                    _s(ident), _s(rec.captured_at),
                    _s(getattr(rec, "replica_or_table", None)),
-                   _s(origins.get(rec.evidence_id, "")))
+                   _s(origins.get(rec.evidence_id, "")),
+                   _s(getattr(rec, "presence", "")),
+                   _b(getattr(rec, "claim_only", False)))
             if row not in seen:
                 seen.add(row)
                 rows.append(row)
@@ -381,7 +389,10 @@ def save_case(conn: sqlite3.Connection, case: dict, *, our_status: str,
         "resources": resource_rows(cid, decision),
         "flows": flow_rows(cid, decision),
         "restore_risks": restore_risk_rows(cid, decision),
-        "timeline": timeline_rows(cid, decision),
+        # P3's timeline if it has one, otherwise the derived display timeline
+        "timeline": timeline_rows(cid, {"timeline": (
+            (decision or {}).get("timeline")
+            or case_timeline.build_timeline(case, identity, evidence, lineage_edges))}),
         "steps": step_rows(cid, steps),
         "lineage_edges": lineage_rows(cid, lineage_edges),
     }

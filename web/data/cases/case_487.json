@@ -104,6 +104,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_445",
+      "event_time": "2026-02-06T08:12:30Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_5293",
+      "target_system": "account_service",
+      "target_resource_id": "account_5293",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_5293 to account_service."
+    },
+    {
       "activity_id": "activity_448",
       "event_time": "2026-02-06T09:52:22Z",
       "event_type": "SYNC_RECORD",
@@ -115,6 +128,45 @@
       "target_resource_id": "account_5293",
       "reported_result": "SUCCESS",
       "details": "Replication worker reported its final checkpoint for account_5293."
+    },
+    {
+      "activity_id": "activity_450",
+      "event_time": "2026-02-06T10:11:51Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_901",
+      "target_system": "search_service",
+      "target_resource_id": "search_901",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker received the final result for search_901 from search_service."
+    },
+    {
+      "activity_id": "activity_451",
+      "event_time": "2026-02-06T10:30:21Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_5361",
+      "target_system": "support_platform",
+      "target_resource_id": "support_5361",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker received the final result for support_5361 from support_platform."
+    },
+    {
+      "activity_id": "activity_452",
+      "event_time": "2026-02-06T10:49:50Z",
+      "event_type": "ANONYMIZE_RECORD",
+      "kind": "status",
+      "label": "anonymize",
+      "source_system": "deletion_worker",
+      "source_resource_id": "analytics_7818",
+      "target_system": "analytics_platform",
+      "target_resource_id": "analytics_7818",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker received the final result for analytics_7818 from analytics_platform."
     }
   ],
   "lineage": {
@@ -255,6 +307,135 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2024-12-14T16:31:44Z",
+      "system_id": "identity",
+      "resource_id": "phone",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_01"
+    },
+    {
+      "time": "2026-02-03T09:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-06T08:12:30Z",
+      "system_id": "account_service",
+      "resource_id": "account_5293",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_445"
+    },
+    {
+      "time": "2026-02-06T09:52:22Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_5293",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_448"
+    },
+    {
+      "time": "2026-02-06T10:11:51Z",
+      "system_id": "search_service",
+      "resource_id": "search_901",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_450"
+    },
+    {
+      "time": "2026-02-06T10:30:21Z",
+      "system_id": "support_platform",
+      "resource_id": "support_5361",
+      "event": "REDACT_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_451"
+    },
+    {
+      "time": "2026-02-06T10:49:50Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7818",
+      "event": "ANONYMIZE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_452"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_5293",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7818",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_901",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_5361",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "search_service",
+      "resource_id": "search_901",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "account_service",
+      "resource_id": "account_5293",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7818",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "support_platform",
+      "resource_id": "support_5361",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T09:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

@@ -6,7 +6,7 @@ import path from "node:path";
 // It is outside public/, so it is only reachable through the API routes.
 const DATA_DIR = path.join(process.cwd(), "data");
 
-import { OUR_STATUSES, type CaseListItem, type Status, type Summary } from "./types";
+import { OUR_STATUSES, type CaseListItem, type LieDetectorData, type Status, type Summary } from "./types";
 
 export const STATUSES = OUR_STATUSES;
 export type { CaseListItem, Status, Summary };
@@ -21,6 +21,10 @@ async function readJson<T>(relative: string): Promise<T> {
 
 export function getSummary(): Promise<Summary> {
   return readJson<Summary>("summary.json");
+}
+
+export function getLieDetector(): Promise<LieDetectorData> {
+  return readJson<LieDetectorData>("lie_detector.json");
 }
 
 export function getCaseList(): Promise<CaseListItem[]> {

@@ -119,7 +119,47 @@
       "origin": "customer_account_service"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3684",
+      "event_time": "2026-09-06T11:00:18Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_1810",
+      "target_system": "account_service",
+      "target_resource_id": "account_1810",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_1810 to account_service."
+    },
+    {
+      "activity_id": "activity_3691",
+      "event_time": "2026-09-06T12:51:10Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_4887",
+      "target_system": "support_platform",
+      "target_resource_id": "support_4887",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_4887 from support_platform."
+    },
+    {
+      "activity_id": "activity_3694",
+      "event_time": "2026-09-06T13:10:39Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_3200",
+      "target_system": "search_service",
+      "target_resource_id": "search_3200",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_3200 from search_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -231,6 +271,95 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-06-03T02:15:52Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_303"
+    },
+    {
+      "time": "2026-06-03T02:15:52Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_304"
+    },
+    {
+      "time": "2026-09-03T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-09-06T11:00:18Z",
+      "system_id": "account_service",
+      "resource_id": "account_1810",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_3684"
+    },
+    {
+      "time": "2026-09-06T12:51:10Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4887",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_3691"
+    },
+    {
+      "time": "2026-09-06T13:10:39Z",
+      "system_id": "search_service",
+      "resource_id": "search_3200",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_3694"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_1810",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8349",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_3200",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4887",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

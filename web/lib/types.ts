@@ -103,6 +103,45 @@ export type Lineage = {
   edge_note: string;
 };
 
+export type TimelineEvent = {
+  time: string;
+  system_id: string;
+  resource_id: string;
+  event: string;
+  state_after: string;
+  evidence_id: string;
+};
+
+export type Basis = "proof" | "claim" | "record";
+
+/**
+ * Proof = direct evidence of state (snapshot, SQL row, read-back, document).
+ * Claim = something a system reported (activity rows, second-hand ledgers).
+ * Record = audit-log identity changes, the request, the audit time.
+ * Works for TRACE's derived timeline and for P3's timeline (by evidence id).
+ */
+export function eventBasis(e: TimelineEvent): Basis {
+  if (e.event === "EVIDENCE_PROOF" || e.event === "ABSENCE_PROOF") return "proof";
+  if (e.event === "EVIDENCE_CLAIM" || e.evidence_id.startsWith("activity_")) return "claim";
+  if (e.evidence_id.startsWith("evidence_")) return "proof";
+  return "record";
+}
+
+export type LieDetectorRow = {
+  system_id: string;
+  proof_cases: number;
+  claim_only_cases: number;
+  share_with_proof: number;
+};
+
+export type LieDetectorData = {
+  reported_complete_cases: number;
+  systems: LieDetectorRow[];
+  basis: string;
+  note: string;
+  policy_engine_connected: boolean;
+};
+
 export type CaseDetail = CaseListItem & {
   request_text: string;
   confidence: string;
@@ -118,7 +157,7 @@ export type CaseDetail = CaseListItem & {
   resources: unknown[];
   flows: unknown[];
   restore_risks: unknown[];
-  timeline: unknown[];
+  timeline: TimelineEvent[];
   steps: Step[];
 };
 

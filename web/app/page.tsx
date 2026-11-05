@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import ClaimChart from "@/components/ClaimChart";
 import LanguageBars from "@/components/LanguageBars";
+import LieDetector from "@/components/LieDetector";
 import { OUR_STATUSES, STATUS_META, type Summary } from "@/lib/types";
 
 const STEPS = [
@@ -123,6 +124,7 @@ export default function Overview() {
         </Panel>
       </div>
 
+      <LieDetector />
       <section aria-labelledby="how" className="rounded-xl border border-white/10 bg-surface p-5 sm:p-6">
         <h2 id="how" className="text-base font-semibold text-ink">How TRACE works</h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

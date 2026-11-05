@@ -102,7 +102,47 @@
       "origin": "downstream_delivery_service"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_899",
+      "event_time": "2026-03-08T06:11:09Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_1897",
+      "target_system": "account_service",
+      "target_resource_id": "account_1897",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_1897 to account_service."
+    },
+    {
+      "activity_id": "activity_904",
+      "event_time": "2026-03-08T07:59:01Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_1194",
+      "target_system": "search_service",
+      "target_resource_id": "search_1194",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for search_1194 from search_service."
+    },
+    {
+      "activity_id": "activity_906",
+      "event_time": "2026-03-08T08:18:30Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_4123",
+      "target_system": "support_platform",
+      "target_resource_id": "support_4123",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker received the final result for support_4123 from support_platform."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -214,6 +254,87 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-02-27T14:16:29Z",
+      "system_id": "identity",
+      "resource_id": "phone",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_07"
+    },
+    {
+      "time": "2026-03-05T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-03-08T06:11:09Z",
+      "system_id": "account_service",
+      "resource_id": "account_1897",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_899"
+    },
+    {
+      "time": "2026-03-08T07:59:01Z",
+      "system_id": "search_service",
+      "resource_id": "search_1194",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_904"
+    },
+    {
+      "time": "2026-03-08T08:18:30Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4123",
+      "event": "REDACT_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_906"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_1897",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4839",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1194",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4123",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

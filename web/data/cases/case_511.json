@@ -157,6 +157,32 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_262",
+      "event_time": "2026-01-23T05:56:53Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_1035",
+      "target_system": "account_service",
+      "target_resource_id": "account_1035",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_1035 to account_service."
+    },
+    {
+      "activity_id": "activity_264",
+      "event_time": "2026-01-23T06:31:34Z",
+      "event_type": "RETAIN_RECORD",
+      "kind": "status",
+      "label": "retain",
+      "source_system": "deletion_worker",
+      "source_resource_id": "legal_hold_4887",
+      "target_system": "legal_service",
+      "target_resource_id": "legal_hold_4887",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for legal_hold_4887."
+    },
+    {
       "activity_id": "activity_271",
       "event_time": "2026-01-23T07:59:15Z",
       "event_type": "SYNC_RECORD",
@@ -333,6 +359,111 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-10-11T00:36:49Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_69"
+    },
+    {
+      "time": "2025-10-11T00:36:49Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_70"
+    },
+    {
+      "time": "2026-01-20T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-23T05:56:53Z",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_262"
+    },
+    {
+      "time": "2026-01-23T06:31:34Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4887",
+      "event": "RETAIN_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_264"
+    },
+    {
+      "time": "2026-01-23T07:59:15Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_1035",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_271"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_49"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4883",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4883",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4887",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4887",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

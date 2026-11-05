@@ -130,7 +130,34 @@
       "origin": "customer_data_reporting_replica_capture"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_478",
+      "event_time": "2026-02-08T11:31:35Z",
+      "event_type": "RETAIN_RECORD",
+      "kind": "status",
+      "label": "retain",
+      "source_system": "deletion_worker",
+      "source_resource_id": "legal_hold_5622",
+      "target_system": "legal_service",
+      "target_resource_id": "legal_hold_5622",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for legal_hold_5622."
+    },
+    {
+      "activity_id": "activity_480",
+      "event_time": "2026-02-08T12:47:16Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_4146",
+      "target_system": "support_platform",
+      "target_resource_id": "support_4146",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_4146 from support_platform."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -288,6 +315,87 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-05T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-08T11:31:35Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_5622",
+      "event": "RETAIN_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_478"
+    },
+    {
+      "time": "2026-02-08T12:47:16Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4146",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_480"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1369",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1369",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_5622",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_5622",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4146",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4146",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

@@ -104,6 +104,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_637",
+      "event_time": "2026-02-19T06:13:21Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_3002",
+      "target_system": "account_service",
+      "target_resource_id": "account_3002",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_3002 to account_service."
+    },
+    {
       "activity_id": "activity_638",
       "event_time": "2026-02-19T07:38:13Z",
       "event_type": "SYNC_RECORD",
@@ -211,6 +224,71 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-11-14T18:24:25Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_100"
+    },
+    {
+      "time": "2025-11-14T18:24:25Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_99"
+    },
+    {
+      "time": "2026-02-16T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-19T06:13:21Z",
+      "system_id": "account_service",
+      "resource_id": "account_3002",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_637"
+    },
+    {
+      "time": "2026-02-19T07:38:13Z",
+      "system_id": "account_replication_cluster",
+      "resource_id": "account_3002",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_638"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_3002",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1149",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_41"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

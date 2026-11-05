@@ -28,6 +28,21 @@ const C = {
 
 type Placed = LineageNode & { x: number; y: number };
 
+/** A box's state at the slider's moment (time-travel mode). */
+export type NodeTime = {
+  state: "present" | "absent" | "none";
+  basis: "proof" | "claim" | null;
+  evidence_id: string;
+};
+
+const TIME_TEXT: Record<string, string> = {
+  "present-proof": "● data present · proof",
+  "present-claim": "◌ data present · claim",
+  "absent-proof": "absent · proof",
+  "absent-claim": "absent · claim",
+  none: "no evidence yet",
+};
+
 const trunc = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
 
 function edgeColor(e: LineageEdge, nodes: Map<string, Placed>) {
@@ -53,7 +68,17 @@ function edgePath(a: Placed, b: Placed): string {
   return `M${x},${ay} C${bulge},${ay} ${bulge},${by} ${x + 6},${by}`;
 }
 
-export default function LineageMap({ lineage }: { lineage: Lineage }) {
+export default function LineageMap({
+  lineage,
+  timeState,
+  at,
+}: {
+  lineage: Lineage;
+  /** time-travel mode: state of each node id at the slider's moment */
+  timeState?: Record<string, NodeTime>;
+  /** ISO time of the slider; arrows reported later are faded */
+  at?: string;
+}) {
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -136,7 +161,8 @@ export default function LineageMap({ lineage }: { lineage: Lineage }) {
             if (!a || !b) return null;
             const color = edgeColor(e, byId);
             const kind = color === C.flow ? "flow" : color === C.restore ? "restore" : "claim";
-            const dim = activeId && !linked.has(e.activity_id);
+            const future = !!at && e.event_time > at;
+            const dim = future || (activeId && !linked.has(e.activity_id));
             return (
               <path
                 key={e.activity_id}
@@ -146,7 +172,7 @@ export default function LineageMap({ lineage }: { lineage: Lineage }) {
                 strokeWidth={2}
                 strokeDasharray={kind === "claim" ? "5 4" : undefined}
                 markerEnd={`url(#arrow-${kind})`}
-                opacity={dim ? 0.25 : 1}
+                opacity={future ? 0.12 : dim ? 0.25 : 1}
               >
                 <title>{`${e.label} (${e.reported_result}, reported claim) · ${e.activity_id}`}</title>
               </path>
@@ -158,11 +184,23 @@ export default function LineageMap({ lineage }: { lineage: Lineage }) {
             const isActive = n.id === activeId;
             const flow = n.active_flow?.active_at_audit;
             const restore = n.restore_risk?.active_at_audit;
-            const ring = flow ? C.flow : restore ? C.restore : isActive ? "rgba(255,255,255,0.55)" : C.border;
-            const third =
-              n.source === "evidence"
+            const t = timeState?.[n.id];
+            const present = t?.state === "present";
+            const ring = flow
+              ? C.flow
+              : restore
+                ? C.restore
+                : present
+                  ? C.ink
+                  : isActive
+                    ? "rgba(255,255,255,0.55)"
+                    : C.border;
+            const third = t
+              ? `${TIME_TEXT[t.state === "none" ? "none" : `${t.state}-${t.basis}`]}${t.evidence_id ? ` · ${t.evidence_id}` : ""}`
+              : n.source === "evidence"
                 ? trunc(n.file_ids.join(", "), 30)
                 : "named in activity log only";
+            const opacity = !t || present ? 1 : t.state === "absent" ? 0.55 : 0.35;
             return (
               <g
                 key={n.id}
@@ -183,6 +221,8 @@ export default function LineageMap({ lineage }: { lineage: Lineage }) {
                   }
                 }}
                 className="cursor-pointer outline-none"
+                opacity={opacity}
+                style={{ transition: "opacity 250ms" }}
               >
                 <rect
                   width={COL_W}
@@ -190,8 +230,10 @@ export default function LineageMap({ lineage }: { lineage: Lineage }) {
                   rx={8}
                   fill={isActive ? C.nodeSelected : C.node}
                   stroke={ring}
-                  strokeWidth={flow || restore ? 2 : 1}
-                  strokeDasharray={n.source === "activity" ? "4 3" : undefined}
+                  strokeWidth={flow || restore || present ? 2 : 1}
+                  strokeDasharray={
+                    present && t?.basis === "claim" ? "5 3" : n.source === "activity" ? "4 3" : undefined
+                  }
                 />
                 <text x={12} y={21} fill={C.ink} fontSize={13} fontWeight={600}>
                   {trunc(n.system_id, 26)}
@@ -199,8 +241,14 @@ export default function LineageMap({ lineage }: { lineage: Lineage }) {
                 <text x={12} y={39} fill={C.ink2} fontSize={11.5} fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace">
                   {trunc(n.resource_id + (n.replica_or_table ? ` · ${n.replica_or_table}` : ""), 30)}
                 </text>
-                <text x={12} y={56} fill={C.muted} fontSize={11} fontFamily={n.source === "evidence" ? "ui-monospace, SFMono-Regular, Menlo, monospace" : undefined}>
-                  {third}
+                <text
+                  x={12}
+                  y={56}
+                  fill={present ? C.ink : C.muted}
+                  fontSize={11}
+                  fontFamily={!t && n.source === "evidence" ? "ui-monospace, SFMono-Regular, Menlo, monospace" : undefined}
+                >
+                  {trunc(third, 34)}
                 </text>
                 {n.claims.length > 0 && (
                   <g transform={`translate(${COL_W - 16},14)`}>

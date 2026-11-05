@@ -76,7 +76,21 @@
       "origin": "service_readback_logs"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_4011",
+      "event_time": "2026-03-10T06:07:01Z",
+      "event_type": "LINK_RESOURCE_IDENTITY",
+      "kind": "status",
+      "label": "link resource identity",
+      "source_system": "data_catalog",
+      "source_resource_id": "tombstone_17",
+      "target_system": "identity_service",
+      "target_resource_id": "tombstone_17",
+      "reported_result": "SUCCESS",
+      "details": "Data catalog linked tombstone_17 (user_17) to le****@outlook.com and user_17."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -144,6 +158,95 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_49"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-13T07:43:27Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_63"
+    },
+    {
+      "time": "2026-02-23T10:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_45"
+    },
+    {
+      "time": "2026-03-05T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_43"
+    },
+    {
+      "time": "2026-03-08T03:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-03-10T05:38:48Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_66"
+    },
+    {
+      "time": "2026-03-10T06:00:00Z",
+      "system_id": "identity_service",
+      "resource_id": "user_17",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_42"
+    },
+    {
+      "time": "2026-03-10T06:07:01Z",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_17",
+      "event": "LINK_RESOURCE_IDENTITY",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_4011"
+    },
+    {
+      "time": "2026-03-10T06:18:01Z",
+      "system_id": "account_service",
+      "resource_id": "account_6523",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_67"
+    },
+    {
+      "time": "2026-03-11T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

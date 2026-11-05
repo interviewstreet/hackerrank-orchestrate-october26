@@ -68,7 +68,21 @@
       "origin": "export_service"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_4004",
+      "event_time": "2026-06-18T12:07:01Z",
+      "event_type": "LINK_RESOURCE_IDENTITY",
+      "kind": "status",
+      "label": "link resource identity",
+      "source_system": "data_catalog",
+      "source_resource_id": "export_1260",
+      "target_system": "export_service",
+      "target_resource_id": "export_1260",
+      "reported_result": "SUCCESS",
+      "details": "Data catalog linked export_1260 (export_1260) to in****@outlook.com and user_18."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -114,6 +128,79 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-04-24T08:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_33"
+    },
+    {
+      "time": "2026-05-19T06:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_29"
+    },
+    {
+      "time": "2026-06-18T12:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_23"
+    },
+    {
+      "time": "2026-06-18T12:07:01Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "LINK_RESOURCE_IDENTITY",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_4004"
+    },
+    {
+      "time": "2026-06-28T07:00:00Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_22"
+    },
+    {
+      "time": "2026-07-03T07:43:56Z",
+      "system_id": "export_service",
+      "resource_id": "export_1260",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_81"
+    },
+    {
+      "time": "2026-07-16T08:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-07-19T13:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

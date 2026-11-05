@@ -87,6 +87,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_3683",
+      "event_time": "2026-09-06T10:51:45Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_2381",
+      "target_system": "account_service",
+      "target_resource_id": "account_2381",
+      "reported_result": "PARTIAL",
+      "details": "Deletion worker submitted primary profile account_2381 to account_service."
+    },
+    {
       "activity_id": "activity_3693",
       "event_time": "2026-09-06T13:00:37Z",
       "event_type": "CHECK_DATA_FLOW",
@@ -197,6 +210,63 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-09-05T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-09-06T10:51:45Z",
+      "system_id": "account_service",
+      "resource_id": "account_2381",
+      "event": "DELETE_RECORD",
+      "state_after": "PARTIAL",
+      "evidence_id": "activity_3683"
+    },
+    {
+      "time": "2026-09-06T13:00:37Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7495",
+      "event": "CHECK_DATA_FLOW",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_3693"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_2381",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_633",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7495",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_03"
+    },
+    {
+      "time": "2026-10-01T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

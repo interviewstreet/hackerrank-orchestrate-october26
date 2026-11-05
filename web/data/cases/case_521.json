@@ -76,7 +76,21 @@
       "origin": "central_observability_export"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_18",
+      "event_time": "2026-01-06T05:10:32Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_1482",
+      "target_system": "account_service",
+      "target_resource_id": "account_1482",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_1482 to account_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -144,6 +158,55 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-01-05T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-06T05:10:32Z",
+      "system_id": "account_service",
+      "resource_id": "account_1482",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_18"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_1482",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_49"
+    },
+    {
+      "time": "2026-02-03T05:59:42Z",
+      "system_id": "account_service",
+      "resource_id": "account_1482",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "time": "2026-02-03T05:59:42Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3567",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "time": "2026-02-03T06:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

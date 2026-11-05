@@ -90,6 +90,19 @@
       "target_resource_id": "search_8450",
       "reported_result": "SUCCESS",
       "details": "Active connector repopulated downstream resource search_8450."
+    },
+    {
+      "activity_id": "activity_570",
+      "event_time": "2026-02-14T12:00:37Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_8450",
+      "target_system": "search_service",
+      "target_resource_id": "search_8450",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_8450 from search_service."
     }
   ],
   "lineage": {
@@ -170,6 +183,71 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8730",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_8450",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-11T11:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-14T11:41:08Z",
+      "system_id": "search_service",
+      "resource_id": "search_8450",
+      "event": "SYNC_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_568"
+    },
+    {
+      "time": "2026-02-14T12:00:37Z",
+      "system_id": "search_service",
+      "resource_id": "search_8450",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_570"
+    },
+    {
+      "time": "2026-02-28T10:36:37Z",
+      "system_id": "search_service",
+      "resource_id": "search_8450",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_65"
+    },
+    {
+      "time": "2026-02-28T10:36:37Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8730",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_65"
+    },
+    {
+      "time": "2026-02-28T11:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

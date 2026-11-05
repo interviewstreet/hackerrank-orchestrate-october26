@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { ReportedBadge, StatusBadge } from "@/components/Badges";
 import IdentityTrail from "@/components/IdentityTrail";
-import LineageMap from "@/components/LineageMap";
+import LineageExplorer from "@/components/LineageExplorer";
 import { formatUtc, LANGUAGE_NAMES, REPORTED_LABELS, type CaseDetail } from "@/lib/types";
 
 type Load = { state: "loading" } | { state: "missing" } | { state: "error"; message: string } | { state: "ok"; data: CaseDetail };
@@ -304,7 +304,11 @@ function CaseView({ c }: { c: CaseDetail }) {
               <IdentityTrail trail={c.identity_trail} />
             </div>
           )}
-          <LineageMap lineage={c.lineage} />
+          <LineageExplorer
+            lineage={c.lineage}
+            timeline={c.timeline}
+            auditAt={c.timeline.find((e) => e.event === "AUDIT")?.time ?? c.audit_at}
+          />
           <p className="mt-4 text-xs text-muted">
             Arrows come from the shop&apos;s activity log, so they are reported activity (claims), not proof. They are shown
             for context only and are never used to decide whether a deletion is complete.

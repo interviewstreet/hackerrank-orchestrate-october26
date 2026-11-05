@@ -134,6 +134,19 @@
       "details": "Connector status check confirmed that data flow data_flow_3669 remains enabled."
     },
     {
+      "activity_id": "activity_494",
+      "event_time": "2026-02-09T10:06:48Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "search_1613",
+      "target_system": "search_service",
+      "target_resource_id": "search_1613",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for search_1613 from search_service."
+    },
+    {
       "activity_id": "activity_495",
       "event_time": "2026-02-09T10:25:18Z",
       "event_type": "CHECK_RESTORE_ACCESS",
@@ -145,6 +158,19 @@
       "target_resource_id": "backup_4600",
       "reported_result": "SUCCESS",
       "details": "Restore-access check confirmed that archive backup_4600 can still be restored."
+    },
+    {
+      "activity_id": "activity_496",
+      "event_time": "2026-02-09T10:44:47Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_4364",
+      "target_system": "support_platform",
+      "target_resource_id": "support_4364",
+      "reported_result": "FAILED",
+      "details": "Deletion worker received the final result for support_4364 from support_platform."
     }
   ],
   "lineage": {
@@ -274,6 +300,135 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-10-21T03:08:33Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_78"
+    },
+    {
+      "time": "2025-10-21T03:08:33Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_79"
+    },
+    {
+      "time": "2026-02-07T09:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_4600",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3669",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "search_service",
+      "resource_id": "search_1613",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-08T07:00:00Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4364",
+      "event": "ABSENCE_PROOF",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_47"
+    },
+    {
+      "time": "2026-02-09T09:47:19Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3669",
+      "event": "CHECK_DATA_FLOW",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_492"
+    },
+    {
+      "time": "2026-02-09T10:06:48Z",
+      "system_id": "search_service",
+      "resource_id": "search_1613",
+      "event": "DELETE_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_494"
+    },
+    {
+      "time": "2026-02-09T10:25:18Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_4600",
+      "event": "CHECK_RESTORE_ACCESS",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_495"
+    },
+    {
+      "time": "2026-02-09T10:44:47Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4364",
+      "event": "REDACT_RECORD",
+      "state_after": "FAILED",
+      "evidence_id": "activity_496"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3669",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "support_platform",
+      "resource_id": "support_4364",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "search_service",
+      "resource_id": "search_1613",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T08:39:11Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_4600",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "time": "2026-02-18T09:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

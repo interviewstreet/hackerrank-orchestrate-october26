@@ -94,12 +94,28 @@ class TestEdgeFromRow(unittest.TestCase):
                                       "data_flow_3"), self.RES)
                 self.assertEqual(e.kind, "control")
 
-    def test_deletion_claims_are_not_edges(self):
-        for etype in ("DELETE_RECORD", "REDACT_RECORD", "ANONYMIZE_RECORD", "RETAIN_RECORD",
-                      "LINK_RESOURCE_IDENTITY", "SEND_EMAIL", "UPDATE_RECORD"):
+    def test_other_claims_are_status_rows(self):
+        """Kept for the time-travel timeline; never drawn on the map."""
+        for etype, label in (("DELETE_RECORD", "delete"), ("REDACT_RECORD", "redact"),
+                             ("ANONYMIZE_RECORD", "anonymize"), ("RETAIN_RECORD", "retain"),
+                             ("LINK_RESOURCE_IDENTITY", "link resource identity")):
             with self.subTest(etype=etype):
-                self.assertIsNone(edge_from_row(row("a", etype, "deletion_worker",
-                                                    "account_service", "account_1"), self.RES))
+                e = edge_from_row(row("a", etype, "deletion_worker", "account_service",
+                                      "account_1"), self.RES)
+                self.assertEqual((e.kind, e.label), ("status", label))
+
+    def test_status_rows_not_on_map(self):
+        lin = ex.build_lineage(
+            hits=[], flows=[], restore_risks=[],
+            edges=[{"activity_id": "a1", "event_time": "2026-09-02T00:00:00Z",
+                    "event_type": "DELETE_RECORD", "kind": "status", "label": "delete",
+                    "source_system": "deletion_worker", "source_resource_id": "account_1",
+                    "target_system": "account_service", "target_resource_id": "account_1",
+                    "reported_result": "SUCCESS", "details": "Deleted account_1."}])
+        self.assertEqual((lin["nodes"], lin["edges"]), ([], []))
+
+    def test_row_without_event_type_ignored(self):
+        self.assertIsNone(edge_from_row(row("a", "", "x", "y", "account_1"), self.RES))
 
     def test_other_peoples_resources_ignored(self):
         self.assertIsNone(edge_from_row(row("a", "SYNC_RECORD", "account_service",

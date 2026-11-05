@@ -68,6 +68,15 @@
     },
     {
       "file_id": "evidence_08",
+      "system_id": "account_service",
+      "resource_id": "account_8473",
+      "matched_identifier": "email:ma****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "search_index_service"
+    },
+    {
+      "file_id": "evidence_08",
       "system_id": "security_service",
       "resource_id": "audit_record_5580",
       "matched_identifier": "user_id:user_84",
@@ -76,7 +85,21 @@
       "origin": "search_index_service"
     }
   ],
-  "lineage_edges": [],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3413",
+      "event_time": "2026-08-24T05:50:56Z",
+      "event_type": "DELETE_RECORD",
+      "kind": "status",
+      "label": "delete",
+      "source_system": "deletion_worker",
+      "source_resource_id": "account_8473",
+      "target_system": "account_service",
+      "target_resource_id": "account_8473",
+      "reported_result": "SUCCESS",
+      "details": "Deletion worker submitted primary profile account_8473 to account_service."
+    }
+  ],
   "lineage": {
     "groups": [
       {
@@ -144,6 +167,55 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2026-08-23T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-08-24T05:50:56Z",
+      "system_id": "account_service",
+      "resource_id": "account_8473",
+      "event": "DELETE_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_3413"
+    },
+    {
+      "time": "2026-09-06T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_8473",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "time": "2026-09-06T07:00:00Z",
+      "system_id": "account_service",
+      "resource_id": "account_8473",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "ABSENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "time": "2026-09-06T07:00:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5580",
+      "event": "EVIDENCE_CLAIM",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "time": "2026-09-06T07:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

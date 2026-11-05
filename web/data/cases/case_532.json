@@ -121,6 +121,19 @@
   ],
   "lineage_edges": [
     {
+      "activity_id": "activity_94",
+      "event_time": "2026-01-12T11:38:36Z",
+      "event_type": "REDACT_RECORD",
+      "kind": "status",
+      "label": "redact",
+      "source_system": "deletion_worker",
+      "source_resource_id": "support_7724",
+      "target_system": "support_platform",
+      "target_resource_id": "support_7724",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for support_7724."
+    },
+    {
       "activity_id": "activity_95",
       "event_time": "2026-01-12T11:45:06Z",
       "event_type": "DISABLE_DATA_FLOW",
@@ -274,6 +287,95 @@
   "resources": [],
   "flows": [],
   "restore_risks": [],
-  "timeline": [],
+  "timeline": [
+    {
+      "time": "2025-10-01T08:27:16Z",
+      "system_id": "identity",
+      "resource_id": "email",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_63"
+    },
+    {
+      "time": "2025-10-01T08:27:16Z",
+      "system_id": "identity",
+      "resource_id": "email_hash",
+      "event": "IDENTITY_CHANGE",
+      "state_after": "CHANGED",
+      "evidence_id": "audit_64"
+    },
+    {
+      "time": "2026-01-09T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "DELETION_REQUESTED",
+      "state_after": "",
+      "evidence_id": ""
+    },
+    {
+      "time": "2026-01-12T11:38:36Z",
+      "system_id": "support_platform",
+      "resource_id": "support_7724",
+      "event": "REDACT_RECORD",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_94"
+    },
+    {
+      "time": "2026-01-12T11:45:06Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6987",
+      "event": "DISABLE_DATA_FLOW",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_95"
+    },
+    {
+      "time": "2026-01-12T11:52:35Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_6344",
+      "event": "BLOCK_RESTORE",
+      "state_after": "SUCCESS",
+      "evidence_id": "activity_96"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4828",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "support_platform",
+      "resource_id": "support_7724",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6987",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T11:44:59Z",
+      "system_id": "backup_service",
+      "resource_id": "backup_6344",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_62"
+    },
+    {
+      "time": "2026-01-29T12:00:00Z",
+      "system_id": "",
+      "resource_id": "",
+      "event": "AUDIT",
+      "state_after": "",
+      "evidence_id": ""
+    }
+  ],
   "steps": []
 }

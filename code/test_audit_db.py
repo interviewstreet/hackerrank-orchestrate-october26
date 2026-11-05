@@ -65,7 +65,8 @@ def make_classifier() -> ClassificationResult:
 
 def make_record(eid, rid, idents, captured):
     return SimpleNamespace(evidence_id=eid, system_id="account_service", resource_id=rid,
-                           identifiers_matched=idents, captured_at=captured)
+                           identifiers_matched=idents, captured_at=captured,
+                           presence="PRESENT", claim_only=False)
 
 
 EVIDENCE = {
@@ -143,7 +144,7 @@ class TestSchema(DbTestCase):
                            "changed_at", "matches_request"],
             "evidence_hits": ["case_id", "file_id", "system_id", "resource_id",
                               "matched_identifier", "captured_at", "replica_or_table",
-                              "origin"],
+                              "origin", "presence", "claim_only"],
             "lineage_edges": ["case_id", "activity_id", "event_time", "event_type", "kind",
                               "label", "source_system", "source_resource_id",
                               "target_system", "target_resource_id", "reported_result",
@@ -310,7 +311,31 @@ class TestSaveCase(DbTestCase):
                        steps=[])
         counts = audit_db.table_counts(self.conn)
         self.assertEqual((counts["resources"], counts["flows"], counts["restore_risks"],
-                          counts["timeline"], counts["steps"]), (0, 0, 0, 0, 0))
+                          counts["steps"]), (0, 0, 0, 0))
+        # no P3 timeline -> TRACE's derived display timeline is saved instead
+        events = [r["event"] for r in self.q("SELECT event FROM timeline ORDER BY seq")]
+        self.assertEqual(events[0], "IDENTITY_CHANGE")
+        self.assertIn("DELETION_REQUESTED", events)
+        self.assertIn("EVIDENCE_PROOF", events)
+        self.assertEqual(events[-1], "AUDIT")
+
+    def test_p3_timeline_wins_over_derived(self):
+        self.save_full()   # DECISION has a 2-event P3 timeline
+        self.assertEqual([r["event"] for r in self.q("SELECT event FROM timeline ORDER BY seq")],
+                         ["DELETE", "SYNC"])
+
+    def test_no_evidence_no_timeline(self):
+        audit_db.save_case(self.conn, CASE, our_status="NOT_APPLICABLE",
+                           classification="NOT_APPLICABLE")
+        self.assertEqual(audit_db.table_counts(self.conn)["timeline"], 0)
+
+    def test_evidence_presence_and_claim_only_saved(self):
+        rec = make_record("evidence_3", "account_1", ["user_id:user_9"],
+                          datetime(2026, 9, 20, tzinfo=UTC))
+        rec.claim_only, rec.presence = True, "ABSENT"
+        self.save_full(evidence=dict(EVIDENCE, records=[rec]))
+        self.assertEqual(self.q("SELECT presence, claim_only FROM evidence_hits"),
+                         [{"presence": "ABSENT", "claim_only": 1}])
 
     def test_early_stop_saves_only_the_case_row(self):
         audit_db.save_case(self.conn, CASE, our_status="NOT_APPLICABLE",

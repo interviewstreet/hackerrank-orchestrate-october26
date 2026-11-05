@@ -9,6 +9,8 @@ Writes:
     web/data/summary.json          status counts, reported vs ours
     web/data/cases.json            short list of every case
     web/data/cases/<case_id>.json  everything about one case
+    web/data/lie_detector.json     per system: cases the shop reported COMPLETE
+                                   that still had evidence of the person's data
 
 web/data/ is outside web/public/, so the files are not served directly:
 the website reads them only through its API routes (web/app/api/).
@@ -170,6 +172,53 @@ def _language_counts(counts: Counter) -> dict[str, int]:
     out = {lang: counts.get(lang, 0) for lang in LANGUAGES}
     out.update({k: v for k, v in sorted(counts.items()) if k not in LANGUAGES})
     return out
+
+
+def build_lie_detector(conn: sqlite3.Connection) -> dict:
+    """
+    For deletion requests the shop reported COMPLETE: per system, how many
+    cases still had evidence of the person's data (presence PRESENT) in a
+    file captured after requested_at.
+
+      proof_cases       at least one direct observation (snapshot, SQL row,
+                        read-back, document, screenshot)
+      claim_only_cases  only second-hand lookup ledgers (P2 claim_only)
+
+    This is not a verdict: some systems must keep data by policy (e.g. audit
+    logs, legal holds). The final verdict comes from the policy engine.
+    """
+    from utils import parse_ts
+
+    cases = {r["case_id"]: r for r in _rows(
+        conn, "SELECT case_id, requested_at FROM cases "
+              "WHERE reported_status = 'COMPLETE' AND classification = 'IS_DELETION'")}
+    proof: dict[str, set] = {}
+    claim: dict[str, set] = {}
+    for h in _rows(conn, "SELECT case_id, system_id, captured_at, presence, claim_only "
+                         "FROM evidence_hits WHERE presence = 'PRESENT'"):
+        c = cases.get(h["case_id"])
+        if not c:
+            continue
+        requested, captured = parse_ts(c["requested_at"]), parse_ts(h["captured_at"])
+        if requested is None or captured is None or captured <= requested:
+            continue
+        (claim if h["claim_only"] else proof).setdefault(h["system_id"], set()).add(h["case_id"])
+    systems = sorted(set(proof) | set(claim))
+    total = len(cases)
+    rows = [{"system_id": sid,
+             "proof_cases": len(proof.get(sid, ())),
+             "claim_only_cases": len(claim.get(sid, set()) - proof.get(sid, set())),
+             "share_with_proof": round(len(proof.get(sid, ())) / total, 4) if total else 0.0}
+            for sid in systems]
+    rows.sort(key=lambda r: (-r["proof_cases"], -r["claim_only_cases"], r["system_id"]))
+    return {
+        "reported_complete_cases": total,
+        "systems": rows,
+        "basis": "evidence captured after the request, showing the person's data as present",
+        "note": "Some of this data may be kept on purpose (for example audit logs or legal "
+                "holds). The final verdict for each case comes from the policy engine.",
+        "policy_engine_connected": _policy_engine_connected(conn),
+    }
 
 
 def build_case_list(conn: sqlite3.Connection) -> list[dict]:
@@ -335,6 +384,8 @@ def build_lineage(hits: list[dict], edges: list[dict], flows: list[dict],
         if e["kind"] == "control":
             find(e["target_system"], e["target_resource_id"])["claims"].append(claim)
             continue
+        if e["kind"] != "movement":
+            continue   # delete / redact / ... claims: timeline only, not the map
         src = find(e["source_system"], e["source_resource_id"])
         dst = find(e["target_system"], e["target_resource_id"])
         out_edges.append(dict(claim, **{"from": src["id"], "to": dst["id"], "kind": "claim"}))
@@ -392,6 +443,7 @@ def export(db_path: Path | str = audit_db.DEFAULT_DB_PATH,
         case_list = build_case_list(conn)
         _write_json(out_dir / "summary.json", summary)
         _write_json(out_dir / "cases.json", case_list)
+        _write_json(out_dir / "lie_detector.json", build_lie_detector(conn))
         for c in case_list:
             _write_json(cases_dir / _safe_filename(c["case_id"]),
                         build_case(conn, c["case_id"]))
