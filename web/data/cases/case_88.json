@@ -224,7 +224,42 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_868",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_90",
+        "evidence_08"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_3825",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    },
+    {
+      "system_id": "support_platform",
+      "resource_id": "support_2967",
+      "category": "SUPPORT_MESSAGE",
+      "required_treatment": "REDACT",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -301,5 +336,51 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "support_platform",
+      "resource_id": "support_2967",
+      "operation": "REPORT_EXPOSED_PII",
+      "state": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "step_no": 2,
+      "phase": "REMEDIATION",
+      "system_id": "support_platform",
+      "resource_id": "support_2967",
+      "operation": "REDACT_RECORD",
+      "state": "REDACTED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_868",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 4,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3825",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "support_platform",
+      "resource_id": "support_2967",
+      "operation": "VERIFY_RECORD_REDACTED",
+      "state": "REDACTED",
+      "evidence_id": ""
+    }
+  ]
 }

@@ -352,7 +352,63 @@
     ],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_6075",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    },
+    {
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8539",
+      "category": "ANALYTICS_PROFILE",
+      "required_treatment": "ANONYMIZE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    },
+    {
+      "system_id": "search_service",
+      "resource_id": "search_9156",
+      "category": "SEARCH_INDEX_ENTRY",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_8304",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    },
+    {
+      "system_id": "support_platform",
+      "resource_id": "support_266",
+      "category": "SUPPORT_MESSAGE",
+      "required_treatment": "REDACT",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_08"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -469,5 +525,123 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "account_service",
+      "resource_id": "account_6075",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "step_no": 2,
+      "phase": "FINDING",
+      "system_id": "search_service",
+      "resource_id": "search_9156",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "step_no": 3,
+      "phase": "FINDING",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8539",
+      "operation": "REPORT_EXPOSED_PII",
+      "state": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "step_no": 4,
+      "phase": "FINDING",
+      "system_id": "support_platform",
+      "resource_id": "support_266",
+      "operation": "REPORT_EXPOSED_PII",
+      "state": "PRESENT",
+      "evidence_id": "evidence_08"
+    },
+    {
+      "step_no": 5,
+      "phase": "REMEDIATION",
+      "system_id": "account_service",
+      "resource_id": "account_6075",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 6,
+      "phase": "REMEDIATION",
+      "system_id": "search_service",
+      "resource_id": "search_9156",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 7,
+      "phase": "REMEDIATION",
+      "system_id": "support_platform",
+      "resource_id": "support_266",
+      "operation": "REDACT_RECORD",
+      "state": "REDACTED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 8,
+      "phase": "REMEDIATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8539",
+      "operation": "ANONYMIZE_RECORD",
+      "state": "ANONYMIZED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 9,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_6075",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 10,
+      "phase": "VERIFICATION",
+      "system_id": "search_service",
+      "resource_id": "search_9156",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 11,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8304",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 12,
+      "phase": "VERIFICATION",
+      "system_id": "support_platform",
+      "resource_id": "support_266",
+      "operation": "VERIFY_RECORD_REDACTED",
+      "state": "REDACTED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 13,
+      "phase": "VERIFICATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8539",
+      "operation": "VERIFY_RECORD_ANONYMIZED",
+      "state": "ANONYMIZED",
+      "evidence_id": ""
+    }
+  ]
 }

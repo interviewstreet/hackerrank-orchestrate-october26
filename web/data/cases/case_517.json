@@ -200,7 +200,11 @@
         "first_captured_at": "2026-02-03T05:59:42Z",
         "last_captured_at": "2026-02-03T05:59:42Z",
         "claims": [],
-        "active_flow": null,
+        "active_flow": {
+          "kind": "DATA_FLOW",
+          "active_at_audit": true,
+          "evidence_id": "evidence_48"
+        },
         "restore_risk": null
       },
       {
@@ -262,8 +266,61 @@
     ],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
-  "flows": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_3407",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8165",
+      "category": "DATA_FLOW",
+      "required_treatment": "DISABLE_FLOW",
+      "state_at_audit": "ACTIVE",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "search_service",
+      "resource_id": "search_2818",
+      "category": "SEARCH_INDEX_ENTRY",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_946",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8165",
+      "kind": "DATA_FLOW",
+      "active_at_audit": true,
+      "evidence_id": "evidence_48"
+    }
+  ],
   "restore_risks": [],
   "timeline": [
     {
@@ -355,5 +412,78 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "search_service",
+      "resource_id": "search_2818",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "step_no": 2,
+      "phase": "FINDING",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8165",
+      "operation": "REPORT_ACTIVE_DATA_FLOW",
+      "state": "ACTIVE",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "step_no": 3,
+      "phase": "REMEDIATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8165",
+      "operation": "DISABLE_DATA_FLOW",
+      "state": "DISABLED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 4,
+      "phase": "REMEDIATION",
+      "system_id": "search_service",
+      "resource_id": "search_2818",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_3407",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 6,
+      "phase": "VERIFICATION",
+      "system_id": "search_service",
+      "resource_id": "search_2818",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 7,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_946",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 8,
+      "phase": "VERIFICATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8165",
+      "operation": "VERIFY_DATA_FLOW_DISABLED",
+      "state": "DISABLED",
+      "evidence_id": ""
+    }
+  ]
 }

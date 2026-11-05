@@ -222,7 +222,10 @@
           }
         ],
         "active_flow": null,
-        "restore_risk": null
+        "restore_risk": {
+          "active_at_audit": true,
+          "evidence_id": "evidence_15"
+        }
       },
       {
         "id": "backup_service|backup_1214|customer_data_read_replica",
@@ -250,9 +253,50 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_1421",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_15"
+      ]
+    },
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_1214",
+      "category": "BACKUP_ARCHIVE",
+      "required_treatment": "BLOCK_RESTORE",
+      "state_at_audit": "ACTIVE",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_15"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_8742",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_15"
+      ]
+    }
+  ],
   "flows": [],
-  "restore_risks": [],
+  "restore_risks": [
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_1214",
+      "active_at_audit": true,
+      "evidence_id": "evidence_15"
+    }
+  ],
   "timeline": [
     {
       "time": "2026-02-08T07:00:00Z",
@@ -391,5 +435,51 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "backup_service",
+      "resource_id": "backup_1214",
+      "operation": "REPORT_RESTORE_RISK",
+      "state": "ACTIVE",
+      "evidence_id": "evidence_15"
+    },
+    {
+      "step_no": 2,
+      "phase": "REMEDIATION",
+      "system_id": "backup_service",
+      "resource_id": "backup_1214",
+      "operation": "BLOCK_RESTORE",
+      "state": "BLOCKED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_1421",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 4,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8742",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "backup_service",
+      "resource_id": "backup_1214",
+      "operation": "VERIFY_RESTORE_BLOCKED",
+      "state": "BLOCKED",
+      "evidence_id": ""
+    }
+  ]
 }

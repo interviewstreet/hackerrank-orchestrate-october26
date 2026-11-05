@@ -3,7 +3,7 @@
   "email": "ab****@proton.me",
   "request_text": "Please begin the deletion process for the account using this email address. Please follow the applicable retention and deletion requirements for the account. A short confirmation when the process is complete is sufficient.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -163,7 +163,30 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_5284",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_85"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_3088",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_85"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -456,5 +479,24 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_5284",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_85"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3088",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_85"
+    }
+  ]
 }

@@ -168,7 +168,41 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_1530",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_31"
+      ]
+    },
+    {
+      "system_id": "search_service",
+      "resource_id": "search_5472",
+      "category": "SEARCH_INDEX_ENTRY",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_74"
+      ]
+    },
+    {
+      "system_id": "support_platform",
+      "resource_id": "support_7995",
+      "category": "SUPPORT_MESSAGE",
+      "required_treatment": "REDACT",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_74"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -285,5 +319,69 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "search_service",
+      "resource_id": "search_5472",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_74"
+    },
+    {
+      "step_no": 2,
+      "phase": "FINDING",
+      "system_id": "support_platform",
+      "resource_id": "support_7995",
+      "operation": "REPORT_EXPOSED_PII",
+      "state": "PRESENT",
+      "evidence_id": "evidence_74"
+    },
+    {
+      "step_no": 3,
+      "phase": "REMEDIATION",
+      "system_id": "search_service",
+      "resource_id": "search_5472",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 4,
+      "phase": "REMEDIATION",
+      "system_id": "support_platform",
+      "resource_id": "support_7995",
+      "operation": "REDACT_RECORD",
+      "state": "REDACTED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_1530",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 6,
+      "phase": "VERIFICATION",
+      "system_id": "search_service",
+      "resource_id": "search_5472",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 7,
+      "phase": "VERIFICATION",
+      "system_id": "support_platform",
+      "resource_id": "support_7995",
+      "operation": "VERIFY_RECORD_REDACTED",
+      "state": "REDACTED",
+      "evidence_id": ""
+    }
+  ]
 }

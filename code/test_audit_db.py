@@ -376,6 +376,56 @@ class TestSaveCase(DbTestCase):
 # ---------------------------------------------------------------------------
 
 @unittest.skipUnless((DATASET_DIR / "user_identities.csv").exists(), "dataset not present")
+class TestP3ResourceFields(unittest.TestCase):
+    """P3's decide() resources (finding / verification shape) are mapped to the
+    CONTRACTS.md section 2 columns for display; contract-shaped input is kept."""
+
+    @staticmethod
+    def p3(**kw):
+        base = {"system_id": "account_service", "resource_id": "account_9", "category": "USER_PROFILE",
+                "rule_id": "rule_01", "action": "DELETE", "finding": None, "finding_evidence": "",
+                "remediation": None, "verification": None, "verification_evidence": "",
+                "linked_by": "", "reason": "", "copies": []}
+        base.update(kw)
+        return base
+
+    def test_remaining_record_is_unsatisfied_and_present(self):
+        r = self.p3(finding="REPORT_REMAINING_RECORD", finding_evidence="evidence_57",
+                    remediation="DELETE_RECORD", verification="VERIFY_RECORD_ABSENT",
+                    copies=[{"replica_or_table": None, "presence": "PRESENT", "proven": True,
+                             "evidence_id": "evidence_57", "conflict": False},
+                            {"replica_or_table": "eu_replica", "presence": "PRESENT", "proven": True,
+                             "evidence_id": "evidence_58", "conflict": False}])
+        self.assertEqual(audit_db.resource_fields(r), ("DELETE", "PRESENT", False, ["evidence_57", "evidence_58"]))
+
+    def test_proven_absent_record_is_satisfied(self):
+        r = self.p3(verification="VERIFY_RECORD_ABSENT", verification_evidence="evidence_05")
+        self.assertEqual(audit_db.resource_fields(r), ("DELETE", "ABSENT", True, ["evidence_05"]))
+
+    def test_unproven_state_is_unknown(self):
+        r = self.p3(verification="VERIFY_RECORD_ABSENT")
+        self.assertEqual(audit_db.resource_fields(r), ("DELETE", "UNKNOWN", True, []))
+
+    def test_retained_tombstone_and_processes(self):
+        retain = self.p3(category="SECURITY_AUDIT_LOG", action="RETAIN",
+                         verification="VERIFY_RECORD_PRESENT", verification_evidence="evidence_37")
+        self.assertEqual(audit_db.resource_fields(retain)[:3], ("RETAIN", "PRESENT", True))
+        tomb = self.p3(category="ACCOUNT_TOMBSTONE", action="REDACT", finding="REPORT_EXPOSED_PII",
+                       finding_evidence="evidence_12", verification="VERIFY_RECORD_REDACTED")
+        self.assertEqual(audit_db.resource_fields(tomb)[:3], ("TOMBSTONE", "PRESENT", False))
+        flow = self.p3(category="DATA_FLOW", action="", finding="REPORT_ACTIVE_DATA_FLOW",
+                       finding_evidence="act_1", verification="VERIFY_DATA_FLOW_DISABLED")
+        self.assertEqual(audit_db.resource_fields(flow)[:3], ("DISABLE_FLOW", "ACTIVE", False))
+        backup = self.p3(category="BACKUP_ARCHIVE", action="RETAIN",
+                         verification="VERIFY_RESTORE_BLOCKED", verification_evidence="act_2")
+        self.assertEqual(audit_db.resource_fields(backup)[:3], ("BLOCK_RESTORE", "BLOCKED", True))
+
+    def test_contract_shaped_resource_is_kept(self):
+        r = {"system_id": "s", "resource_id": "r", "category": "USER_PROFILE", "required_treatment": "DELETE",
+             "state_at_audit": "PRESENT", "satisfied": False, "evidence_ids": ["evidence_1"]}
+        self.assertEqual(audit_db.resource_fields(r), ("DELETE", "PRESENT", False, ["evidence_1"]))
+
+
 class TestMainSavesCases(DbTestCase):
 
     @classmethod

@@ -244,7 +244,53 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_4441",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_69",
+        "evidence_36"
+      ]
+    },
+    {
+      "system_id": "export_service",
+      "resource_id": "export_9989",
+      "category": "USER_EXPORT",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_36"
+      ]
+    },
+    {
+      "system_id": "search_service",
+      "resource_id": "search_7562",
+      "category": "SEARCH_INDEX_ENTRY",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_36"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_2342",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_36"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -321,5 +367,78 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "export_service",
+      "resource_id": "export_9989",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_36"
+    },
+    {
+      "step_no": 2,
+      "phase": "FINDING",
+      "system_id": "search_service",
+      "resource_id": "search_7562",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_36"
+    },
+    {
+      "step_no": 3,
+      "phase": "REMEDIATION",
+      "system_id": "export_service",
+      "resource_id": "export_9989",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 4,
+      "phase": "REMEDIATION",
+      "system_id": "search_service",
+      "resource_id": "search_7562",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_4441",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 6,
+      "phase": "VERIFICATION",
+      "system_id": "export_service",
+      "resource_id": "export_9989",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 7,
+      "phase": "VERIFICATION",
+      "system_id": "search_service",
+      "resource_id": "search_7562",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 8,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2342",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": ""
+    }
+  ]
 }

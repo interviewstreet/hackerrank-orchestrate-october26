@@ -3,7 +3,7 @@
   "email": "th****@gmail.com",
   "request_text": "Please process a permanent account-deletion request for this email address. Please apply the correct treatment to records covered by the request. I would appreciate confirmation of the final outcome.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -217,7 +217,41 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_7320",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_02"
+      ]
+    },
+    {
+      "system_id": "identity_service",
+      "resource_id": "tombstone_205",
+      "category": "ACCOUNT_TOMBSTONE",
+      "required_treatment": "TOMBSTONE",
+      "state_at_audit": "REDACTED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_52"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_6244",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_52"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -350,5 +384,33 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_7320",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_02"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6244",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_52"
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_205",
+      "operation": "VERIFY_RECORD_REDACTED",
+      "state": "REDACTED",
+      "evidence_id": "evidence_52"
+    }
+  ]
 }

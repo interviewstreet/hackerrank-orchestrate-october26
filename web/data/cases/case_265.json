@@ -3,7 +3,7 @@
   "email": "ol****@zoho.com",
   "request_text": "Please close my account and process the associated personal-data deletion. Please apply the correct treatment to records covered by the request. Please send a confirmation after the process finishes.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -156,7 +156,30 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_5015",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_25"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_6378",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_25"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -369,5 +392,24 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_5015",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_25"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6378",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_25"
+    }
+  ]
 }

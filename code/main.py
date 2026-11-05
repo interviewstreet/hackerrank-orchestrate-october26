@@ -33,10 +33,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import audit_db
 import lineage
-from evidence_search import find_records
+from evidence_search import find_records, get_scanner
 from identity_resolver import IdentityResolver
 from models import EVIDENCE_KEYS, ClassificationResult
-from policy_engine import decide
+from policy_engine import PolicyContext, configure, decide
 from request_classifier import classify_request
 from step_builder import build_steps
 from utils import parse_ts, warn
@@ -171,14 +171,26 @@ def run_case(case: dict, resolver: IdentityResolver,
     return result
 
 
-def main() -> int:
-    with open(DATASET_DIR / "deletion_requests.csv", newline="", encoding="utf-8") as fh:
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="Ghost Data Still Exists deletion audit")
+    ap.add_argument("--requests", default="deletion_requests.csv",
+                    help="request file inside dataset/ (default: deletion_requests.csv)")
+    ap.add_argument("--output", default=str(OUTPUT_PATH), help="output CSV path (default: <repo>/output.csv)")
+    # argv=None (a call from Python, e.g. a test) means "no options", never
+    # sys.argv; the command line passes sys.argv[1:] explicitly below.
+    args = ap.parse_args(argv if argv is not None else [])
+    output_path = Path(args.output)
+
+    with open(DATASET_DIR / args.requests, newline="", encoding="utf-8") as fh:
         cases = list(csv.DictReader(fh))
 
     resolver = IdentityResolver(
         DATASET_DIR / "user_identities.csv",
         DATASET_DIR / "user_audit_log.csv",
     )
+    # One scanner (P2) and one policy context (P3) shared by every case
+    configure(PolicyContext(DATASET_DIR, scanner=get_scanner(DATASET_DIR), resolver=resolver))
 
     try:
         db = audit_db.connect(audit_db.DEFAULT_DB_PATH)
@@ -212,7 +224,7 @@ def main() -> int:
     if len(ids) != len(set(ids)):
         raise SystemExit("ERROR: duplicate case_id in output")
 
-    with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as fh:
+    with open(output_path, "w", newline="", encoding="utf-8") as fh:
         writer = csv.writer(fh, lineterminator="\n")
         writer.writerow(["case_id", "deletion_status", "steps_json"])
         writer.writerows(rows)
@@ -221,7 +233,7 @@ def main() -> int:
         db.close()
 
     counts = Counter(r[1] for r in rows)
-    print(f"Wrote {len(rows)} rows to {OUTPUT_PATH}")
+    print(f"Wrote {len(rows)} rows to {output_path}")
     for status in ("COMPLETE", "INCOMPLETE", "NOT_APPLICABLE"):
         print(f"  {status:<15} {counts.get(status, 0)}")
     sort = lambda ids: sorted(ids, key=_case_sort_key)  # noqa: E731
@@ -233,4 +245,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

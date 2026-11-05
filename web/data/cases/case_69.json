@@ -3,7 +3,7 @@
   "email": "d.****@yahoo.com",
   "request_text": "Solicito la eliminación permanente de la cuenta asociada a este correo. Revisen los identificadores actuales y anteriores según su política de privacidad. Por favor, confirmen el resultado cuando termine la revisión.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "es",
   "confidence": "HIGH",
@@ -110,7 +110,30 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_4990",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_93"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_9011",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_93"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -211,5 +234,24 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_4990",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_93"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9011",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_93"
+    }
+  ]
 }

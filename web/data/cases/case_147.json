@@ -134,15 +134,48 @@
           }
         ],
         "active_flow": null,
-        "restore_risk": null
+        "restore_risk": {
+          "active_at_audit": true,
+          "evidence_id": "evidence_86"
+        }
       }
     ],
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_5023",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_15"
+      ]
+    },
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_4244",
+      "category": "BACKUP_ARCHIVE",
+      "required_treatment": "BLOCK_RESTORE",
+      "state_at_audit": "ACTIVE",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_86"
+      ]
+    }
+  ],
   "flows": [],
-  "restore_risks": [],
+  "restore_risks": [
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_4244",
+      "active_at_audit": true,
+      "evidence_id": "evidence_86"
+    }
+  ],
   "timeline": [
     {
       "time": "2025-06-23T01:51:04Z",
@@ -233,5 +266,42 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "backup_service",
+      "resource_id": "backup_4244",
+      "operation": "REPORT_RESTORE_RISK",
+      "state": "ACTIVE",
+      "evidence_id": "evidence_86"
+    },
+    {
+      "step_no": 2,
+      "phase": "REMEDIATION",
+      "system_id": "backup_service",
+      "resource_id": "backup_4244",
+      "operation": "BLOCK_RESTORE",
+      "state": "BLOCKED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_5023",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 4,
+      "phase": "VERIFICATION",
+      "system_id": "backup_service",
+      "resource_id": "backup_4244",
+      "operation": "VERIFY_RESTORE_BLOCKED",
+      "state": "BLOCKED",
+      "evidence_id": ""
+    }
+  ]
 }

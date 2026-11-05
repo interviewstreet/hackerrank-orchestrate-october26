@@ -3,7 +3,7 @@
   "email": "ch****@proton.me",
   "request_text": "Please treat this message as a request for permanent account deletion. Please review any identifiers connected to this account as part of the request. A short confirmation when the process is complete is sufficient.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -155,7 +155,30 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_7455",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_64"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_7073",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_64"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -232,5 +255,24 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_7455",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_64"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7073",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_64"
+    }
+  ]
 }

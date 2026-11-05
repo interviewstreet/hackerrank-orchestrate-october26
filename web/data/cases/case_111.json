@@ -3,7 +3,7 @@
   "email": "O.****@GMAIL.COM",
   "request_text": "Please process a permanent account-deletion request for this email address. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.",
   "reported_status": "PARTIALLY_COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -142,7 +142,41 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_7578",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_10"
+      ]
+    },
+    {
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9875",
+      "category": "ANALYTICS_PROFILE",
+      "required_treatment": "ANONYMIZE",
+      "state_at_audit": "ANONYMIZED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_10"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_8933",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_10"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -219,5 +253,33 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_7578",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_10"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8933",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_10"
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9875",
+      "operation": "VERIFY_RECORD_ANONYMIZED",
+      "state": "ANONYMIZED",
+      "evidence_id": "evidence_10"
+    }
+  ]
 }

@@ -266,7 +266,11 @@
             "details": "Connector status check confirmed that data flow data_flow_9556 remains enabled."
           }
         ],
-        "active_flow": null,
+        "active_flow": {
+          "kind": "DATA_FLOW",
+          "active_at_audit": true,
+          "evidence_id": "evidence_48"
+        },
         "restore_risk": null
       },
       {
@@ -339,8 +343,83 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
-  "flows": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_6473",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9920",
+      "category": "ANALYTICS_PROFILE",
+      "required_treatment": "ANONYMIZE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9556",
+      "category": "DATA_FLOW",
+      "required_treatment": "DISABLE_FLOW",
+      "state_at_audit": "ACTIVE",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "search_service",
+      "resource_id": "search_2715",
+      "category": "SEARCH_INDEX_ENTRY",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_1967",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    },
+    {
+      "system_id": "support_platform",
+      "resource_id": "support_3982",
+      "category": "SUPPORT_MESSAGE",
+      "required_treatment": "REDACT",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_48"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9556",
+      "kind": "DATA_FLOW",
+      "active_at_audit": true,
+      "evidence_id": "evidence_48"
+    }
+  ],
   "restore_risks": [],
   "timeline": [
     {
@@ -456,5 +535,132 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "search_service",
+      "resource_id": "search_2715",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "step_no": 2,
+      "phase": "FINDING",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9920",
+      "operation": "REPORT_EXPOSED_PII",
+      "state": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "step_no": 3,
+      "phase": "FINDING",
+      "system_id": "support_platform",
+      "resource_id": "support_3982",
+      "operation": "REPORT_EXPOSED_PII",
+      "state": "PRESENT",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "step_no": 4,
+      "phase": "FINDING",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9556",
+      "operation": "REPORT_ACTIVE_DATA_FLOW",
+      "state": "ACTIVE",
+      "evidence_id": "evidence_48"
+    },
+    {
+      "step_no": 5,
+      "phase": "REMEDIATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9556",
+      "operation": "DISABLE_DATA_FLOW",
+      "state": "DISABLED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 6,
+      "phase": "REMEDIATION",
+      "system_id": "search_service",
+      "resource_id": "search_2715",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 7,
+      "phase": "REMEDIATION",
+      "system_id": "support_platform",
+      "resource_id": "support_3982",
+      "operation": "REDACT_RECORD",
+      "state": "REDACTED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 8,
+      "phase": "REMEDIATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9920",
+      "operation": "ANONYMIZE_RECORD",
+      "state": "ANONYMIZED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 9,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_6473",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 10,
+      "phase": "VERIFICATION",
+      "system_id": "search_service",
+      "resource_id": "search_2715",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 11,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1967",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 12,
+      "phase": "VERIFICATION",
+      "system_id": "support_platform",
+      "resource_id": "support_3982",
+      "operation": "VERIFY_RECORD_REDACTED",
+      "state": "REDACTED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 13,
+      "phase": "VERIFICATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9920",
+      "operation": "VERIFY_RECORD_ANONYMIZED",
+      "state": "ANONYMIZED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 14,
+      "phase": "VERIFICATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9556",
+      "operation": "VERIFY_DATA_FLOW_DISABLED",
+      "state": "DISABLED",
+      "evidence_id": ""
+    }
+  ]
 }

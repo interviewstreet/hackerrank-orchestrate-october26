@@ -3,7 +3,7 @@
   "email": "fo****@gmail.com",
   "request_text": "I am requesting deletion of the account registered to this email address. Please ensure the request is applied to the relevant account records. A short confirmation when the process is complete is sufficient.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -110,7 +110,41 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_7340",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_66"
+      ]
+    },
+    {
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7270",
+      "category": "ANALYTICS_PROFILE",
+      "required_treatment": "ANONYMIZE",
+      "state_at_audit": "ANONYMIZED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_66"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_753",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_66"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -155,5 +189,33 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_7340",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_66"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_753",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_66"
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7270",
+      "operation": "VERIFY_RECORD_ANONYMIZED",
+      "state": "ANONYMIZED",
+      "evidence_id": "evidence_66"
+    }
+  ]
 }

@@ -1,3 +1,5 @@
+.DS_Store
+.env
 .venv/
 venv/
 __pycache__/
@@ -5,6 +7,7 @@ __pycache__/
 .pytest_cache/
 # partially written OCR cache entries (atomic-write temp files)
 code/evidence/ocr_cache/*.tmp
+code.zip
 
 # local pipeline database: holds unmasked identifiers; only web/public/data is published
 audit.db

@@ -293,13 +293,79 @@ def evidence_rows(case_id: str, evidence: Optional[dict],
     return rows
 
 
+# P3's decide() describes each resource by the steps it needs (finding /
+# remediation / verification operations and their evidence) rather than by the
+# CONTRACTS.md section 2 field names. These maps translate it for display only;
+# output.csv is never affected.
+_VERIFY_TREATMENT = {
+    "VERIFY_RECORD_ABSENT": "DELETE",
+    "VERIFY_RECORD_PRESENT": "RETAIN",
+    "VERIFY_RECORD_REDACTED": "REDACT",
+    "VERIFY_RECORD_ANONYMIZED": "ANONYMIZE",
+    "VERIFY_DATA_FLOW_DISABLED": "DISABLE_FLOW",
+    "VERIFY_RESTORE_BLOCKED": "BLOCK_RESTORE",
+}
+_VERIFY_STATE = {
+    "VERIFY_RECORD_ABSENT": "ABSENT",
+    "VERIFY_RECORD_PRESENT": "PRESENT",
+    "VERIFY_RECORD_REDACTED": "REDACTED",
+    "VERIFY_RECORD_ANONYMIZED": "ANONYMIZED",
+    "VERIFY_DATA_FLOW_DISABLED": "DISABLED",
+    "VERIFY_RESTORE_BLOCKED": "BLOCKED",
+}
+_FINDING_STATE = {
+    "REPORT_REMAINING_RECORD": "PRESENT",
+    "REPORT_EXPOSED_PII": "PRESENT",
+    "REPORT_ACTIVE_DATA_FLOW": "ACTIVE",
+    "REPORT_RESTORE_RISK": "ACTIVE",
+}
+_ACTIONS = {"DELETE", "REDACT", "ANONYMIZE", "RETAIN"}
+
+
+def resource_fields(r: dict) -> tuple[str, str, bool, list[str]]:
+    """(required_treatment, state_at_audit, satisfied, evidence_ids) for one
+    resource. Uses the CONTRACTS.md section 2 fields when present, otherwise
+    derives them from P3's decide() fields:
+
+      required_treatment  ACCOUNT_TOMBSTONE -> TOMBSTONE; else the treatment the
+                          final verification proves (ABSENT -> DELETE, ...);
+                          else P3's rule action
+      state_at_audit      the finding's state (PRESENT / ACTIVE) when the
+                          resource still violates policy; else the verified
+                          state, or UNKNOWN when no evidence proves it
+      satisfied           True when P3 reported no finding for the resource
+      evidence_ids        the finding's (or verification's) evidence first,
+                          then the evidence of each copy, no duplicates
+    """
+    if "required_treatment" in r or "state_at_audit" in r or "satisfied" in r:
+        return (_s(r.get("required_treatment")), _s(r.get("state_at_audit")),
+                bool(r.get("satisfied")), [str(e) for e in r.get("evidence_ids") or [] if e])
+    finding, verification = r.get("finding"), r.get("verification")
+    if r.get("category") == "ACCOUNT_TOMBSTONE":
+        treatment = "TOMBSTONE"
+    elif verification in _VERIFY_TREATMENT:
+        treatment = _VERIFY_TREATMENT[verification]
+    else:
+        treatment = r.get("action") if r.get("action") in _ACTIONS else ""
+    if finding:
+        state, first = _FINDING_STATE.get(finding, "PRESENT"), r.get("finding_evidence")
+    else:
+        first = r.get("verification_evidence")
+        state = _VERIFY_STATE.get(verification, "UNKNOWN") if first else "UNKNOWN"
+    ids: list[str] = []
+    for e in [first] + [c.get("evidence_id") for c in r.get("copies") or []]:
+        if e and e not in ids:
+            ids.append(str(e))
+    return treatment, state, not finding, ids
+
+
 def resource_rows(case_id: str, decision: Optional[dict]) -> list[tuple]:
     rows = []
     for r in (decision or {}).get("resources", []) or []:
+        treatment, state, satisfied, ids = resource_fields(r)
         rows.append((case_id, _s(r.get("system_id")), _s(r.get("resource_id")),
-                     _s(r.get("category")), _s(r.get("required_treatment")),
-                     _s(r.get("state_at_audit")), _b(r.get("satisfied")),
-                     json.dumps(list(r.get("evidence_ids") or []), ensure_ascii=False)))
+                     _s(r.get("category")), treatment, state, _b(satisfied),
+                     json.dumps(ids, ensure_ascii=False)))
     return rows
 
 

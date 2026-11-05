@@ -6,6 +6,7 @@ Run from the repo root with:
 """
 from __future__ import annotations
 
+import re
 import sqlite3
 import sys
 import unittest
@@ -186,9 +187,11 @@ class TestLineageIsDisplayOnly(unittest.TestCase):
     """The map must never change a deletion decision."""
 
     def test_policy_engine_does_not_use_lineage(self):
+        # The policy engine may read system_activity.csv itself (catalog links,
+        # restore/flow risk signals); what it must never do is use this
+        # display-only lineage map, so it must not import the lineage module.
         src = (Path(__file__).parent / "policy_engine.py").read_text(encoding="utf-8")
-        self.assertNotIn("lineage", src)
-        self.assertNotIn("system_activity", src)
+        self.assertIsNone(re.search(r"^\s*(import\s+lineage\b|from\s+lineage\b)", src, re.M))
 
     def test_restore_edge_into_backup_column(self):
         lin = ex.build_lineage(

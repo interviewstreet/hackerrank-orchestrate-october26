@@ -60,9 +60,15 @@
       "proof_cases": 1,
       "claim_only_cases": 1,
       "share_with_proof": 0.0039
+    },
+    {
+      "system_id": "account_history_service",
+      "proof_cases": 1,
+      "claim_only_cases": 0,
+      "share_with_proof": 0.0039
     }
   ],
   "basis": "evidence captured after the request, showing the person's data as present",
   "note": "Some of this data may be kept on purpose (for example audit logs or legal holds). The final verdict for each case comes from the policy engine.",
-  "policy_engine_connected": false
+  "policy_engine_connected": true
 }

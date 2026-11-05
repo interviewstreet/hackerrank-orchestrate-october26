@@ -3,7 +3,7 @@
   "email": "sd****@fastmail.com",
   "request_text": "Please process a permanent account-deletion request for this email address. Please apply the request across the systems covered by your deletion policy. Please contact me if you need information to verify the request.",
   "reported_status": "PARTIALLY_COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -214,7 +214,11 @@
             "details": "Policy action completed for data_flow_5877."
           }
         ],
-        "active_flow": null,
+        "active_flow": {
+          "kind": "DATA_FLOW",
+          "active_at_audit": false,
+          "evidence_id": "evidence_20"
+        },
         "restore_risk": null
       },
       {
@@ -355,7 +359,10 @@
           }
         ],
         "active_flow": null,
-        "restore_risk": null
+        "restore_risk": {
+          "active_at_audit": false,
+          "evidence_id": "evidence_20"
+        }
       },
       {
         "id": "backup_service|backup_9519|customer_data_read_replica",
@@ -383,9 +390,91 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
-  "flows": [],
-  "restore_risks": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_2399",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_20"
+      ]
+    },
+    {
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_2463",
+      "category": "ANALYTICS_PROFILE",
+      "required_treatment": "ANONYMIZE",
+      "state_at_audit": "ANONYMIZED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_20"
+      ]
+    },
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_9519",
+      "category": "BACKUP_ARCHIVE",
+      "required_treatment": "BLOCK_RESTORE",
+      "state_at_audit": "BLOCKED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_20"
+      ]
+    },
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5877",
+      "category": "DATA_FLOW",
+      "required_treatment": "DISABLE_FLOW",
+      "state_at_audit": "DISABLED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_20"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_2736",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_20"
+      ]
+    },
+    {
+      "system_id": "support_platform",
+      "resource_id": "support_9505",
+      "category": "SUPPORT_MESSAGE",
+      "required_treatment": "REDACT",
+      "state_at_audit": "REDACTED",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_20"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5877",
+      "kind": "DATA_FLOW",
+      "active_at_audit": false,
+      "evidence_id": "evidence_20"
+    }
+  ],
+  "restore_risks": [
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_9519",
+      "active_at_audit": false,
+      "evidence_id": "evidence_20"
+    }
+  ],
   "timeline": [
     {
       "time": "2026-02-08T07:00:00Z",
@@ -636,5 +725,60 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_2399",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2736",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "support_platform",
+      "resource_id": "support_9505",
+      "operation": "VERIFY_RECORD_REDACTED",
+      "state": "REDACTED",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "step_no": 4,
+      "phase": "VERIFICATION",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_2463",
+      "operation": "VERIFY_RECORD_ANONYMIZED",
+      "state": "ANONYMIZED",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5877",
+      "operation": "VERIFY_DATA_FLOW_DISABLED",
+      "state": "DISABLED",
+      "evidence_id": "evidence_20"
+    },
+    {
+      "step_no": 6,
+      "phase": "VERIFICATION",
+      "system_id": "backup_service",
+      "resource_id": "backup_9519",
+      "operation": "VERIFY_RESTORE_BLOCKED",
+      "state": "BLOCKED",
+      "evidence_id": "evidence_20"
+    }
+  ]
 }

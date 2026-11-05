@@ -66,6 +66,24 @@
       "captured_at": "2026-06-18T12:00:00Z",
       "replica_or_table": "",
       "origin": "export_service"
+    },
+    {
+      "file_id": "evidence_18",
+      "system_id": "account_history_service",
+      "resource_id": "NST-2026-0718-1842",
+      "matched_identifier": "email:in****@outlook.com",
+      "captured_at": "2026-07-18T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_history_service"
+    },
+    {
+      "file_id": "evidence_18",
+      "system_id": "account_history_service",
+      "resource_id": "NST-2026-0718-1842",
+      "matched_identifier": "user_id:user_18",
+      "captured_at": "2026-07-18T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_history_service"
     }
   ],
   "lineage_edges": [
@@ -100,6 +118,29 @@
     ],
     "nodes": [
       {
+        "id": "account_history_service|NST-2026-0718-1842|",
+        "system_id": "account_history_service",
+        "resource_id": "NST-2026-0718-1842",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_18"
+        ],
+        "origins": [
+          "account_history_service"
+        ],
+        "matched_identifiers": [
+          "email:in****@outlook.com",
+          "user_id:user_18"
+        ],
+        "first_captured_at": "2026-07-18T11:00:00Z",
+        "last_captured_at": "2026-07-18T11:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
         "id": "export_service|export_1260|",
         "system_id": "export_service",
         "resource_id": "export_1260",
@@ -125,7 +166,19 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "export_service",
+      "resource_id": "export_1842",
+      "category": "USER_EXPORT",
+      "required_treatment": "DELETE",
+      "state_at_audit": "PRESENT",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_18"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -194,6 +247,14 @@
       "evidence_id": ""
     },
     {
+      "time": "2026-07-18T11:00:00Z",
+      "system_id": "account_history_service",
+      "resource_id": "NST-2026-0718-1842",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_18"
+    },
+    {
       "time": "2026-07-19T13:00:00Z",
       "system_id": "",
       "resource_id": "",
@@ -202,5 +263,33 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "export_service",
+      "resource_id": "export_1842",
+      "operation": "REPORT_REMAINING_RECORD",
+      "state": "PRESENT",
+      "evidence_id": "evidence_18"
+    },
+    {
+      "step_no": 2,
+      "phase": "REMEDIATION",
+      "system_id": "export_service",
+      "resource_id": "export_1842",
+      "operation": "DELETE_RECORD",
+      "state": "ABSENT",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "export_service",
+      "resource_id": "export_1842",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": ""
+    }
+  ]
 }

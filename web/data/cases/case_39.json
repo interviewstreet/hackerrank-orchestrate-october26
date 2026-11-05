@@ -117,15 +117,39 @@
         "first_captured_at": "2026-08-07T08:00:00Z",
         "last_captured_at": "2026-08-07T08:00:00Z",
         "claims": [],
-        "active_flow": null,
+        "active_flow": {
+          "kind": "DATA_FLOW",
+          "active_at_audit": true,
+          "evidence_id": "evidence_14"
+        },
         "restore_risk": null
       }
     ],
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
-  "flows": [],
+  "resources": [
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1121",
+      "category": "DATA_FLOW",
+      "required_treatment": "DISABLE_FLOW",
+      "state_at_audit": "ACTIVE",
+      "satisfied": false,
+      "evidence_ids": [
+        "evidence_14"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1121",
+      "kind": "DATA_FLOW",
+      "active_at_audit": true,
+      "evidence_id": "evidence_14"
+    }
+  ],
   "restore_risks": [],
   "timeline": [
     {
@@ -225,5 +249,33 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "FINDING",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1121",
+      "operation": "REPORT_ACTIVE_DATA_FLOW",
+      "state": "ACTIVE",
+      "evidence_id": "evidence_14"
+    },
+    {
+      "step_no": 2,
+      "phase": "REMEDIATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1121",
+      "operation": "DISABLE_DATA_FLOW",
+      "state": "DISABLED",
+      "evidence_id": ""
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1121",
+      "operation": "VERIFY_DATA_FLOW_DISABLED",
+      "state": "DISABLED",
+      "evidence_id": ""
+    }
+  ]
 }

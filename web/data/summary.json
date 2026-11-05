@@ -1,8 +1,8 @@
 {
   "total_cases": 518,
   "status_counts": {
-    "COMPLETE": 0,
-    "INCOMPLETE": 508,
+    "COMPLETE": 153,
+    "INCOMPLETE": 355,
     "NOT_APPLICABLE": 10
   },
   "reported_status_counts": {
@@ -12,22 +12,22 @@
   },
   "reported_vs_ours": {
     "COMPLETE": {
-      "COMPLETE": 0,
-      "INCOMPLETE": 254,
+      "COMPLETE": 91,
+      "INCOMPLETE": 163,
       "NOT_APPLICABLE": 0
     },
     "PARTIALLY_COMPLETE": {
-      "COMPLETE": 0,
-      "INCOMPLETE": 152,
+      "COMPLETE": 36,
+      "INCOMPLETE": 116,
       "NOT_APPLICABLE": 0
     },
     "NOT_STARTED": {
-      "COMPLETE": 0,
-      "INCOMPLETE": 102,
+      "COMPLETE": 26,
+      "INCOMPLETE": 76,
       "NOT_APPLICABLE": 10
     }
   },
-  "reported_complete_but_not_complete": 254,
+  "reported_complete_but_not_complete": 163,
   "classification_counts": {
     "IS_DELETION": 508,
     "NOT_APPLICABLE": 10
@@ -40,5 +40,5 @@
     "ja": 12,
     "ko": 12
   },
-  "policy_engine_connected": false
+  "policy_engine_connected": true
 }

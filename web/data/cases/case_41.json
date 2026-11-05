@@ -3,7 +3,7 @@
   "email": "lu****@gmail.com",
   "request_text": "Please erase the account linked to this email address. Please handle any copies that fall within the scope of the deletion request. Let me know when the request has been completed.",
   "reported_status": "PARTIALLY_COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -248,7 +248,11 @@
             "details": "Policy action completed for data_flow_2901."
           }
         ],
-        "active_flow": null,
+        "active_flow": {
+          "kind": "DATA_FLOW",
+          "active_at_audit": false,
+          "evidence_id": ""
+        },
         "restore_risk": null
       },
       {
@@ -323,15 +327,101 @@
           }
         ],
         "active_flow": null,
-        "restore_risk": null
+        "restore_risk": {
+          "active_at_audit": false,
+          "evidence_id": ""
+        }
       }
     ],
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
-  "flows": [],
-  "restore_risks": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_4051",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_05",
+        "evidence_03"
+      ]
+    },
+    {
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6830",
+      "category": "ANALYTICS_PROFILE",
+      "required_treatment": "ANONYMIZE",
+      "state_at_audit": "UNKNOWN",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_03"
+      ]
+    },
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_706",
+      "category": "BACKUP_ARCHIVE",
+      "required_treatment": "BLOCK_RESTORE",
+      "state_at_audit": "UNKNOWN",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_03"
+      ]
+    },
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2901",
+      "category": "DATA_FLOW",
+      "required_treatment": "DISABLE_FLOW",
+      "state_at_audit": "UNKNOWN",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_03"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_7814",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_03"
+      ]
+    },
+    {
+      "system_id": "support_platform",
+      "resource_id": "support_2667",
+      "category": "SUPPORT_MESSAGE",
+      "required_treatment": "REDACT",
+      "state_at_audit": "UNKNOWN",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_03"
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2901",
+      "kind": "DATA_FLOW",
+      "active_at_audit": false,
+      "evidence_id": ""
+    }
+  ],
+  "restore_risks": [
+    {
+      "system_id": "backup_service",
+      "resource_id": "backup_706",
+      "active_at_audit": false,
+      "evidence_id": ""
+    }
+  ],
   "timeline": [
     {
       "time": "2026-06-02T19:46:59Z",
@@ -438,5 +528,24 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_4051",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_05"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7814",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_03"
+    }
+  ]
 }

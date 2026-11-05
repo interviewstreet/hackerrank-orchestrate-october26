@@ -3,7 +3,7 @@
   "email": "ol****@gmail.com",
   "request_text": "I no longer use this account and would like it permanently deleted. Please process this under the standard personal-data deletion procedure. Please send a confirmation after the process finishes.",
   "reported_status": "COMPLETE",
-  "our_status": "INCOMPLETE",
+  "our_status": "COMPLETE",
   "classification": "IS_DELETION",
   "language": "en",
   "confidence": "HIGH",
@@ -58,6 +58,15 @@
     }
   ],
   "evidence_hits": [
+    {
+      "file_id": "evidence_55",
+      "system_id": "security_service",
+      "resource_id": "audit_record_003",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T06:30:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
+    },
     {
       "file_id": "evidence_37",
       "system_id": "security_service",
@@ -196,6 +205,7 @@
         "source": "evidence",
         "group": "copy",
         "file_ids": [
+          "evidence_55",
           "evidence_37"
         ],
         "origins": [
@@ -204,7 +214,7 @@
         "matched_identifiers": [
           "user_id:user_03"
         ],
-        "first_captured_at": "2026-09-05T07:00:00Z",
+        "first_captured_at": "2026-09-05T06:30:00Z",
         "last_captured_at": "2026-09-05T07:00:00Z",
         "claims": [],
         "active_flow": null,
@@ -280,7 +290,85 @@
     "edges": [],
     "edge_note": "reported activity (claims)"
   },
-  "resources": [],
+  "resources": [
+    {
+      "system_id": "account_service",
+      "resource_id": "account_7219",
+      "category": "USER_PROFILE",
+      "required_treatment": "DELETE",
+      "state_at_audit": "ABSENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_90"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_001",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_37"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_002",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_37"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_003",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_37"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_004",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_37"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_005",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_37"
+      ]
+    },
+    {
+      "system_id": "security_service",
+      "resource_id": "audit_record_006",
+      "category": "SECURITY_AUDIT_LOG",
+      "required_treatment": "RETAIN",
+      "state_at_audit": "PRESENT",
+      "satisfied": true,
+      "evidence_ids": [
+        "evidence_37"
+      ]
+    }
+  ],
   "flows": [],
   "restore_risks": [],
   "timeline": [
@@ -725,6 +813,14 @@
       "evidence_id": ""
     },
     {
+      "time": "2026-09-05T06:30:00Z",
+      "system_id": "security_service",
+      "resource_id": "audit_record_003",
+      "event": "EVIDENCE_PROOF",
+      "state_after": "PRESENT",
+      "evidence_id": "evidence_55"
+    },
+    {
       "time": "2026-09-05T07:00:00Z",
       "system_id": "security_service",
       "resource_id": "audit_record_001",
@@ -789,5 +885,69 @@
       "evidence_id": ""
     }
   ],
-  "steps": []
+  "steps": [
+    {
+      "step_no": 1,
+      "phase": "VERIFICATION",
+      "system_id": "account_service",
+      "resource_id": "account_7219",
+      "operation": "VERIFY_RECORD_ABSENT",
+      "state": "ABSENT",
+      "evidence_id": "evidence_90"
+    },
+    {
+      "step_no": 2,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_001",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_37"
+    },
+    {
+      "step_no": 3,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_002",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_37"
+    },
+    {
+      "step_no": 4,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_003",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_37"
+    },
+    {
+      "step_no": 5,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_004",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_37"
+    },
+    {
+      "step_no": 6,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_005",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_37"
+    },
+    {
+      "step_no": 7,
+      "phase": "VERIFICATION",
+      "system_id": "security_service",
+      "resource_id": "audit_record_006",
+      "operation": "VERIFY_RECORD_PRESENT",
+      "state": "PRESENT",
+      "evidence_id": "evidence_37"
+    }
+  ]
 }
