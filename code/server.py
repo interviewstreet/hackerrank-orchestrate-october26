@@ -223,20 +223,27 @@ def main():
     parser.add_argument('--dataset', type=Path, default=root / 'dataset')
     parser.add_argument('--port', type=int, default=8000)
     args = parser.parse_args()
-    try:
+        try:
         results = load_results(args.dataset)
         with (args.dataset / 'deletion_requests.csv').open(encoding='utf-8', newline='') as request_file:
             requests = list(csv.DictReader(request_file))
-        with ApiServer(('127.0.0.1', args.port), results, requests) as server:
+
+        # Render sets PORT; use 0.0.0.0 there, keep 127.0.0.1 for local runs
+        host = '0.0.0.0' if os.environ.get('PORT') else '127.0.0.1'
+        port = int(os.environ.get('PORT', args.port))
+
+        with ApiServer((host, port), results, requests) as server:
             server.email = EmailHttpAdapter(
                 build_service_from_env(), Operators.from_env(os.environ),
                 case_provider=lambda cid: server.results[cid].to_dict() if cid in server.results else None)
-            print(f'EraSight local API: http://127.0.0.1:{args.port} ({len(results)} engine cases)')
+            print(f'EraSight API: http://{host}:{port} ({len(results)} engine cases)', flush=True)
             server.serve_forever()
     except KeyboardInterrupt:
         pass
     except Exception:
-        raise SystemExit('Unable to start the local API. Check the dataset, required parser tools and port. No credentials were logged.') from None
+        import traceback
+        traceback.print_exc()
+        raise SystemExit('Unable to start the API. See the traceback above.')
 
 
 if __name__ == '__main__':
