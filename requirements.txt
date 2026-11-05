@@ -1,0 +1,4 @@
+# The agent itself uses only the Python standard library (Python 3.10+).
+# System tools needed for PDF and screenshot evidence: poppler-utils (pdftotext) and tesseract-ocr.
+# Only if you mount the email router (code/integrations/email/router.py) in a FastAPI app; the engine and the email core need nothing.
+# fastapi>=0.110
