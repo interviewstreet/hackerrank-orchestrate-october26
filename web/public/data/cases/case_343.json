@@ -1,0 +1,56 @@
+{
+  "case_id": "case_343",
+  "email": "li****@outlook.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please ensure the request is applied to the relevant account records. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-18T09:00:00Z",
+  "audit_at": "2026-04-29T09:00:00Z",
+  "user_id": "user_341",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "li****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**41",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "8f6928e3…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. S.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_71",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9233",
+      "matched_identifier": "user_id:user_341",
+      "captured_at": "2026-04-29T08:32:22Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

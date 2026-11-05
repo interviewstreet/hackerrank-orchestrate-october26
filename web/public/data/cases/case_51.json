@@ -1,0 +1,84 @@
+{
+  "case_id": "case_51",
+  "email": "n.****@gmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please apply the request across the systems covered by your deletion policy. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-07T11:00:00Z",
+  "audit_at": "2026-09-26T11:00:00Z",
+  "user_id": "user_49",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "n.****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **08",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "82671907…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. M.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_94",
+      "system_id": "account_service",
+      "resource_id": "account_3610",
+      "matched_identifier": "email:n.****@gmail.com",
+      "captured_at": "2026-09-26T10:38:56Z"
+    },
+    {
+      "file_id": "evidence_94",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_4713",
+      "matched_identifier": "user_id:user_49",
+      "captured_at": "2026-09-26T10:38:56Z"
+    },
+    {
+      "file_id": "evidence_94",
+      "system_id": "backup_service",
+      "resource_id": "backup_7809",
+      "matched_identifier": "user_id:user_49",
+      "captured_at": "2026-09-26T10:38:56Z"
+    },
+    {
+      "file_id": "evidence_94",
+      "system_id": "support_platform",
+      "resource_id": "support_1097",
+      "matched_identifier": "user_id:user_49",
+      "captured_at": "2026-09-26T10:38:56Z"
+    },
+    {
+      "file_id": "evidence_94",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3308",
+      "matched_identifier": "user_id:user_49",
+      "captured_at": "2026-09-26T10:38:56Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,68 @@
+{
+  "case_id": "case_525",
+  "email": "o.****@yahoo.com",
+  "request_text": "Please erase the account linked to this email address. Please include information linked through current or earlier account identifiers. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-16T12:00:00Z",
+  "audit_at": "2026-01-29T12:00:00Z",
+  "user_id": "user_523",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "o.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": "audit_59"
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**23",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "9c40bdba…",
+      "is_historical": false,
+      "audit_id": "audit_60"
+    },
+    {
+      "kind": "name",
+      "value": "O. W.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "o.****@yahoo.com",
+      "is_historical": true,
+      "audit_id": "audit_59"
+    },
+    {
+      "kind": "email_hash",
+      "value": "6570536e…",
+      "is_historical": true,
+      "audit_id": "audit_60"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_62",
+      "system_id": "account_service",
+      "resource_id": "account_4974",
+      "matched_identifier": "email:o.****@yahoo.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

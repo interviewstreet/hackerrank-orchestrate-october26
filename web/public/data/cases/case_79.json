@@ -1,0 +1,75 @@
+{
+  "case_id": "case_79",
+  "email": "ji****@outlook.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please follow the applicable retention and deletion requirements for the account. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-15T08:00:00Z",
+  "audit_at": "2026-09-11T08:00:00Z",
+  "user_id": "user_77",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ji****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_273"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **10",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "aed0cce8…",
+      "is_historical": false,
+      "audit_id": "audit_274"
+    },
+    {
+      "kind": "name",
+      "value": "J. P.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ji****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_273"
+    },
+    {
+      "kind": "email_hash",
+      "value": "368e72e6…",
+      "is_historical": true,
+      "audit_id": "audit_274"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_91",
+      "system_id": "account_service",
+      "resource_id": "account_5186",
+      "matched_identifier": "email:ji****@outlook.com",
+      "captured_at": "2026-09-11T07:42:53Z"
+    },
+    {
+      "file_id": "evidence_91",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1734",
+      "matched_identifier": "user_id:user_77",
+      "captured_at": "2026-09-11T07:42:53Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

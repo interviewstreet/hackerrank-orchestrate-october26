@@ -1,0 +1,89 @@
+{
+  "case_id": "case_420",
+  "email": "st****@fastmail.com",
+  "request_text": "Solicito la eliminación permanente de la cuenta asociada a este correo. Revisen los identificadores actuales y anteriores según su política de privacidad. Por favor, confirmen el resultado cuando termine la revisión.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "es",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: eliminación"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“eliminación”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-25T09:00:00Z",
+  "audit_at": "2026-03-25T09:00:00Z",
+  "user_id": "user_418",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "st****@fastmail.com",
+      "is_historical": false,
+      "audit_id": "audit_108"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *17",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "90aa2a87…",
+      "is_historical": false,
+      "audit_id": "audit_109"
+    },
+    {
+      "kind": "name",
+      "value": "S. T.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "st****@fastmail.com",
+      "is_historical": true,
+      "audit_id": "audit_108"
+    },
+    {
+      "kind": "email_hash",
+      "value": "b80a39f5…",
+      "is_historical": true,
+      "audit_id": "audit_109"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_39",
+      "system_id": "account_service",
+      "resource_id": "account_7606",
+      "matched_identifier": "email:st****@fastmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "export_service",
+      "resource_id": "export_389",
+      "matched_identifier": "email:st****@fastmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "search_service",
+      "resource_id": "search_8472",
+      "matched_identifier": "email:st****@fastmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9687",
+      "matched_identifier": "user_id:user_418",
+      "captured_at": "2026-03-25T08:59:44Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

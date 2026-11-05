@@ -1,0 +1,90 @@
+{
+  "case_id": "case_367",
+  "email": "pr****@outlook.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please apply the request across the systems covered by your deletion policy. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-04T07:00:00Z",
+  "audit_at": "2026-04-19T07:00:00Z",
+  "user_id": "user_365",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "pr****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***49",
+      "is_historical": false,
+      "audit_id": "audit_68"
+    },
+    {
+      "kind": "email_hash",
+      "value": "f957edd1…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "P. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***97",
+      "is_historical": true,
+      "audit_id": "audit_68"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_34",
+      "system_id": "search_service",
+      "resource_id": "search_9950",
+      "matched_identifier": "email:pr****@outlook.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "support_platform",
+      "resource_id": "support_4691",
+      "matched_identifier": "email:pr****@outlook.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "account_service",
+      "resource_id": "account_3204",
+      "matched_identifier": "email:pr****@outlook.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_946",
+      "matched_identifier": "email:pr****@outlook.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9082",
+      "matched_identifier": "user_id:user_365",
+      "captured_at": "2026-04-19T06:59:43Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

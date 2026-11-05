@@ -1,0 +1,89 @@
+{
+  "case_id": "case_155",
+  "email": "th****@proton.me",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please ensure the request is applied to the relevant account records. Please confirm the result after completing the required checks.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-10T07:00:00Z",
+  "audit_at": "2026-08-02T07:00:00Z",
+  "user_id": "user_153",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "th****@proton.me",
+      "is_historical": false,
+      "audit_id": "audit_228"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **52",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "af1defa3…",
+      "is_historical": false,
+      "audit_id": "audit_229"
+    },
+    {
+      "kind": "name",
+      "value": "T. D.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "th****@proton.me",
+      "is_historical": true,
+      "audit_id": "audit_228"
+    },
+    {
+      "kind": "email_hash",
+      "value": "207d622d…",
+      "is_historical": true,
+      "audit_id": "audit_229"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_15",
+      "system_id": "backup_service",
+      "resource_id": "backup_161",
+      "matched_identifier": "user_id:user_153",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_4305",
+      "matched_identifier": "user_id:user_153",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4199",
+      "matched_identifier": "user_id:user_153",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "support_platform",
+      "resource_id": "support_7867",
+      "matched_identifier": "user_id:user_153",
+      "captured_at": "2026-08-02T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

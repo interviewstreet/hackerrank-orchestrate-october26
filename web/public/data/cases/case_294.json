@@ -1,0 +1,57 @@
+{
+  "case_id": "case_294",
+  "email": "tk****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please apply the request across the systems covered by your deletion policy. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-02T07:00:00Z",
+  "audit_at": "2026-05-24T07:00:00Z",
+  "user_id": "user_292",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "tk****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *36",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "89eb9b9b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "T. K.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_75",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4387",
+      "matched_identifier": "user_id:user_292",
+      "captured_at": "2026-05-24T06:39:55Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

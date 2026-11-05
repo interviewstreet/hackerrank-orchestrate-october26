@@ -1,0 +1,75 @@
+{
+  "case_id": "case_451",
+  "email": "ka****@outlook.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please include records associated with the account under your privacy process. Please let me know once the request has been reviewed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-19T06:00:00Z",
+  "audit_at": "2026-03-10T06:00:00Z",
+  "user_id": "user_449",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_97"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **93",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "294b8567…",
+      "is_historical": false,
+      "audit_id": "audit_98"
+    },
+    {
+      "kind": "name",
+      "value": "K. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ka****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_97"
+    },
+    {
+      "kind": "email_hash",
+      "value": "aaaa3114…",
+      "is_historical": true,
+      "audit_id": "audit_98"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_66",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7263",
+      "matched_identifier": "email:ka****@outlook.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    },
+    {
+      "file_id": "evidence_66",
+      "system_id": "search_service",
+      "resource_id": "search_360",
+      "matched_identifier": "email:ka****@outlook.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

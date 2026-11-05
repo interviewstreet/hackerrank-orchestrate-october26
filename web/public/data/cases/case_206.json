@@ -1,0 +1,68 @@
+{
+  "case_id": "case_206",
+  "email": "am****@gmail.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please complete the normal identity and data review for this request. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-24T09:00:00Z",
+  "audit_at": "2026-07-08T09:00:00Z",
+  "user_id": "user_204",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "am****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_205"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **89",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "908163b3…",
+      "is_historical": false,
+      "audit_id": "audit_206"
+    },
+    {
+      "kind": "name",
+      "value": "A. A.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "am****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_205"
+    },
+    {
+      "kind": "email_hash",
+      "value": "c11489e0…",
+      "is_historical": true,
+      "audit_id": "audit_206"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_20",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9878",
+      "matched_identifier": "user_id:user_204",
+      "captured_at": "2026-07-08T09:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

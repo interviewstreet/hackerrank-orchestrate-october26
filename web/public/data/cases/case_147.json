@@ -1,0 +1,62 @@
+{
+  "case_id": "case_147",
+  "email": "l.****@gmail.com",
+  "request_text": "Solicito la eliminación permanente de la cuenta asociada a este correo. Revisen los identificadores actuales y anteriores según su política de privacidad. Por favor, confirmen el resultado cuando termine la revisión.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "es",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: eliminación"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“eliminación”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-23T08:00:00Z",
+  "audit_at": "2026-08-07T08:00:00Z",
+  "user_id": "user_145",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "l.****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *29",
+      "is_historical": false,
+      "audit_id": "audit_33"
+    },
+    {
+      "kind": "email_hash",
+      "value": "0c02dab8…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. F.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *26",
+      "is_historical": true,
+      "audit_id": "audit_33"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_86",
+      "system_id": "backup_service",
+      "resource_id": "backup_4244",
+      "matched_identifier": "email:l.****@gmail.com",
+      "captured_at": "2026-08-07T07:41:04Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

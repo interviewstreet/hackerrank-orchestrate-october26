@@ -1,0 +1,78 @@
+{
+  "case_id": "case_515",
+  "email": "ka****@proton.me",
+  "request_text": "Please erase the account linked to this email address. Please apply the request across the systems covered by your deletion policy. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-11T06:00:00Z",
+  "audit_at": "2026-02-03T06:00:00Z",
+  "user_id": "user_513",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *57",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "aa18150b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "K. I.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_48",
+      "system_id": "search_service",
+      "resource_id": "search_1928",
+      "matched_identifier": "email:ka****@proton.me",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "account_service",
+      "resource_id": "account_3411",
+      "matched_identifier": "email:ka****@proton.me",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "support_platform",
+      "resource_id": "support_4533",
+      "matched_identifier": "email:ka****@proton.me",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7062",
+      "matched_identifier": "user_id:user_513",
+      "captured_at": "2026-02-03T05:59:42Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,83 @@
+{
+  "case_id": "case_527",
+  "email": "jo****@proton.me",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please apply the request across the systems covered by your deletion policy. I would appreciate confirmation of the final outcome.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-14T12:00:00Z",
+  "audit_at": "2026-01-29T12:00:00Z",
+  "user_id": "user_525",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "jo****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 05",
+      "is_historical": false,
+      "audit_id": "audit_03"
+    },
+    {
+      "kind": "email_hash",
+      "value": "bf0907a9…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "J. L.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 06",
+      "is_historical": true,
+      "audit_id": "audit_03"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_62",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7468",
+      "matched_identifier": "email:jo****@proton.me",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "support_platform",
+      "resource_id": "support_9832",
+      "matched_identifier": "email:jo****@proton.me",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "support_platform",
+      "resource_id": "support_3896",
+      "matched_identifier": "email:jo****@proton.me",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "search_service",
+      "resource_id": "search_1091",
+      "matched_identifier": "email:jo****@proton.me",
+      "captured_at": "2026-01-29T11:44:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

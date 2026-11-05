@@ -1,0 +1,68 @@
+{
+  "case_id": "case_98",
+  "email": "ma****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please include records associated with the account under your privacy process. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-06T06:00:00Z",
+  "audit_at": "2026-09-01T06:00:00Z",
+  "user_id": "user_96",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ma****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_254"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 30",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "cc009487…",
+      "is_historical": false,
+      "audit_id": "audit_255"
+    },
+    {
+      "kind": "name",
+      "value": "M. E.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ma****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_254"
+    },
+    {
+      "kind": "email_hash",
+      "value": "1d4f8cdc…",
+      "is_historical": true,
+      "audit_id": "audit_255"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_89",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3165",
+      "matched_identifier": "email:ma****@gmail.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

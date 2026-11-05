@@ -1,0 +1,75 @@
+{
+  "case_id": "case_285",
+  "email": "t.****@yahoo.com",
+  "request_text": "Please erase the account linked to this email address. Please check the records connected to the account before confirming completion. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-16T08:00:00Z",
+  "audit_at": "2026-05-29T08:00:00Z",
+  "user_id": "user_283",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "t.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": "audit_167"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **26",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "bab02bc4…",
+      "is_historical": false,
+      "audit_id": "audit_168"
+    },
+    {
+      "kind": "name",
+      "value": "T. Z.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "t.****@yahoo.com",
+      "is_historical": true,
+      "audit_id": "audit_167"
+    },
+    {
+      "kind": "email_hash",
+      "value": "e6b2a101…",
+      "is_historical": true,
+      "audit_id": "audit_168"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_76",
+      "system_id": "account_service",
+      "resource_id": "account_285",
+      "matched_identifier": "email:t.****@yahoo.com",
+      "captured_at": "2026-05-29T07:43:13Z"
+    },
+    {
+      "file_id": "evidence_76",
+      "system_id": "search_service",
+      "resource_id": "search_036",
+      "matched_identifier": "email:t.****@yahoo.com",
+      "captured_at": "2026-05-29T07:43:13Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

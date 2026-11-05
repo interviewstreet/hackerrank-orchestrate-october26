@@ -1,0 +1,84 @@
+{
+  "case_id": "case_156",
+  "email": "ks****@fastmail.com",
+  "request_text": "このメールアドレスに関連するアカウントの完全な削除を依頼します。 プライバシー手続きに従い、現在および過去の識別情報を確認してください。 確認が完了したら結果をお知らせください。",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ja",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 削除"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“削除”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-09T07:00:00Z",
+  "audit_at": "2026-08-02T07:00:00Z",
+  "user_id": "user_154",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ks****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **81",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b9b06071…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "K. S.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_15",
+      "system_id": "export_service",
+      "resource_id": "export_5897",
+      "matched_identifier": "email:ks****@fastmail.com",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "search_service",
+      "resource_id": "search_4870",
+      "matched_identifier": "email:ks****@fastmail.com",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "search_service",
+      "resource_id": "search_4870",
+      "matched_identifier": "name:k. s.",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "search_service",
+      "resource_id": "search_4870",
+      "matched_identifier": "user_id:user_154",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5890",
+      "matched_identifier": "user_id:user_154",
+      "captured_at": "2026-08-02T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

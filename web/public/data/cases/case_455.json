@@ -1,0 +1,84 @@
+{
+  "case_id": "case_455",
+  "email": "ao****@proton.me",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please include information linked through current or earlier account identifiers. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-10T12:00:00Z",
+  "audit_at": "2026-03-05T12:00:00Z",
+  "user_id": "user_453",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ao****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **02",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1b281589…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. M.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_43",
+      "system_id": "search_service",
+      "resource_id": "search_887",
+      "matched_identifier": "email:ao****@proton.me",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "support_platform",
+      "resource_id": "support_2055",
+      "matched_identifier": "email:ao****@proton.me",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "search_service",
+      "resource_id": "search_887",
+      "matched_identifier": "name:a. m.",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "search_service",
+      "resource_id": "search_887",
+      "matched_identifier": "user_id:user_453",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2788",
+      "matched_identifier": "user_id:user_453",
+      "captured_at": "2026-03-05T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

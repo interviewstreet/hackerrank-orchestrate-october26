@@ -1,0 +1,56 @@
+{
+  "case_id": "case_393",
+  "email": "a.****@yahoo.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please ensure the request is applied to the relevant account records. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-14T11:00:00Z",
+  "audit_at": "2026-04-04T11:00:00Z",
+  "user_id": "user_391",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "a.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***11",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "d73a09f8…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. M.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_69",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7330",
+      "matched_identifier": "user_id:user_391",
+      "captured_at": "2026-04-04T10:04:19Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

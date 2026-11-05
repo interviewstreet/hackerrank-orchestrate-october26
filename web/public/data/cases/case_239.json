@@ -1,0 +1,64 @@
+{
+  "case_id": "case_239",
+  "email": "da****@proton.me",
+  "request_text": "Please permanently delete the account associated with this email address. Please process this under the standard personal-data deletion procedure. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-27T06:00:00Z",
+  "audit_at": "2026-06-23T06:00:00Z",
+  "user_id": "user_237",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "da****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**37",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "44ebeb3d…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "D. P.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_79",
+      "system_id": "account_service",
+      "resource_id": "account_2838",
+      "matched_identifier": "email:da****@proton.me",
+      "captured_at": "2026-06-23T05:37:26Z"
+    },
+    {
+      "file_id": "evidence_79",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4940",
+      "matched_identifier": "user_id:user_237",
+      "captured_at": "2026-06-23T05:37:26Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

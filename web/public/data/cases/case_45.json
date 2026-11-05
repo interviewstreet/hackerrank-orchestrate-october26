@@ -1,0 +1,92 @@
+{
+  "case_id": "case_45",
+  "email": "ol****@gmail.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please process this under the standard personal-data deletion procedure. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-03T04:00:00Z",
+  "audit_at": "2026-09-06T09:00:00Z",
+  "user_id": "user_03",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ol****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**03",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1fa7764c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "O. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_37",
+      "system_id": "security_service",
+      "resource_id": "audit_record_001",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_37",
+      "system_id": "security_service",
+      "resource_id": "audit_record_002",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_37",
+      "system_id": "security_service",
+      "resource_id": "audit_record_003",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_37",
+      "system_id": "security_service",
+      "resource_id": "audit_record_004",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_37",
+      "system_id": "security_service",
+      "resource_id": "audit_record_005",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_37",
+      "system_id": "security_service",
+      "resource_id": "audit_record_006",
+      "matched_identifier": "user_id:user_03",
+      "captured_at": "2026-09-05T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,24 @@
+{
+  "case_id": "case_538",
+  "email": "mo****@icloud.com",
+  "request_text": "Please remove me from marketing lists only. I still want receipts and service messages for this account.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "keep: still want",
+    "opt_out: marketing"
+  ],
+  "reason": "Not a deletion request: the person asks to stop marketing messages (“marketing”), and they want to keep the account (“still want”).",
+  "requested_at": "2026-08-31T12:00:00Z",
+  "audit_at": "2026-09-26T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

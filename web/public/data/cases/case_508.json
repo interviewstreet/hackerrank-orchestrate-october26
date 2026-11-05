@@ -1,0 +1,71 @@
+{
+  "case_id": "case_508",
+  "email": "ka****@gmail.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the request across the systems covered by your deletion policy. Please confirm the result after completing the required checks.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-23T07:00:00Z",
+  "audit_at": "2026-02-08T07:00:00Z",
+  "user_id": "user_506",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **23",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "e8e87b41…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "J. K.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_47",
+      "system_id": "support_platform",
+      "resource_id": "support_2691",
+      "matched_identifier": "email:ka****@gmail.com",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8154",
+      "matched_identifier": "user_id:user_506",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "support_platform",
+      "resource_id": "support_2691",
+      "matched_identifier": "user_id:user_506",
+      "captured_at": "2026-02-08T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

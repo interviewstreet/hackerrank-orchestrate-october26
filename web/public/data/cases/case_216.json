@@ -1,0 +1,91 @@
+{
+  "case_id": "case_216",
+  "email": "mn****@fastmail.com",
+  "request_text": "Please erase the account linked to this email address. Please review the account data that is eligible for deletion or de-identification. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-09T08:00:00Z",
+  "audit_at": "2026-07-03T08:00:00Z",
+  "user_id": "user_214",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "mn****@fastmail.com",
+      "is_historical": false,
+      "audit_id": "audit_201"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *96",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "864a74bd…",
+      "is_historical": false,
+      "audit_id": "audit_202"
+    },
+    {
+      "kind": "name",
+      "value": "M. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "mn****@fastmail.com",
+      "is_historical": true,
+      "audit_id": "audit_201"
+    },
+    {
+      "kind": "email_hash",
+      "value": "270ece55…",
+      "is_historical": true,
+      "audit_id": "audit_202"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_81",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_4527",
+      "matched_identifier": "email:mn****@fastmail.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    },
+    {
+      "file_id": "evidence_81",
+      "system_id": "export_service",
+      "resource_id": "export_5351",
+      "matched_identifier": "email:mn****@fastmail.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    },
+    {
+      "file_id": "evidence_81",
+      "system_id": "search_service",
+      "resource_id": "search_5216",
+      "matched_identifier": "email:mn****@fastmail.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    },
+    {
+      "file_id": "evidence_81",
+      "system_id": "support_platform",
+      "resource_id": "support_8453",
+      "matched_identifier": "email:mn****@fastmail.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

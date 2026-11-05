@@ -1,0 +1,62 @@
+{
+  "case_id": "case_127",
+  "email": "ye****@outlook.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please follow the applicable retention and deletion requirements for the account. Please let me know once the request has been reviewed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-02T10:00:00Z",
+  "audit_at": "2026-08-17T10:00:00Z",
+  "user_id": "user_125",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ye****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **34",
+      "is_historical": false,
+      "audit_id": "audit_28"
+    },
+    {
+      "kind": "email_hash",
+      "value": "1d4f0037…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **40",
+      "is_historical": true,
+      "audit_id": "audit_28"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_87",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9649",
+      "matched_identifier": "user_id:user_125",
+      "captured_at": "2026-08-17T09:42:50Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

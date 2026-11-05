@@ -1,0 +1,64 @@
+{
+  "case_id": "case_496",
+  "email": "li****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please process this under the standard personal-data deletion procedure. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-20T08:00:00Z",
+  "audit_at": "2026-02-13T08:00:00Z",
+  "user_id": "user_494",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "li****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**17",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b45617df…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. L.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_63",
+      "system_id": "search_service",
+      "resource_id": "search_3169",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-02-13T07:43:27Z"
+    },
+    {
+      "file_id": "evidence_63",
+      "system_id": "support_platform",
+      "resource_id": "support_6391",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-02-13T07:43:27Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

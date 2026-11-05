@@ -1,0 +1,91 @@
+{
+  "case_id": "case_386",
+  "email": "ya****@gmail.com",
+  "request_text": "I would like the account associated with this address to be erased. Please complete the normal identity and data review for this request. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erased"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erased”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-26T12:00:00Z",
+  "audit_at": "2026-04-09T12:00:00Z",
+  "user_id": "user_384",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ya****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **39",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "43f01671…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. D.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_36",
+      "system_id": "account_service",
+      "resource_id": "account_807",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_4420",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7623",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "search_service",
+      "resource_id": "search_3630",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "support_platform",
+      "resource_id": "support_1693",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8245",
+      "matched_identifier": "user_id:user_384",
+      "captured_at": "2026-04-09T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

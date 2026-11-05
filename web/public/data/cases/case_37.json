@@ -1,0 +1,103 @@
+{
+  "case_id": "case_37",
+  "email": "ab****@zoho.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please apply the request across the systems covered by your deletion policy. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-06T12:00:00Z",
+  "audit_at": "2026-10-01T12:00:00Z",
+  "user_id": "user_35",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ab****@zoho.com",
+      "is_historical": false,
+      "audit_id": "audit_305"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **55",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "7fa9a566…",
+      "is_historical": false,
+      "audit_id": "audit_306"
+    },
+    {
+      "kind": "name",
+      "value": "A. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ab****@zoho.com",
+      "is_historical": true,
+      "audit_id": "audit_179"
+    },
+    {
+      "kind": "email",
+      "value": "ab****@zoho.com",
+      "is_historical": true,
+      "audit_id": "audit_305"
+    },
+    {
+      "kind": "email_hash",
+      "value": "6de35c99…",
+      "is_historical": true,
+      "audit_id": "audit_180"
+    },
+    {
+      "kind": "email_hash",
+      "value": "98787fbb…",
+      "is_historical": true,
+      "audit_id": "audit_306"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_03",
+      "system_id": "account_service",
+      "resource_id": "account_5193",
+      "matched_identifier": "email:ab****@zoho.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2528",
+      "matched_identifier": "email:ab****@zoho.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "search_service",
+      "resource_id": "search_1934",
+      "matched_identifier": "email:ab****@zoho.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2019",
+      "matched_identifier": "user_id:user_35",
+      "captured_at": "2026-10-01T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

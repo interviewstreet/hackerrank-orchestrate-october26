@@ -1,0 +1,63 @@
+{
+  "case_id": "case_120",
+  "email": "rb****@fastmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please ensure the request is applied to the relevant account records. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-25T11:00:00Z",
+  "audit_at": "2026-08-22T11:00:00Z",
+  "user_id": "user_118",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "rb****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***25",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "f97910de…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "R. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_88",
+      "system_id": "export_service",
+      "resource_id": "export_4289",
+      "matched_identifier": "email:rb****@fastmail.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    },
+    {
+      "file_id": "evidence_88",
+      "system_id": "search_service",
+      "resource_id": "search_943",
+      "matched_identifier": "email:rb****@fastmail.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

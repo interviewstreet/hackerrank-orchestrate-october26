@@ -1,0 +1,77 @@
+{
+  "case_id": "case_348",
+  "email": "io****@fastmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please apply the correct treatment to records covered by the request. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-13T09:00:00Z",
+  "audit_at": "2026-04-29T09:00:00Z",
+  "user_id": "user_346",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "io****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **83",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "657404a0…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "I. O.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_71",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9196",
+      "matched_identifier": "email:io****@fastmail.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    },
+    {
+      "file_id": "evidence_71",
+      "system_id": "export_service",
+      "resource_id": "export_4871",
+      "matched_identifier": "email:io****@fastmail.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    },
+    {
+      "file_id": "evidence_71",
+      "system_id": "support_platform",
+      "resource_id": "support_2897",
+      "matched_identifier": "email:io****@fastmail.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    },
+    {
+      "file_id": "evidence_71",
+      "system_id": "search_service",
+      "resource_id": "search_6170",
+      "matched_identifier": "email:io****@fastmail.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

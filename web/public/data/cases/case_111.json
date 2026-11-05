@@ -1,0 +1,57 @@
+{
+  "case_id": "case_111",
+  "email": "O.****@GMAIL.COM",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-08T12:00:00Z",
+  "audit_at": "2026-08-27T12:00:00Z",
+  "user_id": "user_109",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "o.****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 48",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "0825a72a…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "O. A.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_10",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8933",
+      "matched_identifier": "user_id:user_109",
+      "captured_at": "2026-08-27T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

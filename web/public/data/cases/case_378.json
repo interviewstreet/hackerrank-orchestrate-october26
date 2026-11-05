@@ -1,0 +1,75 @@
+{
+  "case_id": "case_378",
+  "email": "jk****@gmail.com",
+  "request_text": "이 이메일 주소에 연결된 계정의 영구 삭제를 요청합니다. 개인정보 처리 절차에 따라 현재 및 이전 식별자를 검토해 주세요. 검토가 완료되면 결과를 확인해 주세요.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ko",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 삭제"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“삭제”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-19T06:00:00Z",
+  "audit_at": "2026-04-14T06:00:00Z",
+  "user_id": "user_376",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "jk****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_129"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **98",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b85c27d0…",
+      "is_historical": false,
+      "audit_id": "audit_130"
+    },
+    {
+      "kind": "name",
+      "value": "J. K.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "jk****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_129"
+    },
+    {
+      "kind": "email_hash",
+      "value": "f3c2d9f1…",
+      "is_historical": true,
+      "audit_id": "audit_130"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_70",
+      "system_id": "account_service",
+      "resource_id": "account_976",
+      "matched_identifier": "email:jk****@gmail.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    },
+    {
+      "file_id": "evidence_70",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7312",
+      "matched_identifier": "user_id:user_376",
+      "captured_at": "2026-04-14T05:40:07Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,97 @@
+{
+  "case_id": "case_110",
+  "email": "in****@gmail.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please handle any copies that fall within the scope of the deletion request. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-09T12:00:00Z",
+  "audit_at": "2026-08-27T12:00:00Z",
+  "user_id": "user_108",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "in****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_250"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 48",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "09d29d39…",
+      "is_historical": false,
+      "audit_id": "audit_251"
+    },
+    {
+      "kind": "name",
+      "value": "I. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "in****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_250"
+    },
+    {
+      "kind": "email_hash",
+      "value": "68c08949…",
+      "is_historical": true,
+      "audit_id": "audit_251"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_10",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8857",
+      "matched_identifier": "email:in****@gmail.com",
+      "captured_at": "2026-08-27T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_10",
+      "system_id": "search_service",
+      "resource_id": "search_3993",
+      "matched_identifier": "email:in****@gmail.com",
+      "captured_at": "2026-08-27T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_10",
+      "system_id": "search_service",
+      "resource_id": "search_3993",
+      "matched_identifier": "name:i. m.",
+      "captured_at": "2026-08-27T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_10",
+      "system_id": "search_service",
+      "resource_id": "search_3993",
+      "matched_identifier": "user_id:user_108",
+      "captured_at": "2026-08-27T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_10",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9268",
+      "matched_identifier": "user_id:user_108",
+      "captured_at": "2026-08-27T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

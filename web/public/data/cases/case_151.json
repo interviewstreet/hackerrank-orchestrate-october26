@@ -1,0 +1,78 @@
+{
+  "case_id": "case_151",
+  "email": "el****@outlook.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please review any identifiers connected to this account as part of the request. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-19T08:00:00Z",
+  "audit_at": "2026-08-07T08:00:00Z",
+  "user_id": "user_149",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "el****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *01",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "100c56bb…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "E. I.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_86",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8905",
+      "matched_identifier": "user_id:user_149",
+      "captured_at": "2026-08-07T07:41:04Z"
+    },
+    {
+      "file_id": "evidence_86",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2437",
+      "matched_identifier": "user_id:user_149",
+      "captured_at": "2026-08-07T07:41:04Z"
+    },
+    {
+      "file_id": "evidence_86",
+      "system_id": "backup_service",
+      "resource_id": "backup_9557",
+      "matched_identifier": "user_id:user_149",
+      "captured_at": "2026-08-07T07:41:04Z"
+    },
+    {
+      "file_id": "evidence_86",
+      "system_id": "support_platform",
+      "resource_id": "support_5400",
+      "matched_identifier": "user_id:user_149",
+      "captured_at": "2026-08-07T07:41:04Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

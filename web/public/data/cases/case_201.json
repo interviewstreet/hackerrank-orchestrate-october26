@@ -1,0 +1,89 @@
+{
+  "case_id": "case_201",
+  "email": "j.****@yahoo.com",
+  "request_text": "Je demande la suppression définitive du compte associé à cette adresse e-mail. Veuillez examiner les identifiants actuels et antérieurs conformément à votre procédure de confidentialité. Merci de confirmer le résultat une fois la vérification terminée.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "fr",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: suppression"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“suppression”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-14T10:00:00Z",
+  "audit_at": "2026-07-13T10:00:00Z",
+  "user_id": "user_199",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "j.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": "audit_210"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 64",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "eace1ee0…",
+      "is_historical": false,
+      "audit_id": "audit_211"
+    },
+    {
+      "kind": "name",
+      "value": "J. G.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "j.****@yahoo.com",
+      "is_historical": true,
+      "audit_id": "audit_210"
+    },
+    {
+      "kind": "email_hash",
+      "value": "e0da6cad…",
+      "is_historical": true,
+      "audit_id": "audit_211"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_82",
+      "system_id": "account_service",
+      "resource_id": "account_2933",
+      "matched_identifier": "email:j.****@yahoo.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    },
+    {
+      "file_id": "evidence_82",
+      "system_id": "search_service",
+      "resource_id": "search_5135",
+      "matched_identifier": "email:j.****@yahoo.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    },
+    {
+      "file_id": "evidence_82",
+      "system_id": "support_platform",
+      "resource_id": "support_2863",
+      "matched_identifier": "email:j.****@yahoo.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    },
+    {
+      "file_id": "evidence_82",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5688",
+      "matched_identifier": "email:j.****@yahoo.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

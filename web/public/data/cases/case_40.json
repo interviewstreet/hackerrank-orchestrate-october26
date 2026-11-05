@@ -1,0 +1,89 @@
+{
+  "case_id": "case_40",
+  "email": "CH****@GMAIL.COM",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please handle any copies that fall within the scope of the deletion request. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-03T12:00:00Z",
+  "audit_at": "2026-10-01T12:00:00Z",
+  "user_id": "user_38",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ch****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_303"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **24",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "e80b6f27…",
+      "is_historical": false,
+      "audit_id": "audit_304"
+    },
+    {
+      "kind": "name",
+      "value": "J. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ch****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_303"
+    },
+    {
+      "kind": "email_hash",
+      "value": "fc79be7e…",
+      "is_historical": true,
+      "audit_id": "audit_304"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_03",
+      "system_id": "account_service",
+      "resource_id": "account_1810",
+      "matched_identifier": "email:ch****@gmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "search_service",
+      "resource_id": "search_3200",
+      "matched_identifier": "email:ch****@gmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "support_platform",
+      "resource_id": "support_4887",
+      "matched_identifier": "email:ch****@gmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8349",
+      "matched_identifier": "user_id:user_38",
+      "captured_at": "2026-10-01T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

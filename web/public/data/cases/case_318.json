@@ -1,0 +1,63 @@
+{
+  "case_id": "case_318",
+  "email": "mr****@gmail.com",
+  "request_text": "Je demande la suppression définitive du compte associé à cette adresse e-mail. Veuillez examiner les identifiants actuels et antérieurs conformément à votre procédure de confidentialité. Merci de confirmer le résultat une fois la vérification terminée.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "fr",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: suppression"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“suppression”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-18T12:00:00Z",
+  "audit_at": "2026-05-14T12:00:00Z",
+  "user_id": "user_316",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "mr****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 19",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "db775804…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "M. R.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_74",
+      "system_id": "search_service",
+      "resource_id": "search_5472",
+      "matched_identifier": "email:mr****@gmail.com",
+      "captured_at": "2026-05-14T11:44:54Z"
+    },
+    {
+      "file_id": "evidence_74",
+      "system_id": "support_platform",
+      "resource_id": "support_7995",
+      "matched_identifier": "email:mr****@gmail.com",
+      "captured_at": "2026-05-14T11:44:54Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

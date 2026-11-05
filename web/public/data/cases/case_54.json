@@ -1,0 +1,126 @@
+{
+  "case_id": "case_54",
+  "email": "BC****@GMAIL.COM",
+  "request_text": "Solicito a exclusão permanente da conta associada a este e-mail. Verifiquem os identificadores atuais e anteriores conforme o processo de privacidade. Por favor, confirmem o resultado quando a análise terminar.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "pt",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: exclusão"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“exclusão”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-30T10:00:00Z",
+  "audit_at": "2026-09-21T10:00:00Z",
+  "user_id": "user_52",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "bc****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**46",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "da5e2641…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "B. C.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5080",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "search_service",
+      "resource_id": "search_3995",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "support_platform",
+      "resource_id": "support_835",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "email_hash:da5e2641…",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "search_service",
+      "resource_id": "search_3995",
+      "matched_identifier": "name:b. c.",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "phone:***********46",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "search_service",
+      "resource_id": "search_3995",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6325",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "support_platform",
+      "resource_id": "support_835",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

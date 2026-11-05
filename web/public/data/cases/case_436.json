@@ -1,0 +1,77 @@
+{
+  "case_id": "case_436",
+  "email": "li****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please ensure the request is applied to the relevant account records. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-19T07:00:00Z",
+  "audit_at": "2026-03-15T07:00:00Z",
+  "user_id": "user_434",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "li****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 97",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "9e24912c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "F. L.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_41",
+      "system_id": "account_service",
+      "resource_id": "account_3078",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-03-15T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_41",
+      "system_id": "search_service",
+      "resource_id": "search_6599",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-03-15T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_41",
+      "system_id": "support_platform",
+      "resource_id": "support_165",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-03-15T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_41",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2748",
+      "matched_identifier": "user_id:user_434",
+      "captured_at": "2026-03-15T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

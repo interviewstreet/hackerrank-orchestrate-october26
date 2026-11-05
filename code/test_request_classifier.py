@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from models import ClassificationResult
-from request_classifier import classify_request
+from request_classifier import LANGUAGES, classify_request, detect_language
 
 IS_DEL = ClassificationResult.IS_DELETION
 NA = ClassificationResult.NOT_APPLICABLE
@@ -186,6 +186,86 @@ class TestResultShape(unittest.TestCase):
         self.assertEqual((a.label, a.matched_keywords), (b.label, b.matched_keywords))
 
 
+class TestDetectLanguage(unittest.TestCase):
+    """Made-up sentences, not from the dataset."""
+
+    CASES = {
+        "en": ["Please delete my account and all my data.",
+               "I don't want my account deleted, just unsubscribe me.",
+               "Hello there."],
+        "es": ["Por favor, borren todos mis datos personales y cierren la cuenta.",
+               "No eliminen mi cuenta, solo quiero una copia de mis datos.",
+               "¿Pueden confirmar la eliminación?"],
+        "pt": ["Quero que apaguem a minha conta e todos os dados.",
+               "Não exclua minha conta, quero apenas atualizar meu telefone.",
+               "Solicito a exclusão da conta."],
+        "fr": ["Supprimez mon compte définitivement.",
+               "Ne supprimez pas mon compte, je veux seulement corriger mon nom.",
+               "Merci de traiter ma demande."],
+        "ja": ["アカウントを削除してください", "データがまだ削除されていません。", "退会希望"],
+        "ko": ["제 계정을 탈퇴 처리하고 개인정보를 삭제해 주세요.", "계정을 삭제하지 마세요."],
+    }
+
+    def test_languages(self):
+        for lang, texts in self.CASES.items():
+            for text in texts:
+                with self.subTest(text=text):
+                    self.assertEqual(detect_language(text), lang)
+
+    def test_empty_or_no_words_is_en(self):
+        for text in ("", "   ", "12345", None):
+            with self.subTest(text=text):
+                self.assertEqual(detect_language(text), "en")
+
+    def test_result_carries_language(self):
+        self.assertEqual(classify_request("Supprimez mon compte.").language, "fr")
+
+
+class TestExplanation(unittest.TestCase):
+    """signals and reason explain the decision; they never change it."""
+
+    def test_signals_name_the_intent(self):
+        r = classify_request("Please remove me from marketing lists only. "
+                             "I still want receipts.")
+        self.assertEqual(r.signals, ["keep: still want", "opt_out: marketing"])
+
+    def test_signals_match_matched_keywords(self):
+        """Same phrases as matched_keywords, only OTHER is split by intent."""
+        for text in ("Could you send me a copy? I still use it, so please don't delete it.",
+                     "Delete my account and send me a copy of my data first.",
+                     "I can't log in, please reset my password."):
+            with self.subTest(text=text):
+                r = classify_request(text)
+                self.assertEqual(sorted(x.split(":", 1)[1].strip() for x in r.signals),
+                                 sorted(x.split(":", 1)[1] for x in r.matched_keywords))
+                for sig in r.signals:
+                    self.assertIn(sig.split(":")[0], {"negation", "keep", "deletion",
+                                                      "access", "correction", "opt_out",
+                                                      "login"})
+
+    def test_reason_for_each_label(self):
+        cases = {
+            "Please delete my account.": "Deletion request:",
+            "Please unsubscribe me from your newsletter.": "Not a deletion request:",
+            "Please don't delete my account.": "Not a deletion request:",
+            "Don't close my account, but delete my old order history.": "Unclear",
+            "Delete my account and send me a copy of my data first.": "Unclear",
+            "What is the weather like today?": "Unclear",
+        }
+        for text, start in cases.items():
+            with self.subTest(text=text):
+                reason = classify_request(text).reason
+                self.assertTrue(reason.startswith(start), reason)
+                self.assertTrue(reason.endswith("."), reason)
+                self.assertEqual(reason.count(". "), 0, "one sentence")
+
+    def test_reason_quotes_what_matched(self):
+        r = classify_request("I need a copy of my invoices. Please keep the account.")
+        self.assertIn("“I need a copy”", r.reason)
+        self.assertIn("“keep the account”", r.reason)
+        self.assertIn("see or get a copy of their data", r.reason)
+
+
 # ---------------------------------------------------------------------------
 # Real dataset
 # ---------------------------------------------------------------------------
@@ -211,6 +291,42 @@ class TestRealDataset(unittest.TestCase):
     def test_exactly_533_to_542_not_applicable(self):
         na = {c for c, r in self.results.items() if r.label == NA}
         self.assertEqual(na, EXPECTED_NA)
+
+    def test_label_counts_unchanged(self):
+        counts = {}
+        for r in self.results.values():
+            counts[r.label] = counts.get(r.label, 0) + 1
+        self.assertEqual(counts, {IS_DEL: 508, NA: 10})
+
+    def test_every_case_has_language_confidence_signals_reason(self):
+        for c, r in self.results.items():
+            with self.subTest(case=c):
+                self.assertIn(r.language, LANGUAGES)
+                self.assertEqual(r.confidence, "HIGH")
+                self.assertTrue(r.signals)
+                self.assertTrue(r.reason)
+
+    def test_not_applicable_reasons_are_clear(self):
+        """Each of case_533-542 names the real intent and quotes the phrases."""
+        expected_intent = {
+            "case_533": "correct or update", "case_534": "stop marketing",
+            "case_535": "copy of their data", "case_536": "signing in",
+            "case_537": "correct or update", "case_538": "stop marketing",
+            "case_539": "copy of their data", "case_540": "copy of their data",
+            "case_541": "correct or update", "case_542": "copy of their data",
+        }
+        for c, intent in expected_intent.items():
+            with self.subTest(case=c):
+                reason = self.results[c].reason
+                self.assertTrue(reason.startswith("Not a deletion request:"), reason)
+                self.assertIn(intent, reason)
+                self.assertIn("“", reason)
+
+    def test_language_counts(self):
+        langs = {}
+        for r in self.results.values():
+            langs[r.language] = langs.get(r.language, 0) + 1
+        self.assertEqual(langs, {"en": 456, "es": 12, "pt": 14, "fr": 12, "ja": 12, "ko": 12})
 
     def test_everything_else_is_deletion(self):
         for c, r in self.results.items():

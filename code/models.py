@@ -116,6 +116,9 @@ class ClassificationResult:
         confidence: str,
         matched_keywords: list[str],
         note: str = "",
+        language: str = "",
+        signals: Optional[list[str]] = None,
+        reason: str = "",
     ):
         assert label in (
             self.IS_DELETION,
@@ -124,8 +127,14 @@ class ClassificationResult:
         ), f"Invalid label: {label!r}"
         self.label = label
         self.confidence = confidence        # "HIGH" | "LOW"
-        self.matched_keywords = matched_keywords
+        self.matched_keywords = matched_keywords   # e.g. "OTHER:marketing"
         self.note = note
+        # Explanation fields (for audit.db / the website); never affect the label
+        self.language = language            # "en" | "es" | "pt" | "fr" | "ja" | "ko"
+        # e.g. "opt_out: marketing", "keep: still want" (family in lower case;
+        # OTHER is split into access / correction / opt_out / login)
+        self.signals = list(signals or [])
+        self.reason = reason                # one plain-English sentence
 
     def is_deletion(self) -> bool:
         return self.label == self.IS_DELETION
@@ -135,5 +144,6 @@ class ClassificationResult:
             f"ClassificationResult(label={self.label!r}, "
             f"confidence={self.confidence!r}, "
             f"keywords={self.matched_keywords!r}, "
-            f"note={self.note!r})"
+            f"note={self.note!r}, "
+            f"language={self.language!r})"
         )

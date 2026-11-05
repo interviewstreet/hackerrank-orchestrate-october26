@@ -1,0 +1,91 @@
+{
+  "case_id": "case_548",
+  "email": "fe****@icloud.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please complete the normal identity and data review for this request. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-02T12:00:00Z",
+  "audit_at": "2026-09-20T12:00:00Z",
+  "user_id": "user_548",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "fe****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *42",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "33f407a3…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "S. F.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_3745",
+      "matched_identifier": "email:fe****@icloud.com",
+      "captured_at": "2026-09-20T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_3745",
+      "matched_identifier": "email_hash:33f407a3…",
+      "captured_at": "2026-09-20T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_3745",
+      "matched_identifier": "name:s. f.",
+      "captured_at": "2026-09-20T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_3745",
+      "matched_identifier": "phone:*********42",
+      "captured_at": "2026-09-20T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_3745",
+      "matched_identifier": "user_id:user_548",
+      "captured_at": "2026-09-20T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6970",
+      "matched_identifier": "user_id:user_548",
+      "captured_at": "2026-09-20T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

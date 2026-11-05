@@ -1,0 +1,83 @@
+{
+  "case_id": "case_317",
+  "email": "et****@gmail.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please complete the normal identity and data review for this request. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-19T12:00:00Z",
+  "audit_at": "2026-05-14T12:00:00Z",
+  "user_id": "user_315",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "et****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**15",
+      "is_historical": false,
+      "audit_id": "audit_09"
+    },
+    {
+      "kind": "email_hash",
+      "value": "ae80bcc1…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "E. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**65",
+      "is_historical": true,
+      "audit_id": "audit_09"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_74",
+      "system_id": "support_platform",
+      "resource_id": "support_4439",
+      "matched_identifier": "email:et****@gmail.com",
+      "captured_at": "2026-05-14T11:44:54Z"
+    },
+    {
+      "file_id": "evidence_74",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3064",
+      "matched_identifier": "email:et****@gmail.com",
+      "captured_at": "2026-05-14T11:44:54Z"
+    },
+    {
+      "file_id": "evidence_74",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1488",
+      "matched_identifier": "email:et****@gmail.com",
+      "captured_at": "2026-05-14T11:44:54Z"
+    },
+    {
+      "file_id": "evidence_74",
+      "system_id": "search_service",
+      "resource_id": "search_8665",
+      "matched_identifier": "email:et****@gmail.com",
+      "captured_at": "2026-05-14T11:44:54Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

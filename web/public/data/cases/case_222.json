@@ -1,0 +1,69 @@
+{
+  "case_id": "case_222",
+  "email": "dc****@gmail.com",
+  "request_text": "이 이메일 주소에 연결된 계정의 영구 삭제를 요청합니다. 개인정보 처리 절차에 따라 현재 및 이전 식별자를 검토해 주세요. 검토가 완료되면 결과를 확인해 주세요.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ko",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 삭제"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“삭제”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-23T08:00:00Z",
+  "audit_at": "2026-07-03T08:00:00Z",
+  "user_id": "user_220",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "dc****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **30",
+      "is_historical": false,
+      "audit_id": "audit_92"
+    },
+    {
+      "kind": "email_hash",
+      "value": "fbc98b0f…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "D. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **87",
+      "is_historical": true,
+      "audit_id": "audit_92"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_81",
+      "system_id": "search_service",
+      "resource_id": "search_6405",
+      "matched_identifier": "email:dc****@gmail.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    },
+    {
+      "file_id": "evidence_81",
+      "system_id": "support_platform",
+      "resource_id": "support_111",
+      "matched_identifier": "email:dc****@gmail.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

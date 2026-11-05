@@ -1,0 +1,64 @@
+{
+  "case_id": "case_529",
+  "email": "fa****@zoho.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please handle any copies that fall within the scope of the deletion request. I would appreciate confirmation of the final outcome.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-12T12:00:00Z",
+  "audit_at": "2026-01-29T12:00:00Z",
+  "user_id": "user_527",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "fa****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **50",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "46ac0458…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "F. S.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_62",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6588",
+      "matched_identifier": "email:fa****@zoho.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "search_service",
+      "resource_id": "search_3382",
+      "matched_identifier": "email:fa****@zoho.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

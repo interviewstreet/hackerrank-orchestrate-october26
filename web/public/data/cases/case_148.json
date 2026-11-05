@@ -1,0 +1,77 @@
+{
+  "case_id": "case_148",
+  "email": "CA****@GMAIL.COM",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-22T08:00:00Z",
+  "audit_at": "2026-08-07T08:00:00Z",
+  "user_id": "user_146",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ca****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_232"
+    },
+    {
+      "kind": "phone",
+      "value": "+** **** ****46",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "41d2a764…",
+      "is_historical": false,
+      "audit_id": "audit_233"
+    },
+    {
+      "kind": "name",
+      "value": "A. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ca****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_232"
+    },
+    {
+      "kind": "email_hash",
+      "value": "1a0f5a81…",
+      "is_historical": true,
+      "audit_id": "audit_233"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_86",
+      "system_id": "search_service",
+      "resource_id": "search_7239",
+      "matched_identifier": "email:ca****@gmail.com",
+      "captured_at": "2026-08-07T07:41:04Z"
+    },
+    {
+      "file_id": "evidence_86",
+      "system_id": "support_platform",
+      "resource_id": "support_5716",
+      "matched_identifier": "email:ca****@gmail.com",
+      "captured_at": "2026-08-07T07:41:04Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

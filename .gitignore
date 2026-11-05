@@ -5,3 +5,7 @@ __pycache__/
 .pytest_cache/
 # partially written OCR cache entries (atomic-write temp files)
 code/evidence/ocr_cache/*.tmp
+
+# local pipeline database: holds unmasked identifiers; only web/public/data is published
+audit.db
+audit.db-journal

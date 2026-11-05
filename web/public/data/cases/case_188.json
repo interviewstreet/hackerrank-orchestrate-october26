@@ -1,0 +1,76 @@
+{
+  "case_id": "case_188",
+  "email": "ma****@outlook.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please follow the applicable retention and deletion requirements for the account. Please confirm the result after completing the required checks.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-02T11:00:00Z",
+  "audit_at": "2026-07-18T11:00:00Z",
+  "user_id": "user_186",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ma****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_214"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 55",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "f703057a…",
+      "is_historical": false,
+      "audit_id": "audit_215"
+    },
+    {
+      "kind": "name",
+      "value": "M. D.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ma****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_214"
+    },
+    {
+      "kind": "email_hash",
+      "value": "88c523df…",
+      "is_historical": true,
+      "audit_id": "audit_215"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_83",
+      "system_id": "search_service",
+      "resource_id": "search_3223",
+      "matched_identifier": "email:ma****@outlook.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_707",
+      "matched_identifier": "email:ma****@outlook.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

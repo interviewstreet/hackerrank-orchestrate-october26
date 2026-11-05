@@ -1,0 +1,65 @@
+{
+  "case_id": "case_349",
+  "email": "ya****@zoho.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please review the account data that is eligible for deletion or de-identification. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-12T09:00:00Z",
+  "audit_at": "2026-04-29T09:00:00Z",
+  "user_id": "user_347",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ya****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **85",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "79c943e7…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. F.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_71",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3178",
+      "matched_identifier": "email:ya****@zoho.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    },
+    {
+      "file_id": "evidence_71",
+      "system_id": "search_service",
+      "resource_id": "search_3944",
+      "matched_identifier": "email:ya****@zoho.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

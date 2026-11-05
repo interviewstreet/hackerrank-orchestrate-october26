@@ -1,0 +1,83 @@
+{
+  "case_id": "case_387",
+  "email": "y.****@gmail.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please process this under the standard personal-data deletion procedure. Please confirm when the review is complete.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-25T12:00:00Z",
+  "audit_at": "2026-04-09T12:00:00Z",
+  "user_id": "user_385",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "y.****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_119"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **59",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "677ae6b9…",
+      "is_historical": false,
+      "audit_id": "audit_120"
+    },
+    {
+      "kind": "name",
+      "value": "Y. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "y.****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_119"
+    },
+    {
+      "kind": "email_hash",
+      "value": "40883bc3…",
+      "is_historical": true,
+      "audit_id": "audit_120"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_36",
+      "system_id": "account_service",
+      "resource_id": "account_3978",
+      "matched_identifier": "email:y.****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "backup_service",
+      "resource_id": "backup_1668",
+      "matched_identifier": "email:y.****@gmail.com",
+      "captured_at": "2026-04-09T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_36",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2536",
+      "matched_identifier": "user_id:user_385",
+      "captured_at": "2026-04-09T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

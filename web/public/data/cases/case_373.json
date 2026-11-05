@@ -1,0 +1,75 @@
+{
+  "case_id": "case_373",
+  "email": "sa****@zoho.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please apply the correct treatment to records covered by the request. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-24T06:00:00Z",
+  "audit_at": "2026-04-14T06:00:00Z",
+  "user_id": "user_371",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "sa****@zoho.com",
+      "is_historical": false,
+      "audit_id": "audit_124"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **15",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "c1d3c9dd…",
+      "is_historical": false,
+      "audit_id": "audit_125"
+    },
+    {
+      "kind": "name",
+      "value": "S. H.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "sa****@zoho.com",
+      "is_historical": true,
+      "audit_id": "audit_124"
+    },
+    {
+      "kind": "email_hash",
+      "value": "2b7bd7a3…",
+      "is_historical": true,
+      "audit_id": "audit_125"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_70",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2984",
+      "matched_identifier": "email:sa****@zoho.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    },
+    {
+      "file_id": "evidence_70",
+      "system_id": "search_service",
+      "resource_id": "search_7859",
+      "matched_identifier": "email:sa****@zoho.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

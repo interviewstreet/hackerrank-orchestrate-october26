@@ -1,0 +1,70 @@
+{
+  "case_id": "case_447",
+  "email": "e.****@gmail.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please process this under the standard personal-data deletion procedure. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-23T06:00:00Z",
+  "audit_at": "2026-03-10T06:00:00Z",
+  "user_id": "user_445",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "e.****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_95"
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**45",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "e8c1591b…",
+      "is_historical": false,
+      "audit_id": "audit_96"
+    },
+    {
+      "kind": "name",
+      "value": "E. W.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "e.****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_95"
+    },
+    {
+      "kind": "email_hash",
+      "value": "7c923c4b…",
+      "is_historical": true,
+      "audit_id": "audit_96"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_66",
+      "system_id": "backup_service",
+      "resource_id": "backup_5192",
+      "matched_identifier": "email:e.****@gmail.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

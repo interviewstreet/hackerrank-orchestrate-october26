@@ -1,0 +1,64 @@
+{
+  "case_id": "case_230",
+  "email": "ma****@gmail.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-10T07:00:00Z",
+  "audit_at": "2026-06-28T07:00:00Z",
+  "user_id": "user_228",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ma****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **79",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "d29cbb7f…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "M. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_80",
+      "system_id": "search_service",
+      "resource_id": "search_5612",
+      "matched_identifier": "email:ma****@gmail.com",
+      "captured_at": "2026-06-28T06:25:56Z"
+    },
+    {
+      "file_id": "evidence_80",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2516",
+      "matched_identifier": "email:ma****@gmail.com",
+      "captured_at": "2026-06-28T06:25:56Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

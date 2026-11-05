@@ -1,0 +1,69 @@
+{
+  "case_id": "case_167",
+  "email": "ab****@proton.me",
+  "request_text": "Please begin the deletion process for the account using this email address. Please follow the applicable retention and deletion requirements for the account. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-13T06:00:00Z",
+  "audit_at": "2026-07-28T06:00:00Z",
+  "user_id": "user_165",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ab****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **76",
+      "is_historical": false,
+      "audit_id": "audit_36"
+    },
+    {
+      "kind": "email_hash",
+      "value": "0a00cf10…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. F.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **68",
+      "is_historical": true,
+      "audit_id": "audit_36"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_85",
+      "system_id": "account_service",
+      "resource_id": "account_5284",
+      "matched_identifier": "email:ab****@proton.me",
+      "captured_at": "2026-07-28T05:44:17Z"
+    },
+    {
+      "file_id": "evidence_85",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3088",
+      "matched_identifier": "user_id:user_165",
+      "captured_at": "2026-07-28T05:44:17Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,57 @@
+{
+  "case_id": "case_178",
+  "email": "ra****@icloud.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please include information linked through current or earlier account identifiers. I would appreciate confirmation of the final outcome.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-27T12:00:00Z",
+  "audit_at": "2026-07-23T12:00:00Z",
+  "user_id": "user_176",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ra****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **31",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "bf7fb1c2…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. R.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_84",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8521",
+      "matched_identifier": "user_id:user_176",
+      "captured_at": "2026-07-23T11:43:30Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

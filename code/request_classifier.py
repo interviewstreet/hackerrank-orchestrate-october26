@@ -138,46 +138,56 @@ _KEEP = [
 # ---------------------------------------------------------------------------
 # Non-deletion intents
 # ---------------------------------------------------------------------------
-_OTHER = [
+# Each pattern is tagged with the intent it shows. The tag is only used to
+# explain the decision (signals / reason); every intent counts the same.
+ACCESS, CORRECTION, OPT_OUT, LOGIN = "access", "correction", "opt_out", "login"
+_A, _C, _O, _L = ACCESS, CORRECTION, OPT_OUT, LOGIN
+
+_OTHER_TAGGED = [
     # English — access / copy / export
-    r"\bwhat\s+(?:personal\s+)?(?:information|data)\s+(?:you|do\s+you)\s+(?:hold|have|store)",
-    r"\binformation\s+request\b", r"\baccess\s+(?:to\s+)?my\s+(?:data|information)",
+    (_A, r"\bwhat\s+(?:personal\s+)?(?:information|data)\s+(?:you|do\s+you)\s+(?:hold|have|store)"),
+    (_A, r"\binformation\s+request\b"), (_A, r"\baccess\s+(?:to\s+)?my\s+(?:data|information)"),
     # copy / download only when the person wants to *receive* something
-    r"\b(?:send|give|provide|email|mail)\s+me\s+(?:a\s+|the\s+)?cop(?:y|ies)\b",
-    r"\b(?:i|we)\s+(?:need|want|would\s+like|'d\s+like|request)\s+(?:a\s+|to\s+get\s+a\s+)?cop(?:y|ies)\b",
-    r"\b(?:i|we)\s+(?:need|want|would\s+like|'d\s+like)\s+to\s+download\b",
-    r"\bdownload\s+(?:my|our)\b", r"\bportable\b", r"\bexport\s+my\b",
+    (_A, r"\b(?:send|give|provide|email|mail)\s+me\s+(?:a\s+|the\s+)?cop(?:y|ies)\b"),
+    (_A, r"\b(?:i|we)\s+(?:need|want|would\s+like|'d\s+like|request)\s+(?:a\s+|to\s+get\s+a\s+)?cop(?:y|ies)\b"),
+    (_A, r"\b(?:i|we)\s+(?:need|want|would\s+like|'d\s+like)\s+to\s+download\b"),
+    (_A, r"\bdownload\s+(?:my|our)\b"), (_A, r"\bportable\b"), (_A, r"\bexport\s+my\b"),
     # English — correct / change / update
-    r"\b(?:correct|fix|update|change|replace)\s+(?:it|my|the|this)\b",
-    r"\bupdated\b", r"\bmisspel\w*", r"\bout\s+of\s+date\b", r"\bincorrect\b",
+    (_C, r"\b(?:correct|fix|update|change|replace)\s+(?:it|my|the|this)\b"),
+    (_C, r"\bupdated\b"), (_C, r"\bmisspel\w*"), (_C, r"\bout\s+of\s+date\b"), (_C, r"\bincorrect\b"),
     # English — marketing opt-out
-    r"\bmarketing\b", r"\bpromotional\b", r"\bnewsletters?\b", r"\bunsubscribe\b",
-    r"\bopt[- ]?out\b", r"\bmailing\s+lists?\b",
+    (_O, r"\bmarketing\b"), (_O, r"\bpromotional\b"), (_O, r"\bnewsletters?\b"), (_O, r"\bunsubscribe\b"),
+    (_O, r"\bopt[- ]?out\b"), (_O, r"\bmailing\s+lists?\b"),
     # English — login help
-    r"\blog\s?in\b", r"\bpassword\b", r"\breset\w*", r"\bsign\s+in\b", r"\bcan't\s+access\b",
+    (_L, r"\blog\s?in\b"), (_L, r"\bpassword\b"), (_L, r"\breset\w*"), (_L, r"\bsign\s+in\b"),
+    (_L, r"\bcan't\s+access\b"),
     # Spanish
-    r"\bcopia\b", r"\bdescarg\w+", r"\bacceso\s+a\s+mis\s+datos", r"\bcorregir\b",
-    r"\bactualiz\w+", r"\bcambi\w+", r"\bpublicidad\b", r"\bcontrase[ñn]a\b",
-    r"\biniciar\s+sesi[oó]n\b",
+    (_A, r"\bcopia\b"), (_A, r"\bdescarg\w+"), (_A, r"\bacceso\s+a\s+mis\s+datos"), (_C, r"\bcorregir\b"),
+    (_C, r"\bactualiz\w+"), (_C, r"\bcambi\w+"), (_O, r"\bpublicidad\b"), (_L, r"\bcontrase[ñn]a\b"),
+    (_L, r"\biniciar\s+sesi[oó]n\b"),
     # Portuguese
-    r"\bc[oó]pia\b", r"\bbaixar\b", r"\bacesso\s+aos\s+meus\s+dados", r"\bcorrigir\b",
-    r"\batualiz\w+", r"\balter\w+", r"\bpublicidade\b", r"\bsenha\b",
+    (_A, r"\bc[oó]pia\b"), (_A, r"\bbaixar\b"), (_A, r"\bacesso\s+aos\s+meus\s+dados"), (_C, r"\bcorrigir\b"),
+    (_C, r"\batualiz\w+"), (_C, r"\balter\w+"), (_O, r"\bpublicidade\b"), (_L, r"\bsenha\b"),
     # French
-    r"\bcopie\b", r"\bt[ée]l[ée]charg\w+", r"\bacc[èe]s\s+[àa]\s+mes\s+donn[ée]es",
-    r"\bcorrig\w+", r"\bmettre\s+[àa]\s+jour\b", r"\bmodifi\w+", r"\bpublicit[ée]\b",
-    r"\bd[ée]sabonn\w+", r"\bmot\s+de\s+passe\b", r"\bconnexion\b",
+    (_A, r"\bcopie\b"), (_A, r"\bt[ée]l[ée]charg\w+"), (_A, r"\bacc[èe]s\s+[àa]\s+mes\s+donn[ée]es"),
+    (_C, r"\bcorrig\w+"), (_C, r"\bmettre\s+[àa]\s+jour\b"), (_C, r"\bmodifi\w+"), (_O, r"\bpublicit[ée]\b"),
+    (_O, r"\bd[ée]sabonn\w+"), (_L, r"\bmot\s+de\s+passe\b"), (_L, r"\bconnexion\b"),
     # Japanese
-    r"コピー", r"ダウンロード", r"開示", r"修正", r"訂正", r"変更", r"更新",
-    r"配信停止", r"メールマガジン", r"広告", r"パスワード", r"ログイン",
+    (_A, r"コピー"), (_A, r"ダウンロード"), (_A, r"開示"), (_C, r"修正"), (_C, r"訂正"), (_C, r"変更"),
+    (_C, r"更新"), (_O, r"配信停止"), (_O, r"メールマガジン"), (_O, r"広告"), (_L, r"パスワード"),
+    (_L, r"ログイン"),
     # Korean
-    r"사본", r"다운로드", r"열람", r"수정", r"정정", r"변경", r"업데이트",
-    r"마케팅", r"광고", r"수신\s*거부", r"비밀번호", r"로그인",
+    (_A, r"사본"), (_A, r"다운로드"), (_A, r"열람"), (_C, r"수정"), (_C, r"정정"), (_C, r"변경"),
+    (_C, r"업데이트"), (_O, r"마케팅"), (_O, r"광고"), (_O, r"수신\s*거부"), (_L, r"비밀번호"),
+    (_L, r"로그인"),
 ]
+_OTHER = [p for _, p in _OTHER_TAGGED]
 
 _DELETION_RE = [re.compile(p, _F) for p in _DELETION]
 _NEGATION_RE = [re.compile(p, _F) for p in _NEGATION]
 _KEEP_RE = [re.compile(p, _F) for p in _KEEP]
 _OTHER_RE = [re.compile(p, _F) for p in _OTHER]
+_OTHER_INTENT = {rx: tag for rx, (tag, _) in zip(_OTHER_RE, _OTHER_TAGGED)}
 
 
 # Conjunctions that start a new clause (a second, separate request):
@@ -199,8 +209,123 @@ def _find(patterns: list[re.Pattern], text: str) -> list[re.Match]:
     return [m for p in patterns for m in p.finditer(text)]
 
 
+# ---------------------------------------------------------------------------
+# Language detection (explanation only — never used by the decision)
+# ---------------------------------------------------------------------------
+LANGUAGES = ("en", "es", "pt", "fr", "ja", "ko")
+
+_KANA = re.compile(r"[぀-ヿ]")
+_HANGUL = re.compile(r"[ᄀ-ᇿ㄰-㆏가-힯]")
+_HAN = re.compile(r"[一-鿿]")
+
+# Common short words, chosen so each one is typical of one language.
+# Words shared by several languages (de, que, la, a, no ...) are left out.
+_STOPWORDS = {
+    "en": {"the", "and", "my", "i", "is", "please", "to", "of", "you", "it", "for",
+           "this", "that", "with", "have", "me", "your", "am", "was", "all", "any",
+           "account", "data", "delete", "remove", "information", "about", "be", "can"},
+    "es": {"el", "los", "las", "mi", "mis", "por", "favor", "cuenta", "datos", "y",
+           "una", "con", "para", "quiero", "todos", "su", "sus", "del", "lo", "eliminen",
+           "borren", "también", "información", "solicito", "ustedes", "cualquier"},
+    "pt": {"os", "meu", "minha", "meus", "minhas", "conta", "dados", "uma", "com",
+           "não", "quero", "você", "vocês", "do", "da", "dos", "das", "em", "seu",
+           "sua", "também", "informações", "excluam", "apaguem", "solicito", "qualquer"},
+    "fr": {"le", "les", "mon", "ma", "mes", "je", "vous", "compte", "données", "et",
+           "avec", "pour", "est", "pas", "merci", "du", "des", "au", "aux", "votre",
+           "vos", "supprimez", "toutes", "tous", "aussi", "informations", "demande"},
+}
+# Letters typical of one language add extra weight
+_LETTER_HINTS = {"es": "ñ¿¡", "pt": "ãõ", "fr": "èêëîïœùûç«»"}
+_WORD = re.compile(r"[^\W\d_]+(?:'[^\W\d_]+)?", re.UNICODE)
+
+
+def detect_language(request_text: str) -> str:
+    """
+    Return the language of *request_text*: en, es, pt, fr, ja or ko.
+
+    Japanese and Korean are recognised by their scripts (kana / Han for
+    Japanese, Hangul for Korean). For Latin-script text, each language
+    scores 1 point per typical short word and 2 per typical letter; the
+    highest score wins, ties go to the order en, es, pt, fr. Text with no
+    signal at all (empty, only numbers) is "en".
+    """
+    text = _normalise(request_text).lower()
+    if _HANGUL.search(text):
+        return "ko"
+    if _KANA.search(text) or _HAN.search(text):
+        return "ja"
+    words = _WORD.findall(text)
+    scores = {lang: sum(w in sw for w in words) for lang, sw in _STOPWORDS.items()}
+    for lang, letters in _LETTER_HINTS.items():
+        scores[lang] += 2 * sum(text.count(ch) for ch in letters)
+    best = max(scores.values())
+    if best == 0:
+        return "en"
+    return next(lang for lang in ("en", "es", "pt", "fr") if scores[lang] == best)
+
+
+# ---------------------------------------------------------------------------
+# Explanation: signals and a one-sentence reason (never affect the label)
+# ---------------------------------------------------------------------------
+_INTENT_WORDS = {
+    ACCESS: "to see or get a copy of their data",
+    CORRECTION: "to correct or update their details",
+    OPT_OUT: "to stop marketing messages",
+    LOGIN: "for help signing in",
+}
+
+
+def _q(items: list[str], limit: int = 2) -> str:
+    """'“a”, “b”' — the first *limit* matched phrases, quoted."""
+    return ", ".join(f"“{i}”" for i in items[:limit])
+
+
+def _join(parts: list[str]) -> str:
+    if len(parts) <= 1:
+        return "".join(parts)
+    return ", ".join(parts[:-1]) + " and " + parts[-1]
+
+
+def _reason(label: str, neg: list[str], keep: list[str], dele: list[str],
+            other: dict[str, list[str]], conflict: bool) -> str:
+    intents = [f"{_INTENT_WORDS[t]} ({_q(v)})" for t, v in other.items()]
+    if label == ClassificationResult.IS_DELETION:
+        return (f"Deletion request: the person asks to delete their data ({_q(dele)}) "
+                "and nothing in the text refuses deletion or asks for something else.")
+    if label == ClassificationResult.NOT_APPLICABLE:
+        refusals = []
+        if neg:
+            refusals.append(f"say they do not want deletion ({_q(neg)})")
+        if keep:
+            refusals.append(f"want to keep the account ({_q(keep)})")
+        if intents and refusals:
+            return (f"Not a deletion request: the person asks {_join(intents)}, "
+                    f"and they {_join(refusals)}.")
+        if intents:
+            return (f"Not a deletion request: the person only asks {_join(intents)}, "
+                    "and never asks for deletion.")
+        return f"Not a deletion request: they {_join(refusals)}."
+    # UNCERTAIN
+    if conflict:
+        clash = [f"says not to delete ({_q(neg)})"] if neg else []
+        clash += [f"asks to keep the account ({_q(keep)})"] if keep else []
+        return (f"Unclear, needs review by a person: the text asks to delete ({_q(dele)}) "
+                f"but also {_join(clash)}.")
+    if dele:
+        return (f"Unclear, needs review by a person: the text asks to delete ({_q(dele)}) "
+                f"and also asks {_join(intents)}.")
+    return ("Unclear, needs review by a person: no phrase asking for deletion "
+            "or for anything else was found.")
+
+
 def classify_request(request_text: str) -> ClassificationResult:
     """Classify *request_text* as IS_DELETION, NOT_APPLICABLE or UNCERTAIN."""
+    result = _classify(request_text)
+    result.language = detect_language(request_text)
+    return result
+
+
+def _classify(request_text: str) -> ClassificationResult:
     text = _normalise(request_text)
 
     neg = _find(_NEGATION_RE, text)
@@ -242,22 +367,40 @@ def classify_request(request_text: str) -> ClassificationResult:
         + [f"DELETION:{k}" for k in kw(positive_del)]
         + [f"OTHER:{k}" for k in kw(other)]
     )
+    # Explanation: same matches, OTHER split by intent (first-seen order)
+    other_by_intent: dict[str, list[str]] = {}
+    for m in sorted(other, key=lambda m: m.start()):
+        found = other_by_intent.setdefault(_OTHER_INTENT[m.re], [])
+        if m.group(0) not in found:
+            found.append(m.group(0))
+    named = (
+        [f"negation: {k}" for k in kw(neg)]
+        + [f"keep: {k}" for k in kw(keep)]
+        + [f"deletion: {k}" for k in kw(positive_del)]
+        + [f"{t}: {k}" for t, ks in other_by_intent.items() for k in ks]
+    )
+
     R = ClassificationResult
+
+    def make(label: str, confidence: str, note: str, conflict: bool = False):
+        return R(label, confidence, signals, note, signals=named,
+                 reason=_reason(label, kw(neg), kw(keep), kw(positive_del),
+                                other_by_intent, conflict))
 
     if neg or keep:
         if positive_del:
-            return R(R.UNCERTAIN, "LOW", signals,
-                     "deletion requested but also negated / keep-account phrase")
-        return R(R.NOT_APPLICABLE, "HIGH", signals,
-                 "deletion negated or asks to keep the account")
+            return make(R.UNCERTAIN, "LOW",
+                        "deletion requested but also negated / keep-account phrase",
+                        conflict=True)
+        return make(R.NOT_APPLICABLE, "HIGH", "deletion negated or asks to keep the account")
 
     if positive_del:
         if other:
-            return R(R.UNCERTAIN, "LOW", signals,
-                     "deletion requested together with a non-deletion intent")
-        return R(R.IS_DELETION, "HIGH", signals, "deletion requested")
+            return make(R.UNCERTAIN, "LOW",
+                        "deletion requested together with a non-deletion intent")
+        return make(R.IS_DELETION, "HIGH", "deletion requested")
 
     if other:
-        return R(R.NOT_APPLICABLE, "HIGH", signals, "non-deletion intent only")
+        return make(R.NOT_APPLICABLE, "HIGH", "non-deletion intent only")
 
-    return R(R.UNCERTAIN, "LOW", signals, "no deletion or non-deletion signal matched")
+    return make(R.UNCERTAIN, "LOW", "no deletion or non-deletion signal matched")

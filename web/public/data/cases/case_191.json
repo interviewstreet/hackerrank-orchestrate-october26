@@ -1,0 +1,79 @@
+{
+  "case_id": "case_191",
+  "email": "KA****@PROTON.ME",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please handle any copies that fall within the scope of the deletion request. Please confirm when the review is complete.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-29T11:00:00Z",
+  "audit_at": "2026-07-18T11:00:00Z",
+  "user_id": "user_189",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **52",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "44376f7c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "K. H.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_83",
+      "system_id": "backup_service",
+      "resource_id": "backup_3010",
+      "matched_identifier": "user_id:user_189",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1611",
+      "matched_identifier": "user_id:user_189",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7493",
+      "matched_identifier": "user_id:user_189",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "support_platform",
+      "resource_id": "support_5049",
+      "matched_identifier": "user_id:user_189",
+      "captured_at": "2026-07-18T10:43:35Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

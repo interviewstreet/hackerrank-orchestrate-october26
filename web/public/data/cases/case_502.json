@@ -1,0 +1,62 @@
+{
+  "case_id": "case_502",
+  "email": "ho****@icloud.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please ensure the request is applied to the relevant account records. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-03T08:00:00Z",
+  "audit_at": "2026-02-13T08:00:00Z",
+  "user_id": "user_500",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ho****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *12",
+      "is_historical": false,
+      "audit_id": "audit_12"
+    },
+    {
+      "kind": "email_hash",
+      "value": "7d9dc5a0…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "P. H.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *21",
+      "is_historical": true,
+      "audit_id": "audit_12"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_63",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5238",
+      "matched_identifier": "user_id:user_500",
+      "captured_at": "2026-02-13T07:43:27Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,89 @@
+{
+  "case_id": "case_414",
+  "email": "km****@gmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please complete the normal identity and data review for this request. Please let me know once the request has been reviewed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-03T09:00:00Z",
+  "audit_at": "2026-03-25T09:00:00Z",
+  "user_id": "user_412",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "km****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_113"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **37",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "05ce0cef…",
+      "is_historical": false,
+      "audit_id": "audit_114"
+    },
+    {
+      "kind": "name",
+      "value": "K. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "km****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_113"
+    },
+    {
+      "kind": "email_hash",
+      "value": "057129e4…",
+      "is_historical": true,
+      "audit_id": "audit_114"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_39",
+      "system_id": "account_service",
+      "resource_id": "account_5260",
+      "matched_identifier": "email:km****@gmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "support_platform",
+      "resource_id": "support_3768",
+      "matched_identifier": "email:km****@gmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "search_service",
+      "resource_id": "search_8770",
+      "matched_identifier": "email:km****@gmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3768",
+      "matched_identifier": "user_id:user_412",
+      "captured_at": "2026-03-25T08:59:44Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

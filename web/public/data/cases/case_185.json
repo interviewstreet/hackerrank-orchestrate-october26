@@ -1,0 +1,75 @@
+{
+  "case_id": "case_185",
+  "email": "di****@gmail.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please handle any copies that fall within the scope of the deletion request. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-05T11:00:00Z",
+  "audit_at": "2026-07-18T11:00:00Z",
+  "user_id": "user_183",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "di****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_216"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***22",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "73b8e612…",
+      "is_historical": false,
+      "audit_id": "audit_217"
+    },
+    {
+      "kind": "name",
+      "value": "D. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "di****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_216"
+    },
+    {
+      "kind": "email_hash",
+      "value": "93c6728a…",
+      "is_historical": true,
+      "audit_id": "audit_217"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_83",
+      "system_id": "search_service",
+      "resource_id": "search_8463",
+      "matched_identifier": "email:di****@gmail.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1950",
+      "matched_identifier": "email:di****@gmail.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

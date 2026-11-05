@@ -15,6 +15,10 @@ Pipeline per case:
 
 A case that raises an error is written as INCOMPLETE with [] and reported,
 so output.csv is always written with one row per request.
+
+Each case's results are also saved to audit.db (audit_db.py) for the
+website export. A database error only prints a warning: it never changes
+a case's answer and never stops output.csv from being written.
 """
 from __future__ import annotations
 
@@ -27,6 +31,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
+import audit_db
 from evidence_search import find_records
 from identity_resolver import IdentityResolver
 from models import EVIDENCE_KEYS, ClassificationResult
@@ -61,14 +66,22 @@ def _check_evidence(evidence, case_id: str) -> None:
              "add them to CONTRACTS.md if P3 should use them")
 
 
-def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str]:
+def process_case(case: dict, resolver: IdentityResolver,
+                 trace: dict | None = None) -> tuple[str, list, str]:
     """
     Return (deletion_status, steps, classifier_label) for one request row.
     May raise; run_case() catches errors.
+
+    If *trace* is a dict, the intermediate results (classification,
+    classifier, identity, evidence, decision) are put in it as they are computed, so
+    run_case() can save them to audit.db even if a later stage fails.
     """
     case_id = case["case_id"]
+    trace = {} if trace is None else trace
 
     cls = classify_request(case["request_text"])
+    trace["classification"] = cls.label
+    trace["classifier"] = cls
     if cls.label == ClassificationResult.NOT_APPLICABLE:
         return "NOT_APPLICABLE", [], cls.label
     if cls.label == ClassificationResult.UNCERTAIN:
@@ -86,6 +99,7 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
 
     identity = resolver.resolve(case["email"], audit_at=audit_at,
                                 requested_at=requested_at, case_id=case_id)
+    trace["identity"] = identity
     if identity is None:
         warn(f"{case_id}: email could not be resolved to a user; output INCOMPLETE []")
         return "INCOMPLETE", [], cls.label
@@ -96,10 +110,12 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
     evidence_case["audit_at"] = audit_at
     evidence = find_records(identity, evidence_case)
     _check_evidence(evidence, case_id)
+    trace["evidence"] = evidence
 
     decision = decide(identity, evidence, case)
     if not isinstance(decision, dict):
         raise TypeError(f"decide() must return a dict, got {type(decision).__name__}")
+    trace["decision"] = decision
     status = decision.get("deletion_status")
     if status not in ("COMPLETE", "INCOMPLETE"):
         warn(f"{case_id}: decide() returned status {status!r}; using INCOMPLETE")
@@ -111,20 +127,39 @@ def process_case(case: dict, resolver: IdentityResolver) -> tuple[str, list, str
     return status, steps, cls.label
 
 
-def run_case(case: dict, resolver: IdentityResolver) -> tuple[str, str, str, bool]:
+def run_case(case: dict, resolver: IdentityResolver,
+             db=None) -> tuple[str, str, str, bool]:
     """
     Run one case safely. Returns (deletion_status, steps_json, classifier_label,
     failed). Any error becomes INCOMPLETE with [] and a warning.
+
+    If *db* (an audit_db connection) is given, the case is saved to it at
+    the end. Saving has its own try/except: a database error only warns.
     """
     case_id = case.get("case_id", "?")
+    trace: dict = {}
     try:
-        status, steps, label = process_case(case, resolver)
+        status, steps, label = process_case(case, resolver, trace)
         # Deterministic, compact JSON; keep non-ASCII as-is
         steps_json = json.dumps(steps, ensure_ascii=False, separators=(",", ":"))
-        return status, steps_json, label, False
+        result = (status, steps_json, label, False)
     except Exception as exc:  # noqa: BLE001 — one bad case must not stop the run
         warn(f"{case_id}: {type(exc).__name__}: {exc}; output INCOMPLETE []")
-        return "INCOMPLETE", "[]", "", True
+        status, steps = "INCOMPLETE", []
+        result = ("INCOMPLETE", "[]", "", True)
+
+    if db is not None:
+        try:
+            audit_db.save_case(db, case, our_status=status,
+                               classification=trace.get("classification", ""),
+                               classifier=trace.get("classifier"),
+                               identity=trace.get("identity"),
+                               evidence=trace.get("evidence"),
+                               decision=trace.get("decision"),
+                               steps=steps)
+        except Exception as exc:  # noqa: BLE001 — the database is optional
+            warn(f"{case_id}: could not save to audit.db ({type(exc).__name__}: {exc})")
+    return result
 
 
 def main() -> int:
@@ -136,11 +171,18 @@ def main() -> int:
         DATASET_DIR / "user_audit_log.csv",
     )
 
+    try:
+        db = audit_db.connect(audit_db.DEFAULT_DB_PATH)
+    except Exception as exc:  # noqa: BLE001 — output.csv must still be written
+        warn(f"could not open audit.db ({type(exc).__name__}: {exc}); "
+             "continuing without the database")
+        db = None
+
     rows: list[tuple[str, str, str]] = []
     uncertain: list[str] = []
     failed: list[str] = []
     for case in cases:
-        status, steps_json, label, err = run_case(case, resolver)
+        status, steps_json, label, err = run_case(case, resolver, db)
         assert status in VALID_STATUSES, f"{case['case_id']}: bad status {status!r}"
         rows.append((case["case_id"], status, steps_json))
         if label == ClassificationResult.UNCERTAIN:
@@ -158,6 +200,9 @@ def main() -> int:
         writer = csv.writer(fh, lineterminator="\n")
         writer.writerow(["case_id", "deletion_status", "steps_json"])
         writer.writerows(rows)
+
+    if db is not None:
+        db.close()
 
     counts = Counter(r[1] for r in rows)
     print(f"Wrote {len(rows)} rows to {OUTPUT_PATH}")

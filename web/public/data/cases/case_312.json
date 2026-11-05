@@ -1,0 +1,90 @@
+{
+  "case_id": "case_312",
+  "email": "rk****@fastmail.com",
+  "request_text": "このメールアドレスに関連するアカウントの完全な削除を依頼します。 プライバシー手続きに従い、現在および過去の識別情報を確認してください。 確認が完了したら結果をお知らせください。",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ja",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 削除"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“削除”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-29T06:00:00Z",
+  "audit_at": "2026-05-19T06:00:00Z",
+  "user_id": "user_310",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "rk****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **17",
+      "is_historical": false,
+      "audit_id": "audit_29"
+    },
+    {
+      "kind": "email_hash",
+      "value": "26ef89fa…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "R. K.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **44",
+      "is_historical": true,
+      "audit_id": "audit_29"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_29",
+      "system_id": "export_service",
+      "resource_id": "export_9860",
+      "matched_identifier": "email:rk****@fastmail.com",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_6805",
+      "matched_identifier": "email:rk****@fastmail.com",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_6805",
+      "matched_identifier": "name:r. k.",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_6805",
+      "matched_identifier": "user_id:user_310",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6559",
+      "matched_identifier": "user_id:user_310",
+      "captured_at": "2026-05-19T06:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

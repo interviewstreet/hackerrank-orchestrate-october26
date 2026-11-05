@@ -1,0 +1,76 @@
+{
+  "case_id": "case_238",
+  "email": "ro****@icloud.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please follow the applicable retention and deletion requirements for the account. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-28T06:00:00Z",
+  "audit_at": "2026-06-23T06:00:00Z",
+  "user_id": "user_236",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ro****@icloud.com",
+      "is_historical": false,
+      "audit_id": "audit_189"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *50",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "caa1c544…",
+      "is_historical": false,
+      "audit_id": "audit_190"
+    },
+    {
+      "kind": "name",
+      "value": "V. R.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ro****@icloud.com",
+      "is_historical": true,
+      "audit_id": "audit_189"
+    },
+    {
+      "kind": "email_hash",
+      "value": "1359f3f0…",
+      "is_historical": true,
+      "audit_id": "audit_190"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_79",
+      "system_id": "account_service",
+      "resource_id": "account_945",
+      "matched_identifier": "email:ro****@icloud.com",
+      "captured_at": "2026-06-23T05:37:26Z"
+    },
+    {
+      "file_id": "evidence_79",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6797",
+      "matched_identifier": "user_id:user_236",
+      "captured_at": "2026-06-23T05:37:26Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

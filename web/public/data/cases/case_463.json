@@ -1,0 +1,77 @@
+{
+  "case_id": "case_463",
+  "email": "an****@outlook.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please complete the normal identity and data review for this request. Please contact me if you need information to verify the request.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-17T11:00:00Z",
+  "audit_at": "2026-02-28T11:00:00Z",
+  "user_id": "user_461",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "an****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *34",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ffa18662…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_65",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8024",
+      "matched_identifier": "user_id:user_461",
+      "captured_at": "2026-02-28T10:36:37Z"
+    },
+    {
+      "file_id": "evidence_65",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8444",
+      "matched_identifier": "user_id:user_461",
+      "captured_at": "2026-02-28T10:36:37Z"
+    },
+    {
+      "file_id": "evidence_65",
+      "system_id": "backup_service",
+      "resource_id": "backup_2005",
+      "matched_identifier": "user_id:user_461",
+      "captured_at": "2026-02-28T10:36:37Z"
+    },
+    {
+      "file_id": "evidence_65",
+      "system_id": "support_platform",
+      "resource_id": "support_2659",
+      "matched_identifier": "user_id:user_461",
+      "captured_at": "2026-02-28T10:36:37Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,76 @@
+{
+  "case_id": "case_426",
+  "email": "ao****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please follow the applicable retention and deletion requirements for the account. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-06T08:00:00Z",
+  "audit_at": "2026-03-20T08:00:00Z",
+  "user_id": "user_424",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ao****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_101"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **08",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "286c38e2…",
+      "is_historical": false,
+      "audit_id": "audit_102"
+    },
+    {
+      "kind": "name",
+      "value": "A. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ao****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_101"
+    },
+    {
+      "kind": "email_hash",
+      "value": "dc99cec0…",
+      "is_historical": true,
+      "audit_id": "audit_102"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_68",
+      "system_id": "support_platform",
+      "resource_id": "support_9212",
+      "matched_identifier": "email:ao****@gmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "search_service",
+      "resource_id": "search_2635",
+      "matched_identifier": "email:ao****@gmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

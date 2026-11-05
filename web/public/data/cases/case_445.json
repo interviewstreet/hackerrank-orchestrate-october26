@@ -1,0 +1,76 @@
+{
+  "case_id": "case_445",
+  "email": "di****@zoho.com",
+  "request_text": "Please erase the account linked to this email address. Please process this under the standard personal-data deletion procedure. Please confirm the result after completing the required checks.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-25T06:00:00Z",
+  "audit_at": "2026-03-10T06:00:00Z",
+  "user_id": "user_443",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "di****@zoho.com",
+      "is_historical": false,
+      "audit_id": "audit_93"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***58",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "f848286b…",
+      "is_historical": false,
+      "audit_id": "audit_94"
+    },
+    {
+      "kind": "name",
+      "value": "D. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "di****@zoho.com",
+      "is_historical": true,
+      "audit_id": "audit_93"
+    },
+    {
+      "kind": "email_hash",
+      "value": "01a5e386…",
+      "is_historical": true,
+      "audit_id": "audit_94"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_66",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7584",
+      "matched_identifier": "email:di****@zoho.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    },
+    {
+      "file_id": "evidence_66",
+      "system_id": "search_service",
+      "resource_id": "search_2886",
+      "matched_identifier": "email:di****@zoho.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,89 @@
+{
+  "case_id": "case_335",
+  "email": "nn****@proton.me",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please include information linked through current or earlier account identifiers. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-11T10:00:00Z",
+  "audit_at": "2026-05-04T10:00:00Z",
+  "user_id": "user_333",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "nn****@proton.me",
+      "is_historical": false,
+      "audit_id": "audit_146"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **26",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ae0e06ab…",
+      "is_historical": false,
+      "audit_id": "audit_147"
+    },
+    {
+      "kind": "name",
+      "value": "N. A.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "nn****@proton.me",
+      "is_historical": true,
+      "audit_id": "audit_146"
+    },
+    {
+      "kind": "email_hash",
+      "value": "19f8c8e9…",
+      "is_historical": true,
+      "audit_id": "audit_147"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_72",
+      "system_id": "backup_service",
+      "resource_id": "backup_3136",
+      "matched_identifier": "user_id:user_333",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7452",
+      "matched_identifier": "user_id:user_333",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "security_service",
+      "resource_id": "audit_record_711",
+      "matched_identifier": "user_id:user_333",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "support_platform",
+      "resource_id": "support_4712",
+      "matched_identifier": "user_id:user_333",
+      "captured_at": "2026-05-04T09:41:47Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

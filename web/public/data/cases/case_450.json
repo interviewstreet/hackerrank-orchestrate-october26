@@ -1,0 +1,77 @@
+{
+  "case_id": "case_450",
+  "email": "ad****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please complete the normal identity and data review for this request. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-20T06:00:00Z",
+  "audit_at": "2026-03-10T06:00:00Z",
+  "user_id": "user_448",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ad****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *31",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "2eea0b26…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. D.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_66",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8202",
+      "matched_identifier": "email:ad****@gmail.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    },
+    {
+      "file_id": "evidence_66",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9755",
+      "matched_identifier": "email:ad****@gmail.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    },
+    {
+      "file_id": "evidence_66",
+      "system_id": "search_service",
+      "resource_id": "search_2365",
+      "matched_identifier": "email:ad****@gmail.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    },
+    {
+      "file_id": "evidence_66",
+      "system_id": "support_platform",
+      "resource_id": "support_7245",
+      "matched_identifier": "email:ad****@gmail.com",
+      "captured_at": "2026-03-10T05:38:48Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

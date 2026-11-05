@@ -1,0 +1,56 @@
+{
+  "case_id": "case_381",
+  "email": "n.****@yahoo.com",
+  "request_text": "Solicito la eliminación permanente de la cuenta asociada a este correo. Revisen los identificadores actuales y anteriores según su política de privacidad. Por favor, confirmen el resultado cuando termine la revisión.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "es",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: eliminación"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“eliminación”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-16T06:00:00Z",
+  "audit_at": "2026-04-14T06:00:00Z",
+  "user_id": "user_379",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "n.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *92",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "2f7718cb…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. T.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_70",
+      "system_id": "account_service",
+      "resource_id": "account_6784",
+      "matched_identifier": "email:n.****@yahoo.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

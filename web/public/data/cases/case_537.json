@@ -1,0 +1,25 @@
+{
+  "case_id": "case_537",
+  "email": "l.****@yahoo.com",
+  "request_text": "My surname is misspelled on the account. Can you correct it without removing any of my records?",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "negation: without removing",
+    "correction: misspelled",
+    "correction: correct it"
+  ],
+  "reason": "Not a deletion request: the person asks to correct or update their details (“misspelled”, “correct it”), and they say they do not want deletion (“without removing”).",
+  "requested_at": "2026-09-02T12:00:00Z",
+  "audit_at": "2026-09-27T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,76 @@
+{
+  "case_id": "case_92",
+  "email": "do****@outlook.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please ensure the request is applied to the relevant account records. Please contact me if you need information to verify the request.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-17T07:00:00Z",
+  "audit_at": "2026-09-06T07:00:00Z",
+  "user_id": "user_90",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "do****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **58",
+      "is_historical": false,
+      "audit_id": "audit_184"
+    },
+    {
+      "kind": "email_hash",
+      "value": "db6b5ab5…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "D. L.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **54",
+      "is_historical": true,
+      "audit_id": "audit_184"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_08",
+      "system_id": "account_service",
+      "resource_id": "account_3609",
+      "matched_identifier": "email:do****@outlook.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7535",
+      "matched_identifier": "email:do****@outlook.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5625",
+      "matched_identifier": "user_id:user_90",
+      "captured_at": "2026-09-06T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

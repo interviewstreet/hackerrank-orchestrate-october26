@@ -1,0 +1,84 @@
+{
+  "case_id": "case_359",
+  "email": "iu****@proton.me",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please review any identifiers connected to this account as part of the request. I would appreciate confirmation of the final outcome.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-28T08:00:00Z",
+  "audit_at": "2026-04-24T08:00:00Z",
+  "user_id": "user_357",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "iu****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *42",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "3fffb223…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "I. P.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_2492",
+      "matched_identifier": "email:iu****@proton.me",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "support_platform",
+      "resource_id": "support_2537",
+      "matched_identifier": "email:iu****@proton.me",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_2492",
+      "matched_identifier": "name:i. p.",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_2492",
+      "matched_identifier": "user_id:user_357",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2641",
+      "matched_identifier": "user_id:user_357",
+      "captured_at": "2026-04-24T08:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

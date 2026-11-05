@@ -458,3 +458,105 @@ branch=main
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-05T00:59:06Z] Data layer for the web prototype: audit.db + static JSON export
+
+User Prompt (verbatim, secrets redacted):
+I’m building the final prototype. We’ll deploy a Next.js frontend with API routes on Vercel. Vercel can’t run our Python pipeline, so the pipeline must save its results to files the website can read. Do only the data layer in this step: no website yet.
+
+Create code/audit_db.py. It creates audit.db (SQLite) with these tables:
+cases: case_id, email, request_text, reported_status, our_status, classification, requested_at, audit_at
+identities: case_id, user_id, kind (email/phone/email_hash/name), value, is_historical, audit_id
+evidence_hits: case_id, file_id, system_id, resource_id, matched_identifier, captured_at
+resources, flows, timeline: create the tables now, using the fields from code/CONTRACTS.md, but leave them empty until P3’s decide() returns them
+steps: case_id, step_no, phase, system_id, resource_id, operation, state, evidence_id
+Add a function save_case(...) that saves one case’s results. Make re-running safe: clear old rows first.
+In main.py (owned by P4), add one call at the end of each case to save_case(), inside the existing crash safety, so a database error never stops output.csv from being written. Tell me exactly what you changed so I can tell P4.
+Create code/export_web_data.py. It reads audit.db and writes to web/public/data/:
+summary.json: status counts, plus reported_status vs our_status counts
+cases.json: a short list of all cases (case_id, email, statuses)
+cases/<case_id>.json: everything about one case
+Mask emails in the export (e.g. ja****@outlook.com), because the site will be public.
+Add tests for audit_db.py and export_web_data.py.
+Run main.py, then export_web_data.py. Show me: the row counts of every table, the summary.json content, and the case_43 JSON.
+
+Don’t change identity_resolver.py, request_classifier.py or P2’s files.
+
+Agent Response Summary:
+Created code/audit_db.py (7 tables; save_case() deletes the case's old rows and inserts new ones in one transaction) and code/export_web_data.py (summary.json, cases.json, cases/<case_id>.json; emails, phones, names and email hashes masked, including inside request_text; deterministic; stale case files removed). main.py: process_case() takes an optional trace dict, run_case() takes an optional db and calls save_case() in its own try/except so a DB error only warns and never changes an answer; main() opens audit.db and continues without it if that fails. Added test_audit_db.py and test_export_web_data.py (incl. a check that no dataset email/phone appears in the real export). Added audit.db to .gitignore because it holds unmasked identifiers. 153 tests pass; main.py 518 rows (0/508/10); tables: cases 518, identities 2323, evidence_hits 1483, resources/flows/timeline/steps 0.
+
+Actions:
+* Created code/audit_db.py, code/export_web_data.py, code/test_audit_db.py, code/test_export_web_data.py
+* Modified code/main.py, .gitignore
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -> 153 OK
+* Ran: python3 code/main.py -> 518 rows; python3 code/export_web_data.py -> 518 case files in web/public/data/
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-05T04:40:54Z] Website skeleton request (interrupted by user before any work)
+
+User Prompt (verbatim, secrets redacted):
+Now build the website skeleton and backend. Keep it small in this step.
+
+Add a restore_risks table to audit_db.py (fields from CONTRACTS.md) and include it in the export.
+Change export_web_data.py to write into web/data/ instead of web/public/data/, so the data is only served through our API.
+Create a Next.js app in web/ (App Router, TypeScript, Tailwind CSS). Keep the setup minimal.
+Backend, as API routes that read the JSON files from web/data/ with fs:
+GET /api/summary returns summary.json
+GET /api/cases returns the case list, with optional ?status= and ?q= filters
+GET /api/cases/[id] returns one case, or 404 if it doesn’t exist
+Make sure the data/ folder is included in the deployed functions on Vercel (for example with outputFileTracingIncludes in next.config).
+One simple home page called “TRACE: Ghost Data Audit”. It fetches /api/summary and shows 3 cards: COMPLETE, INCOMPLETE and NOT_APPLICABLE counts. Use a clean, professional dark design.
+Run npm run build to check it builds with no errors, then run it locally with npm run dev. Test all 3 API routes with curl and show me the output.
+Tell me exactly what settings to use when deploying the web/ folder on Vercel.
+
+[Request interrupted by user]
+
+Agent Response Summary:
+The user interrupted this request before any work was done. No files were created or changed for it (no restore_risks table, no web/data move, no Next.js app).
+
+Actions:
+* none
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-05T04:40:54Z] Save classifier reasoning (language, confidence, signals, reason)
+
+User Prompt (verbatim, secrets redacted):
+Save the classifier’s reasoning in the database too.
+
+In audit_db.py, add these columns to the cases table: language (detected language of request_text: en, es, pt, fr, ja or ko), confidence (HIGH/LOW), matched_signals (a JSON list, e.g. ["opt_out: remove me from marketing lists", "keep: still want receipts"]) and reason (one plain-English sentence explaining the decision). Fill them from the ClassificationResult. If language isn’t detected yet, add a simple detector in request_classifier.py without changing any classification results.
+Include these fields in the export for each case, and add a language_counts section to summary.json.
+Make sure all 10 NOT_APPLICABLE cases (533–542) have a clear reason, and show me all 10 reasons.
+Check that the classification results are exactly the same as before: 508 IS_DELETION, 10 NOT_APPLICABLE.
+Update the tests, run all tests, rerun main.py and export_web_data.py, and show me the case_538 JSON.
+
+Agent Response Summary:
+Added detect_language() (script for ja/ko, typical words and letters for en/es/pt/fr) and an explanation layer to request_classifier.py: OTHER patterns are now tagged by intent (access/correction/opt_out/login) with identical patterns and order (verified against git HEAD), and each ClassificationResult carries language, signals ("family: phrase") and a one-sentence reason; models.ClassificationResult gained these optional fields. All 550 texts (518 + 32 samples) give byte-identical label/confidence/matched_keywords/note to a saved baseline: 508 IS_DELETION, 10 NOT_APPLICABLE. audit_db.py: 4 new cases columns, inserts use explicit column names, an out-of-date audit.db is rebuilt automatically. main.py passes the ClassificationResult to save_case(). Export adds language/confidence/matched_signals/reason per case (masked) and summary.language_counts (en 456, es 12, pt 14, fr 12, ja 12, ko 12). 167 tests pass.
+
+Actions:
+* Modified code/models.py, code/request_classifier.py, code/audit_db.py, code/main.py, code/export_web_data.py, code/README_identity.md
+* Modified code/test_request_classifier.py, code/test_audit_db.py, code/test_export_web_data.py
+* Ran: baseline comparison of all 550 classifications -> 0 differences
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -> 167 OK
+* Ran: python3 code/main.py -> 518 rows (0/508/10); python3 code/export_web_data.py -> 518 cases
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none

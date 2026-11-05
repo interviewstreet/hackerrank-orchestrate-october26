@@ -1,0 +1,75 @@
+{
+  "case_id": "case_143",
+  "email": "ha****@proton.me",
+  "request_text": "Please erase the account linked to this email address. Please check the records connected to the account before confirming completion. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-27T08:00:00Z",
+  "audit_at": "2026-08-07T08:00:00Z",
+  "user_id": "user_141",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ha****@proton.me",
+      "is_historical": false,
+      "audit_id": "audit_236"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **24",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "4a091946…",
+      "is_historical": false,
+      "audit_id": "audit_237"
+    },
+    {
+      "kind": "name",
+      "value": "H. I.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ha****@proton.me",
+      "is_historical": true,
+      "audit_id": "audit_236"
+    },
+    {
+      "kind": "email_hash",
+      "value": "88419302…",
+      "is_historical": true,
+      "audit_id": "audit_237"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_86",
+      "system_id": "search_service",
+      "resource_id": "search_6137",
+      "matched_identifier": "email:ha****@proton.me",
+      "captured_at": "2026-08-07T07:41:04Z"
+    },
+    {
+      "file_id": "evidence_86",
+      "system_id": "support_platform",
+      "resource_id": "support_6560",
+      "matched_identifier": "email:ha****@proton.me",
+      "captured_at": "2026-08-07T07:41:04Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

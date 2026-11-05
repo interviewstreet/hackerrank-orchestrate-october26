@@ -1,0 +1,83 @@
+{
+  "case_id": "case_492",
+  "email": "ea****@fastmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please follow the applicable retention and deletion requirements for the account. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-29T09:00:00Z",
+  "audit_at": "2026-02-18T09:00:00Z",
+  "user_id": "user_490",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ea****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **12",
+      "is_historical": false,
+      "audit_id": "audit_52"
+    },
+    {
+      "kind": "email_hash",
+      "value": "4b725ee2…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "E. A.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **95",
+      "is_historical": true,
+      "audit_id": "audit_52"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_64",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1575",
+      "matched_identifier": "email:ea****@fastmail.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    },
+    {
+      "file_id": "evidence_64",
+      "system_id": "export_service",
+      "resource_id": "export_6406",
+      "matched_identifier": "email:ea****@fastmail.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    },
+    {
+      "file_id": "evidence_64",
+      "system_id": "search_service",
+      "resource_id": "search_9733",
+      "matched_identifier": "email:ea****@fastmail.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    },
+    {
+      "file_id": "evidence_64",
+      "system_id": "support_platform",
+      "resource_id": "support_6737",
+      "matched_identifier": "email:ea****@fastmail.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

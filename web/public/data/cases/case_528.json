@@ -1,0 +1,78 @@
+{
+  "case_id": "case_528",
+  "email": "nz****@fastmail.com",
+  "request_text": "Please erase the account linked to this email address. Please handle any copies that fall within the scope of the deletion request. Please confirm when the review is complete.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-13T12:00:00Z",
+  "audit_at": "2026-01-29T12:00:00Z",
+  "user_id": "user_526",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "nz****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *12",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b118485b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. Z.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_62",
+      "system_id": "support_platform",
+      "resource_id": "support_193",
+      "matched_identifier": "email:nz****@fastmail.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "search_service",
+      "resource_id": "search_1429",
+      "matched_identifier": "email:nz****@fastmail.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "export_service",
+      "resource_id": "export_9388",
+      "matched_identifier": "email:nz****@fastmail.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    },
+    {
+      "file_id": "evidence_62",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8476",
+      "matched_identifier": "email:nz****@fastmail.com",
+      "captured_at": "2026-01-29T11:44:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

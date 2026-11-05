@@ -1,0 +1,90 @@
+{
+  "case_id": "case_82",
+  "email": "ca****@icloud.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please include information linked through current or earlier account identifiers. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-01T08:00:00Z",
+  "audit_at": "2026-09-11T08:00:00Z",
+  "user_id": "user_80",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ca****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *07",
+      "is_historical": false,
+      "audit_id": "audit_46"
+    },
+    {
+      "kind": "email_hash",
+      "value": "96b36a65…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "C. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *68",
+      "is_historical": true,
+      "audit_id": "audit_46"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_91",
+      "system_id": "account_service",
+      "resource_id": "account_4156",
+      "matched_identifier": "email:ca****@icloud.com",
+      "captured_at": "2026-09-11T07:42:53Z"
+    },
+    {
+      "file_id": "evidence_91",
+      "system_id": "support_platform",
+      "resource_id": "support_9166",
+      "matched_identifier": "user_id:user_80",
+      "captured_at": "2026-09-11T07:42:53Z"
+    },
+    {
+      "file_id": "evidence_91",
+      "system_id": "backup_service",
+      "resource_id": "backup_317",
+      "matched_identifier": "user_id:user_80",
+      "captured_at": "2026-09-11T07:42:53Z"
+    },
+    {
+      "file_id": "evidence_91",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3747",
+      "matched_identifier": "user_id:user_80",
+      "captured_at": "2026-09-11T07:42:53Z"
+    },
+    {
+      "file_id": "evidence_91",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9666",
+      "matched_identifier": "user_id:user_80",
+      "captured_at": "2026-09-11T07:42:53Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

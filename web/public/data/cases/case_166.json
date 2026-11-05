@@ -1,0 +1,64 @@
+{
+  "case_id": "case_166",
+  "email": "OB****@ICLOUD.COM",
+  "request_text": "I would like the account associated with this address to be erased. Please apply the request across the systems covered by your deletion policy. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erased",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erased”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-14T06:00:00Z",
+  "audit_at": "2026-07-28T06:00:00Z",
+  "user_id": "user_164",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ob****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **95",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "526cadf5…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. O.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_85",
+      "system_id": "search_service",
+      "resource_id": "search_5261",
+      "matched_identifier": "email:ob****@icloud.com",
+      "captured_at": "2026-07-28T05:44:17Z"
+    },
+    {
+      "file_id": "evidence_85",
+      "system_id": "support_platform",
+      "resource_id": "support_3155",
+      "matched_identifier": "email:ob****@icloud.com",
+      "captured_at": "2026-07-28T05:44:17Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

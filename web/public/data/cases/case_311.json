@@ -1,0 +1,97 @@
+{
+  "case_id": "case_311",
+  "email": "na****@proton.me",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the request across the systems covered by your deletion policy. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-30T06:00:00Z",
+  "audit_at": "2026-05-19T06:00:00Z",
+  "user_id": "user_309",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "na****@proton.me",
+      "is_historical": false,
+      "audit_id": "audit_160"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **18",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "11e2a792…",
+      "is_historical": false,
+      "audit_id": "audit_161"
+    },
+    {
+      "kind": "name",
+      "value": "N. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "na****@proton.me",
+      "is_historical": true,
+      "audit_id": "audit_160"
+    },
+    {
+      "kind": "email_hash",
+      "value": "2097dbe6…",
+      "is_historical": true,
+      "audit_id": "audit_161"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_3004",
+      "matched_identifier": "email:na****@proton.me",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "support_platform",
+      "resource_id": "support_4952",
+      "matched_identifier": "email:na****@proton.me",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_3004",
+      "matched_identifier": "name:n. m.",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_3004",
+      "matched_identifier": "user_id:user_309",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6245",
+      "matched_identifier": "user_id:user_309",
+      "captured_at": "2026-05-19T06:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

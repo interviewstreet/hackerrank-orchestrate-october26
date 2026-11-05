@@ -1,0 +1,75 @@
+{
+  "case_id": "case_84",
+  "email": "cc****@fastmail.com",
+  "request_text": "Je demande la suppression définitive du compte associé à cette adresse e-mail. Veuillez examiner les identifiants actuels et antérieurs conformément à votre procédure de confidentialité. Merci de confirmer le résultat une fois la vérification terminée.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "fr",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: suppression"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“suppression”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-25T07:00:00Z",
+  "audit_at": "2026-09-06T07:00:00Z",
+  "user_id": "user_82",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "cc****@fastmail.com",
+      "is_historical": false,
+      "audit_id": "audit_271"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 07",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "85224ece…",
+      "is_historical": false,
+      "audit_id": "audit_272"
+    },
+    {
+      "kind": "name",
+      "value": "C. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "cc****@fastmail.com",
+      "is_historical": true,
+      "audit_id": "audit_271"
+    },
+    {
+      "kind": "email_hash",
+      "value": "f55ac008…",
+      "is_historical": true,
+      "audit_id": "audit_272"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_08",
+      "system_id": "account_service",
+      "resource_id": "account_2387",
+      "matched_identifier": "email:cc****@fastmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3787",
+      "matched_identifier": "user_id:user_82",
+      "captured_at": "2026-09-06T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,70 @@
+{
+  "case_id": "case_441",
+  "email": "n.****@yahoo.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please check the records connected to the account before confirming completion. Please let me know once the request has been reviewed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-14T07:00:00Z",
+  "audit_at": "2026-03-15T07:00:00Z",
+  "user_id": "user_439",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "n.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **79",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "69da190f…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. M.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_41",
+      "system_id": "account_service",
+      "resource_id": "account_1538",
+      "matched_identifier": "email:n.****@yahoo.com",
+      "captured_at": "2026-03-15T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_41",
+      "system_id": "search_service",
+      "resource_id": "search_3058",
+      "matched_identifier": "email:n.****@yahoo.com",
+      "captured_at": "2026-03-15T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_41",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7313",
+      "matched_identifier": "user_id:user_439",
+      "captured_at": "2026-03-15T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

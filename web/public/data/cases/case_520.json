@@ -1,0 +1,82 @@
+{
+  "case_id": "case_520",
+  "email": "su****@gmail.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please include information linked through current or earlier account identifiers. Please let me know once the request has been reviewed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-06T06:00:00Z",
+  "audit_at": "2026-02-03T06:00:00Z",
+  "user_id": "user_518",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "su****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_65"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **05",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ed01c805…",
+      "is_historical": false,
+      "audit_id": "audit_66"
+    },
+    {
+      "kind": "name",
+      "value": "D. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "su****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_65"
+    },
+    {
+      "kind": "email_hash",
+      "value": "437adbd7…",
+      "is_historical": true,
+      "audit_id": "audit_66"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_48",
+      "system_id": "account_service",
+      "resource_id": "account_4979",
+      "matched_identifier": "email:su****@gmail.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "support_platform",
+      "resource_id": "support_9251",
+      "matched_identifier": "email:su****@gmail.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9504",
+      "matched_identifier": "user_id:user_518",
+      "captured_at": "2026-02-03T05:59:42Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

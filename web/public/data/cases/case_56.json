@@ -1,0 +1,75 @@
+{
+  "case_id": "case_56",
+  "email": "el****@outlook.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please review any identifiers connected to this account as part of the request. Please confirm when the review is complete.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-28T10:00:00Z",
+  "audit_at": "2026-09-21T10:00:00Z",
+  "user_id": "user_54",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "el****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_289"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *12",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1e90d6d1…",
+      "is_historical": false,
+      "audit_id": "audit_290"
+    },
+    {
+      "kind": "name",
+      "value": "E. R.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "el****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_289"
+    },
+    {
+      "kind": "email_hash",
+      "value": "3a48dce7…",
+      "is_historical": true,
+      "audit_id": "audit_290"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_05",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_373",
+      "matched_identifier": "email:el****@outlook.com",
+      "captured_at": "2026-09-21T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4078",
+      "matched_identifier": "user_id:user_54",
+      "captured_at": "2026-09-21T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

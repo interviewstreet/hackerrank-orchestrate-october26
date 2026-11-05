@@ -1,0 +1,76 @@
+{
+  "case_id": "case_439",
+  "email": "tu****@outlook.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please review any identifiers connected to this account as part of the request. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-16T07:00:00Z",
+  "audit_at": "2026-03-15T07:00:00Z",
+  "user_id": "user_437",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "tu****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_99"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **26",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "05f562f8…",
+      "is_historical": false,
+      "audit_id": "audit_100"
+    },
+    {
+      "kind": "name",
+      "value": "T. A.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "tu****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_99"
+    },
+    {
+      "kind": "email_hash",
+      "value": "060789c4…",
+      "is_historical": true,
+      "audit_id": "audit_100"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_41",
+      "system_id": "account_service",
+      "resource_id": "account_3002",
+      "matched_identifier": "email:tu****@outlook.com",
+      "captured_at": "2026-03-15T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_41",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1149",
+      "matched_identifier": "user_id:user_437",
+      "captured_at": "2026-03-15T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,77 @@
+{
+  "case_id": "case_95",
+  "email": "an****@proton.me",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please review any identifiers connected to this account as part of the request. Please contact me if you need information to verify the request.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-09T06:00:00Z",
+  "audit_at": "2026-09-01T06:00:00Z",
+  "user_id": "user_93",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "an****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *26",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "7d2568f2…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. A.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_89",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1316",
+      "matched_identifier": "email:an****@proton.me",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "support_platform",
+      "resource_id": "support_5750",
+      "matched_identifier": "email:an****@proton.me",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "support_platform",
+      "resource_id": "support_7311",
+      "matched_identifier": "email:an****@proton.me",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "search_service",
+      "resource_id": "search_7807",
+      "matched_identifier": "email:an****@proton.me",
+      "captured_at": "2026-09-01T05:33:16Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

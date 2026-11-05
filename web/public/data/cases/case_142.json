@@ -1,0 +1,84 @@
+{
+  "case_id": "case_142",
+  "email": "mo****@icloud.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the request across the systems covered by your deletion policy. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-02T09:00:00Z",
+  "audit_at": "2026-08-12T09:00:00Z",
+  "user_id": "user_140",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "mo****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **04",
+      "is_historical": false,
+      "audit_id": "audit_57"
+    },
+    {
+      "kind": "email_hash",
+      "value": "d6d532c1…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "T. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **78",
+      "is_historical": true,
+      "audit_id": "audit_57"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_13",
+      "system_id": "account_service",
+      "resource_id": "account_2434",
+      "matched_identifier": "email:mo****@icloud.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "search_service",
+      "resource_id": "search_2024",
+      "matched_identifier": "email:mo****@icloud.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "support_platform",
+      "resource_id": "support_771",
+      "matched_identifier": "email:mo****@icloud.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "security_service",
+      "resource_id": "audit_record_280",
+      "matched_identifier": "user_id:user_140",
+      "captured_at": "2026-08-12T09:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

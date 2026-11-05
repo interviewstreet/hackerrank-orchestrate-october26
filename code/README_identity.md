@@ -24,8 +24,17 @@ Japanese, Korean.
 | `label` | `IS_DELETION`, `NOT_APPLICABLE` or `UNCERTAIN` |
 | `confidence` | `HIGH` (clear decision) or `LOW` (only for `UNCERTAIN`) |
 | `matched_keywords` | matched phrases, tagged `DELETION:`, `NEGATION:`, `KEEP:` or `OTHER:` |
-| `note` | one-line reason |
+| `note` | short internal note, e.g. `deletion requested` |
+| `language` | `en`, `es`, `pt`, `fr`, `ja` or `ko`, from `detect_language()` |
+| `signals` | the same phrases as `matched_keywords`, as `"family: phrase"`, with `OTHER` split by intent: `access`, `correction`, `opt_out`, `login` (e.g. `"opt_out: marketing"`) |
+| `reason` | one plain-English sentence explaining the decision, quoting what matched |
 | `is_deletion()` | `True` only for `IS_DELETION` |
+
+`language`, `signals` and `reason` only explain the decision. They are
+computed from the same matches and never change `label`, `confidence` or
+`matched_keywords`. `detect_language()` uses the script for Japanese
+(kana/Han) and Korean (Hangul), and typical short words and letters
+(ñ, ã, è ...) for English, Spanish, Portuguese and French.
 
 **Rules:** `IS_DELETION` only if it asks for deletion with no negated
 *instruction* ("don't delete", "not asking for deletion", "ne supprimez pas",
@@ -43,6 +52,10 @@ review those by hand.
 r = classify_request("I can't access my profile and need help resetting the login. Do not close the account.")
 r.label             # 'NOT_APPLICABLE'
 r.matched_keywords  # ['NEGATION:Do not close', "OTHER:can't access", 'OTHER:resetting', 'OTHER:login']
+r.signals           # ['negation: Do not close', "login: can't access", 'login: resetting', 'login: login']
+r.language          # 'en'
+r.reason            # 'Not a deletion request: the person asks for help signing in (“can't access”,
+                    #  “resetting”), and they say they do not want deletion (“Do not close”).'
 ```
 
 On the real data: case_533 to case_542 are `NOT_APPLICABLE`, the other 508
@@ -103,12 +116,14 @@ dicts (it reads `email` and `audit_at` from each row) and returns
 ## Tests
 
 ```text
-python3 -m unittest discover -s code -p "test_*.py" -v   # all 117 tests
+python3 -m unittest discover -s code -p "test_*.py" -v   # all 167 tests
 
 python3 code/test_utils.py                # 13 tests
 python3 code/test_identity_resolver.py    # 66 tests
-python3 code/test_request_classifier.py   # 20 tests, 47 made-up sentences
+python3 code/test_request_classifier.py   # 31 tests, 64 made-up sentences, language + reason
 python3 code/test_main.py                 # 18 tests: one bad case never stops the run, P2 -> P3 contract, audit_at hand-over
+python3 code/test_audit_db.py             # 22 tests: audit.db tables, save_case(), re-runs, DB errors in main.py
+python3 code/test_export_web_data.py      # 17 tests: JSON export and masking
 ```
 
 ## For P3

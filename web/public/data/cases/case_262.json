@@ -1,0 +1,84 @@
+{
+  "case_id": "case_262",
+  "email": "ol****@icloud.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-03T11:00:00Z",
+  "audit_at": "2026-06-13T11:00:00Z",
+  "user_id": "user_260",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ol****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**24",
+      "is_historical": false,
+      "audit_id": "audit_107"
+    },
+    {
+      "kind": "email_hash",
+      "value": "dd005d7a…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "C. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**96",
+      "is_historical": true,
+      "audit_id": "audit_107"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_24",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "matched_identifier": "email:ol****@icloud.com",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "matched_identifier": "name:c. o.",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "search_service",
+      "resource_id": "search_2228",
+      "matched_identifier": "user_id:user_260",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4812",
+      "matched_identifier": "user_id:user_260",
+      "captured_at": "2026-06-13T11:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

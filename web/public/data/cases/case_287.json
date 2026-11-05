@@ -1,0 +1,69 @@
+{
+  "case_id": "case_287",
+  "email": "so****@proton.me",
+  "request_text": "I would like the account associated with this address to be erased. Please apply the correct treatment to records covered by the request. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erased"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erased”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-14T08:00:00Z",
+  "audit_at": "2026-05-29T08:00:00Z",
+  "user_id": "user_285",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "so****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **33",
+      "is_historical": false,
+      "audit_id": "audit_48"
+    },
+    {
+      "kind": "email_hash",
+      "value": "21d9ce75…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "S. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **28",
+      "is_historical": true,
+      "audit_id": "audit_48"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_76",
+      "system_id": "support_platform",
+      "resource_id": "support_7432",
+      "matched_identifier": "email:so****@proton.me",
+      "captured_at": "2026-05-29T07:43:13Z"
+    },
+    {
+      "file_id": "evidence_76",
+      "system_id": "search_service",
+      "resource_id": "search_5705",
+      "matched_identifier": "email:so****@proton.me",
+      "captured_at": "2026-05-29T07:43:13Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,63 @@
+{
+  "case_id": "case_68",
+  "email": "is****@outlook.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please review any identifiers connected to this account as part of the request. Please confirm the result after completing the required checks.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-31T09:00:00Z",
+  "audit_at": "2026-09-16T09:00:00Z",
+  "user_id": "user_66",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "is****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***19",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "500e0cb7…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "I. I.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_93",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2406",
+      "matched_identifier": "email:is****@outlook.com",
+      "captured_at": "2026-09-16T08:37:39Z"
+    },
+    {
+      "file_id": "evidence_93",
+      "system_id": "search_service",
+      "resource_id": "search_2568",
+      "matched_identifier": "email:is****@outlook.com",
+      "captured_at": "2026-09-16T08:37:39Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

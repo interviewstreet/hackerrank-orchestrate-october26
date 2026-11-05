@@ -1,0 +1,84 @@
+{
+  "case_id": "case_160",
+  "email": "na****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please review the account data that is eligible for deletion or de-identification. Please contact me if you need information to verify the request.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-05T07:00:00Z",
+  "audit_at": "2026-08-02T07:00:00Z",
+  "user_id": "user_158",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "na****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_224"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *54",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "d07d1127…",
+      "is_historical": false,
+      "audit_id": "audit_225"
+    },
+    {
+      "kind": "name",
+      "value": "S. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "na****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_224"
+    },
+    {
+      "kind": "email_hash",
+      "value": "63778571…",
+      "is_historical": true,
+      "audit_id": "audit_225"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_15",
+      "system_id": "support_platform",
+      "resource_id": "support_4148",
+      "matched_identifier": "email:na****@gmail.com",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9882",
+      "matched_identifier": "user_id:user_158",
+      "captured_at": "2026-08-02T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "support_platform",
+      "resource_id": "support_4148",
+      "matched_identifier": "user_id:user_158",
+      "captured_at": "2026-08-02T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

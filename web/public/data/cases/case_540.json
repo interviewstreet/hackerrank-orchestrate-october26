@@ -1,0 +1,24 @@
+{
+  "case_id": "case_540",
+  "email": "ie****@fastmail.com",
+  "request_text": "I need a copy of last year's invoices for my records. Please leave my profile and purchase history in place.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "keep: leave my profile",
+    "access: I need a copy"
+  ],
+  "reason": "Not a deletion request: the person asks to see or get a copy of their data (“I need a copy”), and they want to keep the account (“leave my profile”).",
+  "requested_at": "2026-08-27T12:00:00Z",
+  "audit_at": "2026-09-24T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

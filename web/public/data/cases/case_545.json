@@ -1,0 +1,70 @@
+{
+  "case_id": "case_545",
+  "email": "so****@outlook.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please apply the request across the systems covered by your deletion policy. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-05T12:00:00Z",
+  "audit_at": "2026-09-20T12:00:00Z",
+  "user_id": "user_545",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "so****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **97",
+      "is_historical": false,
+      "audit_id": "audit_53"
+    },
+    {
+      "kind": "email_hash",
+      "value": "e671db6b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "S. K.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **61",
+      "is_historical": true,
+      "audit_id": "audit_53"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_946",
+      "matched_identifier": "user_id:user_545",
+      "captured_at": "2026-09-20T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5041",
+      "matched_identifier": "user_id:user_545",
+      "captured_at": "2026-09-20T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

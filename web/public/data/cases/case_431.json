@@ -1,0 +1,63 @@
+{
+  "case_id": "case_431",
+  "email": "lu****@proton.me",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please apply the correct treatment to records covered by the request. Please confirm the result after completing the required checks.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-01T08:00:00Z",
+  "audit_at": "2026-03-20T08:00:00Z",
+  "user_id": "user_429",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "lu****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**75",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "99b86a48…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. A.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_68",
+      "system_id": "search_service",
+      "resource_id": "search_7427",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "support_platform",
+      "resource_id": "support_3615",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-20T07:23:49Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}

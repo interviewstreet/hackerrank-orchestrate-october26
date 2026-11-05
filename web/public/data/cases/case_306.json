@@ -1,0 +1,92 @@
+{
+  "case_id": "case_306",
+  "email": "fl****@gmail.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please include records associated with the account under your privacy process. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-05T06:00:00Z",
+  "audit_at": "2026-05-19T06:00:00Z",
+  "user_id": "user_304",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "fl****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 17",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "0155a5ec…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "F. L.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_8250",
+      "matched_identifier": "email:fl****@gmail.com",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "support_platform",
+      "resource_id": "support_450",
+      "matched_identifier": "email:fl****@gmail.com",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_8250",
+      "matched_identifier": "name:f. l.",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_8250",
+      "matched_identifier": "user_id:user_304",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9051",
+      "matched_identifier": "user_id:user_304",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "support_platform",
+      "resource_id": "support_450",
+      "matched_identifier": "user_id:user_304",
+      "captured_at": "2026-05-19T06:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "timeline": [],
+  "steps": []
+}
