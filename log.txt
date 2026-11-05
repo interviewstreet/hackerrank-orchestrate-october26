@@ -1949,3 +1949,45 @@ branch=p3-contract-invariants
 repo_root=C:/Users/Admin/aiml/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-05T00:19:39Z] Final log-only commit and push on p3-contract-invariants
+
+User Prompt (verbatim, secrets redacted):
+Proceed with the final log-only commit on p3-contract-invariants. 1. Confirm the current branch is p3-contract-invariants. 2. Confirm the latest uncommitted change is only the current turn's entry in log.txt. 3. Review the diff and verify it contains exactly one new log entry, with the required tool=Claude Code and model=claude-opus-5-5 fields. 4. Stage ONLY log.txt. 5. Verify the staged diff. 6. Commit with message: log: record final P3 follow-up preparation 7. Push the updated branch using git push. 8. Fetch and verify that local and remote p3-contract-invariants match. 9. Confirm P3 and main are unchanged. 10. Confirm sample_predictions.csv remains untracked and untouched. Do not create or merge a PR yet. Do not drop either stash. Stop and report the commit hash, push result, and final status.
+
+Agent Response Summary:
+Confirmed p3-contract-invariants at a831282 (= upstream) with an empty index. The only change was log.txt: exactly 1 new entry ("Push p3-contract-invariants to GitHub"), 0 removed lines, one tool=/model= line each. Staged only log.txt and committed 883bf7b "log: record final P3 follow-up preparation"; git push fast-forwarded a831282..883bf7b. After a re-fetch, local and origin/p3-contract-invariants match at 883bf7b; P3 (origin 2ef4a0d, local cafd103) and main (origin 046a891, local 0eddbbd) are unchanged; stashes kept; sample_predictions.csv untracked and unchanged. This entry was appended after the push, so it is uncommitted.
+
+Actions:
+* git diff review; git add log.txt; git diff --cached; git commit; git push; git fetch; git ls-remote
+* Appended this entry to log.txt (uncommitted)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-contract-invariants
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none
+
+## [2026-11-05T00:23:15Z] PR #2: correct outdated tie-break docstring in invariant test
+
+User Prompt (verbatim, secrets redacted):
+Review PR #2 and inspect the new test test_p3_p4_contract_invariants_on_public_samples in code/tests/test_policy_engine.py. There is an outdated docstring statement: "the resource_id tie-break is left out on purpose: numeric vs lexical is still a team question." Numeric natural sorting has already been confirmed and covered by the earlier regression test merged in PR #1. Please: 1. Verify the existing numeric natural-sort regression test in the base branch. 2. Correct only the outdated docstring so it reflects the confirmed contract. 3. Do not change policy-engine implementation or unrelated tests. 4. Rerun the full test suite and output validation. 5. Review the diff and report exactly what changed. Do not commit, push, or merge without my approval.
+
+Agent Response Summary:
+PR #2 exists (refs/pull/2/head = 883bf7b = local branch). The base (origin/P3 2ef4a0d) has test_resource_ids_use_numeric_natural_sorting, identical on the branch, and it passes (account_9 before account_10 in decide() and build_steps()). Replaced only the 2 outdated docstring lines with 4 lines stating the confirmed numeric natural order and naming the covering test; 0 code lines changed. Results: 508 passed, 1 skipped (live OCR), 592 subtests; output 518 rows, VALID, SHA-256 a215494b...97b6ef identical across 2 runs, output.csv unchanged. No other outdated wording in code/*.py or *.md. Not committed or pushed.
+
+Actions:
+* git fetch; git ls-remote refs/pull/*; git show origin/P3 (base test); pytest of the single test
+* Edited the docstring in code/tests/test_policy_engine.py
+* pytest (root and code/), code/main.py twice, validate_output.py, sha256sum
+* Appended this entry to log.txt (uncommitted)
+
+Context:
+tool=Claude Code
+model=claude-opus-5-5
+branch=p3-contract-invariants
+repo_root=C:/Users/Admin/aiml/TRACE
+worktree=main
+parent_agent=none

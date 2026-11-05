@@ -645,8 +645,10 @@ def test_p3_p4_contract_invariants_on_public_samples(real_ctx, case_id):
     decide() returns only COMPLETE / INCOMPLETE, INCOMPLETE <=> at least one
     finding, every finding has a remediation, retained records / backups /
     tombstones are never deleted, and steps follow the canonical order
-    (phase, operation table, system_id). The resource_id tie-break is left
-    out on purpose: numeric vs lexical is still a team question."""
+    (phase, operation table, system_id). The resource_id tie-break is the
+    confirmed numeric natural order (account_9 before account_10) and is
+    covered by test_resource_ids_use_numeric_natural_sorting, so it is not
+    repeated here."""
     case = _sample(case_id)
     identity = real_ctx.resolver.resolve(case["email"], audit_at=ts(case["audit_at"]),
                                          requested_at=ts(case["requested_at"]), case_id=case_id)
