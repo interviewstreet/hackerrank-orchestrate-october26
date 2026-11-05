@@ -1721,3 +1721,43 @@ branch=member-1-frontend-slack
 repo_root=C:\Users\Luzain Sara\Documents\EraSight
 worktree=C:\Users\Luzain Sara\Documents\EraSight
 parent_agent=none
+
+## [2026-11-05T02:16:42.728962+00:00] Bind advisor provider labels to the selected endpoint
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: log.txt
+
+## Open tabs:
+- log.txt: log.txt
+- .env.example: .env.example
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env: .env
+- .env.local: code/frontend/.env.local
+
+## My request:
+Diagnose the single failing pytest test:
+`code/tests/test_advisor.py::test_openai_compatible_client_needs_all_settings`
+255/256 tests pass on Windows, but the test expects provider `example.test` and receives `Groq`.
+Inspect `code/advisor/llm_client.py`, the test, and environment configuration. Determine why the provider is incorrectly reported and apply the smallest safe fix if necessary.
+Preserve the correct provider behavior for actual Groq requests. Do not modify the test merely to make it pass, and do not modify the engine, email adapter, or CaseAuditResult contract.
+Run the failing test and the complete pytest suite. Report results. Do not commit or push.
+
+
+Agent Response Summary:
+Reproduced the original failing test with LLM_PROVIDER_NAME=Groq: the environment display label incorrectly overrode an explicitly different endpoint. Applied a small client fix so the environment label is used only for its configured endpoint; explicit alternate endpoints use their own host, while configured and matching explicit Groq endpoints retain the Groq label. Left the original test unchanged and added four regression cases. The targeted original test plus new cases passed (5), and the complete Windows Python 3.14 suite passed 260 tests with zero failures or skips and one existing Starlette/httpx deprecation warning; no live model requests, commits or pushes occurred.
+
+Actions:
+* Updated only code/advisor/llm_client.py provider-label selection and added code/tests/test_provider_config.py.
+* Inspected environment setting presence without displaying credentials or changing configuration files.
+* Ran the failing test before/after, provider regression cases and full pytest suite with the Groq environment label present.
+* Confirmed original tests, engine, email adapter and CaseAuditResult contract remain unchanged; ran git diff --check.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none

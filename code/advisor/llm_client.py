@@ -99,11 +99,14 @@ class OpenAICompatibleClient:
     def __init__(self, model: Optional[str] = None, api_key: Optional[str] = None, base_url: Optional[str] = None,
                  timeout: int = 90):
         self._key = api_key or os.environ.get("LLM_API_KEY", "")
-        self.base_url = (base_url or os.environ.get("LLM_BASE_URL", "")).rstrip("/")
+        configured_base_url = os.environ.get("LLM_BASE_URL", "").rstrip("/")
+        self.base_url = (base_url or configured_base_url).rstrip("/")
         self.model = model or os.environ.get("LLM_MODEL", "")
         self.timeout = timeout
         host = urllib.parse.urlparse(self.base_url).netloc if self.base_url else "unknown"
-        self.usage = UsageLog(provider=os.environ.get("LLM_PROVIDER_NAME", host), model=self.model or "unset")
+        # The configured provider label belongs to its endpoint, not an explicit override.
+        provider = (os.environ.get("LLM_PROVIDER_NAME") or host) if self.base_url == configured_base_url else host
+        self.usage = UsageLog(provider=provider, model=self.model or "unset")
         self.last_error = ""
 
     @property
