@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.cache/
+explanations.json
+.coverage
+.pytest_cache/
+email_outbox.db
+email_outbox.db-*
+
+code.zip
+agent-trace/
+agent-trace.zip
