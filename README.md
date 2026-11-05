@@ -54,7 +54,7 @@ From the repository root:
 It exits with a non-zero code and lists the problems otherwise.
 
 Tests that need the real `dataset/` and the root `output.csv` (9 of them) skip themselves when either is absent, so run `python3 code/main.py` first for the full count. The router test skips if `fastapi` is not installed.
-With the dev requirements installed the suite is 156 tests, all using fakes (no network, no model calls, no real email).
+With the dev requirements installed the suite is 188 tests, all using fakes (no network, no model calls, no real email).
 
 ### Reports
 `code/evaluation/evaluation_report.md` (accuracy, six custom cases, failures and improvements) and
@@ -72,6 +72,9 @@ Read from the real environment or from an uncommitted `.env` at the repository r
 | `RESEND_FROM_EMAIL` | email | Verified sender address |
 | `RESEND_WEBHOOK_SECRET` | email | Svix signing secret (`whsec_...`) for delivery webhooks; webhooks are refused without it |
 | `EMAIL_DB_PATH` | email | Optional path of the SQLite outbox (default `email_outbox.db`, gitignored) |
+| `EMAIL_OPERATORS` | email API | `name:sha256-of-token` pairs for the people who may draft, approve and send; create with `python3 code/email_operator_token.py --name <Name> --env-file .env`. Empty disables every email route |
+| `EMAIL_ALLOWED_RECIPIENTS` | email | Comma-separated addresses or `@domain`s that live email may go to; empty disables every email route |
+| `EMAIL_ALLOW_SELF_APPROVAL` | email | `1` lets the drafter also approve (one-person demos only); default: a different person must approve |
 | `LLM_PROVIDER` | advisory | `openai` (any OpenAI-compatible gateway, default) or `anthropic` |
 | `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`, `LLM_PROVIDER_NAME` | advisory | Gateway key, base URL ending in `/v1`, exact model id, display name for the report |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | advisory | Only when `LLM_PROVIDER=anthropic` |
@@ -97,13 +100,15 @@ Run `generate_reports.py` afterwards so `usage_report.md` shows the real calls a
 `code/integrations/email/` sends deletion-audit emails only after a named person approves the exact content.
 States: `DRAFT -> PENDING_APPROVAL -> APPROVED | REJECTED -> SENDING -> SENT | FAILED`. Duplicate sends are prevented per case + recipient + kind,
 by an atomic `APPROVED -> SENDING` claim, and by a Resend `Idempotency-Key`. Webhooks are verified with the Svix signature on the raw body.
-Mounting the FastAPI router and the endpoint table are in [`code/integrations/email/README.md`](./code/integrations/email/README.md);
+The endpoint table and the (optional, FastAPI-only) router are in [`code/integrations/email/README.md`](./code/integrations/email/README.md);
 the cross-team contract is in [`code/CONTRACT.md`](./code/CONTRACT.md).
 
 Try the whole flow from a terminal without sending anything:
 ```bash
 python3 code/email_demo.py --to you@example.com --dry-run
 ```
+For the web app, email goes through the existing `code/server.py` (no second server) using `integrations/email/http_adapter.py`: every request needs a personal login token, the approver must be a different person from the drafter, and only allowed recipients are accepted. The adapter is built and tested; `server.py` and the frontend still have to call it (steps in [`INTEGRATION_PLAN.md`](./code/integrations/email/INTEGRATION_PLAN.md)).
+
 A real send needs `RESEND_API_KEY`, a verified `RESEND_FROM_EMAIL` and `RESEND_WEBHOOK_SECRET`. With Resend's free sender the recipient must be the
 address your Resend account uses. No test ever contacts Resend.
 
@@ -115,6 +120,7 @@ code/advisor/               optional language-model explanations and review flag
 code/advise.py              CLI for the advisory layer
 code/integrations/email/    Resend integration (state machine, store, client, router, webhooks)
 code/email_demo.py          terminal demo of the approval workflow
+code/email_operator_token.py  create a login token for one person who may approve or send email
 code/evaluation/            scorer, custom cases, invariants, report generator, evaluation_report.md, usage_report.md
 code/tests/                 pytest suite (includes an invented mini dataset with hand-derived answers)
 code/CONTRACT.md            shared result and email interface for the frontend/API owner
@@ -126,4 +132,4 @@ log.txt                     agent session log (chat transcript submission)
 - On the 32 public samples `deletion_status` is 32/32, but 5 cases still miss steps (6 steps in total, no wrong steps). Cases 04, 18 and 20 refer to ids that appear nowhere in the data; case 23 has three equally plausible worker activities; case 24 depends on whether an empty snapshot outranks a live lookup (the alternative rule fixed 24 but broke 31). Details are in `evaluation_report.md`.
 - The other 486 requests have no answer key. Their behaviour is checked by policy/time invariants over all 518 rows and by the invented mini dataset, not by a score.
 - Regenerating `output.csv` on a different machine changed one row (`case_34`) with no engine change: the status stays INCOMPLETE, but one of its two remaining records (`support_9538`) was not found on the other machine, so it has 4 steps instead of 7. The likely cause is an OCR or PDF tool-version difference, not yet confirmed. The committed `output.csv` and the reports come from one consistent run; regenerate both together if you rerun on another machine.
-- No live email send has been tried yet; it needs the Resend credentials above.
+- No live email send has been tried yet; it needs the Resend credentials above, and Resend only sends from an address on a domain verified in your Resend account.

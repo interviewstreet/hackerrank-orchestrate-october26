@@ -6,7 +6,7 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 from .approval_service import ApprovalService, clean_actor
 from .config import EmailConfig
 from .draft_generator import REQUESTER, build_draft
-from .errors import EmailNotConfigured, InvalidTransition, ResendError
+from .errors import EmailNotConfigured, InvalidTransition, RecipientNotAllowed, ResendError
 from .models import EmailRecord, EmailState, content_hash, idempotency_key, normalize_recipient
 from .resend_client import ResendClient
 from .store import EmailStore, new_id
@@ -23,7 +23,7 @@ class EmailService:
         self.store = store
         self.client = client
         self.config = config or EmailConfig()
-        self.approvals = ApprovalService(store)
+        self.approvals = ApprovalService(store, allow_self_approval=self.config.allow_self_approval)
 
     # ---- drafting ----
     def create_draft(self, case_id: str, recipient: str, subject: str, body_text: str, *, kind: str = DEFAULT_KIND,
@@ -34,6 +34,7 @@ class EmailService:
         if "\n" in subject or "\r" in subject:
             raise ValueError("subject must be a single line")
         rcpt = normalize_recipient(recipient)
+        self._check_recipient(rcpt)
         rec = EmailRecord(id=new_id(), case_id=case_id.strip(), recipient=rcpt, kind=kind.strip(), subject=subject.strip(),
                           body_text=body_text, state=EmailState.DRAFT.value, meta=meta or {},
                           idempotency_key=idempotency_key(case_id, rcpt, kind))
@@ -88,6 +89,7 @@ class EmailService:
         if rec.state == EmailState.SENT.value:
             return rec
         self.approvals.assert_send_allowed(rec)                  # raises NotApproved / ContentChanged
+        self._check_recipient(rec.recipient)                     # checked again at send time, not only at draft time
         if not (self.client.can_send):
             raise EmailNotConfigured("RESEND_API_KEY and RESEND_FROM_EMAIL must be set to send")
         claimed = self.store.transition(email_id, [EmailState.APPROVED], EmailState.SENDING, who, "send started")
@@ -136,6 +138,10 @@ class EmailService:
     def _finish(self, email_id: str, actor: str, to: EmailState, **fields: Any) -> EmailRecord:
         rec = self.store.transition(email_id, [EmailState.SENDING], to, actor, "send " + to.value.lower(), **fields)
         return rec or self.store.get(email_id)                   # a webhook may already have settled it
+
+    def _check_recipient(self, recipient: str) -> None:
+        if not self.config.recipient_allowed(recipient):
+            raise RecipientNotAllowed("this recipient is not on the allowed list for live email")
 
     def _not_draft(self, email_id: str) -> EmailRecord:
         state = self.store.get(email_id).state

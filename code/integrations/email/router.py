@@ -16,8 +16,8 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from .email_service import EmailService
-from .errors import (ContentChanged, EmailNotConfigured, EmailNotFound, InvalidTransition, WebhookConfigError,
-                     WebhookVerificationError)
+from .errors import (ContentChanged, EmailNotConfigured, EmailNotFound, InvalidTransition, RecipientNotAllowed,
+                     SeparationOfDuties, WebhookConfigError, WebhookVerificationError)
 
 CaseProvider = Callable[[str], Optional[Dict[str, Any]]]     # case_id -> CaseAuditResult.to_dict(), or None
 
@@ -58,6 +58,8 @@ def _http(e: Exception) -> HTTPException:
         return HTTPException(404, str(e))
     if isinstance(e, (InvalidTransition, ContentChanged)):
         return HTTPException(409, str(e))
+    if isinstance(e, (RecipientNotAllowed, SeparationOfDuties)):
+        return HTTPException(403, str(e))
     if isinstance(e, EmailNotConfigured):
         return HTTPException(503, str(e))
     if isinstance(e, ValueError):

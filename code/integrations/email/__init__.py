@@ -8,11 +8,11 @@ Mount in Member 1's FastAPI app:
 from .config import EmailConfig
 from .email_service import EmailService, build_service_from_env
 from .errors import (ContentChanged, EmailError, EmailNotConfigured, EmailNotFound, InvalidTransition, NotApproved,
-                     ResendError, WebhookConfigError, WebhookVerificationError)
+                     RecipientNotAllowed, ResendError, SeparationOfDuties, WebhookConfigError, WebhookVerificationError)
 from .models import EmailRecord, EmailState
 from .resend_client import ResendClient
 from .store import EmailStore
 
 __all__ = ["EmailConfig", "EmailService", "build_service_from_env", "EmailRecord", "EmailState", "EmailStore",
            "ResendClient", "EmailError", "EmailNotFound", "InvalidTransition", "NotApproved", "ContentChanged",
-           "EmailNotConfigured", "ResendError", "WebhookConfigError", "WebhookVerificationError"]
+           "RecipientNotAllowed", "SeparationOfDuties", "EmailNotConfigured", "ResendError", "WebhookConfigError", "WebhookVerificationError"]

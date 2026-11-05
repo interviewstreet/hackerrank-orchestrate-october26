@@ -1,6 +1,6 @@
 # Shared contract: engine output and email router (Member 2 -> Member 1)
 
-Everything here is produced by Member 2's code. Member 1's files (`api.py`, frontend, Slack) are not modified by it.
+Everything here is produced by Member 2's code. Member 1's files (`code/server.py`, frontend, Slack) are not modified by it.
 All code lives under `code/`; put `code/` on `sys.path` (the engine, tests and CLIs already do).
 
 ## 1. `output.csv` (the graded file)
@@ -61,7 +61,12 @@ so compute it once at start-up (or cache it), not per request.
 `python3 code/advise.py [--model]` writes `explanations.json` (gitignored) next to `output.csv`. It adds a plain-language explanation and a
 "needs human review" flag per case. It never changes `deletion_status` or `steps`. Without `--model` it uses templates and needs no key.
 
-## 4. Email router (FastAPI)
+## 4a. Email over `code/server.py` (the supported route)
+`integrations/email/http_adapter.py` serves `/api/email/*` for the existing server with server-side identity (bearer token -> operator name), separate approver, recipient allowlist and fail-closed defaults. Endpoint table, status codes, the lines Member 1 adds to `server.py`, and setup (`code/email_operator_token.py`) are in [`integrations/email/INTEGRATION_PLAN.md`](./integrations/email/INTEGRATION_PLAN.md). Wiring was tested on a scratch copy of her branch; `server.py` itself is unchanged.
+
+## 4b. Email router (FastAPI, optional)
+> **Important:** Member 1's existing API is `code/server.py` (a standard-library `ThreadingHTTPServer` on 127.0.0.1). It is not a FastAPI app and there is no `api.py`; do not create a second server. Its anonymous session + CSRF check does not identify a person, so **do not expose approve or send through it as is**. The FastAPI router below is optional (for a FastAPI deployment only). The plan for the existing server is in [`integrations/email/INTEGRATION_PLAN.md`](./integrations/email/INTEGRATION_PLAN.md).
+
 Full endpoint table, workflow rules and Resend setup: [`integrations/email/README.md`](./integrations/email/README.md). Interface summary:
 
 ```python
@@ -89,4 +94,4 @@ app.include_router(create_email_router(
 - The SQLite outbox (`email_outbox.db`, or `EMAIL_DB_PATH`) holds email bodies: keep it out of git (it is gitignored) and out of `code.zip`.
 
 ## 5. Not covered here
-Wiring explanations into the UI and mounting the router in `api.py` are Member 1's tasks.
+Wiring explanations into the UI and adding email endpoints to `code/server.py` behind real authorization (see `integrations/email/INTEGRATION_PLAN.md`) are still open; email is not exposed by any server yet.
