@@ -2182,3 +2182,23 @@ branch=member-1-frontend-slack
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-05T04:39:36Z] Verify requirements, explain case_34, push code.zip
+
+User Prompt (verbatim, secrets redacted):
+Follow-ups: code.zip not on GitHub / editing it later; PRD requirement re-check; case_34 4-step vs 7-step comparison; "push these changes for now, also push the code.zip file"
+
+Agent Response Summary:
+Re-verified ordering, evidence-citation, tombstone, retention and NOT_APPLICABLE rules across all 518 rows (no violations). Compared the committed 7-step case_34 with the 4-step OCR-miss version (missing support_9538 finding, delete and verify). Code changes were already pushed; force-added the gitignored code.zip at the user's request and pushed it.
+
+Actions:
+* Read-only checks of output.csv against dataset files
+* git add -f code.zip; git add log.txt; commit and push
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-1-frontend-slack
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
