@@ -533,6 +533,29 @@ def test_step_builder_numbers_phases_and_blanks_future_evidence(world):
     assert steps[len(d["findings"])]["operation"] == "DISABLE_DATA_FLOW"
 
 
+def test_resource_ids_use_numeric_natural_sorting(world):
+    records = [
+        obs("account_10", "account_service", "USER_PROFILE",
+            pii={"email": EMAIL}),
+        obs("account_9", "account_service", "USER_PROFILE",
+            pii={"email": EMAIL}),
+    ]
+
+    d = world.decide(records)
+
+    assert [s["resource_id"] for s in d["findings"]] == [
+        "account_9",
+        "account_10",
+    ]
+
+    # build_steps() must keep decide()'s order (P3-P4 contract: it never re-sorts).
+    steps = build_steps(d)
+    assert [s["resource_id"] for s in steps if s["phase"] == "FINDING"] == [
+        "account_9",
+        "account_10",
+    ]
+
+
 def test_step_builder_rejects_values_outside_contract():
     with pytest.raises(ValueError):
         build_steps({"deletion_status": "INCOMPLETE", "findings": [
