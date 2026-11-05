@@ -787,3 +787,29 @@ branch=member-2-backend-resend
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-05T02:00:00Z] Resend free-sender guidance, setup help, audit fixes
+
+User Prompt (verbatim, secrets redacted):
+but if the customer has to draft the email.. there cannot be an email sent from the default free email of resend
+
+yes tell me how to do option 1+2
+
+i want the resend part to be pushed because member 1 has to do work
+
+also fix these: I completed a read-only grading audit against problem_statement.md and deletion_rules.csv. Two failures: (1) tombstone enforcement: ABSENT/UNKNOWN tombstones accepted as compliant, stable user_id not checked, Rule 15 requires REDACT_RECORD; (2) usage_report.md mixes full-dataset advisory and demo tokens, per-request averages wrong, cost estimates missing. Risks: (3) validate_output.py accepts malformed outputs (missing citations, wrong ordering, NOT_APPLICABLE {}); (4) final archive needs evaluation/*.md at the required location. Please handle the engine tombstone and validator fixes on your branch and confirm who fixes usage/cost reporting.
+
+Agent Response Summary:
+Confirmed from Resend docs that the free sender reaches only the account owner and gave the demo plan (own inbox plus delivered@/bounced@resend.dev, test inboxes only), then helped with Windows setup (pull, operator tokens; pdftotext/tesseract missing on the laptop explains one failing sample test there). Fixed the tombstone rule (must exist, keep the subject's stable user_id, REDACT_RECORD when exposed), hardened validate_output.py (arrays only, phase and operation order, citation rules), rewrote the usage report (full run only, demo separate, price assumption and cost) and updated the Resend wording in README and INTEGRATION_PLAN. 198 tests pass; output.csv is unchanged.
+
+Actions:
+* edited code/engine/policy_engine.py, case_analyzer.py, validate_output.py, evaluation/generate_reports.py, usage_report.md, README.md, INTEGRATION_PLAN.md
+* added code/tests/test_tombstone_and_validator.py; ran pytest (198 passed)
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-2-backend-resend
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none

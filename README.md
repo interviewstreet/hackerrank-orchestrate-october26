@@ -109,8 +109,10 @@ python3 code/email_demo.py --to you@example.com --dry-run
 ```
 For the web app, email goes through the existing `code/server.py` (no second server) using `integrations/email/http_adapter.py`: every request needs a personal login token, the approver must be a different person from the drafter, and only allowed recipients are accepted. The adapter is built and tested; `server.py` and the frontend still have to call it (steps in [`INTEGRATION_PLAN.md`](./code/integrations/email/INTEGRATION_PLAN.md)).
 
-A real send needs `RESEND_API_KEY`, a verified `RESEND_FROM_EMAIL` and `RESEND_WEBHOOK_SECRET`. With Resend's free sender the recipient must be the
-address your Resend account uses. No test ever contacts Resend.
+A real send needs `RESEND_API_KEY` and `RESEND_FROM_EMAIL` (and `RESEND_WEBHOOK_SECRET` only if webhooks are used). Resend's free sender
+`onboarding@resend.dev` is for testing: it delivers only to the address your Resend account uses, so emailing real customers needs a domain you
+own and have verified in Resend. For the demo, allow your own Resend address plus Resend's test inboxes `delivered@resend.dev` and
+`bounced@resend.dev` (see `INTEGRATION_PLAN.md`); the dataset customers are fictional. No test ever contacts Resend.
 
 ## Repository layout
 ```text

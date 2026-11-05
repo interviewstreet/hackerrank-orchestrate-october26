@@ -73,7 +73,12 @@ Frontend: a login-token box whose value lives only in memory (a variable, never 
 ## Setting it up (each person who may approve or send)
 1. `python code/email_operator_token.py --name Rachana --env-file .env` prints a login token once and stores only its hash in `.env`. Run it again with another name for a second person (a different approver is required).
 2. Add to `.env`: `EMAIL_ALLOWED_RECIPIENTS=<comma-separated addresses or @domains>`; `RESEND_FROM_EMAIL=<a sender verified in Resend>`; `RESEND_API_KEY`.
-3. Resend only delivers from an address on a domain you have verified (`bmsit.in` cannot be verified by a student). The free sender `onboarding@resend.dev` delivers only to the address your Resend account uses.
+3. **Sender and recipients.** The free sender `onboarding@resend.dev` is for testing only: it can deliver only to the address your Resend account uses, and any other recipient gets a 403. Emailing real customers needs a domain you own, verified in Resend (`bmsit.in` is not ours to verify). The dataset customers are fictional, so the demo uses test inboxes:
+   - `RESEND_FROM_EMAIL=onboarding@resend.dev`
+   - `EMAIL_ALLOWED_RECIPIENTS=<your Resend account email>,delivered@resend.dev,bounced@resend.dev`
+   - Send one real email to your own address, plus `delivered@resend.dev` (Resend shows Delivered) and `bounced@resend.dev` (shows Bounced in the Resend dashboard only, because our app does not receive webhooks; it still shows SENT).
+   - Use a different recipient for each email: the system sends one email per case, recipient and kind.
+   - Staff (operators) draft and approve; the customer is only the recipient.
 
 ## Resend webhooks
 `server.py` listens on 127.0.0.1 only, so Resend cannot reach it, and the approval routes must never be exposed through a tunnel. Without webhooks an email's state comes from the send call (`SENT` or `FAILED`); delivery events (delivered/bounced) are not recorded. If those are needed, run a separate minimal listener for `/webhooks/resend` only (`EmailService.handle_webhook` already verifies the Svix signature).

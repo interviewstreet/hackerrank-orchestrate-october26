@@ -6,10 +6,11 @@ import json
 from pathlib import Path
 from typing import List
 
-from .contracts import OPERATION_STATE
+from .contracts import OPERATION_ORDER, OPERATION_STATE
 
 STATUSES = {"COMPLETE", "INCOMPLETE", "NOT_APPLICABLE"}
 PHASES = {"FINDING", "REMEDIATION", "VERIFICATION"}
+PHASE_RANK = {"FINDING": 0, "REMEDIATION": 1, "VERIFICATION": 2}
 FIELDS = ["step_no", "phase", "system_id", "resource_id", "operation", "state", "evidence_id"]
 
 
@@ -44,21 +45,57 @@ def validate_output_csv(path, dataset_dir) -> List[str]:
         except json.JSONDecodeError as e:
             problems.append(f"{cid}: steps_json is not valid JSON ({e})")
             continue
-        if status == "NOT_APPLICABLE" and steps:
-            problems.append(f"{cid}: NOT_APPLICABLE must have no steps")
+        if not isinstance(steps, list):
+            problems.append(f"{cid}: steps_json must be a JSON array, got {type(steps).__name__}")
+            continue
+        if status == "NOT_APPLICABLE" and steps != []:
+            problems.append(f"{cid}: NOT_APPLICABLE must have steps_json == []")
+        if status == "COMPLETE" and not steps:
+            problems.append(f"{cid}: COMPLETE needs evidence-backed verification steps")
         audit_at = requests.get(cid, {}).get("audit_at", "")
+        last_phase, last_op = -1, -1
         for i, s in enumerate(steps, 1):
-            if list(s) != FIELDS:
+            if not isinstance(s, dict):
+                problems.append(f"{cid}: step {i} is not an object")
+                continue
+            if list(s) != FIELDS and sorted(s) != sorted(FIELDS):
                 problems.append(f"{cid}: step {i} fields {list(s)}")
-            if s.get("step_no") != i:
+                continue
+            if s.get("step_no") != i or isinstance(s.get("step_no"), bool):
                 problems.append(f"{cid}: step_no {s.get('step_no')} != {i}")
-            if s.get("phase") not in PHASES:
-                problems.append(f"{cid}: bad phase {s.get('phase')}")
-            if s.get("operation") not in OPERATION_STATE:
-                problems.append(f"{cid}: bad operation {s.get('operation')}")
-            elif OPERATION_STATE[s["operation"]] != (s["phase"], s["state"]):
-                problems.append(f"{cid}: step {i} phase/state do not match {s['operation']}")
-            e = s.get("evidence_id", "")
+            if any(not isinstance(s.get(k), str) for k in FIELDS[1:]):
+                problems.append(f"{cid}: step {i} has a non-text field")
+                continue
+            phase = s["phase"]
+            if phase not in PHASES:
+                problems.append(f"{cid}: bad phase {phase}")
+            elif PHASE_RANK[phase] < last_phase:
+                problems.append(f"{cid}: step {i} {phase} comes after a later phase")
+            op = s["operation"]
+            if op not in OPERATION_STATE:
+                problems.append(f"{cid}: bad operation {op}")
+            else:
+                if OPERATION_STATE[op] != (phase, s["state"]):
+                    problems.append(f"{cid}: step {i} phase/state do not match {op}")
+                if phase in PHASE_RANK and PHASE_RANK[phase] == last_phase and OPERATION_ORDER.index(op) < last_op:
+                    problems.append(f"{cid}: step {i} {op} is out of order within {phase} "
+                                    "(disable flows and block restores before changing records)")
+                last_op = OPERATION_ORDER.index(op)
+            if phase in PHASE_RANK:
+                if PHASE_RANK[phase] != last_phase:
+                    last_op = OPERATION_ORDER.index(op) if op in OPERATION_STATE else -1
+                last_phase = max(last_phase, PHASE_RANK[phase])
+            e = s["evidence_id"]
+            if phase == "FINDING" and not e:
+                problems.append(f"{cid}: step {i} finding has no evidence_id")
+            if phase == "REMEDIATION" and e:
+                problems.append(f"{cid}: step {i} remediation must have an empty evidence_id")
+            if phase == "VERIFICATION" and status == "COMPLETE" and not e:
+                problems.append(f"{cid}: step {i} verification in a COMPLETE case must cite evidence")
+            if phase == "VERIFICATION" and status == "INCOMPLETE" and e:
+                problems.append(f"{cid}: step {i} future verification must have an empty evidence_id")
+            if status == "COMPLETE" and phase != "VERIFICATION":
+                problems.append(f"{cid}: COMPLETE case contains a {phase} step")
             if e:
                 if e not in manifest:
                     problems.append(f"{cid}: unknown evidence_id {e}")

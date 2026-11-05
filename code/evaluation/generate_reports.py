@@ -181,35 +181,49 @@ Result: **{mini_ok}/{len(mini_expected)} exact** (`pytest code/tests/test_mini_d
         return json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
 
     main_run, demo_run = _load("advisor_usage.json"), _load("advisor_usage_demo.json")
-    runs = [(label, u) for label, u in (("full dataset run (flagged requests)", main_run), ("lookalike demo on the mini dataset", demo_run))
-            if u and u["calls"]]
-    calls = sum(u["calls"] for _, u in runs)
-    tin = sum(u["input_tokens"] for _, u in runs)
-    tout = sum(u["output_tokens"] for _, u in runs)
-    adv = runs[0][1] if runs else None
-    pin = os.environ.get("LLM_PRICE_INPUT_PER_MTOK", "")
-    pout = os.environ.get("LLM_PRICE_OUTPUT_PER_MTOK", "")
-    if not runs:
-        cost, cost_req = "$0.00", "$0.00"
-    elif pin and pout:
-        total = tin / 1e6 * float(pin) + tout / 1e6 * float(pout)
+    # The summary covers ONLY the final full-dataset run that produced output.csv. The mini-dataset demo is reported
+    # separately and never added to the full-run totals or per-request averages.
+    full = main_run if main_run and main_run["calls"] else None
+    demo = demo_run if demo_run and demo_run["calls"] else None
+    calls = full["calls"] if full else 0
+    tin = full["input_tokens"] if full else 0
+    tout = full["output_tokens"] if full else 0
+    adv = full or demo
+    # Estimated prices in USD per million tokens (Groq list price for openai/gpt-oss-120b, checked Nov 2026); override
+    # with LLM_PRICE_INPUT_PER_MTOK / LLM_PRICE_OUTPUT_PER_MTOK if the rates change.
+    pin = float(os.environ.get("LLM_PRICE_INPUT_PER_MTOK") or 0.15)
+    pout = float(os.environ.get("LLM_PRICE_OUTPUT_PER_MTOK") or 0.60)
+
+    def _cost(i, o):
+        return i / 1e6 * pin + o / 1e6 * pout
+    if full:
+        total = _cost(tin, tout)
         cost, cost_req = f"${total:.4f}", f"${total / n:.6f}"
+        per_call = f"{(tin + tout) / calls:.0f}"
     else:
-        cost = cost_req = "not reported (no price supplied)"
-    if not runs:
-        who = ("**The shipped agent makes zero model calls.** It is a deterministic pipeline (rules, parsers, local `pdftotext` and "
-               "`tesseract` OCR). The optional advisory layer (`python code/advise.py --model`) was not used for this run, so there "
-               "are no input or output tokens and no per-token cost.")
+        cost, cost_req, per_call = "$0.00", "$0.00", "n/a"
+    if not full:
+        who = ("**The full-dataset run made zero model calls.** The decisions are a deterministic pipeline (rules, parsers, local "
+               "`pdftotext` and `tesseract` OCR). The optional advisory layer (`python code/advise.py --model`) was not used for "
+               "that run, so there are no input or output tokens and no per-token cost.")
         model_rows = "| Model providers and names used at run time | None |"
-        per_model = "No models were used, so there is no per-model table."
+        per_model = "No models were used in the full-dataset run, so there is no per-model table."
     else:
         who = (f"The decisions behind `output.csv` come from the deterministic engine and make **no model calls**. The optional advisory "
                f"layer (`python code/advise.py --model`) asked **{adv['provider']} / {adv['model']}** for a second opinion on cases the "
-               f"deterministic triggers flagged. It only writes `explanations.json`; it cannot change `output.csv`.")
+               f"deterministic triggers flagged. It only writes `explanations.json`; it cannot change `output.csv`. "
+               f"The figures below are for that single full-dataset advisory run; the mini-dataset demo is listed separately and excluded.")
         model_rows = f"| Model providers and names used at run time | {adv['provider']}: {adv['model']} (advisory layer only) |"
-        rows = "\n".join(f"| {label} | {u['calls']} | {u['input_tokens']} | {u['output_tokens']} |" for label, u in runs)
-        per_model = (f"Model: {adv['provider']} {adv['model']}\n\n| Run | Calls | Input tokens | Output tokens |\n|---|---|---|---|\n{rows}\n"
-                     f"| **Overall** | {calls} | {tin} | {tout} |")
+        per_model = (f"| Model | Calls | Input tokens | Output tokens | Total tokens | Estimated cost |\n|---|---|---|---|---|---|\n"
+                     f"| {adv['provider']} {adv['model']} (full-dataset run) | {calls} | {tin} | {tout} | {tin + tout} | {cost} |\n"
+                     f"| **Overall (full-dataset run)** | {calls} | {tin} | {tout} | {tin + tout} | {cost} |")
+    demo_section = ""
+    if demo:
+        dc = _cost(demo["input_tokens"], demo["output_tokens"])
+        demo_section = (f"\n## Separate: mini-dataset demo (NOT part of the totals above)\n"
+                        f"A lookalike-email demo on the small mini dataset, used only to show the advisory layer working. "
+                        f"{demo['calls']} calls, {demo['input_tokens']} input and {demo['output_tokens']} output tokens "
+                        f"({demo['input_tokens'] + demo['output_tokens']} total, about ${dc:.4f}).\n")
     us = f"""# ERASIGHT Token Usage and Cost Report
 
 This report covers the final full-dataset run that produced `output.csv` ({n} requests).
@@ -224,13 +238,13 @@ This report covers the final full-dataset run that produced `output.csv` ({n} re
 | Input tokens | {tin} |
 | Output tokens | {tout} |
 | Total tokens | {tin + tout} |
-| Average tokens per request | {(tin + tout) / n:.1f} |
-| Estimated total cost | {cost} |
+| Average tokens per request (total tokens / {n} requests) | {(tin + tout) / n:.1f} |\n| Average tokens per model call | {per_call} |
+| Estimated total cost | {cost} |\n| Price assumption (USD per million tokens) | input {pin:g}, output {pout:g} |
 | Estimated cost per request | {cost_req} |
 
 ## Per-model breakdown
 {per_model}
-
+{demo_section}
 ## Run characteristics (measured)
 | Item | Value |
 |---|---|

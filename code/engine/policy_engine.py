@@ -28,7 +28,7 @@ class Decision:
     reason: str = ""
 
 
-def evaluate(ctx: DatasetContext, rs: ResourceState, audit_at: str) -> Optional[Decision]:
+def evaluate(ctx: DatasetContext, rs: ResourceState, audit_at: str, subject_user_id: str = "") -> Optional[Decision]:
     cat = rs.category
     base = dict(resource_id=rs.resource_id, system_id=rs.system_id, category=cat, evidence_id=rs.evidence_id)
 
@@ -51,6 +51,9 @@ def evaluate(ctx: DatasetContext, rs: ResourceState, audit_at: str) -> Optional[
                         remediation_op="BLOCK_RESTORE" if risk else "", verification_op=VERIFY_OP["BLOCKED"],
                         reason="archive can still be restored" if risk else "restore access is blocked")
 
+    if cat == "ACCOUNT_TOMBSTONE":
+        return _tombstone(base, rule, rs, subject_user_id)
+
     final = ACTION_TO_FINAL[action]
     present = rs.state in ("PRESENT", "ACTIVE")
     if action == "DELETE":
@@ -68,3 +71,24 @@ def evaluate(ctx: DatasetContext, rs: ResourceState, audit_at: str) -> Optional[
     # RETAIN (security audit log, legal hold): must remain available; never delete
     return Decision(**base, rule_id=rule["rule_id"], required_action=action, required_final_state=final, compliant=True,
                     verification_op=VERIFY_OP[final], reason="policy requires retention")
+
+
+def _tombstone(base: dict, rule: Dict[str, str], rs: ResourceState, subject_user_id: str) -> Decision:
+    """Rule 15 (REDACT): the tombstone must still exist, keep only the stable internal user_id, and carry no direct
+    identifier. A missing/unproven tombstone breaks references to retained records, so it is NOT compliant; a wrong or
+    missing stable reference is not compliant either. Exposed identifiers are fixed with REDACT_RECORD (never delete)."""
+    refs = {u for o in rs.observations if o.state in ("PRESENT", "ACTIVE", "UNKNOWN", "REDACTED") for u in o.user_refs}
+    ref_ok = bool(subject_user_id) and subject_user_id in refs
+    kw = dict(rule_id=rule["rule_id"], required_action="REDACT", required_final_state="REDACTED",
+              verification_op=VERIFY_OP["REDACTED"])
+    present = rs.state in ("PRESENT", "ACTIVE", "REDACTED")
+    if present and rs.exposed:
+        return Decision(**base, compliant=False, finding_op="REPORT_EXPOSED_PII", remediation_op="REDACT_RECORD",
+                        reason=f"tombstone still exposes {', '.join(rs.exposed_fields)}", **kw)
+    if not present:       # ABSENT or UNKNOWN: the required tombstone cannot be shown to exist
+        return Decision(**base, compliant=False,
+                        reason="required account tombstone is missing or its state is unknown", **kw)
+    if not ref_ok:
+        return Decision(**base, compliant=False,
+                        reason="tombstone does not preserve the subject's stable user_id", **kw)
+    return Decision(**base, compliant=True, reason="tombstone keeps only the stable user_id", **kw)
