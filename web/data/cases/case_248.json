@@ -1,0 +1,59 @@
+{
+  "case_id": "case_248",
+  "email": "ju****@outlook.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please review the account data that is eligible for deletion or de-identification. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-02T12:00:00Z",
+  "audit_at": "2026-06-18T12:00:00Z",
+  "user_id": "user_246",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ju****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **16",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1762d862…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "J. C.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_78",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_677",
+      "matched_identifier": "email:ju****@outlook.com",
+      "captured_at": "2026-06-18T11:44:03Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

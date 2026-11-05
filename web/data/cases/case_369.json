@@ -1,0 +1,65 @@
+{
+  "case_id": "case_369",
+  "email": "d.****@yahoo.com",
+  "request_text": "Please erase the account linked to this email address. Please apply the request across the systems covered by your deletion policy. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-02T07:00:00Z",
+  "audit_at": "2026-04-19T07:00:00Z",
+  "user_id": "user_367",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "d.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**67",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "8cce9c26…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "D. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_34",
+      "system_id": "account_service",
+      "resource_id": "account_8590",
+      "matched_identifier": "email:d.****@yahoo.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "security_service",
+      "resource_id": "audit_record_337",
+      "matched_identifier": "user_id:user_367",
+      "captured_at": "2026-04-19T06:59:43Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

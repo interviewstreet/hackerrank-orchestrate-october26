@@ -1,0 +1,78 @@
+{
+  "case_id": "case_189",
+  "email": "l.****@yahoo.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please check the records connected to the account before confirming completion. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-01T11:00:00Z",
+  "audit_at": "2026-07-18T11:00:00Z",
+  "user_id": "user_187",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "l.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 10",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "708bc35b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_83",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1120",
+      "matched_identifier": "email:l.****@yahoo.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "account_service",
+      "resource_id": "account_5848",
+      "matched_identifier": "email:l.****@yahoo.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "search_service",
+      "resource_id": "search_4334",
+      "matched_identifier": "email:l.****@yahoo.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "support_platform",
+      "resource_id": "support_8447",
+      "matched_identifier": "email:l.****@yahoo.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

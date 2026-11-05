@@ -1,0 +1,76 @@
+{
+  "case_id": "case_125",
+  "email": "ka****@gmail.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please review any identifiers connected to this account as part of the request. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-04T10:00:00Z",
+  "audit_at": "2026-08-17T10:00:00Z",
+  "user_id": "user_123",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_246"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *44",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "18c3311e…",
+      "is_historical": false,
+      "audit_id": "audit_247"
+    },
+    {
+      "kind": "name",
+      "value": "K. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ka****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_246"
+    },
+    {
+      "kind": "email_hash",
+      "value": "5de27a92…",
+      "is_historical": true,
+      "audit_id": "audit_247"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_87",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1103",
+      "matched_identifier": "email:ka****@gmail.com",
+      "captured_at": "2026-08-17T09:42:50Z"
+    },
+    {
+      "file_id": "evidence_87",
+      "system_id": "search_service",
+      "resource_id": "search_9752",
+      "matched_identifier": "email:ka****@gmail.com",
+      "captured_at": "2026-08-17T09:42:50Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

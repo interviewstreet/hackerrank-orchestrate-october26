@@ -1,0 +1,65 @@
+{
+  "case_id": "case_516",
+  "email": "ye****@fastmail.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the request across the systems covered by your deletion policy. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-10T06:00:00Z",
+  "audit_at": "2026-02-03T06:00:00Z",
+  "user_id": "user_514",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ye****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **73",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "63ee2623…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. E.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_48",
+      "system_id": "account_service",
+      "resource_id": "account_141",
+      "matched_identifier": "email:ye****@fastmail.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3777",
+      "matched_identifier": "user_id:user_514",
+      "captured_at": "2026-02-03T05:59:42Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,91 @@
+{
+  "case_id": "case_422",
+  "email": "ca****@gmail.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please check the records connected to the account before confirming completion. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-15T09:00:00Z",
+  "audit_at": "2026-03-25T09:00:00Z",
+  "user_id": "user_420",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ca****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_110"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 83",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "86e3be7f…",
+      "is_historical": false,
+      "audit_id": "audit_111"
+    },
+    {
+      "kind": "name",
+      "value": "C. G.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ca****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_110"
+    },
+    {
+      "kind": "email_hash",
+      "value": "3557d3b4…",
+      "is_historical": true,
+      "audit_id": "audit_111"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_39",
+      "system_id": "search_service",
+      "resource_id": "search_7614",
+      "matched_identifier": "email:ca****@gmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "account_service",
+      "resource_id": "account_4087",
+      "matched_identifier": "email:ca****@gmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8871",
+      "matched_identifier": "email:ca****@gmail.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4218",
+      "matched_identifier": "user_id:user_420",
+      "captured_at": "2026-03-25T08:59:44Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -89,7 +89,8 @@ DECISION = {
                    "evidence_ids": ["evidence_1"]}],
     "flows": [{"system_id": "crm_sync", "resource_id": "job_1", "kind": "SYNC",
                "active_at_audit": True, "evidence_id": "activity_3"}],
-    "restore_risks": [],
+    "restore_risks": [{"system_id": "backup_vault", "resource_id": "snapshot_4",
+                       "active_at_audit": True, "evidence_id": "activity_5"}],
     "timeline": [
         {"time": "2026-09-01T00:00:00Z", "system_id": "account_service",
          "resource_id": "account_1", "event": "DELETE", "state_after": "PRESENT",
@@ -146,6 +147,8 @@ class TestSchema(DbTestCase):
                           "evidence_ids"],
             "flows": ["case_id", "system_id", "resource_id", "kind", "active_at_audit",
                       "evidence_id"],
+            "restore_risks": ["case_id", "system_id", "resource_id", "active_at_audit",
+                              "evidence_id"],
             "timeline": ["case_id", "seq", "time", "system_id", "resource_id", "event",
                          "state_after", "evidence_id"],
             "steps": ["case_id", "step_no", "phase", "system_id", "resource_id",
@@ -246,6 +249,10 @@ class TestSaveCase(DbTestCase):
         self.assertEqual(res["satisfied"], 0)
         self.assertEqual(json.loads(res["evidence_ids"]), ["evidence_1"])
         self.assertEqual(self.q("SELECT active_at_audit FROM flows")[0]["active_at_audit"], 1)
+        self.assertEqual(self.q("SELECT system_id, resource_id, active_at_audit, evidence_id "
+                                "FROM restore_risks"),
+                         [{"system_id": "backup_vault", "resource_id": "snapshot_4",
+                           "active_at_audit": 1, "evidence_id": "activity_5"}])
         self.assertEqual([r["event"] for r in self.q("SELECT event FROM timeline ORDER BY seq")],
                          ["DELETE", "SYNC"])
 
@@ -262,8 +269,8 @@ class TestSaveCase(DbTestCase):
                                  "flows": [], "restore_risks": [], "timeline": []},
                        steps=[])
         counts = audit_db.table_counts(self.conn)
-        self.assertEqual((counts["resources"], counts["flows"], counts["timeline"],
-                          counts["steps"]), (0, 0, 0, 0))
+        self.assertEqual((counts["resources"], counts["flows"], counts["restore_risks"],
+                          counts["timeline"], counts["steps"]), (0, 0, 0, 0, 0))
 
     def test_early_stop_saves_only_the_case_row(self):
         audit_db.save_case(self.conn, CASE, our_status="NOT_APPLICABLE",
@@ -280,7 +287,8 @@ class TestSaveCase(DbTestCase):
         # a smaller re-run removes rows that are no longer produced
         self.save_full(steps=STEPS[:1], decision={"resources": []})
         after = audit_db.table_counts(self.conn)
-        self.assertEqual((after["steps"], after["resources"], after["flows"]), (1, 0, 0))
+        self.assertEqual((after["steps"], after["resources"], after["flows"],
+                          after["restore_risks"]), (1, 0, 0, 0))
 
     def test_rerun_does_not_touch_other_cases(self):
         self.save_full()

@@ -1,0 +1,64 @@
+{
+  "case_id": "case_290",
+  "email": "so****@gmail.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please ensure the request is applied to the relevant account records. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-11T08:00:00Z",
+  "audit_at": "2026-05-29T08:00:00Z",
+  "user_id": "user_288",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "so****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *98",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "6a53b0e4…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "S. L.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_76",
+      "system_id": "search_service",
+      "resource_id": "search_3144",
+      "matched_identifier": "email:so****@gmail.com",
+      "captured_at": "2026-05-29T07:43:13Z"
+    },
+    {
+      "file_id": "evidence_76",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_179",
+      "matched_identifier": "email:so****@gmail.com",
+      "captured_at": "2026-05-29T07:43:13Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

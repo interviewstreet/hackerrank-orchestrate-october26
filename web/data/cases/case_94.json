@@ -1,0 +1,77 @@
+{
+  "case_id": "case_94",
+  "email": "me****@icloud.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please complete the normal identity and data review for this request. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-10T06:00:00Z",
+  "audit_at": "2026-09-01T06:00:00Z",
+  "user_id": "user_92",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "me****@icloud.com",
+      "is_historical": false,
+      "audit_id": "audit_252"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***24",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "fa93cbb4…",
+      "is_historical": false,
+      "audit_id": "audit_253"
+    },
+    {
+      "kind": "name",
+      "value": "N. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "me****@icloud.com",
+      "is_historical": true,
+      "audit_id": "audit_252"
+    },
+    {
+      "kind": "email_hash",
+      "value": "b5b178db…",
+      "is_historical": true,
+      "audit_id": "audit_253"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_89",
+      "system_id": "search_service",
+      "resource_id": "search_7631",
+      "matched_identifier": "email:me****@icloud.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "support_platform",
+      "resource_id": "support_7691",
+      "matched_identifier": "email:me****@icloud.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

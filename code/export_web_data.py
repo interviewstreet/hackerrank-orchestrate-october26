@@ -3,12 +3,15 @@ export_web_data.py — turn audit.db into static JSON for the website.
 
 Run after main.py:
     python3 code/main.py
-    python3 code/export_web_data.py            # writes web/public/data/
+    python3 code/export_web_data.py            # writes web/data/
 
 Writes:
-    web/public/data/summary.json          status counts, reported vs ours
-    web/public/data/cases.json            short list of every case
-    web/public/data/cases/<case_id>.json  everything about one case
+    web/data/summary.json          status counts, reported vs ours
+    web/data/cases.json            short list of every case
+    web/data/cases/<case_id>.json  everything about one case
+
+web/data/ is outside web/public/, so the files are not served directly:
+the website reads them only through its API routes (web/app/api/).
 
 The site is public, so personal identifiers are masked:
     email       javier.r940897@outlook.com -> ja****@outlook.com
@@ -37,7 +40,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import audit_db  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUT_DIR = REPO_ROOT / "web" / "public" / "data"
+DEFAULT_OUT_DIR = REPO_ROOT / "web" / "data"
 
 STATUSES = ("COMPLETE", "INCOMPLETE", "NOT_APPLICABLE")
 LANGUAGES = ("en", "es", "pt", "fr", "ja", "ko")
@@ -181,6 +184,9 @@ def build_case(conn: sqlite3.Connection, case_id: str) -> dict:
                             "WHERE case_id = ? ORDER BY rowid", (case_id,))
     flows = _rows(conn, "SELECT system_id, resource_id, kind, active_at_audit, evidence_id "
                         "FROM flows WHERE case_id = ? ORDER BY rowid", (case_id,))
+    restore_risks = _rows(conn, "SELECT system_id, resource_id, active_at_audit, evidence_id "
+                                "FROM restore_risks WHERE case_id = ? ORDER BY rowid",
+                          (case_id,))
     timeline = _rows(conn, "SELECT time, system_id, resource_id, event, state_after, "
                            "evidence_id FROM timeline WHERE case_id = ? ORDER BY seq",
                      (case_id,))
@@ -190,7 +196,7 @@ def build_case(conn: sqlite3.Connection, case_id: str) -> dict:
     for r in resources:
         r["satisfied"] = bool(r["satisfied"])
         r["evidence_ids"] = json.loads(r["evidence_ids"] or "[]")
-    for f in flows:
+    for f in flows + restore_risks:
         f["active_at_audit"] = bool(f["active_at_audit"])
 
     return {
@@ -216,6 +222,7 @@ def build_case(conn: sqlite3.Connection, case_id: str) -> dict:
                           for h in hits],
         "resources": resources,
         "flows": flows,
+        "restore_risks": restore_risks,
         "timeline": timeline,
         "steps": steps,
     }

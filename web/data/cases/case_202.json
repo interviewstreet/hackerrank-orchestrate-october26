@@ -1,0 +1,71 @@
+{
+  "case_id": "case_202",
+  "email": "da****@icloud.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please review the account data that is eligible for deletion or de-identification. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-03T10:00:00Z",
+  "audit_at": "2026-07-13T10:00:00Z",
+  "user_id": "user_200",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "da****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 49",
+      "is_historical": false,
+      "audit_id": "audit_82"
+    },
+    {
+      "kind": "email_hash",
+      "value": "a9db43f3…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. D.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 49",
+      "is_historical": true,
+      "audit_id": "audit_82"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_82",
+      "system_id": "account_service",
+      "resource_id": "account_5547",
+      "matched_identifier": "email:da****@icloud.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    },
+    {
+      "file_id": "evidence_82",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5401",
+      "matched_identifier": "user_id:user_200",
+      "captured_at": "2026-07-13T09:33:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

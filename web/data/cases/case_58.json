@@ -1,0 +1,57 @@
+{
+  "case_id": "case_58",
+  "email": "fo****@icloud.com",
+  "request_text": "I would like the account associated with this address to be erased. Please review any identifiers connected to this account as part of the request. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erased"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erased”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-26T10:00:00Z",
+  "audit_at": "2026-09-21T10:00:00Z",
+  "user_id": "user_56",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "fo****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 86",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "466e06c2…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "M. F.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8465",
+      "matched_identifier": "user_id:user_56",
+      "captured_at": "2026-09-21T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,70 @@
+{
+  "case_id": "case_177",
+  "email": "z.****@yahoo.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please include records associated with the account under your privacy process. Please send a confirmation after the process finishes.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-28T12:00:00Z",
+  "audit_at": "2026-07-23T12:00:00Z",
+  "user_id": "user_175",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "z.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *87",
+      "is_historical": false,
+      "audit_id": "audit_139"
+    },
+    {
+      "kind": "email_hash",
+      "value": "97b26059…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Z. P.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *58",
+      "is_historical": true,
+      "audit_id": "audit_139"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_84",
+      "system_id": "account_service",
+      "resource_id": "account_8423",
+      "matched_identifier": "email:z.****@yahoo.com",
+      "captured_at": "2026-07-23T11:43:30Z"
+    },
+    {
+      "file_id": "evidence_84",
+      "system_id": "search_service",
+      "resource_id": "search_3038",
+      "matched_identifier": "email:z.****@yahoo.com",
+      "captured_at": "2026-07-23T11:43:30Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

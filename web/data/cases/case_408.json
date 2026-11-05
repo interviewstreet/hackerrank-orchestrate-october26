@@ -1,0 +1,58 @@
+{
+  "case_id": "case_408",
+  "email": "ab****@fastmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please review the account data that is eligible for deletion or de-identification. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-14T10:00:00Z",
+  "audit_at": "2026-03-30T10:00:00Z",
+  "user_id": "user_406",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ab****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** **** ****06",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "c42470c9…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_38",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4216",
+      "matched_identifier": "user_id:user_406",
+      "captured_at": "2026-03-30T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

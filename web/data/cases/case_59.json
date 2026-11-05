@@ -1,0 +1,57 @@
+{
+  "case_id": "case_59",
+  "email": "la****@proton.me",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please include information linked through current or earlier account identifiers. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-25T10:00:00Z",
+  "audit_at": "2026-09-21T10:00:00Z",
+  "user_id": "user_57",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "la****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 07",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "8c2d8dfd…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_962",
+      "matched_identifier": "user_id:user_57",
+      "captured_at": "2026-09-21T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

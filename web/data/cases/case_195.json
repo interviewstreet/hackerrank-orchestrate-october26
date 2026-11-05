@@ -1,0 +1,64 @@
+{
+  "case_id": "case_195",
+  "email": "a.****@gmail.com",
+  "request_text": "このメールアドレスに関連するアカウントの完全な削除を依頼します。 プライバシー手続きに従い、現在および過去の識別情報を確認してください。 確認が完了したら結果をお知らせください。",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ja",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 削除"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“削除”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-20T10:00:00Z",
+  "audit_at": "2026-07-13T10:00:00Z",
+  "user_id": "user_193",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "a.****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **31",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ae6cbe8e…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. S.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_82",
+      "system_id": "account_service",
+      "resource_id": "account_4320",
+      "matched_identifier": "email:a.****@gmail.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    },
+    {
+      "file_id": "evidence_82",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1524",
+      "matched_identifier": "user_id:user_193",
+      "captured_at": "2026-07-13T09:33:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

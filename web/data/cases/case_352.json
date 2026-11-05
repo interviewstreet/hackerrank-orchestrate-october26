@@ -1,0 +1,71 @@
+{
+  "case_id": "case_352",
+  "email": "ja****@gmail.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please ensure the request is applied to the relevant account records. Please let me know once the request has been reviewed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-09T09:00:00Z",
+  "audit_at": "2026-04-29T09:00:00Z",
+  "user_id": "user_350",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ja****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **71",
+      "is_historical": false,
+      "audit_id": "audit_35"
+    },
+    {
+      "kind": "email_hash",
+      "value": "abf91c48…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "D. J.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **57",
+      "is_historical": true,
+      "audit_id": "audit_35"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_71",
+      "system_id": "support_platform",
+      "resource_id": "support_3980",
+      "matched_identifier": "email:ja****@gmail.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    },
+    {
+      "file_id": "evidence_71",
+      "system_id": "search_service",
+      "resource_id": "search_5685",
+      "matched_identifier": "email:ja****@gmail.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

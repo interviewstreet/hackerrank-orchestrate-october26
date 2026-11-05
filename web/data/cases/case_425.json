@@ -1,0 +1,92 @@
+{
+  "case_id": "case_425",
+  "email": "no****@gmail.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please review the account data that is eligible for deletion or de-identification. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-07T08:00:00Z",
+  "audit_at": "2026-03-20T08:00:00Z",
+  "user_id": "user_423",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "no****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_103"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **19",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "aa9f91a4…",
+      "is_historical": false,
+      "audit_id": "audit_104"
+    },
+    {
+      "kind": "name",
+      "value": "N. D.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "no****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_103"
+    },
+    {
+      "kind": "email_hash",
+      "value": "d8c2ecec…",
+      "is_historical": true,
+      "audit_id": "audit_104"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_68",
+      "system_id": "search_service",
+      "resource_id": "search_9072",
+      "matched_identifier": "email:no****@gmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "support_platform",
+      "resource_id": "support_1662",
+      "matched_identifier": "email:no****@gmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_891",
+      "matched_identifier": "email:no****@gmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7718",
+      "matched_identifier": "email:no****@gmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

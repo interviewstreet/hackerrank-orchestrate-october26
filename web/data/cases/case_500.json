@@ -1,0 +1,64 @@
+{
+  "case_id": "case_500",
+  "email": "IN****@OUTLOOK.COM",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the correct treatment to records covered by the request. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-16T08:00:00Z",
+  "audit_at": "2026-02-13T08:00:00Z",
+  "user_id": "user_498",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "in****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 07",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "2ec2a9c1…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "I. R.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_63",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_006",
+      "matched_identifier": "email:in****@outlook.com",
+      "captured_at": "2026-02-13T07:43:27Z"
+    },
+    {
+      "file_id": "evidence_63",
+      "system_id": "search_service",
+      "resource_id": "search_6092",
+      "matched_identifier": "email:in****@outlook.com",
+      "captured_at": "2026-02-13T07:43:27Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

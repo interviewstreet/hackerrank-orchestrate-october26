@@ -1,0 +1,69 @@
+{
+  "case_id": "case_530",
+  "email": "ch****@gmail.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please include information linked through current or earlier account identifiers. Please contact me if you need information to verify the request.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-11T12:00:00Z",
+  "audit_at": "2026-01-29T12:00:00Z",
+  "user_id": "user_528",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ch****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_61"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **81",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "5f9f0605…",
+      "is_historical": false,
+      "audit_id": "audit_62"
+    },
+    {
+      "kind": "name",
+      "value": "C. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ch****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_61"
+    },
+    {
+      "kind": "email_hash",
+      "value": "09c82ded…",
+      "is_historical": true,
+      "audit_id": "audit_62"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_62",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2152",
+      "matched_identifier": "user_id:user_528",
+      "captured_at": "2026-01-29T11:44:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,76 @@
+{
+  "case_id": "case_344",
+  "email": "ch****@outlook.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please include records associated with the account under your privacy process. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-17T09:00:00Z",
+  "audit_at": "2026-04-29T09:00:00Z",
+  "user_id": "user_342",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ch****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_140"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 29",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b723caff…",
+      "is_historical": false,
+      "audit_id": "audit_141"
+    },
+    {
+      "kind": "name",
+      "value": "C. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ch****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_140"
+    },
+    {
+      "kind": "email_hash",
+      "value": "6202ebad…",
+      "is_historical": true,
+      "audit_id": "audit_141"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_71",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5544",
+      "matched_identifier": "email:ch****@outlook.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    },
+    {
+      "file_id": "evidence_71",
+      "system_id": "search_service",
+      "resource_id": "search_5267",
+      "matched_identifier": "email:ch****@outlook.com",
+      "captured_at": "2026-04-29T08:32:22Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,92 @@
+{
+  "case_id": "case_510",
+  "email": "rp****@gmail.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please review any identifiers connected to this account as part of the request. Please let me know once the request has been reviewed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-21T07:00:00Z",
+  "audit_at": "2026-02-08T07:00:00Z",
+  "user_id": "user_508",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "rp****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***61",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "cf0fafdd…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "R. P.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_47",
+      "system_id": "search_service",
+      "resource_id": "search_6147",
+      "matched_identifier": "email:rp****@gmail.com",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "support_platform",
+      "resource_id": "support_9648",
+      "matched_identifier": "email:rp****@gmail.com",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "search_service",
+      "resource_id": "search_6147",
+      "matched_identifier": "name:r. p.",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "search_service",
+      "resource_id": "search_6147",
+      "matched_identifier": "user_id:user_508",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4266",
+      "matched_identifier": "user_id:user_508",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "support_platform",
+      "resource_id": "support_9648",
+      "matched_identifier": "user_id:user_508",
+      "captured_at": "2026-02-08T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

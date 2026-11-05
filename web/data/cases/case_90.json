@@ -1,0 +1,104 @@
+{
+  "case_id": "case_90",
+  "email": "zm****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please apply the correct treatment to records covered by the request. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-19T07:00:00Z",
+  "audit_at": "2026-09-06T07:00:00Z",
+  "user_id": "user_88",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "zm****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_264"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **46",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ab6a0b3d…",
+      "is_historical": false,
+      "audit_id": "audit_265"
+    },
+    {
+      "kind": "name",
+      "value": "Z. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "zm****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_264"
+    },
+    {
+      "kind": "email_hash",
+      "value": "5fe4b542…",
+      "is_historical": true,
+      "audit_id": "audit_265"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_08",
+      "system_id": "account_service",
+      "resource_id": "account_9673",
+      "matched_identifier": "email:zm****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_3181",
+      "matched_identifier": "email:zm****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2085",
+      "matched_identifier": "email:zm****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "search_service",
+      "resource_id": "search_5561",
+      "matched_identifier": "email:zm****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "support_platform",
+      "resource_id": "support_7460",
+      "matched_identifier": "email:zm****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9355",
+      "matched_identifier": "user_id:user_88",
+      "captured_at": "2026-09-06T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

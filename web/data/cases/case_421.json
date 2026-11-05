@@ -1,0 +1,78 @@
+{
+  "case_id": "case_421",
+  "email": "no****@zoho.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please apply the correct treatment to records covered by the request. Please let me know once the request has been reviewed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-24T09:00:00Z",
+  "audit_at": "2026-03-25T09:00:00Z",
+  "user_id": "user_419",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "no****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**19",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "6776a2ee…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. R.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_39",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_4750",
+      "matched_identifier": "email:no****@zoho.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "account_service",
+      "resource_id": "account_8482",
+      "matched_identifier": "email:no****@zoho.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "search_service",
+      "resource_id": "search_3251",
+      "matched_identifier": "email:no****@zoho.com",
+      "captured_at": "2026-03-25T08:59:44Z"
+    },
+    {
+      "file_id": "evidence_39",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1256",
+      "matched_identifier": "user_id:user_419",
+      "captured_at": "2026-03-25T08:59:44Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

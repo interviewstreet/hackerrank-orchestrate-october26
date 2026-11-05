@@ -1,0 +1,26 @@
+{
+  "case_id": "case_542",
+  "email": "om****@gmail.com",
+  "request_text": "Could you send me a copy of the information held on my account? I still use it, so please don't delete or change anything.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "negation: don't delete",
+    "keep: still use",
+    "access: send me a copy"
+  ],
+  "reason": "Not a deletion request: the person asks to see or get a copy of their data (“send me a copy”), and they say they do not want deletion (“don't delete”) and want to keep the account (“still use”).",
+  "requested_at": "2026-09-12T12:00:00Z",
+  "audit_at": "2026-09-22T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

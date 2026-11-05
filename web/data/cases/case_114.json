@@ -1,0 +1,65 @@
+{
+  "case_id": "case_114",
+  "email": "oa****@gmail.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please include records associated with the account under your privacy process. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-31T11:00:00Z",
+  "audit_at": "2026-08-22T11:00:00Z",
+  "user_id": "user_112",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "oa****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **28",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "6ca0ea9f…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "O. A.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_88",
+      "system_id": "search_service",
+      "resource_id": "search_5696",
+      "matched_identifier": "email:oa****@gmail.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    },
+    {
+      "file_id": "evidence_88",
+      "system_id": "support_platform",
+      "resource_id": "support_3786",
+      "matched_identifier": "email:oa****@gmail.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

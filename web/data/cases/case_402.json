@@ -1,0 +1,84 @@
+{
+  "case_id": "case_402",
+  "email": "tk****@gmail.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please check the records connected to the account before confirming completion. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-25T11:00:00Z",
+  "audit_at": "2026-04-04T11:00:00Z",
+  "user_id": "user_400",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "tk****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **67",
+      "is_historical": false,
+      "audit_id": "audit_05"
+    },
+    {
+      "kind": "email_hash",
+      "value": "84e3a371…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "T. K.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **64",
+      "is_historical": true,
+      "audit_id": "audit_05"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_69",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_5811",
+      "matched_identifier": "email:tk****@gmail.com",
+      "captured_at": "2026-04-04T10:04:19Z"
+    },
+    {
+      "file_id": "evidence_69",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9411",
+      "matched_identifier": "email:tk****@gmail.com",
+      "captured_at": "2026-04-04T10:04:19Z"
+    },
+    {
+      "file_id": "evidence_69",
+      "system_id": "search_service",
+      "resource_id": "search_1338",
+      "matched_identifier": "email:tk****@gmail.com",
+      "captured_at": "2026-04-04T10:04:19Z"
+    },
+    {
+      "file_id": "evidence_69",
+      "system_id": "support_platform",
+      "resource_id": "support_4290",
+      "matched_identifier": "email:tk****@gmail.com",
+      "captured_at": "2026-04-04T10:04:19Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

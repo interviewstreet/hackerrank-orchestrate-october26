@@ -1,0 +1,77 @@
+{
+  "case_id": "case_522",
+  "email": "cs****@gmail.com",
+  "request_text": "Solicito a exclusão permanente da conta associada a este e-mail. Verifiquem os identificadores atuais e anteriores conforme o processo de privacidade. Por favor, confirmem o resultado quando a análise terminar.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "pt",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: exclusão"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“exclusão”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-24T06:00:00Z",
+  "audit_at": "2026-02-03T06:00:00Z",
+  "user_id": "user_520",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "cs****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**48",
+      "is_historical": false,
+      "audit_id": "audit_15"
+    },
+    {
+      "kind": "email_hash",
+      "value": "266ca920…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "C. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**28",
+      "is_historical": true,
+      "audit_id": "audit_15"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_48",
+      "system_id": "support_platform",
+      "resource_id": "support_8538",
+      "matched_identifier": "email:cs****@gmail.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "account_service",
+      "resource_id": "account_1096",
+      "matched_identifier": "email:cs****@gmail.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5513",
+      "matched_identifier": "user_id:user_520",
+      "captured_at": "2026-02-03T05:59:42Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

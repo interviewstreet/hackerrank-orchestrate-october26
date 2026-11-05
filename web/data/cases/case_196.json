@@ -1,0 +1,65 @@
+{
+  "case_id": "case_196",
+  "email": "ki****@gmail.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please apply the correct treatment to records covered by the request. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-19T10:00:00Z",
+  "audit_at": "2026-07-13T10:00:00Z",
+  "user_id": "user_194",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ki****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **84",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "e309b34b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "H. K.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_82",
+      "system_id": "account_service",
+      "resource_id": "account_5599",
+      "matched_identifier": "email:ki****@gmail.com",
+      "captured_at": "2026-07-13T09:33:59Z"
+    },
+    {
+      "file_id": "evidence_82",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6389",
+      "matched_identifier": "user_id:user_194",
+      "captured_at": "2026-07-13T09:33:59Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

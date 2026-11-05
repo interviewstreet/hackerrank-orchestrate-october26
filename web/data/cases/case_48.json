@@ -1,0 +1,77 @@
+{
+  "case_id": "case_48",
+  "email": "ln****@fastmail.com",
+  "request_text": "Please erase the account linked to this email address. Please handle any copies that fall within the scope of the deletion request. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-10T11:00:00Z",
+  "audit_at": "2026-09-26T11:00:00Z",
+  "user_id": "user_46",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ln****@fastmail.com",
+      "is_historical": false,
+      "audit_id": "audit_299"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **16",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "02ea4644…",
+      "is_historical": false,
+      "audit_id": "audit_300"
+    },
+    {
+      "kind": "name",
+      "value": "L. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ln****@fastmail.com",
+      "is_historical": true,
+      "audit_id": "audit_299"
+    },
+    {
+      "kind": "email_hash",
+      "value": "6cb13bde…",
+      "is_historical": true,
+      "audit_id": "audit_300"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_94",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7759",
+      "matched_identifier": "email:ln****@fastmail.com",
+      "captured_at": "2026-09-26T10:38:56Z"
+    },
+    {
+      "file_id": "evidence_94",
+      "system_id": "search_service",
+      "resource_id": "search_2127",
+      "matched_identifier": "email:ln****@fastmail.com",
+      "captured_at": "2026-09-26T10:38:56Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

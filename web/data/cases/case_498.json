@@ -1,0 +1,76 @@
+{
+  "case_id": "case_498",
+  "email": "va****@gmail.com",
+  "request_text": "Solicito la eliminación permanente de la cuenta asociada a este correo. Revisen los identificadores actuales y anteriores según su política de privacidad. Por favor, confirmen el resultado cuando termine la revisión.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "es",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: eliminación"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“eliminación”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-18T08:00:00Z",
+  "audit_at": "2026-02-13T08:00:00Z",
+  "user_id": "user_496",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "va****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_74"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *69",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "757cc224…",
+      "is_historical": false,
+      "audit_id": "audit_75"
+    },
+    {
+      "kind": "name",
+      "value": "V. A.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "va****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_74"
+    },
+    {
+      "kind": "email_hash",
+      "value": "052e2ac0…",
+      "is_historical": true,
+      "audit_id": "audit_75"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_63",
+      "system_id": "search_service",
+      "resource_id": "search_6093",
+      "matched_identifier": "email:va****@gmail.com",
+      "captured_at": "2026-02-13T07:43:27Z"
+    },
+    {
+      "file_id": "evidence_63",
+      "system_id": "support_platform",
+      "resource_id": "support_9075",
+      "matched_identifier": "email:va****@gmail.com",
+      "captured_at": "2026-02-13T07:43:27Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,107 @@
+{
+  "case_id": "case_305",
+  "email": "lo****@gmail.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please process this under the standard personal-data deletion procedure. Please send a confirmation after the process finishes.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-06T06:00:00Z",
+  "audit_at": "2026-05-19T06:00:00Z",
+  "user_id": "user_303",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "lo****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 88",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1c9fc93d…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. C.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_29",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9285",
+      "matched_identifier": "email:lo****@gmail.com",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_4321",
+      "matched_identifier": "email:lo****@gmail.com",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9285",
+      "matched_identifier": "email_hash:1c9fc93d…",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_4321",
+      "matched_identifier": "name:l. c.",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9285",
+      "matched_identifier": "phone:*********88",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9285",
+      "matched_identifier": "user_id:user_303",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "search_service",
+      "resource_id": "search_4321",
+      "matched_identifier": "user_id:user_303",
+      "captured_at": "2026-05-19T06:00:00Z"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_507",
+      "matched_identifier": "user_id:user_303",
+      "captured_at": "2026-05-19T06:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

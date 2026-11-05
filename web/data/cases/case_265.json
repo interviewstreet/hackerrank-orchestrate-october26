@@ -1,0 +1,65 @@
+{
+  "case_id": "case_265",
+  "email": "ol****@zoho.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please apply the correct treatment to records covered by the request. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-26T10:00:00Z",
+  "audit_at": "2026-06-08T10:00:00Z",
+  "user_id": "user_263",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ol****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**63",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "d56ce0b9…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "O. W.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_25",
+      "system_id": "account_service",
+      "resource_id": "account_5015",
+      "matched_identifier": "email:ol****@zoho.com",
+      "captured_at": "2026-06-08T09:58:28Z"
+    },
+    {
+      "file_id": "evidence_25",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6378",
+      "matched_identifier": "user_id:user_263",
+      "captured_at": "2026-06-08T09:58:28Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

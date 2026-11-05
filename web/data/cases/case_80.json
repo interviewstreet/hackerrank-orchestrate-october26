@@ -1,0 +1,77 @@
+{
+  "case_id": "case_80",
+  "email": "is****@outlook.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please follow the applicable retention and deletion requirements for the account. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-14T08:00:00Z",
+  "audit_at": "2026-09-11T08:00:00Z",
+  "user_id": "user_78",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "is****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_275"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**61",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "3c718ddf…",
+      "is_historical": false,
+      "audit_id": "audit_276"
+    },
+    {
+      "kind": "name",
+      "value": "I. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "is****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_275"
+    },
+    {
+      "kind": "email_hash",
+      "value": "c916f8dc…",
+      "is_historical": true,
+      "audit_id": "audit_276"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_91",
+      "system_id": "account_service",
+      "resource_id": "account_4006",
+      "matched_identifier": "email:is****@outlook.com",
+      "captured_at": "2026-09-11T07:42:53Z"
+    },
+    {
+      "file_id": "evidence_91",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5681",
+      "matched_identifier": "user_id:user_78",
+      "captured_at": "2026-09-11T07:42:53Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,71 @@
+{
+  "case_id": "case_513",
+  "email": "m.****@yahoo.com",
+  "request_text": "Je demande la suppression définitive du compte associé à cette adresse e-mail. Veuillez examiner les identifiants actuels et antérieurs conformément à votre procédure de confidentialité. Merci de confirmer le résultat une fois la vérification terminée.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "fr",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: suppression"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“suppression”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-13T06:00:00Z",
+  "audit_at": "2026-02-03T06:00:00Z",
+  "user_id": "user_511",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "m.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 05",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "24d09cef…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "M. M.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_48",
+      "system_id": "search_service",
+      "resource_id": "search_4739",
+      "matched_identifier": "email:m.****@yahoo.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "account_service",
+      "resource_id": "account_1334",
+      "matched_identifier": "email:m.****@yahoo.com",
+      "captured_at": "2026-02-03T05:59:42Z"
+    },
+    {
+      "file_id": "evidence_48",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2044",
+      "matched_identifier": "user_id:user_511",
+      "captured_at": "2026-02-03T05:59:42Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

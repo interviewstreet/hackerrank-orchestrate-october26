@@ -1,0 +1,64 @@
+{
+  "case_id": "case_181",
+  "email": "na****@zoho.com",
+  "request_text": "Please erase the account linked to this email address. Please include records associated with the account under your privacy process. Please let me know once the request has been reviewed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-24T12:00:00Z",
+  "audit_at": "2026-07-23T12:00:00Z",
+  "user_id": "user_179",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "na****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **92",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "f806f3db…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. K.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_84",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8346",
+      "matched_identifier": "email:na****@zoho.com",
+      "captured_at": "2026-07-23T11:43:30Z"
+    },
+    {
+      "file_id": "evidence_84",
+      "system_id": "search_service",
+      "resource_id": "search_4894",
+      "matched_identifier": "email:na****@zoho.com",
+      "captured_at": "2026-07-23T11:43:30Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,76 @@
+{
+  "case_id": "case_333",
+  "email": "a.****@yahoo.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the correct treatment to records covered by the request. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-13T10:00:00Z",
+  "audit_at": "2026-05-04T10:00:00Z",
+  "user_id": "user_331",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "a.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": "audit_144"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *56",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "2ecba5f8…",
+      "is_historical": false,
+      "audit_id": "audit_145"
+    },
+    {
+      "kind": "name",
+      "value": "A. I.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "a.****@yahoo.com",
+      "is_historical": true,
+      "audit_id": "audit_144"
+    },
+    {
+      "kind": "email_hash",
+      "value": "186b08e3…",
+      "is_historical": true,
+      "audit_id": "audit_145"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_72",
+      "system_id": "account_service",
+      "resource_id": "account_2475",
+      "matched_identifier": "email:a.****@yahoo.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "search_service",
+      "resource_id": "search_5970",
+      "matched_identifier": "email:a.****@yahoo.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

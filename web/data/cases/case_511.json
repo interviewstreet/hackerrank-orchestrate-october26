@@ -1,0 +1,104 @@
+{
+  "case_id": "case_511",
+  "email": "ni****@outlook.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please handle any copies that fall within the scope of the deletion request. Please confirm the result after completing the required checks.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-20T07:00:00Z",
+  "audit_at": "2026-02-08T07:00:00Z",
+  "user_id": "user_509",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ni****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_69"
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *27",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ffcccdd8…",
+      "is_historical": false,
+      "audit_id": "audit_70"
+    },
+    {
+      "kind": "name",
+      "value": "N. F.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ni****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_69"
+    },
+    {
+      "kind": "email_hash",
+      "value": "fcd3f65f…",
+      "is_historical": true,
+      "audit_id": "audit_70"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_47",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "matched_identifier": "email:ni****@outlook.com",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "matched_identifier": "name:n. f.",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "matched_identifier": "phone:*********27",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "account_service",
+      "resource_id": "account_1035",
+      "matched_identifier": "user_id:user_509",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4887",
+      "matched_identifier": "user_id:user_509",
+      "captured_at": "2026-02-08T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4883",
+      "matched_identifier": "user_id:user_509",
+      "captured_at": "2026-02-08T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

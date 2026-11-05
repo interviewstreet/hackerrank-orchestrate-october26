@@ -1,0 +1,80 @@
+{
+  "case_id": "case_36",
+  "email": "aa****@fastmail.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please review the account data that is eligible for deletion or de-identification. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-07T12:00:00Z",
+  "audit_at": "2026-10-01T12:00:00Z",
+  "user_id": "user_34",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "aa****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **38",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "84b1d427…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. A.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_03",
+      "system_id": "account_service",
+      "resource_id": "account_5823",
+      "matched_identifier": "email:aa****@fastmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "export_service",
+      "resource_id": "export_7689",
+      "matched_identifier": "email:aa****@fastmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "search_service",
+      "resource_id": "search_5575",
+      "matched_identifier": "email:aa****@fastmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2966",
+      "matched_identifier": "user_id:user_34",
+      "captured_at": "2026-10-01T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

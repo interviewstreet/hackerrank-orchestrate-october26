@@ -1,0 +1,57 @@
+{
+  "case_id": "case_309",
+  "email": "t.****@yahoo.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please check the records connected to the account before confirming completion. Please let me know once the request has been reviewed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-02T06:00:00Z",
+  "audit_at": "2026-05-19T06:00:00Z",
+  "user_id": "user_307",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "t.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **97",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b7dd4d87…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "T. O.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1945",
+      "matched_identifier": "user_id:user_307",
+      "captured_at": "2026-05-19T06:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

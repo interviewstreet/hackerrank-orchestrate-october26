@@ -21,7 +21,7 @@ from models import ClassificationResult
 from test_audit_db import CASE, DECISION, EVIDENCE, STEPS, make_classifier, make_identity
 
 REPO_ROOT = Path(__file__).parent.parent
-REAL_EXPORT = REPO_ROOT / "web" / "public" / "data"
+REAL_EXPORT = REPO_ROOT / "web" / "data"
 
 
 class TestMasking(unittest.TestCase):
@@ -145,6 +145,10 @@ class TestExport(unittest.TestCase):
         self.assertEqual(c["resources"][0]["satisfied"], False)
         self.assertEqual(c["resources"][0]["evidence_ids"], ["evidence_1"])
         self.assertIs(c["flows"][0]["active_at_audit"], True)
+        self.assertEqual(c["restore_risks"], [{"system_id": "backup_vault",
+                                               "resource_id": "snapshot_4",
+                                               "active_at_audit": True,
+                                               "evidence_id": "activity_5"}])
         self.assertEqual([t["event"] for t in c["timeline"]], ["DELETE", "SYNC"])
         self.assertEqual([s["step_no"] for s in c["steps"]], [1, 2])
         self.assertEqual(set(c["steps"][0]), {"step_no", "phase", "system_id", "resource_id",
@@ -154,7 +158,8 @@ class TestExport(unittest.TestCase):
         c = self.load("cases/case_t10.json")
         self.assertIsNone(c["user_id"])
         self.assertEqual((c["language"], c["matched_signals"]), ("fr", ["opt_out: publicité"]))
-        for k in ("identities", "evidence_hits", "resources", "flows", "timeline", "steps"):
+        for k in ("identities", "evidence_hits", "resources", "flows", "restore_risks",
+                  "timeline", "steps"):
             self.assertEqual(c[k], [])
 
     def test_no_raw_identifier_anywhere(self):
@@ -180,6 +185,10 @@ class TestExport(unittest.TestCase):
         before = self.db_path.read_bytes()
         ex.export(self.db_path, self.out)
         self.assertEqual(self.db_path.read_bytes(), before)
+
+    def test_default_output_is_outside_public(self):
+        self.assertEqual(ex.DEFAULT_OUT_DIR, REPO_ROOT / "web" / "data")
+        self.assertNotIn("public", ex.DEFAULT_OUT_DIR.parts)
 
     def test_unsafe_case_id_rejected(self):
         with self.assertRaises(ValueError):

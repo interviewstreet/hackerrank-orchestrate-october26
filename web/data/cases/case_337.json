@@ -1,0 +1,77 @@
+{
+  "case_id": "case_337",
+  "email": "ka****@zoho.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please review the account data that is eligible for deletion or de-identification. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-09T10:00:00Z",
+  "audit_at": "2026-05-04T10:00:00Z",
+  "user_id": "user_335",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@zoho.com",
+      "is_historical": false,
+      "audit_id": "audit_148"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **23",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "aecc2e30…",
+      "is_historical": false,
+      "audit_id": "audit_149"
+    },
+    {
+      "kind": "name",
+      "value": "K. D.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ka****@zoho.com",
+      "is_historical": true,
+      "audit_id": "audit_148"
+    },
+    {
+      "kind": "email_hash",
+      "value": "ea06cf46…",
+      "is_historical": true,
+      "audit_id": "audit_149"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_72",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5200",
+      "matched_identifier": "email:ka****@zoho.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "search_service",
+      "resource_id": "search_3773",
+      "matched_identifier": "email:ka****@zoho.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

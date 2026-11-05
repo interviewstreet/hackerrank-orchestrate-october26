@@ -1,0 +1,64 @@
+{
+  "case_id": "case_341",
+  "email": "ka****@gmail.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please review any identifiers connected to this account as part of the request. Please confirm when the review is complete.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-05T10:00:00Z",
+  "audit_at": "2026-05-04T10:00:00Z",
+  "user_id": "user_339",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ka****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***16",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "6fbd1448…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "K. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_72",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_183",
+      "matched_identifier": "email:ka****@gmail.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "search_service",
+      "resource_id": "search_7367",
+      "matched_identifier": "email:ka****@gmail.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

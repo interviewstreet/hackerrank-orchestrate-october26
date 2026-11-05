@@ -1,0 +1,113 @@
+{
+  "case_id": "case_473",
+  "email": "li****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please check the records connected to the account before confirming completion. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-02T10:00:00Z",
+  "audit_at": "2026-02-23T10:00:00Z",
+  "user_id": "user_471",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "li****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**71",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "20152a41…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. C.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_45",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "search_service",
+      "resource_id": "search_7375",
+      "matched_identifier": "email:li****@gmail.com",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "matched_identifier": "email_hash:20152a41…",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "search_service",
+      "resource_id": "search_7375",
+      "matched_identifier": "name:l. c.",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "matched_identifier": "phone:*********71",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_8577",
+      "matched_identifier": "user_id:user_471",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4743",
+      "matched_identifier": "user_id:user_471",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "search_service",
+      "resource_id": "search_7375",
+      "matched_identifier": "user_id:user_471",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "security_service",
+      "resource_id": "audit_record_519",
+      "matched_identifier": "user_id:user_471",
+      "captured_at": "2026-02-23T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

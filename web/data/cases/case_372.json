@@ -1,0 +1,78 @@
+{
+  "case_id": "case_372",
+  "email": "pp****@fastmail.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please handle any copies that fall within the scope of the deletion request. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-30T07:00:00Z",
+  "audit_at": "2026-04-19T07:00:00Z",
+  "user_id": "user_370",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "pp****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *13",
+      "is_historical": false,
+      "audit_id": "audit_38"
+    },
+    {
+      "kind": "email_hash",
+      "value": "a1370ad3…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "P. P.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *39",
+      "is_historical": true,
+      "audit_id": "audit_38"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_34",
+      "system_id": "account_service",
+      "resource_id": "account_2062",
+      "matched_identifier": "email:pp****@fastmail.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "export_service",
+      "resource_id": "export_5081",
+      "matched_identifier": "email:pp****@fastmail.com",
+      "captured_at": "2026-04-19T06:59:43Z"
+    },
+    {
+      "file_id": "evidence_34",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5705",
+      "matched_identifier": "user_id:user_370",
+      "captured_at": "2026-04-19T06:59:43Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

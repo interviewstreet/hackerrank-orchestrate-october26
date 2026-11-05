@@ -1,0 +1,63 @@
+{
+  "case_id": "case_452",
+  "email": "em****@outlook.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please apply the correct treatment to records covered by the request. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-18T06:00:00Z",
+  "audit_at": "2026-03-10T06:00:00Z",
+  "user_id": "user_450",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "em****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **93",
+      "is_historical": false,
+      "audit_id": "audit_44"
+    },
+    {
+      "kind": "email_hash",
+      "value": "7d2c352b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "E. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **48",
+      "is_historical": true,
+      "audit_id": "audit_44"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_66",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8608",
+      "matched_identifier": "user_id:user_450",
+      "captured_at": "2026-03-10T05:38:48Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

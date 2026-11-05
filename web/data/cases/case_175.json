@@ -1,0 +1,91 @@
+{
+  "case_id": "case_175",
+  "email": "lo****@outlook.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please process this under the standard personal-data deletion procedure. Please confirm when the review is complete.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-30T12:00:00Z",
+  "audit_at": "2026-07-23T12:00:00Z",
+  "user_id": "user_173",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "lo****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_218"
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 70",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ca5d2dda…",
+      "is_historical": false,
+      "audit_id": "audit_219"
+    },
+    {
+      "kind": "name",
+      "value": "L. L.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "lo****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_218"
+    },
+    {
+      "kind": "email_hash",
+      "value": "83995776…",
+      "is_historical": true,
+      "audit_id": "audit_219"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_84",
+      "system_id": "backup_service",
+      "resource_id": "backup_549",
+      "matched_identifier": "user_id:user_173",
+      "captured_at": "2026-07-23T11:43:30Z"
+    },
+    {
+      "file_id": "evidence_84",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_4319",
+      "matched_identifier": "user_id:user_173",
+      "captured_at": "2026-07-23T11:43:30Z"
+    },
+    {
+      "file_id": "evidence_84",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7166",
+      "matched_identifier": "user_id:user_173",
+      "captured_at": "2026-07-23T11:43:30Z"
+    },
+    {
+      "file_id": "evidence_84",
+      "system_id": "support_platform",
+      "resource_id": "support_8164",
+      "matched_identifier": "user_id:user_173",
+      "captured_at": "2026-07-23T11:43:30Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

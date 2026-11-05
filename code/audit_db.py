@@ -13,10 +13,12 @@ Tables (one row per item, every row keyed by case_id):
     evidence_hits  one row per (evidence record, matched identifier) from P2
     resources      P3 decision["resources"]  (CONTRACTS.md section 2)
     flows          P3 decision["flows"]
+    restore_risks  P3 decision["restore_risks"]
     timeline       P3 decision["timeline"]
     steps          P4 build_steps() output
 
-resources / flows / timeline stay empty until P3's decide() returns them.
+resources / flows / restore_risks / timeline stay empty until P3's decide()
+returns them.
 
 Re-running is safe: save_case() deletes the case's old rows in every table
 before writing, all in one transaction. If an existing audit.db was made
@@ -84,6 +86,13 @@ CREATE TABLE IF NOT EXISTS flows (
     active_at_audit INTEGER NOT NULL,
     evidence_id     TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS restore_risks (
+    case_id         TEXT NOT NULL,
+    system_id       TEXT NOT NULL,         -- the backup / restore system
+    resource_id     TEXT NOT NULL,
+    active_at_audit INTEGER NOT NULL,      -- 1 = restore is not blocked at audit_at
+    evidence_id     TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS timeline (
     case_id     TEXT NOT NULL,
     seq         INTEGER NOT NULL,         -- order P3 returned (oldest first)
@@ -108,11 +117,13 @@ CREATE INDEX IF NOT EXISTS idx_identities_case    ON identities(case_id);
 CREATE INDEX IF NOT EXISTS idx_evidence_hits_case ON evidence_hits(case_id);
 CREATE INDEX IF NOT EXISTS idx_resources_case     ON resources(case_id);
 CREATE INDEX IF NOT EXISTS idx_flows_case         ON flows(case_id);
+CREATE INDEX IF NOT EXISTS idx_restore_risks_case ON restore_risks(case_id);
 CREATE INDEX IF NOT EXISTS idx_timeline_case      ON timeline(case_id);
 CREATE INDEX IF NOT EXISTS idx_steps_case         ON steps(case_id);
 """
 
-TABLES = ("cases", "identities", "evidence_hits", "resources", "flows", "timeline", "steps")
+TABLES = ("cases", "identities", "evidence_hits", "resources", "flows", "restore_risks",
+          "timeline", "steps")
 
 
 def _expected_columns() -> dict[str, list[str]]:
@@ -259,6 +270,14 @@ def flow_rows(case_id: str, decision: Optional[dict]) -> list[tuple]:
     return rows
 
 
+def restore_risk_rows(case_id: str, decision: Optional[dict]) -> list[tuple]:
+    rows = []
+    for r in (decision or {}).get("restore_risks", []) or []:
+        rows.append((case_id, _s(r.get("system_id")), _s(r.get("resource_id")),
+                     _b(r.get("active_at_audit")), _s(r.get("evidence_id"))))
+    return rows
+
+
 def timeline_rows(case_id: str, decision: Optional[dict]) -> list[tuple]:
     rows = []
     for i, t in enumerate((decision or {}).get("timeline", []) or [], start=1):
@@ -311,6 +330,7 @@ def save_case(conn: sqlite3.Connection, case: dict, *, our_status: str,
         "evidence_hits": evidence_rows(cid, evidence),
         "resources": resource_rows(cid, decision),
         "flows": flow_rows(cid, decision),
+        "restore_risks": restore_risk_rows(cid, decision),
         "timeline": timeline_rows(cid, decision),
         "steps": step_rows(cid, steps),
     }

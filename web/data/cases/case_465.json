@@ -1,0 +1,77 @@
+{
+  "case_id": "case_465",
+  "email": "n.****@yahoo.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please process this under the standard personal-data deletion procedure. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-15T11:00:00Z",
+  "audit_at": "2026-02-28T11:00:00Z",
+  "user_id": "user_463",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "n.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": "audit_84"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **82",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "4c3385ec…",
+      "is_historical": false,
+      "audit_id": "audit_85"
+    },
+    {
+      "kind": "name",
+      "value": "N. O.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "n.****@yahoo.com",
+      "is_historical": true,
+      "audit_id": "audit_84"
+    },
+    {
+      "kind": "email_hash",
+      "value": "25e77dd8…",
+      "is_historical": true,
+      "audit_id": "audit_85"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_65",
+      "system_id": "account_service",
+      "resource_id": "account_3653",
+      "matched_identifier": "email:n.****@yahoo.com",
+      "captured_at": "2026-02-28T10:36:37Z"
+    },
+    {
+      "file_id": "evidence_65",
+      "system_id": "search_service",
+      "resource_id": "search_728",
+      "matched_identifier": "email:n.****@yahoo.com",
+      "captured_at": "2026-02-28T10:36:37Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

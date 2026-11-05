@@ -1,0 +1,85 @@
+{
+  "case_id": "case_203",
+  "email": "an****@proton.me",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please ensure the request is applied to the relevant account records. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-27T09:00:00Z",
+  "audit_at": "2026-07-08T09:00:00Z",
+  "user_id": "user_201",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "an****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *56",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "0803bb0c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. V.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_20",
+      "system_id": "search_service",
+      "resource_id": "search_7542",
+      "matched_identifier": "email:an****@proton.me",
+      "captured_at": "2026-07-08T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_20",
+      "system_id": "support_platform",
+      "resource_id": "support_8903",
+      "matched_identifier": "email:an****@proton.me",
+      "captured_at": "2026-07-08T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_20",
+      "system_id": "search_service",
+      "resource_id": "search_7542",
+      "matched_identifier": "name:a. v.",
+      "captured_at": "2026-07-08T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_20",
+      "system_id": "search_service",
+      "resource_id": "search_7542",
+      "matched_identifier": "user_id:user_201",
+      "captured_at": "2026-07-08T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_20",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1159",
+      "matched_identifier": "user_id:user_201",
+      "captured_at": "2026-07-08T09:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,77 @@
+{
+  "case_id": "case_376",
+  "email": "nd****@gmail.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please apply the request across the systems covered by your deletion policy. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-21T06:00:00Z",
+  "audit_at": "2026-04-14T06:00:00Z",
+  "user_id": "user_374",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "nd****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_127"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **19",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "e96c4863…",
+      "is_historical": false,
+      "audit_id": "audit_128"
+    },
+    {
+      "kind": "name",
+      "value": "A. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "nd****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_127"
+    },
+    {
+      "kind": "email_hash",
+      "value": "b8cdbc0a…",
+      "is_historical": true,
+      "audit_id": "audit_128"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_70",
+      "system_id": "search_service",
+      "resource_id": "search_3126",
+      "matched_identifier": "email:nd****@gmail.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    },
+    {
+      "file_id": "evidence_70",
+      "system_id": "support_platform",
+      "resource_id": "support_475",
+      "matched_identifier": "email:nd****@gmail.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

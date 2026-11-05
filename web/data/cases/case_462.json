@@ -1,0 +1,63 @@
+{
+  "case_id": "case_462",
+  "email": "an****@gmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please complete the normal identity and data review for this request. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-23T12:00:00Z",
+  "audit_at": "2026-03-05T12:00:00Z",
+  "user_id": "user_460",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "an****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 62",
+      "is_historical": false,
+      "audit_id": "audit_10"
+    },
+    {
+      "kind": "email_hash",
+      "value": "a9dc3f09…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 03",
+      "is_historical": true,
+      "audit_id": "audit_10"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_43",
+      "system_id": "security_service",
+      "resource_id": "audit_record_641",
+      "matched_identifier": "user_id:user_460",
+      "captured_at": "2026-03-05T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

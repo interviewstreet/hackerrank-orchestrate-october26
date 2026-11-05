@@ -1,0 +1,70 @@
+{
+  "case_id": "case_172",
+  "email": "me****@gmail.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please review any identifiers connected to this account as part of the request. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-08T06:00:00Z",
+  "audit_at": "2026-07-28T06:00:00Z",
+  "user_id": "user_170",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "me****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***57",
+      "is_historical": false,
+      "audit_id": "audit_221"
+    },
+    {
+      "kind": "email_hash",
+      "value": "be5912c7…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***86",
+      "is_historical": true,
+      "audit_id": "audit_221"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_85",
+      "system_id": "support_platform",
+      "resource_id": "support_2322",
+      "matched_identifier": "email:me****@gmail.com",
+      "captured_at": "2026-07-28T05:44:17Z"
+    },
+    {
+      "file_id": "evidence_85",
+      "system_id": "search_service",
+      "resource_id": "search_7102",
+      "matched_identifier": "email:me****@gmail.com",
+      "captured_at": "2026-07-28T05:44:17Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

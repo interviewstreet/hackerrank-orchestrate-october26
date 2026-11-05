@@ -1,0 +1,98 @@
+{
+  "case_id": "case_41",
+  "email": "lu****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please handle any copies that fall within the scope of the deletion request. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-09-02T12:00:00Z",
+  "audit_at": "2026-10-01T12:00:00Z",
+  "user_id": "user_39",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "lu****@gmail.com",
+      "is_historical": false,
+      "audit_id": "audit_301"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**17",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "061f7ec8…",
+      "is_historical": false,
+      "audit_id": "audit_302"
+    },
+    {
+      "kind": "name",
+      "value": "L. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "lu****@gmail.com",
+      "is_historical": true,
+      "audit_id": "audit_301"
+    },
+    {
+      "kind": "email_hash",
+      "value": "6d2b0eb2…",
+      "is_historical": true,
+      "audit_id": "audit_302"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_03",
+      "system_id": "account_service",
+      "resource_id": "account_4051",
+      "matched_identifier": "email:lu****@gmail.com",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "backup_service",
+      "resource_id": "backup_706",
+      "matched_identifier": "user_id:user_39",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2901",
+      "matched_identifier": "user_id:user_39",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7814",
+      "matched_identifier": "user_id:user_39",
+      "captured_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_03",
+      "system_id": "support_platform",
+      "resource_id": "support_2667",
+      "matched_identifier": "user_id:user_39",
+      "captured_at": "2026-10-01T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

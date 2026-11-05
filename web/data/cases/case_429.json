@@ -1,0 +1,64 @@
+{
+  "case_id": "case_429",
+  "email": "y.****@yahoo.com",
+  "request_text": "このメールアドレスに関連するアカウントの完全な削除を依頼します。 プライバシー手続きに従い、現在および過去の識別情報を確認してください。 確認が完了したら結果をお知らせください。",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ja",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 削除"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“削除”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-03T08:00:00Z",
+  "audit_at": "2026-03-20T08:00:00Z",
+  "user_id": "user_427",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "y.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **40",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "13e0f92c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_68",
+      "system_id": "search_service",
+      "resource_id": "search_1449",
+      "matched_identifier": "email:y.****@yahoo.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "account_service",
+      "resource_id": "account_4204",
+      "matched_identifier": "email:y.****@yahoo.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

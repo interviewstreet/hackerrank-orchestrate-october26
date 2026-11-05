@@ -1,0 +1,92 @@
+{
+  "case_id": "case_258",
+  "email": "ao****@gmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please follow the applicable retention and deletion requirements for the account. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-18T11:00:00Z",
+  "audit_at": "2026-06-13T11:00:00Z",
+  "user_id": "user_256",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ao****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **55",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "e008e5b7…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. O.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_24",
+      "system_id": "search_service",
+      "resource_id": "search_5296",
+      "matched_identifier": "email:ao****@gmail.com",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "support_platform",
+      "resource_id": "support_3834",
+      "matched_identifier": "email:ao****@gmail.com",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "search_service",
+      "resource_id": "search_5296",
+      "matched_identifier": "name:a. o.",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "search_service",
+      "resource_id": "search_5296",
+      "matched_identifier": "user_id:user_256",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "security_service",
+      "resource_id": "audit_record_9890",
+      "matched_identifier": "user_id:user_256",
+      "captured_at": "2026-06-13T11:00:00Z"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "support_platform",
+      "resource_id": "support_3834",
+      "matched_identifier": "user_id:user_256",
+      "captured_at": "2026-06-13T11:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

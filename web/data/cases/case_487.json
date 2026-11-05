@@ -1,0 +1,84 @@
+{
+  "case_id": "case_487",
+  "email": "ar****@outlook.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please review any identifiers connected to this account as part of the request. Please confirm when the review is complete.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-03T09:00:00Z",
+  "audit_at": "2026-02-18T09:00:00Z",
+  "user_id": "user_485",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ar****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 28",
+      "is_historical": false,
+      "audit_id": "audit_01"
+    },
+    {
+      "kind": "email_hash",
+      "value": "7d18fdd4…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. C.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 16",
+      "is_historical": true,
+      "audit_id": "audit_01"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_64",
+      "system_id": "search_service",
+      "resource_id": "search_901",
+      "matched_identifier": "email:ar****@outlook.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    },
+    {
+      "file_id": "evidence_64",
+      "system_id": "account_service",
+      "resource_id": "account_5293",
+      "matched_identifier": "email:ar****@outlook.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    },
+    {
+      "file_id": "evidence_64",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_7818",
+      "matched_identifier": "email:ar****@outlook.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    },
+    {
+      "file_id": "evidence_64",
+      "system_id": "support_platform",
+      "resource_id": "support_5361",
+      "matched_identifier": "email:ar****@outlook.com",
+      "captured_at": "2026-02-18T08:39:11Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,26 @@
+{
+  "case_id": "case_534",
+  "email": "ml****@gmail.com",
+  "request_text": "Please stop the promotional emails. I still need the account and my order history, so I am not asking for deletion.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "negation: not asking for deletion",
+    "keep: still need",
+    "opt_out: promotional"
+  ],
+  "reason": "Not a deletion request: the person asks to stop marketing messages (“promotional”), and they say they do not want deletion (“not asking for deletion”) and want to keep the account (“still need”).",
+  "requested_at": "2026-09-08T12:00:00Z",
+  "audit_at": "2026-09-30T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

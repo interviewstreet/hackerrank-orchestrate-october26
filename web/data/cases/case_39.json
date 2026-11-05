@@ -1,0 +1,57 @@
+{
+  "case_id": "case_39",
+  "email": "ja****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please check the records connected to the account before confirming completion. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-05T05:00:00Z",
+  "audit_at": "2026-08-08T10:00:00Z",
+  "user_id": "user_14",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ja****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***46",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ea610736…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. J.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_14",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_1121",
+      "matched_identifier": "email:ja****@gmail.com",
+      "captured_at": "2026-08-07T08:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

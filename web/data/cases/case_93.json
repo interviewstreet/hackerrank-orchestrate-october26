@@ -1,0 +1,90 @@
+{
+  "case_id": "case_93",
+  "email": "t.****@yahoo.com",
+  "request_text": "Solicito a exclusão permanente da conta associada a este e-mail. Verifiquem os identificadores atuais e anteriores conforme o processo de privacidade. Por favor, confirmem o resultado quando a análise terminar.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "pt",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: exclusão"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“exclusão”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-11T06:00:00Z",
+  "audit_at": "2026-09-01T06:00:00Z",
+  "user_id": "user_91",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "t.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": "audit_258"
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**75",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "d09e1dbe…",
+      "is_historical": false,
+      "audit_id": "audit_259"
+    },
+    {
+      "kind": "name",
+      "value": "T. L.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "t.****@yahoo.com",
+      "is_historical": true,
+      "audit_id": "audit_258"
+    },
+    {
+      "kind": "email_hash",
+      "value": "bb849bc0…",
+      "is_historical": true,
+      "audit_id": "audit_259"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_89",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_047",
+      "matched_identifier": "email:t.****@yahoo.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "account_service",
+      "resource_id": "account_4421",
+      "matched_identifier": "email:t.****@yahoo.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "search_service",
+      "resource_id": "search_1310",
+      "matched_identifier": "email:t.****@yahoo.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    },
+    {
+      "file_id": "evidence_89",
+      "system_id": "support_platform",
+      "resource_id": "support_1824",
+      "matched_identifier": "email:t.****@yahoo.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,64 @@
+{
+  "case_id": "case_443",
+  "email": "se****@proton.me",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please ensure the request is applied to the relevant account records. Please send a confirmation after the process finishes.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-27T06:00:00Z",
+  "audit_at": "2026-03-10T06:00:00Z",
+  "user_id": "user_441",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "se****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **08",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "183bc88e…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "S. C.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_66",
+      "system_id": "search_service",
+      "resource_id": "search_4925",
+      "matched_identifier": "email:se****@proton.me",
+      "captured_at": "2026-03-10T05:38:48Z"
+    },
+    {
+      "file_id": "evidence_66",
+      "system_id": "support_platform",
+      "resource_id": "support_8341",
+      "matched_identifier": "email:se****@proton.me",
+      "captured_at": "2026-03-10T05:38:48Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

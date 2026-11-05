@@ -1,0 +1,70 @@
+{
+  "case_id": "case_397",
+  "email": "jo****@zoho.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please include information linked through current or earlier account identifiers. Please confirm the result after completing the required checks.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-10T11:00:00Z",
+  "audit_at": "2026-04-04T11:00:00Z",
+  "user_id": "user_395",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "jo****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 39",
+      "is_historical": false,
+      "audit_id": "audit_17"
+    },
+    {
+      "kind": "email_hash",
+      "value": "1200b472…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "J. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** ** 92",
+      "is_historical": true,
+      "audit_id": "audit_17"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_69",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_626",
+      "matched_identifier": "email:jo****@zoho.com",
+      "captured_at": "2026-04-04T10:04:19Z"
+    },
+    {
+      "file_id": "evidence_69",
+      "system_id": "search_service",
+      "resource_id": "search_3232",
+      "matched_identifier": "email:jo****@zoho.com",
+      "captured_at": "2026-04-04T10:04:19Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,83 @@
+{
+  "case_id": "case_139",
+  "email": "fa****@outlook.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please complete the normal identity and data review for this request. Please confirm when the review is complete.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-16T09:00:00Z",
+  "audit_at": "2026-08-12T09:00:00Z",
+  "user_id": "user_137",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "fa****@outlook.com",
+      "is_historical": false,
+      "audit_id": "audit_240"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **06",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "28d6de3b…",
+      "is_historical": false,
+      "audit_id": "audit_241"
+    },
+    {
+      "kind": "name",
+      "value": "F. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "fa****@outlook.com",
+      "is_historical": true,
+      "audit_id": "audit_240"
+    },
+    {
+      "kind": "email_hash",
+      "value": "f7a98fd6…",
+      "is_historical": true,
+      "audit_id": "audit_241"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_13",
+      "system_id": "account_service",
+      "resource_id": "account_907",
+      "matched_identifier": "email:fa****@outlook.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "search_service",
+      "resource_id": "search_6677",
+      "matched_identifier": "email:fa****@outlook.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7689",
+      "matched_identifier": "user_id:user_137",
+      "captured_at": "2026-08-12T09:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

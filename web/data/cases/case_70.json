@@ -1,0 +1,57 @@
+{
+  "case_id": "case_70",
+  "email": "co****@icloud.com",
+  "request_text": "I no longer use this account and would like it permanently deleted. Please ensure the request is applied to the relevant account records. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-29T09:00:00Z",
+  "audit_at": "2026-09-16T09:00:00Z",
+  "user_id": "user_68",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "co****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** **** ****68",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "90d09f3d…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "G. C.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_93",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1738",
+      "matched_identifier": "user_id:user_68",
+      "captured_at": "2026-09-16T08:37:39Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

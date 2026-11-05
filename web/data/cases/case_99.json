@@ -1,0 +1,58 @@
+{
+  "case_id": "case_99",
+  "email": "i.****@gmail.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please follow the applicable retention and deletion requirements for the account. I would appreciate confirmation of the final outcome.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-05T06:00:00Z",
+  "audit_at": "2026-09-01T06:00:00Z",
+  "user_id": "user_97",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "i.****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *08",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "20a81f9c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "I. H.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_89",
+      "system_id": "backup_service",
+      "resource_id": "backup_7804",
+      "matched_identifier": "email:i.****@gmail.com",
+      "captured_at": "2026-09-01T05:33:16Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

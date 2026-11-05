@@ -1,0 +1,84 @@
+{
+  "case_id": "case_272",
+  "email": "th****@outlook.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please complete the normal identity and data review for this request. Please confirm when the review is complete.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-19T10:00:00Z",
+  "audit_at": "2026-06-08T10:00:00Z",
+  "user_id": "user_270",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "th****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **56",
+      "is_historical": false,
+      "audit_id": "audit_23"
+    },
+    {
+      "kind": "email_hash",
+      "value": "442a3ee4…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "T. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **06",
+      "is_historical": true,
+      "audit_id": "audit_23"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_25",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2010",
+      "matched_identifier": "email:th****@outlook.com",
+      "captured_at": "2026-06-08T09:58:28Z"
+    },
+    {
+      "file_id": "evidence_25",
+      "system_id": "account_service",
+      "resource_id": "account_4226",
+      "matched_identifier": "email:th****@outlook.com",
+      "captured_at": "2026-06-08T09:58:28Z"
+    },
+    {
+      "file_id": "evidence_25",
+      "system_id": "search_service",
+      "resource_id": "search_3875",
+      "matched_identifier": "email:th****@outlook.com",
+      "captured_at": "2026-06-08T09:58:28Z"
+    },
+    {
+      "file_id": "evidence_25",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4646",
+      "matched_identifier": "user_id:user_270",
+      "captured_at": "2026-06-08T09:58:28Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

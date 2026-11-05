@@ -1,0 +1,78 @@
+{
+  "case_id": "case_281",
+  "email": "el****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please check the records connected to the account before confirming completion. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-05T09:00:00Z",
+  "audit_at": "2026-06-03T09:00:00Z",
+  "user_id": "user_279",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "el****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *88",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ada181ee…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "E. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_77",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_9008",
+      "matched_identifier": "email:el****@gmail.com",
+      "captured_at": "2026-06-03T08:34:57Z"
+    },
+    {
+      "file_id": "evidence_77",
+      "system_id": "search_service",
+      "resource_id": "search_3364",
+      "matched_identifier": "email:el****@gmail.com",
+      "captured_at": "2026-06-03T08:34:57Z"
+    },
+    {
+      "file_id": "evidence_77",
+      "system_id": "support_platform",
+      "resource_id": "support_2757",
+      "matched_identifier": "email:el****@gmail.com",
+      "captured_at": "2026-06-03T08:34:57Z"
+    },
+    {
+      "file_id": "evidence_77",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6265",
+      "matched_identifier": "email:el****@gmail.com",
+      "captured_at": "2026-06-03T08:34:57Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

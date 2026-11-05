@@ -1,0 +1,84 @@
+{
+  "case_id": "case_302",
+  "email": "ar****@gmail.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please review any identifiers connected to this account as part of the request. Let me know when the request has been completed.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-14T07:00:00Z",
+  "audit_at": "2026-05-24T07:00:00Z",
+  "user_id": "user_300",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ar****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***20",
+      "is_historical": false,
+      "audit_id": "audit_126"
+    },
+    {
+      "kind": "email_hash",
+      "value": "19b1dd0b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. R.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***89",
+      "is_historical": true,
+      "audit_id": "audit_126"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_75",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1133",
+      "matched_identifier": "email:ar****@gmail.com",
+      "captured_at": "2026-05-24T06:39:55Z"
+    },
+    {
+      "file_id": "evidence_75",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_7594",
+      "matched_identifier": "email:ar****@gmail.com",
+      "captured_at": "2026-05-24T06:39:55Z"
+    },
+    {
+      "file_id": "evidence_75",
+      "system_id": "search_service",
+      "resource_id": "search_1033",
+      "matched_identifier": "email:ar****@gmail.com",
+      "captured_at": "2026-05-24T06:39:55Z"
+    },
+    {
+      "file_id": "evidence_75",
+      "system_id": "support_platform",
+      "resource_id": "support_2983",
+      "matched_identifier": "email:ar****@gmail.com",
+      "captured_at": "2026-05-24T06:39:55Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

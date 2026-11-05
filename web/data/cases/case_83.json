@@ -1,0 +1,66 @@
+{
+  "case_id": "case_83",
+  "email": "li****@proton.me",
+  "request_text": "Please erase the account linked to this email address. Please review the account data that is eligible for deletion or de-identification. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-26T07:00:00Z",
+  "audit_at": "2026-09-06T07:00:00Z",
+  "user_id": "user_81",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "li****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+* (***) ***-**81",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "2b9c7841…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "L. W.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_08",
+      "system_id": "account_service",
+      "resource_id": "account_2449",
+      "matched_identifier": "email:li****@proton.me",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2636",
+      "matched_identifier": "user_id:user_81",
+      "captured_at": "2026-09-06T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

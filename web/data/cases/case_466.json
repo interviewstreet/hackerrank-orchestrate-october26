@@ -1,0 +1,69 @@
+{
+  "case_id": "case_466",
+  "email": "ap****@icloud.com",
+  "request_text": "Please erase the account linked to this email address. Please review any identifiers connected to this account as part of the request. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-14T11:00:00Z",
+  "audit_at": "2026-02-28T11:00:00Z",
+  "user_id": "user_464",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ap****@icloud.com",
+      "is_historical": false,
+      "audit_id": "audit_89"
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **82",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "b3ceaf96…",
+      "is_historical": false,
+      "audit_id": "audit_90"
+    },
+    {
+      "kind": "name",
+      "value": "A. A.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email",
+      "value": "ap****@icloud.com",
+      "is_historical": true,
+      "audit_id": "audit_89"
+    },
+    {
+      "kind": "email_hash",
+      "value": "b2f931fe…",
+      "is_historical": true,
+      "audit_id": "audit_90"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_65",
+      "system_id": "search_service",
+      "resource_id": "search_8417",
+      "matched_identifier": "email:ap****@icloud.com",
+      "captured_at": "2026-02-28T10:36:37Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

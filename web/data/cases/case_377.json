@@ -1,0 +1,65 @@
+{
+  "case_id": "case_377",
+  "email": "ri****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please review the account data that is eligible for deletion or de-identification. Please let me know once the request has been reviewed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-20T06:00:00Z",
+  "audit_at": "2026-04-14T06:00:00Z",
+  "user_id": "user_375",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ri****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **25",
+      "is_historical": false,
+      "audit_id": "audit_14"
+    },
+    {
+      "kind": "email_hash",
+      "value": "10b096b8…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "R. S.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **13",
+      "is_historical": true,
+      "audit_id": "audit_14"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_70",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_3651",
+      "matched_identifier": "email:ri****@gmail.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

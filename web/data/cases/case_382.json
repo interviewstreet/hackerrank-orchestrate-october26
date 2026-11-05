@@ -1,0 +1,84 @@
+{
+  "case_id": "case_382",
+  "email": "re****@icloud.com",
+  "request_text": "Please permanently delete the account associated with this email address. Please include records associated with the account under your privacy process. Please confirm when the review is complete.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-04T06:00:00Z",
+  "audit_at": "2026-04-14T06:00:00Z",
+  "user_id": "user_380",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "re****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** **** ****80",
+      "is_historical": false,
+      "audit_id": "audit_04"
+    },
+    {
+      "kind": "email_hash",
+      "value": "28e05ee0…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "H. R.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** **** ****80",
+      "is_historical": true,
+      "audit_id": "audit_04"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_70",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_9918",
+      "matched_identifier": "email:re****@icloud.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    },
+    {
+      "file_id": "evidence_70",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6090",
+      "matched_identifier": "email:re****@icloud.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    },
+    {
+      "file_id": "evidence_70",
+      "system_id": "support_platform",
+      "resource_id": "support_5071",
+      "matched_identifier": "email:re****@icloud.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    },
+    {
+      "file_id": "evidence_70",
+      "system_id": "search_service",
+      "resource_id": "search_8171",
+      "matched_identifier": "email:re****@icloud.com",
+      "captured_at": "2026-04-14T05:40:07Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

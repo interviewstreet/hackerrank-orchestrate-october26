@@ -1,0 +1,113 @@
+{
+  "case_id": "case_477",
+  "email": "z.****@yahoo.com",
+  "request_text": "I want to close this account and have its associated personal data deleted. Please apply the correct treatment to records covered by the request. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close this account",
+    "deletion: deleted"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close this account”, “deleted”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-29T10:00:00Z",
+  "audit_at": "2026-02-23T10:00:00Z",
+  "user_id": "user_475",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "z.****@yahoo.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **51",
+      "is_historical": false,
+      "audit_id": "audit_24"
+    },
+    {
+      "kind": "email_hash",
+      "value": "14022097…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Z. M.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **87",
+      "is_historical": true,
+      "audit_id": "audit_24"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_45",
+      "system_id": "account_service",
+      "resource_id": "account_3119",
+      "matched_identifier": "email:z.****@yahoo.com",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "search_service",
+      "resource_id": "search_5052",
+      "matched_identifier": "email:z.****@yahoo.com",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "account_service",
+      "resource_id": "account_3119",
+      "matched_identifier": "name:z. m.",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "search_service",
+      "resource_id": "search_5052",
+      "matched_identifier": "name:z. m.",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "account_service",
+      "resource_id": "account_3119",
+      "matched_identifier": "phone:**********51",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "account_service",
+      "resource_id": "account_3119",
+      "matched_identifier": "user_id:user_475",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "search_service",
+      "resource_id": "search_5052",
+      "matched_identifier": "user_id:user_475",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6405",
+      "matched_identifier": "user_id:user_475",
+      "captured_at": "2026-02-23T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

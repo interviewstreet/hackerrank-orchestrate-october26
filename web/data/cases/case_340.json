@@ -1,0 +1,66 @@
+{
+  "case_id": "case_340",
+  "email": "sa****@gmail.com",
+  "request_text": "Please close my account and process the associated personal-data deletion. Please review the account data that is eligible for deletion or de-identification. Please contact me if you need information to verify the request.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: close my account",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“close my account”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-06T10:00:00Z",
+  "audit_at": "2026-05-04T10:00:00Z",
+  "user_id": "user_338",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "sa****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**39",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "9e35b097…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "I. S.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_72",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5916",
+      "matched_identifier": "email:sa****@gmail.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    },
+    {
+      "file_id": "evidence_72",
+      "system_id": "search_service",
+      "resource_id": "search_5411",
+      "matched_identifier": "email:sa****@gmail.com",
+      "captured_at": "2026-05-04T09:41:47Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

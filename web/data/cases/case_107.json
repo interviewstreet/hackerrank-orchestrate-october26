@@ -1,0 +1,63 @@
+{
+  "case_id": "case_107",
+  "email": "pr****@proton.me",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please include information linked through current or earlier account identifiers. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-12T12:00:00Z",
+  "audit_at": "2026-08-27T12:00:00Z",
+  "user_id": "user_105",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "pr****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***86",
+      "is_historical": false,
+      "audit_id": "audit_26"
+    },
+    {
+      "kind": "email_hash",
+      "value": "9abd47f9…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "P. P.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***68",
+      "is_historical": true,
+      "audit_id": "audit_26"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_10",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7572",
+      "matched_identifier": "user_id:user_105",
+      "captured_at": "2026-08-27T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

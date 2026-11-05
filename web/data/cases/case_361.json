@@ -1,0 +1,85 @@
+{
+  "case_id": "case_361",
+  "email": "ch****@zoho.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please handle any copies that fall within the scope of the deletion request. Please send a confirmation after the process finishes.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-03-26T08:00:00Z",
+  "audit_at": "2026-04-24T08:00:00Z",
+  "user_id": "user_359",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ch****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** *** *** **98",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "f6ce815b…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "C. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_33",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_3052",
+      "matched_identifier": "email:ch****@zoho.com",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "matched_identifier": "email:ch****@zoho.com",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "matched_identifier": "name:c. b.",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_496",
+      "matched_identifier": "user_id:user_359",
+      "captured_at": "2026-04-24T08:00:00Z"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7587",
+      "matched_identifier": "user_id:user_359",
+      "captured_at": "2026-04-24T08:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

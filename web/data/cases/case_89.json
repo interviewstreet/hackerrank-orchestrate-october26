@@ -1,0 +1,78 @@
+{
+  "case_id": "case_89",
+  "email": "ya****@gmail.com",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please complete the normal identity and data review for this request. Please confirm when the review is complete.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-20T07:00:00Z",
+  "audit_at": "2026-09-06T07:00:00Z",
+  "user_id": "user_87",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ya****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **11",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "13221143…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. A.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_08",
+      "system_id": "account_service",
+      "resource_id": "account_8764",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_6499",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "search_service",
+      "resource_id": "search_1839",
+      "matched_identifier": "email:ya****@gmail.com",
+      "captured_at": "2026-09-06T07:00:00Z"
+    },
+    {
+      "file_id": "evidence_08",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2539",
+      "matched_identifier": "user_id:user_87",
+      "captured_at": "2026-09-06T07:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,57 @@
+{
+  "case_id": "case_126",
+  "email": "yf****@gmail.com",
+  "request_text": "I am asking you to remove my account and the personal information linked to it. Please review any identifiers connected to this account as part of the request. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: remove"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“remove”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-03T10:00:00Z",
+  "audit_at": "2026-08-17T10:00:00Z",
+  "user_id": "user_124",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "yf****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+*** ** *** **16",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ce2f9a26…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Y. F.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_87",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6884",
+      "matched_identifier": "user_id:user_124",
+      "captured_at": "2026-08-17T09:42:50Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

@@ -1,0 +1,64 @@
+{
+  "case_id": "case_121",
+  "email": "ni****@zoho.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please review any identifiers connected to this account as part of the request. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-24T11:00:00Z",
+  "audit_at": "2026-08-22T11:00:00Z",
+  "user_id": "user_119",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ni****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *41",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "17c4c6cb…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_88",
+      "system_id": "account_service",
+      "resource_id": "account_081",
+      "matched_identifier": "email:ni****@zoho.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    },
+    {
+      "file_id": "evidence_88",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2103",
+      "matched_identifier": "user_id:user_119",
+      "captured_at": "2026-08-22T10:39:10Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

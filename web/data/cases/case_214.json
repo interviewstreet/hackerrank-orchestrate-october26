@@ -1,0 +1,65 @@
+{
+  "case_id": "case_214",
+  "email": "be****@icloud.com",
+  "request_text": "Please erase the account linked to this email address. Please process this under the standard personal-data deletion procedure. I would appreciate confirmation of the final outcome.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-11T08:00:00Z",
+  "audit_at": "2026-07-03T08:00:00Z",
+  "user_id": "user_212",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "be****@icloud.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 62",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "15761af1…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "C. B.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_81",
+      "system_id": "search_service",
+      "resource_id": "search_7351",
+      "matched_identifier": "email:be****@icloud.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    },
+    {
+      "file_id": "evidence_81",
+      "system_id": "support_platform",
+      "resource_id": "support_1146",
+      "matched_identifier": "email:be****@icloud.com",
+      "captured_at": "2026-07-03T07:43:56Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

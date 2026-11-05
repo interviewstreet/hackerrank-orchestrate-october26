@@ -1,0 +1,26 @@
+{
+  "case_id": "case_539",
+  "email": "le****@proton.me",
+  "request_text": "Can you tell me what personal information you hold about me? This is an information request, not a request to erase it.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "negation: not a request to erase",
+    "access: what personal information you hold",
+    "access: information request"
+  ],
+  "reason": "Not a deletion request: the person asks to see or get a copy of their data (“what personal information you hold”, “information request”), and they say they do not want deletion (“not a request to erase”).",
+  "requested_at": "2026-08-29T12:00:00Z",
+  "audit_at": "2026-09-25T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

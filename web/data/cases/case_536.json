@@ -1,0 +1,27 @@
+{
+  "case_id": "case_536",
+  "email": "ad****@outlook.com",
+  "request_text": "I can't access my profile and need help resetting the login. Do not close the account.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "NOT_APPLICABLE",
+  "classification": "NOT_APPLICABLE",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "negation: Do not close",
+    "login: can't access",
+    "login: resetting",
+    "login: login"
+  ],
+  "reason": "Not a deletion request: the person asks for help signing in (“can't access”, “resetting”), and they say they do not want deletion (“Do not close”).",
+  "requested_at": "2026-09-04T12:00:00Z",
+  "audit_at": "2026-09-28T12:00:00Z",
+  "user_id": null,
+  "identities": [],
+  "evidence_hits": [],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

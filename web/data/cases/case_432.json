@@ -1,0 +1,70 @@
+{
+  "case_id": "case_432",
+  "email": "an****@fastmail.com",
+  "request_text": "Please begin the deletion process for the account using this email address. Please review any identifiers connected to this account as part of the request. Please send a confirmation after the process finishes.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-28T08:00:00Z",
+  "audit_at": "2026-03-20T08:00:00Z",
+  "user_id": "user_430",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "an****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***79",
+      "is_historical": false,
+      "audit_id": "audit_43"
+    },
+    {
+      "kind": "email_hash",
+      "value": "bc57496f…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. N.",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ***** ***21",
+      "is_historical": true,
+      "audit_id": "audit_43"
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_68",
+      "system_id": "search_service",
+      "resource_id": "search_3844",
+      "matched_identifier": "email:an****@fastmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    },
+    {
+      "file_id": "evidence_68",
+      "system_id": "export_service",
+      "resource_id": "export_9343",
+      "matched_identifier": "email:an****@fastmail.com",
+      "captured_at": "2026-03-20T07:23:49Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

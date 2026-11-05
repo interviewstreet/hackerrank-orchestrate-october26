@@ -1,0 +1,64 @@
+{
+  "case_id": "case_116",
+  "email": "ay****@outlook.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please complete the normal identity and data review for this request. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-29T11:00:00Z",
+  "audit_at": "2026-08-22T11:00:00Z",
+  "user_id": "user_114",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ay****@outlook.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **20",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1cd766ee…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "A. D.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_88",
+      "system_id": "search_service",
+      "resource_id": "search_696",
+      "matched_identifier": "email:ay****@outlook.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    },
+    {
+      "file_id": "evidence_88",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6699",
+      "matched_identifier": "email:ay****@outlook.com",
+      "captured_at": "2026-08-22T10:39:10Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

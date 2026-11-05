@@ -1,0 +1,64 @@
+{
+  "case_id": "case_184",
+  "email": "pe****@gmail.com",
+  "request_text": "Please erase the account linked to this email address. Please ensure the request is applied to the relevant account records. Please contact me if you need information to verify the request.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erase"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erase”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-06T11:00:00Z",
+  "audit_at": "2026-07-18T11:00:00Z",
+  "user_id": "user_182",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "pe****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *****-**32",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ccdff9bd…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "B. P.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_83",
+      "system_id": "search_service",
+      "resource_id": "search_8680",
+      "matched_identifier": "email:pe****@gmail.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    },
+    {
+      "file_id": "evidence_83",
+      "system_id": "support_platform",
+      "resource_id": "support_1892",
+      "matched_identifier": "email:pe****@gmail.com",
+      "captured_at": "2026-07-18T10:43:35Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

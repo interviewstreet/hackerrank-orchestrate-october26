@@ -1,0 +1,86 @@
+{
+  "case_id": "case_233",
+  "email": "ma****@gmail.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please apply the request across the systems covered by your deletion policy. I would appreciate confirmation of the final outcome.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete",
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-06-02T06:00:00Z",
+  "audit_at": "2026-06-23T06:00:00Z",
+  "user_id": "user_231",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ma****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **27",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "cf95a1fb…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "M. M.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_79",
+      "system_id": "account_service",
+      "resource_id": "account_5264",
+      "matched_identifier": "email:ma****@gmail.com",
+      "captured_at": "2026-06-23T05:37:26Z"
+    },
+    {
+      "file_id": "evidence_79",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8350",
+      "matched_identifier": "user_id:user_231",
+      "captured_at": "2026-06-23T05:37:26Z"
+    },
+    {
+      "file_id": "evidence_79",
+      "system_id": "support_platform",
+      "resource_id": "support_9670",
+      "matched_identifier": "user_id:user_231",
+      "captured_at": "2026-06-23T05:37:26Z"
+    },
+    {
+      "file_id": "evidence_79",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_6754",
+      "matched_identifier": "user_id:user_231",
+      "captured_at": "2026-06-23T05:37:26Z"
+    },
+    {
+      "file_id": "evidence_79",
+      "system_id": "backup_service",
+      "resource_id": "backup_8162",
+      "matched_identifier": "user_id:user_231",
+      "captured_at": "2026-06-23T05:37:26Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

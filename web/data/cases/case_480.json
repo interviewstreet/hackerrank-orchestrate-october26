@@ -1,0 +1,80 @@
+{
+  "case_id": "case_480",
+  "email": "zn****@fastmail.com",
+  "request_text": "I would like the account associated with this address to be erased. Please review the account data that is eligible for deletion or de-identification. A short confirmation when the process is complete is sufficient.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: erased",
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“erased”, “deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-01-26T10:00:00Z",
+  "audit_at": "2026-02-23T10:00:00Z",
+  "user_id": "user_478",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "zn****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** *** **69",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "1ff5f642…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "Z. N.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_45",
+      "system_id": "backup_service",
+      "resource_id": "backup_7706",
+      "matched_identifier": "user_id:user_478",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_2893",
+      "matched_identifier": "user_id:user_478",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "security_service",
+      "resource_id": "audit_record_7742",
+      "matched_identifier": "user_id:user_478",
+      "captured_at": "2026-02-23T10:00:00Z"
+    },
+    {
+      "file_id": "evidence_45",
+      "system_id": "support_platform",
+      "resource_id": "support_5854",
+      "matched_identifier": "user_id:user_478",
+      "captured_at": "2026-02-23T10:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

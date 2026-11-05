@@ -1,0 +1,78 @@
+{
+  "case_id": "case_460",
+  "email": "pa****@gmail.com",
+  "request_text": "I would like to submit a request to delete this account and its personal data. Please ensure the request is applied to the relevant account records. Please confirm the result after completing the required checks.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: delete"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“delete”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-02-05T12:00:00Z",
+  "audit_at": "2026-03-05T12:00:00Z",
+  "user_id": "user_458",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "pa****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** **** ****58",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "2a281960…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "G. P.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_43",
+      "system_id": "support_platform",
+      "resource_id": "support_4146",
+      "matched_identifier": "email:pa****@gmail.com",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_5622",
+      "matched_identifier": "user_id:user_458",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1369",
+      "matched_identifier": "user_id:user_458",
+      "captured_at": "2026-03-05T12:00:00Z"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "support_platform",
+      "resource_id": "support_4146",
+      "matched_identifier": "user_id:user_458",
+      "captured_at": "2026-03-05T12:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

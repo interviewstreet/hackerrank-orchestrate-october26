@@ -1,0 +1,64 @@
+{
+  "case_id": "case_71",
+  "email": "JU****@PROTON.ME",
+  "request_text": "I am requesting deletion of the account registered to this email address. Please check the records connected to the account before confirming completion. I would appreciate confirmation of the final outcome.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-08-28T09:00:00Z",
+  "audit_at": "2026-09-16T09:00:00Z",
+  "user_id": "user_69",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ju****@proton.me",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 56",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "ec6df3a5…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "J. L.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_93",
+      "system_id": "search_service",
+      "resource_id": "search_684",
+      "matched_identifier": "email:ju****@proton.me",
+      "captured_at": "2026-09-16T08:37:39Z"
+    },
+    {
+      "file_id": "evidence_93",
+      "system_id": "support_platform",
+      "resource_id": "support_1370",
+      "matched_identifier": "email:ju****@proton.me",
+      "captured_at": "2026-09-16T08:37:39Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

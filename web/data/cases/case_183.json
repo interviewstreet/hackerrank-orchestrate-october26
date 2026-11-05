@@ -1,0 +1,57 @@
+{
+  "case_id": "case_183",
+  "email": "s.****@gmail.com",
+  "request_text": "이 이메일 주소에 연결된 계정의 영구 삭제를 요청합니다. 개인정보 처리 절차에 따라 현재 및 이전 식별자를 검토해 주세요. 검토가 완료되면 결과를 확인해 주세요.",
+  "reported_status": "NOT_STARTED",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ko",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 삭제"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“삭제”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-07T11:00:00Z",
+  "audit_at": "2026-07-18T11:00:00Z",
+  "user_id": "user_181",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "s.****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **04",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "6be63fb7…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "S. J.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_83",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3262",
+      "matched_identifier": "user_id:user_181",
+      "captured_at": "2026-07-18T10:43:35Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

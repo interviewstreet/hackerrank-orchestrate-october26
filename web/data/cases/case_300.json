@@ -1,0 +1,64 @@
+{
+  "case_id": "case_300",
+  "email": "jp****@fastmail.com",
+  "request_text": "이 이메일 주소에 연결된 계정의 영구 삭제를 요청합니다. 개인정보 처리 절차에 따라 현재 및 이전 식별자를 검토해 주세요. 검토가 완료되면 결과를 확인해 주세요.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "ko",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: 삭제"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“삭제”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-04-26T07:00:00Z",
+  "audit_at": "2026-05-24T07:00:00Z",
+  "user_id": "user_298",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "jp****@fastmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** ** **** **65",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "fe59b5c9…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "J. P.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_75",
+      "system_id": "export_service",
+      "resource_id": "export_6623",
+      "matched_identifier": "email:jp****@fastmail.com",
+      "captured_at": "2026-05-24T06:39:55Z"
+    },
+    {
+      "file_id": "evidence_75",
+      "system_id": "search_service",
+      "resource_id": "search_4299",
+      "matched_identifier": "email:jp****@fastmail.com",
+      "captured_at": "2026-05-24T06:39:55Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

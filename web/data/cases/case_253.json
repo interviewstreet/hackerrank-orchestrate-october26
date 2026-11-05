@@ -1,0 +1,58 @@
+{
+  "case_id": "case_253",
+  "email": "ma****@zoho.com",
+  "request_text": "Please process a permanent account-deletion request for this email address. Please review the account data that is eligible for deletion or de-identification. Let me know when the request has been completed.",
+  "reported_status": "PARTIALLY_COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion",
+    "deletion: de-identification"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”, “de-identification”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-05-23T11:00:00Z",
+  "audit_at": "2026-06-13T11:00:00Z",
+  "user_id": "user_251",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "ma****@zoho.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** * ** ** ** 52",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "532cfb4c…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "M. L.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_24",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2927",
+      "matched_identifier": "user_id:user_251",
+      "captured_at": "2026-06-13T11:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}

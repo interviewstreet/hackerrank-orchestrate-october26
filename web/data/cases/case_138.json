@@ -1,0 +1,78 @@
+{
+  "case_id": "case_138",
+  "email": "nh****@gmail.com",
+  "request_text": "Please treat this message as a request for permanent account deletion. Please include records associated with the account under your privacy process. Let me know when the request has been completed.",
+  "reported_status": "COMPLETE",
+  "our_status": "INCOMPLETE",
+  "classification": "IS_DELETION",
+  "language": "en",
+  "confidence": "HIGH",
+  "matched_signals": [
+    "deletion: deletion"
+  ],
+  "reason": "Deletion request: the person asks to delete their data (“deletion”) and nothing in the text refuses deletion or asks for something else.",
+  "requested_at": "2026-07-17T09:00:00Z",
+  "audit_at": "2026-08-12T09:00:00Z",
+  "user_id": "user_136",
+  "identities": [
+    {
+      "kind": "email",
+      "value": "nh****@gmail.com",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "phone",
+      "value": "+** *** *** *98",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "email_hash",
+      "value": "d126a293…",
+      "is_historical": false,
+      "audit_id": ""
+    },
+    {
+      "kind": "name",
+      "value": "N. H.",
+      "is_historical": false,
+      "audit_id": ""
+    }
+  ],
+  "evidence_hits": [
+    {
+      "file_id": "evidence_13",
+      "system_id": "account_service",
+      "resource_id": "account_6452",
+      "matched_identifier": "email:nh****@gmail.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "search_service",
+      "resource_id": "search_4464",
+      "matched_identifier": "email:nh****@gmail.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "support_platform",
+      "resource_id": "support_2716",
+      "matched_identifier": "email:nh****@gmail.com",
+      "captured_at": "2026-08-12T09:00:00Z"
+    },
+    {
+      "file_id": "evidence_13",
+      "system_id": "security_service",
+      "resource_id": "audit_record_122",
+      "matched_identifier": "user_id:user_136",
+      "captured_at": "2026-08-12T09:00:00Z"
+    }
+  ],
+  "resources": [],
+  "flows": [],
+  "restore_risks": [],
+  "timeline": [],
+  "steps": []
+}
