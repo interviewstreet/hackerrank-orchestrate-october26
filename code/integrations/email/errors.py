@@ -26,6 +26,14 @@ class ContentChanged(EmailError):
     """The stored content no longer matches what the approver approved."""
 
 
+class RecipientNotAllowed(EmailError):
+    """The recipient is not on EMAIL_ALLOWED_RECIPIENTS."""
+
+
+class SeparationOfDuties(EmailError):
+    """The approver also drafted, edited or submitted this email."""
+
+
 class EmailNotConfigured(EmailError):
     """RESEND_API_KEY or RESEND_FROM_EMAIL is missing, so nothing can be sent."""
 

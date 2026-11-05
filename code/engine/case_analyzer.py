@@ -152,7 +152,7 @@ def analyze_case(request: Dict[str, str], ec: EngineContext, _peer_pass: bool = 
         if not category:
             continue
         rs = reconstruct(ec.store, rid, system_id, category, audit_at)
-        d = evaluate(ec.ctx, rs, audit_at)
+        d = evaluate(ec.ctx, rs, audit_at, subject.user_id or "")
         if d is None:
             continue
         decisions.append(d)

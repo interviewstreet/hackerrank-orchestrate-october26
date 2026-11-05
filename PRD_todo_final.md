@@ -12,6 +12,11 @@ Built and tested with a fake Resend (see `PRD_done.md` Section 12). A live send 
 - Open (Rach's laptop): build `agent-trace.zip`. Run `python3 build_agent_trace.py` where the Claude Code sessions ran, add `/export` transcripts and the Claude web-app export, review the staged files, zip, open the zip once.
 - Open: `log.txt` must be uploaded as the `chat_transcript`; check it once for personal data (it contains one personal email address in an earlier entry, and the log is append-only).
 
+## Section G: Email adapter for `code/server.py`: BUILT (Member 2), wiring is Member 1's
+Done and tested (see `PRD_done.md` Section 14 and `code/integrations/email/INTEGRATION_PLAN.md`). Left:
+- Member 1: add the `/api/email/*` dispatch to `server.py` (exact lines in the plan, tested on a scratch copy of her branch) and the frontend token box; re-run her tests.
+- Rach: create operator tokens (`code/email_operator_token.py`), set `EMAIL_ALLOWED_RECIPIENTS`, and for a live send a Resend-verified sender.
+
 ## Section E: Optional accuracy polish. LIKELY UNREACHABLE
 Remaining sample gaps: cases 04, 18, 20, 23, 24 (6 missing steps). Each needs a guess or an organizer answer:
 - 04, 18, 20: ids appear nowhere in the data.
@@ -22,7 +27,7 @@ After any engine change: `python3 code/main.py`, `pytest code/tests`, `python3 c
 ## Small leftovers
 - Optional: add sample-data tests to CI (needs a safe way to provide the dataset, or a trimmed fixture).
 - Optional: coverage for CLI wrappers and evaluation scripts (currently unmeasured).
-- Explanations are not yet wired into emails or the UI (Member 1's side; the email package can already use them as an internal draft body).
+- Explanations are not yet wired into the UI (Member 1's side; the adapter can already generate an internal draft body from a case with `audience=internal`).
 - Optional: find out why `case_34` differs between machines (likely OCR or PDF tool version) so `output.csv` is reproducible everywhere.
 
 ## Open items for Rach

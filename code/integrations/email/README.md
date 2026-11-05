@@ -3,7 +3,9 @@
 Human-approved, duplicate-safe email for deletion-audit results. Standard library only, except `router.py` (needs `fastapi`).
 Nothing is sent unless a named person approved that exact content.
 
-## Mount it (Member 1)
+> **Note:** the team's API is `code/server.py` (standard-library `ThreadingHTTPServer`), not FastAPI. Do not mount this router there and do not create a second server; see [INTEGRATION_PLAN.md](./INTEGRATION_PLAN.md) (identity from the server, separation of duties, recipient allowlist). The router below is only for a FastAPI deployment.
+
+## Mount it (FastAPI deployments only)
 ```python
 from fastapi import Depends
 from integrations.email import build_service_from_env
@@ -17,6 +19,11 @@ app.include_router(create_email_router(
 ))
 ```
 `code/` must be on `sys.path` (the engine and tests already do this). Member 1's files are not modified by this package.
+
+## Safety settings (also apply to the HTTP adapter)
+- `EMAIL_ALLOWED_RECIPIENTS` (addresses or `@domain`): when set, drafts and sends to anyone else are refused (checked at draft and again at send). The HTTP adapter refuses to run without it.
+- The person who drafted, edited, re-drafted or submitted an email cannot approve it. `EMAIL_ALLOW_SELF_APPROVAL=1` switches that off for one-person demos.
+- `EMAIL_OPERATORS` (hashed login tokens) is used by `http_adapter.py`; see [INTEGRATION_PLAN.md](./INTEGRATION_PLAN.md).
 
 ## Workflow
 `DRAFT -> PENDING_APPROVAL -> APPROVED | REJECTED -> SENDING -> SENT | FAILED`
@@ -54,7 +61,7 @@ app.include_router(create_email_router(
 3. Webhooks without the secret are refused (503); bad signatures or timestamps older than 5 minutes are refused (400).
 
 ## Limits to know
-- Approver identity is whatever the caller sends; trust it only behind real authentication.
+- Through the FastAPI router the approver name is whatever the caller sends; trust it only behind real authentication. The HTTP adapter (used with `code/server.py`) takes the name from the login token instead.
 - If a send times out the outcome is unknown: the email is `FAILED`, and a re-approved retry reuses the same key (safe for 24 hours).
 - The SQLite outbox contains email bodies (it is gitignored); do not commit `email_outbox.db`.
 

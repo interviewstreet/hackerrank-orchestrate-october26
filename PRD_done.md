@@ -112,6 +112,16 @@ Files: `code/integrations/email/*` (config, models/state machine, SQLite store, 
 Rebuild command (from the repo root):
 `zip -r code.zip README.md requirements.txt requirements-dev.txt .env.example code -x "*/__pycache__/*" "*/.cache/*" "*/.pytest_cache/*" "*/.venv/*" "*/venv/*" "*/.git/*" "*/.DS_Store" "*.pyc" "*/.coverage" "*.db" "*.db-*" "*.zip" "*.tar" "*.gz" "*.tgz" "*.7z" "*.rar"`
 
+## Section 14: Secure email adapter for `code/server.py`: BUILT and tested; not yet wired in
+Why: Member 1's API is a standard-library `ThreadingHTTPServer` (`code/server.py`), not FastAPI; its anonymous session proves origin, not identity, so approve/send must not be exposed through it as is. No second server was created.
+Files: `code/integrations/email/{operators,http_adapter}.py`, `code/email_operator_token.py`, safety additions in `config.py`, `approval_service.py`, `email_service.py`, `errors.py`; tests `code/tests/test_email_adapter.py` (32 tests); design, endpoint table and the lines Member 1 adds: `code/integrations/email/INTEGRATION_PLAN.md`.
+- Identity from the server: `Authorization: Bearer <token>` is hashed and matched to a name in `EMAIL_OPERATORS` (hashes only); that name is the actor/approver; names in a request body are ignored.
+- Fail closed: no operators, or no `EMAIL_ALLOWED_RECIPIENTS`, means 503 everywhere.
+- Separation of duties in the core: whoever drafted, edited, re-drafted or submitted cannot approve (403); `EMAIL_ALLOW_SELF_APPROVAL=1` is the explicit one-person demo switch. Recipient allowlist checked at draft and again at send. Failed-login lockout and one-at-a-time sends.
+- Checks: 188 tests pass (156 before); email package coverage 97%. Mutation check: 10 deliberate breaks of the safety rules (separation of duties, body-supplied name, auth, allowlist at draft and at send, fail-open, rate limit, send lock, plain-text token) were each caught by a test. Live check: the wiring was applied to a scratch copy of `member-1-frontend-slack` (`ee39f7e`) and run over real HTTP, 20 of 20 checks, `server.py` itself untouched.
+- Open: Member 1 adds the dispatch to `server.py` and the token box to the frontend; no live Resend send has been tried (needs a verified sender: `bmsit.in` addresses cannot be verified by a student, and the free sender only delivers to the Resend account's own address). Webhooks are not served (127.0.0.1 only).
+- Setup for Rach: `python code/email_operator_token.py --name <Name> --env-file .env` for each approver (two different people are needed unless the demo switch is on); set `EMAIL_ALLOWED_RECIPIENTS`.
+
 ## Still open after this round (be honest in the interview)
 - Sample cases 04, 18, 20, 23, 24: 6 steps missing. Cases 04, 18, 20 reference ids (`account_004`, `audit_record_6645`, `audit_record_5569`) that appear in no evidence or activity, so they cannot be derived without guessing. Case 23 (`account_410`) has 3 equally plausible worker activities. Case 24 (`account_5334`) depends on whether an empty JSON snapshot outranks a live lookup: switching rules fixed case 24 but broke case 31, so the original rule stays.
 - The other 486 requests have no answer key; behaviour there is checked only by invariants and by the mini dataset.

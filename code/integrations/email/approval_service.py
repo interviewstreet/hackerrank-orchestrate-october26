@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-from .errors import ContentChanged, InvalidTransition
+from .errors import ContentChanged, InvalidTransition, SeparationOfDuties
 from .models import EmailRecord, EmailState
 from .store import EmailStore
 
@@ -18,8 +18,17 @@ def clean_actor(actor: str) -> str:
 
 
 class ApprovalService:
-    def __init__(self, store: EmailStore):
+    def __init__(self, store: EmailStore, allow_self_approval: bool = False):
         self._store = store
+        self._allow_self = allow_self_approval
+
+    _AUTHOR_NOTES = ("created", "draft edited", "re-drafted after rejection", "submitted for approval")
+
+    def _authors(self, email_id: str) -> set:
+        """People who drafted, edited, re-drafted or submitted this email. Reviewers and senders are not authors, and the
+        automatic 'system' and webhook actors are not people."""
+        return {e["actor"].strip().lower() for e in self._store.events(email_id)
+                if e["note"] in self._AUTHOR_NOTES} - {"system", "resend-webhook", ""}
 
     def submit(self, email_id: str, actor: str) -> EmailRecord:
         """DRAFT -> PENDING_APPROVAL (also FAILED -> PENDING_APPROVAL: a failed send needs approval again)."""
@@ -31,6 +40,8 @@ class ApprovalService:
     def approve(self, email_id: str, approver: str) -> EmailRecord:
         who = clean_actor(approver)
         current = self._store.get(email_id)
+        if not self._allow_self and who.lower() in self._authors(email_id):
+            raise SeparationOfDuties("the approver must be a different person from whoever drafted or submitted this email")
         rec = self._store.transition(email_id, [EmailState.PENDING_APPROVAL], EmailState.APPROVED, who, "approved",
                                      approved_by=who, approved_at=self._store.now(), approved_hash=current.content_hash)
         return rec or self._refuse(email_id, "only a PENDING_APPROVAL email can be approved")
