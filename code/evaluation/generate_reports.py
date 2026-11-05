@@ -172,6 +172,17 @@ Result: **{mini_ok}/{len(mini_expected)} exact** (`pytest code/tests/test_mini_d
   template on any problem, and never changes `output.csv`. Unit tests use a fake model; no live-model evaluation has been run yet.
 - The system has no learned component, so there is no training/test split; the samples were used to design rules, and the
   custom cases above plus the invariants are the independent checks.
+- Screenshot evidence is read with `tesseract` and PDFs with `pdftotext`, so the result can depend on tool versions. Regenerating `output.csv` on another machine changed one row (`case_34`: status unchanged, but one support record read from a PNG was missed, giving 4 steps instead of 7). The committed `output.csv` and these reports come from one consistent run.
+
+## 11. Improvement recommendations
+- Pin or vendor the OCR and PDF tool versions (or add a container image), and add a regression test that fails when a screenshot-derived record
+  is not extracted, so an environment difference like the `case_34` one is caught before submission.
+- Obtain labelled answers for more than 32 cases, or have a second reviewer hand-derive a random sample of the other 486, to measure the
+  least-proven rules (peer ordering, unowned analytics records) instead of relying on invariants alone.
+- Run the optional advisory layer against a live model on the ambiguous cases and compare its flags with human review before relying on it.
+- Add an automated check that every cited evidence item was captured at or before the case's `audit_at` and actually mentions the cited resource.
+- Customer emails for incomplete cases name only the kinds of system a case touches. Extend this with case-specific retention notes once
+  legal review supplies approved wording.
 """
     (HERE / "evaluation_report.md").write_text(ev, encoding="utf-8")
 
@@ -239,7 +250,7 @@ This report covers the final full-dataset run that produced `output.csv` ({n} re
 | Output tokens | {tout} |
 | Total tokens | {tin + tout} |
 | Average tokens per request (total tokens / {n} requests) | {(tin + tout) / n:.1f} |\n| Average tokens per model call | {per_call} |
-| Estimated total cost | {cost} |\n| Price assumption (USD per million tokens) | input {pin:g}, output {pout:g} |
+| Estimated total cost | {cost} |\n| Price assumption (USD per million tokens) | input {pin:g}, output {pout:g} (checked against Groq's official model page on 2026-11-05: input $0.15, output $0.60 per million tokens) |
 | Estimated cost per request | {cost_req} |
 
 ## Per-model breakdown

@@ -15,7 +15,7 @@ The decisions behind `output.csv` come from the deterministic engine and make **
 | Average tokens per request (total tokens / 518 requests) | 6.3 |
 | Average tokens per model call | 545 |
 | Estimated total cost | $0.0013 |
-| Price assumption (USD per million tokens) | input 0.15, output 0.6 |
+| Price assumption (USD per million tokens) | input 0.15, output 0.6 (checked against Groq's official model page on 2026-11-05: input $0.15, output $0.60 per million tokens) |
 | Estimated cost per request | $0.000002 |
 
 ## Per-model breakdown

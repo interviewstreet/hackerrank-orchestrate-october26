@@ -20,6 +20,16 @@ def _as_dict(case: Any) -> Dict[str, Any]:
     return case.to_dict() if hasattr(case, "to_dict") else dict(case)
 
 
+def _systems_clause(c: Dict[str, Any]) -> str:
+    """Name the kinds of system the case's own steps touch, in customer-safe words. Empty when none are known."""
+    ids = [str(s.get("system_id", "")).lower() for s in (c.get("steps") or [])]
+    phrases = [phrase for keys, phrase in templates.SYSTEM_PHRASES if any(k in i for i in ids for k in keys)]
+    if not phrases:
+        return ""
+    joined = phrases[0] if len(phrases) == 1 else ", ".join(phrases[:-1]) + " and " + phrases[-1]
+    return templates.SYSTEMS_CLAUSE.format(systems=joined)
+
+
 def build_draft(case: Any, *, explanation: Optional[str] = None, review_needed: bool = False, review_reason: str = "",
                 audience: str = REQUESTER) -> DraftContent:
     """case is a CaseAuditResult or its to_dict().
@@ -34,7 +44,8 @@ def build_draft(case: Any, *, explanation: Optional[str] = None, review_needed: 
         raise ValueError(f"cannot draft an email for status {status!r}")
     summary = c.get("summary") or {}
     fields = {"case_id": c["case_id"], "systems_checked": summary.get("systems_checked", 0),
-              "findings_count": summary.get("findings_count", 0), "remediation_count": summary.get("remediation_count", 0)}
+              "findings_count": summary.get("findings_count", 0), "remediation_count": summary.get("remediation_count", 0),
+              "systems_clause": _systems_clause(c) if status == "INCOMPLETE" else ""}
     subject = templates.SUBJECTS[status].format(**fields)
     body = templates.BODIES[status].format(**fields)
     if audience == INTERNAL:

@@ -2158,3 +2158,27 @@ branch=member-1-frontend-slack
 repo_root=/home/claude/erasight
 worktree=main
 parent_agent=none
+
+## [2026-11-05T04:21:07Z] Run PRD remaining work (everything possible)
+
+User Prompt (verbatim, secrets redacted):
+do these (attached PRD_todo_final.md); follow-up choices: scope "Everything possible", push "Commit and push"
+
+Agent Response Summary:
+Confirmed member-1-frontend-slack already contains member-2-backend-resend (983d222) and main. Scanned all branch history and the working tree for secrets (none found), ran backend tests (284, then 288 with new email tests), frontend tests (48) and the production build, and re-ran code/main.py (output validates; only case_34 differs from the committed file because of an OCR difference on this machine, so the committed output.csv was kept). Improved the incomplete-case customer email wording with tests, added improvement recommendations, an OCR limitation and a verified Groq price note to the reports, untracked tsconfig.tsbuildinfo, and built and validated code.zip.
+
+Actions:
+* git fetch of main and member-2-backend-resend; history and tree secret scan
+* pytest code/tests; npm ci, npm test, npm run build in code/frontend
+* Edited code/integrations/email/templates.py and draft_generator.py; added tests to code/tests/test_email_draft.py
+* Edited code/evaluation/evaluation_report.md, usage_report.md and generate_reports.py
+* git rm --cached code/frontend/tsconfig.tsbuildinfo
+* Built code.zip (121 entries, root evaluation/ plus code/evaluation/) and validated an extracted copy
+
+Context:
+tool=Claude Code
+model=claude-sonnet-5-5
+branch=member-1-frontend-slack
+repo_root=/home/claude/erasight
+worktree=main
+parent_agent=none
