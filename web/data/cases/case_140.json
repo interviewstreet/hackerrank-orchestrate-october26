@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "ch****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **74",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "1368af67…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "C. E.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ch****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,44 +62,231 @@
       "system_id": "account_service",
       "resource_id": "account_6372",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-08-12T09:00:00Z"
+      "captured_at": "2026-08-12T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "integration_management_service"
     },
     {
       "file_id": "evidence_13",
       "system_id": "analytics_platform",
       "resource_id": "analytics_3006",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-08-12T09:00:00Z"
+      "captured_at": "2026-08-12T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "integration_management_service"
     },
     {
       "file_id": "evidence_13",
       "system_id": "integration_service",
       "resource_id": "data_flow_9030",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-08-12T09:00:00Z"
+      "captured_at": "2026-08-12T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "integration_management_service"
     },
     {
       "file_id": "evidence_13",
       "system_id": "search_service",
       "resource_id": "search_7363",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-08-12T09:00:00Z"
+      "captured_at": "2026-08-12T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "integration_management_service"
     },
     {
       "file_id": "evidence_13",
       "system_id": "support_platform",
       "resource_id": "support_5323",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-08-12T09:00:00Z"
+      "captured_at": "2026-08-12T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "integration_management_service"
     },
     {
       "file_id": "evidence_13",
       "system_id": "security_service",
       "resource_id": "audit_record_8086",
       "matched_identifier": "user_id:user_138",
-      "captured_at": "2026-08-12T09:00:00Z"
+      "captured_at": "2026-08-12T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "integration_management_service"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2835",
+      "event_time": "2026-07-16T09:38:04Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_9030",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_9030",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_9030 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_6372|",
+        "system_id": "account_service",
+        "resource_id": "account_6372",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_13"
+        ],
+        "origins": [
+          "integration_management_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-08-12T09:00:00Z",
+        "last_captured_at": "2026-08-12T09:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "analytics_platform|analytics_3006|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_3006",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_13"
+        ],
+        "origins": [
+          "integration_management_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-08-12T09:00:00Z",
+        "last_captured_at": "2026-08-12T09:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_9030|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_9030",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_13"
+        ],
+        "origins": [
+          "integration_management_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-08-12T09:00:00Z",
+        "last_captured_at": "2026-08-12T09:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_2835",
+            "event_time": "2026-07-16T09:38:04Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_9030 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_7363|",
+        "system_id": "search_service",
+        "resource_id": "search_7363",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_13"
+        ],
+        "origins": [
+          "integration_management_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-08-12T09:00:00Z",
+        "last_captured_at": "2026-08-12T09:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_8086|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_8086",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_13"
+        ],
+        "origins": [
+          "integration_management_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_138"
+        ],
+        "first_captured_at": "2026-08-12T09:00:00Z",
+        "last_captured_at": "2026-08-12T09:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_5323|",
+        "system_id": "support_platform",
+        "resource_id": "support_5323",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_13"
+        ],
+        "origins": [
+          "integration_management_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-08-12T09:00:00Z",
+        "last_captured_at": "2026-08-12T09:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

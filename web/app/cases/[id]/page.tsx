@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ReportedBadge, StatusBadge } from "@/components/Badges";
+import IdentityTrail from "@/components/IdentityTrail";
+import LineageMap from "@/components/LineageMap";
 import { formatUtc, LANGUAGE_NAMES, REPORTED_LABELS, type CaseDetail } from "@/lib/types";
 
 type Load = { state: "loading" } | { state: "missing" } | { state: "error"; message: string } | { state: "ok"; data: CaseDetail };
@@ -284,11 +286,31 @@ function CaseView({ c }: { c: CaseDetail }) {
               })}
             </Table>
             <p className="mt-3 text-xs text-muted">
-              Historical values were replaced by the change in the audit log shown. Values are masked for privacy.
+              {historical.length > 0 && "Historical values were replaced by the change in the audit log shown. "}
+              Values are masked for privacy.
             </p>
           </>
         )}
       </Section>
+
+      {c.our_status !== "NOT_APPLICABLE" && (
+        <Section title="Where the data lives">
+          <p className="mb-4 text-sm text-ink-2">
+            Every system where evidence captured before the audit time still shows this person&apos;s data, and how it
+            was reported to move between systems.
+          </p>
+          {c.identity_trail.length > 0 && (
+            <div className="mb-6">
+              <IdentityTrail trail={c.identity_trail} />
+            </div>
+          )}
+          <LineageMap lineage={c.lineage} />
+          <p className="mt-4 text-xs text-muted">
+            Arrows come from the shop&apos;s activity log, so they are reported activity (claims), not proof. They are shown
+            for context only and are never used to decide whether a deletion is complete.
+          </p>
+        </Section>
+      )}
 
       <Section title="Evidence found" count={c.evidence_hits.length}>
         {c.evidence_hits.length === 0 ? (

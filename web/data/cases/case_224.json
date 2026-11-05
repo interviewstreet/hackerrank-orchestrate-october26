@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "ne****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ***** ***62",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "d7d75b20…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "N. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ne****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,9 +62,76 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_1140",
       "matched_identifier": "email:ne****@outlook.com",
-      "captured_at": "2026-06-28T06:25:56Z"
+      "captured_at": "2026-06-28T06:25:56Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2409",
+      "event_time": "2026-06-17T07:51:39Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_1140",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_1140",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_1140 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_1140|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_1140",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_80"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:ne****@outlook.com"
+        ],
+        "first_captured_at": "2026-06-28T06:25:56Z",
+        "last_captured_at": "2026-06-28T06:25:56Z",
+        "claims": [
+          {
+            "activity_id": "activity_2409",
+            "event_time": "2026-06-17T07:51:39Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_1140 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

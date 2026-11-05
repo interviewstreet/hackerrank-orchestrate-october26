@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "ar****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** **** ****16",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "7001f886…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "A. R.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ar****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,9 +62,54 @@
       "system_id": "backup_service",
       "resource_id": "backup_9287",
       "matched_identifier": "email:ar****@gmail.com",
-      "captured_at": "2026-04-29T09:00:00Z"
+      "captured_at": "2026-04-29T09:00:00Z",
+      "replica_or_table": "",
+      "origin": "backup_service"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "backup_service|backup_9287|",
+        "system_id": "backup_service",
+        "resource_id": "backup_9287",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_32"
+        ],
+        "origins": [
+          "backup_service"
+        ],
+        "matched_identifiers": [
+          "email:ar****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-29T09:00:00Z",
+        "last_captured_at": "2026-04-29T09:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "fo****@icloud.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** * ** ** ** 86",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "466e06c2…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "M. F.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "fo****@icloud.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,9 +62,85 @@
       "system_id": "security_service",
       "resource_id": "audit_record_8465",
       "matched_identifier": "user_id:user_56",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_8465",
+      "matched_identifier": "user_id:user_56",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "security_service|audit_record_8465|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_8465",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_56"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_8465|customer_data_read_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_8465",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_56"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

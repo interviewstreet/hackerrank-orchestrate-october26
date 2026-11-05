@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "r.****@yahoo.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **93",
       "is_historical": false,
-      "audit_id": "audit_112"
+      "audit_id": "audit_112",
+      "changed_at": "2025-11-25T04:21:34Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "12586c8e…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "R. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** **** **92",
       "is_historical": true,
-      "audit_id": "audit_112"
+      "audit_id": "audit_112",
+      "changed_at": "2025-11-25T04:21:34Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "r.****@yahoo.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,16 +70,85 @@
       "system_id": "account_service",
       "resource_id": "account_1220",
       "matched_identifier": "email:r.****@yahoo.com",
-      "captured_at": "2026-08-22T10:39:10Z"
+      "captured_at": "2026-08-22T10:39:10Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_88",
       "system_id": "security_service",
       "resource_id": "audit_record_1598",
       "matched_identifier": "user_id:user_115",
-      "captured_at": "2026-08-22T10:39:10Z"
+      "captured_at": "2026-08-22T10:39:10Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_1220|",
+        "system_id": "account_service",
+        "resource_id": "account_1220",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_88"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:r.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-08-22T10:39:10Z",
+        "last_captured_at": "2026-08-22T10:39:10Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_1598|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_1598",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_88"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "user_id:user_115"
+        ],
+        "first_captured_at": "2026-08-22T10:39:10Z",
+        "last_captured_at": "2026-08-22T10:39:10Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

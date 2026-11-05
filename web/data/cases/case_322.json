@@ -21,31 +21,49 @@
       "kind": "email",
       "value": "ez****@icloud.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **38",
       "is_historical": false,
-      "audit_id": "audit_138"
+      "audit_id": "audit_138",
+      "changed_at": "2025-12-24T19:16:29Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "430fedaa…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "E. E.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **24",
       "is_historical": true,
-      "audit_id": "audit_138"
+      "audit_id": "audit_138",
+      "changed_at": "2025-12-24T19:16:29Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ez****@icloud.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -54,9 +72,54 @@
       "system_id": "security_service",
       "resource_id": "audit_record_3201",
       "matched_identifier": "user_id:user_320",
-      "captured_at": "2026-05-14T11:44:54Z"
+      "captured_at": "2026-05-14T11:44:54Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "security_service|audit_record_3201|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3201",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_74"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_320"
+        ],
+        "first_captured_at": "2026-05-14T11:44:54Z",
+        "last_captured_at": "2026-05-14T11:44:54Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -139,9 +139,12 @@ class TestExport(unittest.TestCase):
         self.assertEqual(c["reason"], "Deletion request from A. L. (ol****@example.com).")
         self.assertEqual(c["user_id"], "user_9")
         self.assertEqual(c["identities"][0], {"kind": "email", "value": "ne****@example.com",
-                                              "is_historical": False, "audit_id": "audit_7"})
+                                              "is_historical": False, "audit_id": "audit_7",
+                                              "changed_at": "2026-05-01T00:00:00Z",
+                                              "matches_request": False})
         self.assertIn({"kind": "phone", "value": "+** ** ***** **78", "is_historical": False,
-                       "audit_id": ""}, c["identities"])
+                       "audit_id": "", "changed_at": "", "matches_request": False},
+                      c["identities"])
         self.assertEqual({h["matched_identifier"] for h in c["evidence_hits"]},
                          {"email:ne****@example.com", "name:a. l."})
         self.assertEqual(c["resources"][0]["satisfied"], False)
@@ -156,12 +159,34 @@ class TestExport(unittest.TestCase):
         self.assertEqual(set(c["steps"][0]), {"step_no", "phase", "system_id", "resource_id",
                                               "operation", "state", "evidence_id"})
 
+    def test_identity_trail(self):
+        trail = self.load("cases/case_t1.json")["identity_trail"]
+        self.assertEqual(trail, [
+            {"value": "ol****@example.com", "is_current": False, "is_request": True,
+             "replaced_by": {"audit_id": "audit_7", "changed_at": "2026-05-01T00:00:00Z"}},
+            {"value": "ne****@example.com", "is_current": True, "is_request": False,
+             "replaced_by": None},
+        ])
+
+    def test_lineage_map(self):
+        lin = self.load("cases/case_t1.json")["lineage"]
+        self.assertEqual([g["id"] for g in lin["groups"]], ["primary", "copy", "backup"])
+        self.assertEqual(lin["edge_note"], "reported activity (claims)")
+        n = lin["nodes"][0]
+        self.assertEqual((n["system_id"], n["resource_id"], n["group"], n["source"]),
+                         ("account_service", "account_1", "primary", "evidence"))
+        self.assertEqual(n["file_ids"], ["evidence_1"])
+        self.assertEqual(sorted(n["matched_identifiers"]),
+                         ["email:ne****@example.com", "name:a. l."])   # masked
+
     def test_case_without_results_has_empty_lists(self):
         c = self.load("cases/case_t10.json")
         self.assertIsNone(c["user_id"])
         self.assertEqual((c["language"], c["matched_signals"]), ("fr", ["opt_out: publicité"]))
+        self.assertEqual(c["lineage"]["nodes"], [])
+        self.assertEqual(c["identity_trail"], [])
         for k in ("identities", "evidence_hits", "resources", "flows", "restore_risks",
-                  "timeline", "steps"):
+                  "timeline", "steps", "lineage_edges"):
             self.assertEqual(c[k], [])
 
     def test_no_raw_identifier_anywhere(self):

@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "z.****@yahoo.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** *** *** *87",
       "is_historical": false,
-      "audit_id": "audit_139"
+      "audit_id": "audit_139",
+      "changed_at": "2025-12-25T05:21:34Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "97b26059…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "Z. P.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *58",
       "is_historical": true,
-      "audit_id": "audit_139"
+      "audit_id": "audit_139",
+      "changed_at": "2025-12-25T05:21:34Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "z.****@yahoo.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,16 +70,126 @@
       "system_id": "account_service",
       "resource_id": "account_8423",
       "matched_identifier": "email:z.****@yahoo.com",
-      "captured_at": "2026-07-23T11:43:30Z"
+      "captured_at": "2026-07-23T11:43:30Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     },
     {
       "file_id": "evidence_84",
       "system_id": "search_service",
       "resource_id": "search_3038",
       "matched_identifier": "email:z.****@yahoo.com",
-      "captured_at": "2026-07-23T11:43:30Z"
+      "captured_at": "2026-07-23T11:43:30Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2606",
+      "event_time": "2026-06-30T12:44:21Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "account_service",
+      "source_resource_id": "account_8423",
+      "target_system": "account_replication_cluster",
+      "target_resource_id": "account_8423",
+      "reported_result": "PARTIAL",
+      "details": "Replication worker reported its final checkpoint for account_8423."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_8423|",
+        "system_id": "account_service",
+        "resource_id": "account_8423",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_84"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:z.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-07-23T11:43:30Z",
+        "last_captured_at": "2026-07-23T11:43:30Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "account_replication_cluster|account_8423|",
+        "system_id": "account_replication_cluster",
+        "resource_id": "account_8423",
+        "replica_or_table": "",
+        "source": "activity",
+        "group": "copy",
+        "file_ids": [],
+        "origins": [],
+        "matched_identifiers": [],
+        "first_captured_at": "",
+        "last_captured_at": "",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_3038|",
+        "system_id": "search_service",
+        "resource_id": "search_3038",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_84"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:z.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-07-23T11:43:30Z",
+        "last_captured_at": "2026-07-23T11:43:30Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_2606",
+        "event_time": "2026-06-30T12:44:21Z",
+        "label": "sync",
+        "reported_result": "PARTIAL",
+        "details": "Replication worker reported its final checkpoint for account_8423.",
+        "from": "account_service|account_8423|",
+        "to": "account_replication_cluster|account_8423|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

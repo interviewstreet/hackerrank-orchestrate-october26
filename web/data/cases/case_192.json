@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "eo****@fastmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **51",
       "is_historical": false,
-      "audit_id": "audit_16"
+      "audit_id": "audit_16",
+      "changed_at": "2025-04-14T04:06:19Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "99e589e8…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "E. O.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **33",
       "is_historical": true,
-      "audit_id": "audit_16"
+      "audit_id": "audit_16",
+      "changed_at": "2025-04-14T04:06:19Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "eo****@fastmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,30 +70,147 @@
       "system_id": "export_service",
       "resource_id": "export_2705",
       "matched_identifier": "email:eo****@fastmail.com",
-      "captured_at": "2026-07-18T10:43:35Z"
+      "captured_at": "2026-07-18T10:43:35Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_83",
       "system_id": "search_service",
       "resource_id": "search_6680",
       "matched_identifier": "email:eo****@fastmail.com",
-      "captured_at": "2026-07-18T10:43:35Z"
+      "captured_at": "2026-07-18T10:43:35Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_83",
       "system_id": "support_platform",
       "resource_id": "support_5493",
       "matched_identifier": "email:eo****@fastmail.com",
-      "captured_at": "2026-07-18T10:43:35Z"
+      "captured_at": "2026-07-18T10:43:35Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_83",
       "system_id": "analytics_platform",
       "resource_id": "analytics_4472",
       "matched_identifier": "email:eo****@fastmail.com",
-      "captured_at": "2026-07-18T10:43:35Z"
+      "captured_at": "2026-07-18T10:43:35Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_4472|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_4472",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_83"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:eo****@fastmail.com"
+        ],
+        "first_captured_at": "2026-07-18T10:43:35Z",
+        "last_captured_at": "2026-07-18T10:43:35Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "export_service|export_2705|",
+        "system_id": "export_service",
+        "resource_id": "export_2705",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_83"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:eo****@fastmail.com"
+        ],
+        "first_captured_at": "2026-07-18T10:43:35Z",
+        "last_captured_at": "2026-07-18T10:43:35Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_6680|",
+        "system_id": "search_service",
+        "resource_id": "search_6680",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_83"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:eo****@fastmail.com"
+        ],
+        "first_captured_at": "2026-07-18T10:43:35Z",
+        "last_captured_at": "2026-07-18T10:43:35Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_5493|",
+        "system_id": "support_platform",
+        "resource_id": "support_5493",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_83"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:eo****@fastmail.com"
+        ],
+        "first_captured_at": "2026-07-18T10:43:35Z",
+        "last_captured_at": "2026-07-18T10:43:35Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

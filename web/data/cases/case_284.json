@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "ko****@outlook.com",
       "is_historical": false,
-      "audit_id": "audit_170"
+      "audit_id": "audit_170",
+      "changed_at": "2026-01-29T00:19:20Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **92",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "db9864e1…",
       "is_historical": false,
-      "audit_id": "audit_171"
+      "audit_id": "audit_171",
+      "changed_at": "2026-01-29T00:19:20Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "K. A.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ko****@outlook.com",
       "is_historical": true,
-      "audit_id": "audit_170"
+      "audit_id": "audit_170",
+      "changed_at": "2026-01-29T00:19:20Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "b5d4717c…",
       "is_historical": true,
-      "audit_id": "audit_171"
+      "audit_id": "audit_171",
+      "changed_at": "2026-01-29T00:19:20Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ko****@outlook.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_170",
+        "changed_at": "2026-01-29T00:19:20Z"
+      }
+    },
+    {
+      "value": "ko****@outlook.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,9 +88,76 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_6953",
       "matched_identifier": "email:ko****@outlook.com",
-      "captured_at": "2026-05-29T07:43:13Z"
+      "captured_at": "2026-05-29T07:43:13Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_1961",
+      "event_time": "2026-05-18T08:57:57Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_6953",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_6953",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_6953 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_6953|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_6953",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_76"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:ko****@outlook.com"
+        ],
+        "first_captured_at": "2026-05-29T07:43:13Z",
+        "last_captured_at": "2026-05-29T07:43:13Z",
+        "claims": [
+          {
+            "activity_id": "activity_1961",
+            "event_time": "2026-05-18T08:57:57Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_6953 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

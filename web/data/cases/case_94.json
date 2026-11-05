@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "me****@icloud.com",
       "is_historical": false,
-      "audit_id": "audit_252"
+      "audit_id": "audit_252",
+      "changed_at": "2026-05-03T17:09:10Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ***** ***24",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "fa93cbb4…",
       "is_historical": false,
-      "audit_id": "audit_253"
+      "audit_id": "audit_253",
+      "changed_at": "2026-05-03T17:09:10Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "N. M.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "me****@icloud.com",
       "is_historical": true,
-      "audit_id": "audit_252"
+      "audit_id": "audit_252",
+      "changed_at": "2026-05-03T17:09:10Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "b5b178db…",
       "is_historical": true,
-      "audit_id": "audit_253"
+      "audit_id": "audit_253",
+      "changed_at": "2026-05-03T17:09:10Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "me****@icloud.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_252",
+        "changed_at": "2026-05-03T17:09:10Z"
+      }
+    },
+    {
+      "value": "me****@icloud.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,16 +88,85 @@
       "system_id": "search_service",
       "resource_id": "search_7631",
       "matched_identifier": "email:me****@icloud.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_89",
       "system_id": "support_platform",
       "resource_id": "support_7691",
       "matched_identifier": "email:me****@icloud.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "search_service|search_7631|",
+        "system_id": "search_service",
+        "resource_id": "search_7631",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:me****@icloud.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_7691|",
+        "system_id": "support_platform",
+        "resource_id": "support_7691",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:me****@icloud.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

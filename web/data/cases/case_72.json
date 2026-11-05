@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "aj****@fastmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *** ** 74",
       "is_historical": false,
-      "audit_id": "audit_181"
+      "audit_id": "audit_181",
+      "changed_at": "2026-02-08T02:06:19Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "d3973ea3…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "A. J.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** *** ** 10",
       "is_historical": true,
-      "audit_id": "audit_181"
+      "audit_id": "audit_181",
+      "changed_at": "2026-02-08T02:06:19Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "aj****@fastmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,9 +70,54 @@
       "system_id": "export_service",
       "resource_id": "export_4091",
       "matched_identifier": "email:aj****@fastmail.com",
-      "captured_at": "2026-09-16T08:37:39Z"
+      "captured_at": "2026-09-16T08:37:39Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "export_service|export_4091|",
+        "system_id": "export_service",
+        "resource_id": "export_4091",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_93"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:aj****@fastmail.com"
+        ],
+        "first_captured_at": "2026-09-16T08:37:39Z",
+        "last_captured_at": "2026-09-16T08:37:39Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

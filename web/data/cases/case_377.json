@@ -21,31 +21,49 @@
       "kind": "email",
       "value": "ri****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **25",
       "is_historical": false,
-      "audit_id": "audit_14"
+      "audit_id": "audit_14",
+      "changed_at": "2025-04-08T18:41:54Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "10b096b8…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "R. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** **** **13",
       "is_historical": true,
-      "audit_id": "audit_14"
+      "audit_id": "audit_14",
+      "changed_at": "2025-04-08T18:41:54Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ri****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -54,9 +72,54 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_3651",
       "matched_identifier": "email:ri****@gmail.com",
-      "captured_at": "2026-04-14T05:40:07Z"
+      "captured_at": "2026-04-14T05:40:07Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_3651|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_3651",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_70"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:ri****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-14T05:40:07Z",
+        "last_captured_at": "2026-04-14T05:40:07Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

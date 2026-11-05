@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "ch****@outlook.com",
       "is_historical": false,
-      "audit_id": "audit_140"
+      "audit_id": "audit_140",
+      "changed_at": "2025-12-30T01:19:20Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** * ** ** ** 29",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "b723caff…",
       "is_historical": false,
-      "audit_id": "audit_141"
+      "audit_id": "audit_141",
+      "changed_at": "2025-12-30T01:19:20Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "C. M.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ch****@outlook.com",
       "is_historical": true,
-      "audit_id": "audit_140"
+      "audit_id": "audit_140",
+      "changed_at": "2025-12-30T01:19:20Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "6202ebad…",
       "is_historical": true,
-      "audit_id": "audit_141"
+      "audit_id": "audit_141",
+      "changed_at": "2025-12-30T01:19:20Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ch****@outlook.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_140",
+        "changed_at": "2025-12-30T01:19:20Z"
+      }
+    },
+    {
+      "value": "ch****@outlook.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,16 +87,107 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_5544",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-04-29T08:32:22Z"
+      "captured_at": "2026-04-29T08:32:22Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_71",
       "system_id": "search_service",
       "resource_id": "search_5267",
       "matched_identifier": "email:ch****@outlook.com",
-      "captured_at": "2026-04-29T08:32:22Z"
+      "captured_at": "2026-04-29T08:32:22Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_1495",
+      "event_time": "2026-04-18T09:40:46Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_5544",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_5544",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_5544 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_5544|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_5544",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_71"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-04-29T08:32:22Z",
+        "last_captured_at": "2026-04-29T08:32:22Z",
+        "claims": [
+          {
+            "activity_id": "activity_1495",
+            "event_time": "2026-04-18T09:40:46Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_5544 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_5267|",
+        "system_id": "search_service",
+        "resource_id": "search_5267",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_71"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:ch****@outlook.com"
+        ],
+        "first_captured_at": "2026-04-29T08:32:22Z",
+        "last_captured_at": "2026-04-29T08:32:22Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

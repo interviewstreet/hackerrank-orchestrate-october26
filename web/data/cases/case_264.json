@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "mr****@fastmail.com",
       "is_historical": false,
-      "audit_id": "audit_182"
+      "audit_id": "audit_182",
+      "changed_at": "2026-02-08T08:00:00Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *94",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "b1e7764d…",
       "is_historical": false,
-      "audit_id": "audit_183"
+      "audit_id": "audit_183",
+      "changed_at": "2026-02-08T08:00:00Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "M. R.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "mr****@fastmail.com",
       "is_historical": true,
-      "audit_id": "audit_182"
+      "audit_id": "audit_182",
+      "changed_at": "2026-02-08T08:00:00Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "21adc4ef…",
       "is_historical": true,
-      "audit_id": "audit_183"
+      "audit_id": "audit_183",
+      "changed_at": "2026-02-08T08:00:00Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "mr****@fastmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_182",
+        "changed_at": "2026-02-08T08:00:00Z"
+      }
+    },
+    {
+      "value": "mr****@fastmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,37 +87,221 @@
       "system_id": "account_service",
       "resource_id": "account_8316",
       "matched_identifier": "email:mr****@fastmail.com",
-      "captured_at": "2026-06-08T09:58:28Z"
+      "captured_at": "2026-06-08T09:58:28Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_25",
       "system_id": "support_platform",
       "resource_id": "support_9996",
       "matched_identifier": "user_id:user_262",
-      "captured_at": "2026-06-08T09:58:28Z"
+      "captured_at": "2026-06-08T09:58:28Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_25",
       "system_id": "backup_service",
       "resource_id": "backup_3250",
       "matched_identifier": "user_id:user_262",
-      "captured_at": "2026-06-08T09:58:28Z"
+      "captured_at": "2026-06-08T09:58:28Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_25",
       "system_id": "security_service",
       "resource_id": "audit_record_6711",
       "matched_identifier": "user_id:user_262",
-      "captured_at": "2026-06-08T09:58:28Z"
+      "captured_at": "2026-06-08T09:58:28Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_25",
       "system_id": "integration_service",
       "resource_id": "data_flow_4885",
       "matched_identifier": "user_id:user_262",
-      "captured_at": "2026-06-08T09:58:28Z"
+      "captured_at": "2026-06-08T09:58:28Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2117",
+      "event_time": "2026-05-29T09:45:01Z",
+      "event_type": "DISABLE_DATA_FLOW",
+      "kind": "control",
+      "label": "flow disabled",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_4885",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_4885",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for data_flow_4885."
+    },
+    {
+      "activity_id": "activity_2118",
+      "event_time": "2026-05-29T09:52:30Z",
+      "event_type": "BLOCK_RESTORE",
+      "kind": "control",
+      "label": "restore blocked",
+      "source_system": "deletion_worker",
+      "source_resource_id": "backup_3250",
+      "target_system": "backup_service",
+      "target_resource_id": "backup_3250",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for backup_3250."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_8316|",
+        "system_id": "account_service",
+        "resource_id": "account_8316",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_25"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com"
+        ],
+        "first_captured_at": "2026-06-08T09:58:28Z",
+        "last_captured_at": "2026-06-08T09:58:28Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_4885|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_4885",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_25"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_262"
+        ],
+        "first_captured_at": "2026-06-08T09:58:28Z",
+        "last_captured_at": "2026-06-08T09:58:28Z",
+        "claims": [
+          {
+            "activity_id": "activity_2117",
+            "event_time": "2026-05-29T09:45:01Z",
+            "label": "flow disabled",
+            "reported_result": "SUCCESS",
+            "details": "Policy action completed for data_flow_4885."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_6711|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_6711",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_25"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_262"
+        ],
+        "first_captured_at": "2026-06-08T09:58:28Z",
+        "last_captured_at": "2026-06-08T09:58:28Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_9996|",
+        "system_id": "support_platform",
+        "resource_id": "support_9996",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_25"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_262"
+        ],
+        "first_captured_at": "2026-06-08T09:58:28Z",
+        "last_captured_at": "2026-06-08T09:58:28Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_3250|",
+        "system_id": "backup_service",
+        "resource_id": "backup_3250",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_25"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_262"
+        ],
+        "first_captured_at": "2026-06-08T09:58:28Z",
+        "last_captured_at": "2026-06-08T09:58:28Z",
+        "claims": [
+          {
+            "activity_id": "activity_2118",
+            "event_time": "2026-05-29T09:52:30Z",
+            "label": "restore blocked",
+            "reported_result": "SUCCESS",
+            "details": "Policy action completed for backup_3250."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

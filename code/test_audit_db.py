@@ -139,9 +139,15 @@ class TestSchema(DbTestCase):
             "cases": ["case_id", "email", "request_text", "reported_status", "our_status",
                       "classification", "requested_at", "audit_at", "language",
                       "confidence", "matched_signals", "reason"],
-            "identities": ["case_id", "user_id", "kind", "value", "is_historical", "audit_id"],
+            "identities": ["case_id", "user_id", "kind", "value", "is_historical", "audit_id",
+                           "changed_at", "matches_request"],
             "evidence_hits": ["case_id", "file_id", "system_id", "resource_id",
-                              "matched_identifier", "captured_at"],
+                              "matched_identifier", "captured_at", "replica_or_table",
+                              "origin"],
+            "lineage_edges": ["case_id", "activity_id", "event_time", "event_type", "kind",
+                              "label", "source_system", "source_resource_id",
+                              "target_system", "target_resource_id", "reported_result",
+                              "details"],
             "resources": ["case_id", "system_id", "resource_id", "category",
                           "required_treatment", "state_at_audit", "satisfied",
                           "evidence_ids"],
@@ -224,6 +230,16 @@ class TestSaveCase(DbTestCase):
         self.assertEqual({r["user_id"] for r in self.q("SELECT user_id FROM identities")},
                          {"user_9"})
 
+    def test_identity_change_time_and_request_email(self):
+        self.save_full()
+        rows = {(r["value"], r["is_historical"]): r for r in self.q(
+            "SELECT value, is_historical, changed_at, matches_request FROM identities")}
+        old = rows[("old.mail@example.com", 1)]
+        self.assertEqual((old["changed_at"], old["matches_request"]),
+                         ("2026-05-01T00:00:00Z", 1))   # request email = old email
+        self.assertEqual(rows[("new.mail@example.com", 0)]["matches_request"], 0)
+        self.assertEqual(rows[("+55 11 91234 5678", 0)]["changed_at"], "")   # never changed
+
     def test_empty_phone_not_saved(self):
         ident = make_identity()
         ident.current_phone = ""
@@ -242,6 +258,30 @@ class TestSaveCase(DbTestCase):
              "matched_identifier": "name:ana lima",
              "captured_at": "2026-09-20T10:00:00Z"},
         ])
+
+    def test_evidence_origin_and_replica(self):
+        rec = make_record("evidence_2", "account_1", ["email:new.mail@example.com"],
+                          datetime(2026, 9, 20, tzinfo=UTC))
+        rec.replica_or_table = "reporting_replica"
+        self.save_full(evidence=dict(EVIDENCE, records=[rec]),
+                       file_origins={"evidence_2": "customer_data_reporting_replica_capture"})
+        row = self.q("SELECT replica_or_table, origin FROM evidence_hits")[0]
+        self.assertEqual(row, {"replica_or_table": "reporting_replica",
+                               "origin": "customer_data_reporting_replica_capture"})
+
+    def test_lineage_edges_saved_and_replaced(self):
+        edge = {"activity_id": "activity_9", "event_time": "2026-09-01T00:00:00Z",
+                "event_type": "SYNC_RECORD", "kind": "movement", "label": "sync",
+                "source_system": "account_service", "source_resource_id": "account_1",
+                "target_system": "account_replication_cluster",
+                "target_resource_id": "account_1", "reported_result": "SUCCESS",
+                "details": "Replication worker reported its final checkpoint."}
+        self.save_full(lineage_edges=[edge])
+        self.assertEqual(self.q("SELECT activity_id, kind, target_system FROM lineage_edges"),
+                         [{"activity_id": "activity_9", "kind": "movement",
+                           "target_system": "account_replication_cluster"}])
+        self.save_full(lineage_edges=[])          # re-run clears old edges
+        self.assertEqual(audit_db.table_counts(self.conn)["lineage_edges"], 0)
 
     def test_decision_tables(self):
         self.save_full()
@@ -374,6 +414,22 @@ class TestMainSavesCases(DbTestCase):
         self.assertEqual(got, expected)
         self.assertIn("could not save to audit.db", err)
         self.assertIn("disk full", err)
+
+    def test_real_case_43_saves_lineage_edges(self):
+        import csv
+        import lineage
+        with open(DATASET_DIR / "deletion_requests.csv", newline="", encoding="utf-8") as fh:
+            case = next(r for r in csv.DictReader(fh) if r["case_id"] == "case_43")
+        src = lineage.LineageSource(DATASET_DIR)
+        err = io.StringIO()
+        with redirect_stderr(err):
+            result = self.main.run_case(case, self.resolver, self.conn, src)
+        self.assertEqual(result, self.main.run_case(case, self.resolver))  # map never changes the answer
+        edges = self.q("SELECT activity_id, target_system FROM lineage_edges")
+        self.assertIn({"activity_id": "activity_3886",
+                       "target_system": "account_replication_cluster"}, edges)
+        origin = self.q("SELECT origin FROM evidence_hits WHERE file_id = 'evidence_94'")
+        self.assertTrue(origin and origin[0]["origin"])
 
     def test_closed_connection_only_warns(self):
         self.conn.close()

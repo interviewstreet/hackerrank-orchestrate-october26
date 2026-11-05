@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "ra****@zoho.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**60",
       "is_historical": false,
-      "audit_id": "audit_22"
+      "audit_id": "audit_22",
+      "changed_at": "2025-05-18T19:01:14Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "4d760d11…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "R. C.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**54",
       "is_historical": true,
-      "audit_id": "audit_22"
+      "audit_id": "audit_22",
+      "changed_at": "2025-05-18T19:01:14Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ra****@zoho.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,9 +70,85 @@
       "system_id": "security_service",
       "resource_id": "audit_record_1171",
       "matched_identifier": "user_id:user_455",
-      "captured_at": "2026-03-05T12:00:00Z"
+      "captured_at": "2026-03-05T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_reporting_replica_capture"
+    },
+    {
+      "file_id": "evidence_43",
+      "system_id": "security_service",
+      "resource_id": "audit_record_1171",
+      "matched_identifier": "user_id:user_455",
+      "captured_at": "2026-03-05T12:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "security_service|audit_record_1171|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_1171",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_43"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_455"
+        ],
+        "first_captured_at": "2026-03-05T12:00:00Z",
+        "last_captured_at": "2026-03-05T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_1171|customer_data_reporting_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_1171",
+        "replica_or_table": "customer_data_reporting_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_43"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_455"
+        ],
+        "first_captured_at": "2026-03-05T12:00:00Z",
+        "last_captured_at": "2026-03-05T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

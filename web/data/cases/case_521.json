@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "yu****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **76",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "2d41d393…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "Y. L.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "yu****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,16 +62,85 @@
       "system_id": "account_service",
       "resource_id": "account_1482",
       "matched_identifier": "email:yu****@gmail.com",
-      "captured_at": "2026-02-03T05:59:42Z"
+      "captured_at": "2026-02-03T05:59:42Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_48",
       "system_id": "security_service",
       "resource_id": "audit_record_3567",
       "matched_identifier": "user_id:user_519",
-      "captured_at": "2026-02-03T05:59:42Z"
+      "captured_at": "2026-02-03T05:59:42Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_1482|",
+        "system_id": "account_service",
+        "resource_id": "account_1482",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_48"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:yu****@gmail.com"
+        ],
+        "first_captured_at": "2026-02-03T05:59:42Z",
+        "last_captured_at": "2026-02-03T05:59:42Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3567|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3567",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_48"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_519"
+        ],
+        "first_captured_at": "2026-02-03T05:59:42Z",
+        "last_captured_at": "2026-02-03T05:59:42Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

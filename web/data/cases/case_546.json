@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "ma****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**47",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "85501008…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "M. C.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ma****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,37 +62,207 @@
       "system_id": "identity_service",
       "resource_id": "tombstone_8095",
       "matched_identifier": "email_hash:85501008…",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_8095",
+      "matched_identifier": "email_hash:85501008…",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "identity_service",
       "resource_id": "tombstone_8095",
       "matched_identifier": "name:m. c.",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_8095",
+      "matched_identifier": "name:m. c.",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "identity_service",
       "resource_id": "tombstone_8095",
       "matched_identifier": "phone:***********47",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_8095",
+      "matched_identifier": "phone:***********47",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "identity_service",
       "resource_id": "tombstone_8095",
       "matched_identifier": "user_id:user_546",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_8095",
+      "matched_identifier": "user_id:user_546",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "security_service",
       "resource_id": "audit_record_518",
       "matched_identifier": "user_id:user_546",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "security_service",
+      "resource_id": "audit_record_518",
+      "matched_identifier": "user_id:user_546",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "identity_service|tombstone_8095|",
+        "system_id": "identity_service",
+        "resource_id": "tombstone_8095",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email_hash:85501008…",
+          "name:m. c.",
+          "phone:***********47",
+          "user_id:user_546"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "identity_service|tombstone_8095|customer_data_failover_replica",
+        "system_id": "identity_service",
+        "resource_id": "tombstone_8095",
+        "replica_or_table": "customer_data_failover_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email_hash:85501008…",
+          "name:m. c.",
+          "phone:***********47",
+          "user_id:user_546"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_518|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_518",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_546"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_518|customer_data_failover_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_518",
+        "replica_or_table": "customer_data_failover_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_546"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "le****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** * ** ** ** 06",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "54cf4f53…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "L. G.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "le****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,16 +62,85 @@
       "system_id": "identity_service",
       "resource_id": "user_17",
       "matched_identifier": "user_id:user_17",
-      "captured_at": "2026-03-10T06:00:00Z"
+      "captured_at": "2026-03-10T06:00:00Z",
+      "replica_or_table": "",
+      "origin": "identity_service"
     },
     {
       "file_id": "evidence_67",
       "system_id": "account_service",
       "resource_id": "account_6523",
       "matched_identifier": "email:le****@outlook.com",
-      "captured_at": "2026-03-10T06:18:01Z"
+      "captured_at": "2026-03-10T06:18:01Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_6523|",
+        "system_id": "account_service",
+        "resource_id": "account_6523",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_67"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:le****@outlook.com"
+        ],
+        "first_captured_at": "2026-03-10T06:18:01Z",
+        "last_captured_at": "2026-03-10T06:18:01Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "identity_service|user_17|",
+        "system_id": "identity_service",
+        "resource_id": "user_17",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_42"
+        ],
+        "origins": [
+          "identity_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_17"
+        ],
+        "first_captured_at": "2026-03-10T06:00:00Z",
+        "last_captured_at": "2026-03-10T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

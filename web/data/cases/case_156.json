@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "ks****@fastmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **81",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "b9b06071…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "K. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ks****@fastmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,37 +62,249 @@
       "system_id": "export_service",
       "resource_id": "export_5897",
       "matched_identifier": "email:ks****@fastmail.com",
-      "captured_at": "2026-08-02T07:00:00Z"
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "export_service",
+      "resource_id": "export_5897",
+      "matched_identifier": "email:ks****@fastmail.com",
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_15",
       "system_id": "search_service",
       "resource_id": "search_4870",
       "matched_identifier": "email:ks****@fastmail.com",
-      "captured_at": "2026-08-02T07:00:00Z"
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "search_service",
+      "resource_id": "search_4870",
+      "matched_identifier": "email:ks****@fastmail.com",
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_15",
       "system_id": "search_service",
       "resource_id": "search_4870",
       "matched_identifier": "name:k. s.",
-      "captured_at": "2026-08-02T07:00:00Z"
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "search_service",
+      "resource_id": "search_4870",
+      "matched_identifier": "name:k. s.",
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_15",
       "system_id": "search_service",
       "resource_id": "search_4870",
       "matched_identifier": "user_id:user_154",
-      "captured_at": "2026-08-02T07:00:00Z"
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "search_service",
+      "resource_id": "search_4870",
+      "matched_identifier": "user_id:user_154",
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_15",
       "system_id": "security_service",
       "resource_id": "audit_record_5890",
       "matched_identifier": "user_id:user_154",
-      "captured_at": "2026-08-02T07:00:00Z"
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_15",
+      "system_id": "security_service",
+      "resource_id": "audit_record_5890",
+      "matched_identifier": "user_id:user_154",
+      "captured_at": "2026-08-02T07:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "export_service|export_5897|",
+        "system_id": "export_service",
+        "resource_id": "export_5897",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_15"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:ks****@fastmail.com"
+        ],
+        "first_captured_at": "2026-08-02T07:00:00Z",
+        "last_captured_at": "2026-08-02T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "export_service|export_5897|customer_data_read_replica",
+        "system_id": "export_service",
+        "resource_id": "export_5897",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_15"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:ks****@fastmail.com"
+        ],
+        "first_captured_at": "2026-08-02T07:00:00Z",
+        "last_captured_at": "2026-08-02T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_4870|",
+        "system_id": "search_service",
+        "resource_id": "search_4870",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_15"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:ks****@fastmail.com",
+          "name:k. s.",
+          "user_id:user_154"
+        ],
+        "first_captured_at": "2026-08-02T07:00:00Z",
+        "last_captured_at": "2026-08-02T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_4870|customer_data_read_replica",
+        "system_id": "search_service",
+        "resource_id": "search_4870",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_15"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:ks****@fastmail.com",
+          "name:k. s.",
+          "user_id:user_154"
+        ],
+        "first_captured_at": "2026-08-02T07:00:00Z",
+        "last_captured_at": "2026-08-02T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_5890|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_5890",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_15"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_154"
+        ],
+        "first_captured_at": "2026-08-02T07:00:00Z",
+        "last_captured_at": "2026-08-02T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_5890|customer_data_read_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_5890",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_15"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_154"
+        ],
+        "first_captured_at": "2026-08-02T07:00:00Z",
+        "last_captured_at": "2026-08-02T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

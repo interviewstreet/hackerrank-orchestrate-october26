@@ -38,6 +38,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import audit_db  # noqa: E402
+import lineage  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT_DIR = REPO_ROOT / "web" / "data"
@@ -180,14 +181,22 @@ def build_case_list(conn: sqlite3.Connection) -> list[dict]:
 
 def build_case(conn: sqlite3.Connection, case_id: str) -> dict:
     case = _rows(conn, "SELECT * FROM cases WHERE case_id = ?", (case_id,))[0]
-    ids = _rows(conn, "SELECT user_id, kind, value, is_historical, audit_id "
-                      "FROM identities WHERE case_id = ? ORDER BY rowid", (case_id,))
+    ids = _rows(conn, "SELECT user_id, kind, value, is_historical, audit_id, changed_at, "
+                      "matches_request FROM identities WHERE case_id = ? ORDER BY rowid",
+                (case_id,))
     names = [i["value"] for i in ids if i["kind"] == "name"]
     phones = [i["value"] for i in ids if i["kind"] == "phone"]
 
     hits = _rows(conn, "SELECT file_id, system_id, resource_id, matched_identifier, "
-                       "captured_at FROM evidence_hits WHERE case_id = ? "
-                       "ORDER BY captured_at, file_id, matched_identifier", (case_id,))
+                       "captured_at, replica_or_table, origin FROM evidence_hits "
+                       "WHERE case_id = ? ORDER BY captured_at, file_id, matched_identifier",
+                 (case_id,))
+    edges = _rows(conn, "SELECT activity_id, event_time, event_type, kind, label, "
+                        "source_system, source_resource_id, target_system, "
+                        "target_resource_id, reported_result, details FROM lineage_edges "
+                        "WHERE case_id = ? ORDER BY event_time, activity_id", (case_id,))
+    for e in edges:
+        e["details"] = mask_text(e["details"], names, phones)
     resources = _rows(conn, "SELECT system_id, resource_id, category, required_treatment, "
                             "state_at_audit, satisfied, evidence_ids FROM resources "
                             "WHERE case_id = ? ORDER BY rowid", (case_id,))
@@ -225,15 +234,129 @@ def build_case(conn: sqlite3.Connection, case_id: str) -> dict:
         "user_id": ids[0]["user_id"] if ids else None,
         "identities": [
             {"kind": i["kind"], "value": mask_value(i["kind"], i["value"]),
-             "is_historical": bool(i["is_historical"]), "audit_id": i["audit_id"]}
+             "is_historical": bool(i["is_historical"]), "audit_id": i["audit_id"],
+             "changed_at": i["changed_at"], "matches_request": bool(i["matches_request"])}
             for i in ids],
+        "identity_trail": build_identity_trail(ids),
         "evidence_hits": [dict(h, matched_identifier=mask_identifier(h["matched_identifier"]))
                           for h in hits],
+        # Reported activity = claims (system_activity.csv); display only
+        "lineage_edges": edges,
+        "lineage": build_lineage(hits, edges, flows, restore_risks),
         "resources": resources,
         "flows": flows,
         "restore_risks": restore_risks,
         "timeline": timeline,
         "steps": steps,
+    }
+
+
+def build_identity_trail(ids: list[dict]) -> list[dict]:
+    """
+    The subject's emails, oldest first, each with the audit-log change that
+    replaced it: old email -> (audit_293, 2026-05-28) -> current email.
+    Values are masked.
+    """
+    emails = [i for i in ids if i["kind"] == "email"]
+    older = sorted((i for i in emails if i["is_historical"]),
+                   key=lambda i: (i["changed_at"] or "", i["audit_id"]))
+    current = [i for i in emails if not i["is_historical"]]
+    trail = []
+    for i in older + current:
+        trail.append({
+            "value": mask_email(i["value"]),
+            "is_current": not i["is_historical"],
+            "is_request": bool(i["matches_request"]),
+            # the change that moved this email to the next one (None for current)
+            "replaced_by": ({"audit_id": i["audit_id"], "changed_at": i["changed_at"]}
+                            if i["is_historical"] else None),
+        })
+    return trail
+
+
+def _node_id(system_id: str, resource_id: str, replica: str = "") -> str:
+    return f"{system_id}|{resource_id}|{replica or ''}"
+
+
+def build_lineage(hits: list[dict], edges: list[dict], flows: list[dict],
+                  restore_risks: list[dict]) -> dict:
+    """
+    Nodes (one per system / resource / replica copy, grouped into columns)
+    and edges for the case page's lineage map.
+
+      nodes from evidence hits          source = "evidence"
+      nodes only named in activity rows source = "activity"
+      movement edges                    reported activity (claims)
+      control rows (flow / restore)     attached to their node as claims
+      P3 flows / restore_risks          flags on their node (active_flow,
+                                        restore_risk), drawn on top
+    """
+    nodes: dict[str, dict] = {}
+
+    def node(system_id: str, resource_id: str, replica: str = "", source: str = "activity",
+             origins: tuple = ()) -> dict:
+        nid = _node_id(system_id, resource_id, replica)
+        if nid not in nodes:
+            nodes[nid] = {"id": nid, "system_id": system_id, "resource_id": resource_id,
+                          "replica_or_table": replica, "source": source,
+                          "group": lineage.node_group(system_id, origins, replica),
+                          "file_ids": [], "origins": [], "matched_identifiers": [],
+                          "first_captured_at": "", "last_captured_at": "",
+                          "claims": [], "active_flow": None, "restore_risk": None}
+        return nodes[nid]
+
+    for h in hits:
+        n = node(h["system_id"], h["resource_id"], h["replica_or_table"], "evidence",
+                 (h["origin"],))
+        for key, value in (("file_ids", h["file_id"]), ("origins", h["origin"]),
+                           ("matched_identifiers", mask_identifier(h["matched_identifier"]))):
+            if value and value not in n[key]:
+                n[key].append(value)
+        captured = h["captured_at"]
+        if captured and (not n["first_captured_at"] or captured < n["first_captured_at"]):
+            n["first_captured_at"] = captured
+        if captured > n["last_captured_at"]:
+            n["last_captured_at"] = captured
+    # the group may depend on all origins seen for a node
+    for n in nodes.values():
+        n["group"] = lineage.node_group(n["system_id"], n["origins"], n["replica_or_table"])
+
+    def find(system_id: str, resource_id: str) -> dict:
+        """The primary copy of (system, resource) if seen in evidence, else a new node."""
+        same = [n for n in nodes.values()
+                if n["system_id"] == system_id and n["resource_id"].lower() == resource_id.lower()]
+        same.sort(key=lambda n: (n["replica_or_table"] != "", n["replica_or_table"]))
+        return same[0] if same else node(system_id, resource_id)
+
+    out_edges = []
+    for e in edges:
+        claim = {k: e[k] for k in ("activity_id", "event_time", "label", "reported_result",
+                                   "details")}
+        if e["kind"] == "control":
+            find(e["target_system"], e["target_resource_id"])["claims"].append(claim)
+            continue
+        src = find(e["source_system"], e["source_resource_id"])
+        dst = find(e["target_system"], e["target_resource_id"])
+        out_edges.append(dict(claim, **{"from": src["id"], "to": dst["id"], "kind": "claim"}))
+
+    for f in flows:
+        find(f["system_id"], f["resource_id"])["active_flow"] = {
+            "kind": f["kind"], "active_at_audit": f["active_at_audit"],
+            "evidence_id": f["evidence_id"]}
+    for r in restore_risks:
+        find(r["system_id"], r["resource_id"])["restore_risk"] = {
+            "active_at_audit": r["active_at_audit"], "evidence_id": r["evidence_id"]}
+
+    ordered = sorted(nodes.values(), key=lambda n: (
+        lineage.GROUP_ORDER.index(n["group"]), n["system_id"], n["resource_id"],
+        n["replica_or_table"]))
+    return {
+        "groups": [{"id": g, "label": label} for g, label in (
+            (lineage.PRIMARY, "Primary systems"), (lineage.COPY, "Copies"),
+            (lineage.BACKUP, "Backups & archives"))],
+        "nodes": ordered,
+        "edges": out_edges,
+        "edge_note": "reported activity (claims)",
     }
 
 

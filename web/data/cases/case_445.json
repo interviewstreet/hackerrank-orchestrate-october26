@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "di****@zoho.com",
       "is_historical": false,
-      "audit_id": "audit_93"
+      "audit_id": "audit_93",
+      "changed_at": "2025-11-09T20:30:07Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ***** ***58",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "f848286b…",
       "is_historical": false,
-      "audit_id": "audit_94"
+      "audit_id": "audit_94",
+      "changed_at": "2025-11-09T20:30:07Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "D. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "di****@zoho.com",
       "is_historical": true,
-      "audit_id": "audit_93"
+      "audit_id": "audit_93",
+      "changed_at": "2025-11-09T20:30:07Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "01a5e386…",
       "is_historical": true,
-      "audit_id": "audit_94"
+      "audit_id": "audit_94",
+      "changed_at": "2025-11-09T20:30:07Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "di****@zoho.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_93",
+        "changed_at": "2025-11-09T20:30:07Z"
+      }
+    },
+    {
+      "value": "di****@zoho.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,16 +88,110 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_7584",
       "matched_identifier": "email:di****@zoho.com",
-      "captured_at": "2026-03-10T05:38:48Z"
+      "captured_at": "2026-03-10T05:38:48Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     },
     {
       "file_id": "evidence_66",
       "system_id": "search_service",
       "resource_id": "search_2886",
       "matched_identifier": "email:di****@zoho.com",
-      "captured_at": "2026-03-10T05:38:48Z"
+      "captured_at": "2026-03-10T05:38:48Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_773",
+      "event_time": "2026-02-28T06:57:18Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "integration_service",
+      "source_resource_id": "data_flow_7584",
+      "target_system": "search_service",
+      "target_resource_id": "search_2886",
+      "reported_result": "SUCCESS",
+      "details": "Active connector repopulated downstream resource search_2886."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_7584|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_7584",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_66"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:di****@zoho.com"
+        ],
+        "first_captured_at": "2026-03-10T05:38:48Z",
+        "last_captured_at": "2026-03-10T05:38:48Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_2886|",
+        "system_id": "search_service",
+        "resource_id": "search_2886",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_66"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:di****@zoho.com"
+        ],
+        "first_captured_at": "2026-03-10T05:38:48Z",
+        "last_captured_at": "2026-03-10T05:38:48Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_773",
+        "event_time": "2026-02-28T06:57:18Z",
+        "label": "sync",
+        "reported_result": "SUCCESS",
+        "details": "Active connector repopulated downstream resource search_2886.",
+        "from": "integration_service|data_flow_7584|",
+        "to": "search_service|search_2886|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

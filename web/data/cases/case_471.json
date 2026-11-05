@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "k.****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ***** ***83",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "2534c888…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "K. I.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "k.****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,9 +62,76 @@
       "system_id": "backup_service",
       "resource_id": "backup_7543",
       "matched_identifier": "email:k.****@gmail.com",
-      "captured_at": "2026-02-28T10:36:37Z"
+      "captured_at": "2026-02-28T10:36:37Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_526",
+      "event_time": "2026-02-11T11:55:10Z",
+      "event_type": "CHECK_RESTORE_ACCESS",
+      "kind": "control",
+      "label": "restore-access check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "backup_7543",
+      "target_system": "backup_service",
+      "target_resource_id": "backup_7543",
+      "reported_result": "SUCCESS",
+      "details": "Restore-access check confirmed that archive backup_7543 can still be restored."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "backup_service|backup_7543|",
+        "system_id": "backup_service",
+        "resource_id": "backup_7543",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_65"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:k.****@gmail.com"
+        ],
+        "first_captured_at": "2026-02-28T10:36:37Z",
+        "last_captured_at": "2026-02-28T10:36:37Z",
+        "claims": [
+          {
+            "activity_id": "activity_526",
+            "event_time": "2026-02-11T11:55:10Z",
+            "label": "restore-access check",
+            "reported_result": "SUCCESS",
+            "details": "Restore-access check confirmed that archive backup_7543 can still be restored."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

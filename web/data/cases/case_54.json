@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "bc****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**46",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "da5e2641…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "B. C.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "bc****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,79 +62,475 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_1738",
       "matched_identifier": "email:bc****@gmail.com",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "integration_service",
       "resource_id": "data_flow_5080",
       "matched_identifier": "email:bc****@gmail.com",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_5080",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "search_service",
       "resource_id": "search_3995",
       "matched_identifier": "email:bc****@gmail.com",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "search_service",
+      "resource_id": "search_3995",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "support_platform",
       "resource_id": "support_835",
       "matched_identifier": "email:bc****@gmail.com",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "support_platform",
+      "resource_id": "support_835",
+      "matched_identifier": "email:bc****@gmail.com",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1738",
       "matched_identifier": "email_hash:da5e2641…",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "email_hash:da5e2641…",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "search_service",
       "resource_id": "search_3995",
       "matched_identifier": "name:b. c.",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "search_service",
+      "resource_id": "search_3995",
+      "matched_identifier": "name:b. c.",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1738",
       "matched_identifier": "phone:***********46",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "phone:***********46",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1738",
       "matched_identifier": "user_id:user_52",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1738",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "search_service",
       "resource_id": "search_3995",
       "matched_identifier": "user_id:user_52",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "search_service",
+      "resource_id": "search_3995",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "security_service",
       "resource_id": "audit_record_6325",
       "matched_identifier": "user_id:user_52",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6325",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "support_platform",
       "resource_id": "support_835",
       "matched_identifier": "user_id:user_52",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "support_platform",
+      "resource_id": "support_835",
+      "matched_identifier": "user_id:user_52",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3584",
+      "event_time": "2026-09-01T11:54:17Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_5080",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_5080",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_5080 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_1738|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_1738",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com",
+          "email_hash:da5e2641…",
+          "phone:***********46",
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "analytics_platform|analytics_1738|customer_data_read_replica",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_1738",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com",
+          "email_hash:da5e2641…",
+          "phone:***********46",
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_5080|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_5080",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_3584",
+            "event_time": "2026-09-01T11:54:17Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_5080 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_5080|customer_data_read_replica",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_5080",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_3995|",
+        "system_id": "search_service",
+        "resource_id": "search_3995",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com",
+          "name:b. c.",
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_3995|customer_data_read_replica",
+        "system_id": "search_service",
+        "resource_id": "search_3995",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com",
+          "name:b. c.",
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_6325|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_6325",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_6325|customer_data_read_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_6325",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_835|",
+        "system_id": "support_platform",
+        "resource_id": "support_835",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com",
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_835|customer_data_read_replica",
+        "system_id": "support_platform",
+        "resource_id": "support_835",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:bc****@gmail.com",
+          "user_id:user_52"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

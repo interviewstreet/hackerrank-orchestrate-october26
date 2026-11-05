@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "na****@zoho.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *** **92",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "f806f3db…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "N. K.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "na****@zoho.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,16 +62,110 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_8346",
       "matched_identifier": "email:na****@zoho.com",
-      "captured_at": "2026-07-23T11:43:30Z"
+      "captured_at": "2026-07-23T11:43:30Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     },
     {
       "file_id": "evidence_84",
       "system_id": "search_service",
       "resource_id": "search_4894",
       "matched_identifier": "email:na****@zoho.com",
-      "captured_at": "2026-07-23T11:43:30Z"
+      "captured_at": "2026-07-23T11:43:30Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2548",
+      "event_time": "2026-06-27T12:49:24Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "integration_service",
+      "source_resource_id": "data_flow_8346",
+      "target_system": "search_service",
+      "target_resource_id": "search_4894",
+      "reported_result": "SUCCESS",
+      "details": "Active connector repopulated downstream resource search_4894."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_8346|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_8346",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_84"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:na****@zoho.com"
+        ],
+        "first_captured_at": "2026-07-23T11:43:30Z",
+        "last_captured_at": "2026-07-23T11:43:30Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_4894|",
+        "system_id": "search_service",
+        "resource_id": "search_4894",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_84"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:na****@zoho.com"
+        ],
+        "first_captured_at": "2026-07-23T11:43:30Z",
+        "last_captured_at": "2026-07-23T11:43:30Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_2548",
+        "event_time": "2026-06-27T12:49:24Z",
+        "label": "sync",
+        "reported_result": "SUCCESS",
+        "details": "Active connector repopulated downstream resource search_4894.",
+        "from": "integration_service|data_flow_8346|",
+        "to": "search_service|search_4894|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

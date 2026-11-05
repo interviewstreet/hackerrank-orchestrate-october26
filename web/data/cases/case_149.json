@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "le****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** * ** ** ** 34",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "e6500ff2…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "L. M.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "le****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,16 +63,85 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_5886",
       "matched_identifier": "email:le****@gmail.com",
-      "captured_at": "2026-08-07T07:41:04Z"
+      "captured_at": "2026-08-07T07:41:04Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_86",
       "system_id": "search_service",
       "resource_id": "search_7672",
       "matched_identifier": "email:le****@gmail.com",
-      "captured_at": "2026-08-07T07:41:04Z"
+      "captured_at": "2026-08-07T07:41:04Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_5886|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_5886",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_86"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:le****@gmail.com"
+        ],
+        "first_captured_at": "2026-08-07T07:41:04Z",
+        "last_captured_at": "2026-08-07T07:41:04Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_7672|",
+        "system_id": "search_service",
+        "resource_id": "search_7672",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_86"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:le****@gmail.com"
+        ],
+        "first_captured_at": "2026-08-07T07:41:04Z",
+        "last_captured_at": "2026-08-07T07:41:04Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

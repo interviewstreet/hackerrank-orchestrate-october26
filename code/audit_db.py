@@ -14,6 +14,9 @@ Tables (one row per item, every row keyed by case_id):
     resources      P3 decision["resources"]  (CONTRACTS.md section 2)
     flows          P3 decision["flows"]
     restore_risks  P3 decision["restore_risks"]
+    lineage_edges  system_activity.csv rows about the case's resources, at or
+                   before audit_at (lineage.py). Reported activity = claims;
+                   display only, never used for a deletion decision
     timeline       P3 decision["timeline"]
     steps          P4 build_steps() output
 
@@ -58,7 +61,9 @@ CREATE TABLE IF NOT EXISTS identities (
     kind          TEXT NOT NULL CHECK (kind IN ('email', 'phone', 'email_hash', 'name')),
     value         TEXT NOT NULL,
     is_historical INTEGER NOT NULL CHECK (is_historical IN (0, 1)),
-    audit_id      TEXT NOT NULL
+    audit_id      TEXT NOT NULL,
+    changed_at      TEXT NOT NULL,         -- event_time of audit_id ('' if never changed)
+    matches_request INTEGER NOT NULL       -- 1 = this is the email given with the request
 );
 CREATE TABLE IF NOT EXISTS evidence_hits (
     case_id            TEXT NOT NULL,
@@ -66,7 +71,9 @@ CREATE TABLE IF NOT EXISTS evidence_hits (
     system_id          TEXT NOT NULL,
     resource_id        TEXT NOT NULL,
     matched_identifier TEXT NOT NULL,
-    captured_at        TEXT NOT NULL
+    captured_at        TEXT NOT NULL,
+    replica_or_table   TEXT NOT NULL,      -- '' = primary copy
+    origin             TEXT NOT NULL       -- evidence_files.csv origin of file_id
 );
 CREATE TABLE IF NOT EXISTS resources (
     case_id            TEXT NOT NULL,
@@ -103,6 +110,20 @@ CREATE TABLE IF NOT EXISTS timeline (
     state_after TEXT NOT NULL,
     evidence_id TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS lineage_edges (
+    case_id            TEXT NOT NULL,
+    activity_id        TEXT NOT NULL,
+    event_time         TEXT NOT NULL,
+    event_type         TEXT NOT NULL,
+    kind               TEXT NOT NULL,      -- movement / control
+    label              TEXT NOT NULL,      -- sync, index, export, cache, restore, flow check ...
+    source_system      TEXT NOT NULL,
+    source_resource_id TEXT NOT NULL,
+    target_system      TEXT NOT NULL,
+    target_resource_id TEXT NOT NULL,
+    reported_result    TEXT NOT NULL,      -- a claim, not proof
+    details            TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS steps (
     case_id     TEXT NOT NULL,
     step_no     INTEGER NOT NULL,
@@ -120,10 +141,11 @@ CREATE INDEX IF NOT EXISTS idx_flows_case         ON flows(case_id);
 CREATE INDEX IF NOT EXISTS idx_restore_risks_case ON restore_risks(case_id);
 CREATE INDEX IF NOT EXISTS idx_timeline_case      ON timeline(case_id);
 CREATE INDEX IF NOT EXISTS idx_steps_case         ON steps(case_id);
+CREATE INDEX IF NOT EXISTS idx_lineage_edges_case ON lineage_edges(case_id);
 """
 
 TABLES = ("cases", "identities", "evidence_hits", "resources", "flows", "restore_risks",
-          "timeline", "steps")
+          "timeline", "steps", "lineage_edges")
 
 
 def _expected_columns() -> dict[str, list[str]]:
@@ -207,6 +229,9 @@ def identity_rows(case_id: str, identity) -> list[tuple]:
                 return ch.audit_id
         return ""
 
+    times = {ch.audit_id: ch.event_time for ch in history}
+    request_email = norm("email", getattr(identity, "request_email", "") or "")
+
     uid = identity.user_id
     rows: list[tuple] = []
     seen: set[tuple[str, str]] = set()
@@ -219,7 +244,9 @@ def identity_rows(case_id: str, identity) -> list[tuple]:
             return
         seen.add(key)
         aid = replaced_by(kind, value) if historical else set_by(kind, value)
-        rows.append((case_id, uid, kind, value, _b(historical), aid))
+        is_request = kind == "email" and bool(request_email) and norm(kind, value) == request_email
+        rows.append((case_id, uid, kind, value, _b(historical), aid,
+                     _s(times.get(aid, "")), _b(is_request)))
 
     add("email", identity.current_email, False)
     add("phone", identity.current_phone, False)
@@ -234,17 +261,24 @@ def identity_rows(case_id: str, identity) -> list[tuple]:
     return rows
 
 
-def evidence_rows(case_id: str, evidence: Optional[dict]) -> list[tuple]:
-    """One row per (record, matched identifier) in evidence['records']."""
+def evidence_rows(case_id: str, evidence: Optional[dict],
+                  file_origins: Optional[dict[str, str]] = None) -> list[tuple]:
+    """
+    One row per (record, matched identifier) in evidence['records'].
+    *file_origins* maps file_id -> origin from evidence_files.csv.
+    """
     if not evidence:
         return []
+    origins = file_origins or {}
     rows: list[tuple] = []
     seen: set[tuple] = set()
     for rec in evidence.get("records", []) or []:
         matched = list(getattr(rec, "identifiers_matched", []) or []) or [""]
         for ident in matched:
             row = (case_id, _s(rec.evidence_id), _s(rec.system_id), _s(rec.resource_id),
-                   _s(ident), _s(rec.captured_at))
+                   _s(ident), _s(rec.captured_at),
+                   _s(getattr(rec, "replica_or_table", None)),
+                   _s(origins.get(rec.evidence_id, "")))
             if row not in seen:
                 seen.add(row)
                 rows.append(row)
@@ -287,6 +321,18 @@ def timeline_rows(case_id: str, decision: Optional[dict]) -> list[tuple]:
     return rows
 
 
+def lineage_rows(case_id: str, edges: Optional[Iterable]) -> list[tuple]:
+    """Rows from lineage.LineageEdge objects (or dicts with the same keys)."""
+    rows = []
+    for e in edges or []:
+        get = (lambda k: e.get(k)) if isinstance(e, dict) else (lambda k: getattr(e, k, None))
+        rows.append((case_id, *(_s(get(k)) for k in (
+            "activity_id", "event_time", "event_type", "kind", "label", "source_system",
+            "source_resource_id", "target_system", "target_resource_id", "reported_result",
+            "details"))))
+    return rows
+
+
 def step_rows(case_id: str, steps: Optional[Iterable[dict]]) -> list[tuple]:
     rows = []
     for s in steps or []:
@@ -313,12 +359,16 @@ def classifier_fields(result) -> tuple[str, str, str, str]:
 def save_case(conn: sqlite3.Connection, case: dict, *, our_status: str,
               classification: str, classifier=None, identity=None,
               evidence: Optional[dict] = None, decision: Optional[dict] = None,
-              steps: Optional[Iterable[dict]] = None) -> None:
+              steps: Optional[Iterable[dict]] = None,
+              lineage_edges: Optional[Iterable] = None,
+              file_origins: Optional[dict[str, str]] = None) -> None:
     """
     Save one case's results. Any argument may be None when the pipeline
     stopped early (NOT_APPLICABLE, unresolved email, an error ...).
     *classifier* is the ClassificationResult; it fills language,
-    confidence, matched_signals and reason.
+    confidence, matched_signals and reason. *lineage_edges* (from
+    lineage.LineageSource.edges_for) and *file_origins* (file_id -> origin)
+    only feed the website's lineage map.
 
     Old rows for this case_id are deleted first, in the same transaction,
     so running the pipeline twice never duplicates rows. If anything fails
@@ -327,12 +377,13 @@ def save_case(conn: sqlite3.Connection, case: dict, *, our_status: str,
     cid = case["case_id"]
     rows = {
         "identities": identity_rows(cid, identity),
-        "evidence_hits": evidence_rows(cid, evidence),
+        "evidence_hits": evidence_rows(cid, evidence, file_origins),
         "resources": resource_rows(cid, decision),
         "flows": flow_rows(cid, decision),
         "restore_risks": restore_risk_rows(cid, decision),
         "timeline": timeline_rows(cid, decision),
         "steps": step_rows(cid, steps),
+        "lineage_edges": lineage_rows(cid, lineage_edges),
     }
     case_row = (cid, _s(case.get("email")), _s(case.get("request_text")),
                 _s(case.get("reported_status")), _s(our_status), _s(classification),

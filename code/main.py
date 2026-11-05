@@ -32,6 +32,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import audit_db
+import lineage
 from evidence_search import find_records
 from identity_resolver import IdentityResolver
 from models import EVIDENCE_KEYS, ClassificationResult
@@ -88,6 +89,7 @@ def process_case(case: dict, resolver: IdentityResolver,
         warn(f"{case_id}: classifier UNCERTAIN ({cls.note}); treating as deletion")
 
     audit_at = parse_ts(case.get("audit_at"), context=f"{case_id} audit_at")
+    trace["audit_at"] = audit_at
     if audit_at is None:
         # No cut-off means we cannot tell which evidence is allowed, so we
         # never search without one (P2's request).
@@ -128,13 +130,15 @@ def process_case(case: dict, resolver: IdentityResolver,
 
 
 def run_case(case: dict, resolver: IdentityResolver,
-             db=None) -> tuple[str, str, str, bool]:
+             db=None, lineage_src=None) -> tuple[str, str, str, bool]:
     """
     Run one case safely. Returns (deletion_status, steps_json, classifier_label,
     failed). Any error becomes INCOMPLETE with [] and a warning.
 
     If *db* (an audit_db connection) is given, the case is saved to it at
     the end. Saving has its own try/except: a database error only warns.
+    *lineage_src* (lineage.LineageSource) adds the website's lineage-map
+    data; it is display only and never changes the answer.
     """
     case_id = case.get("case_id", "?")
     trace: dict = {}
@@ -150,13 +154,18 @@ def run_case(case: dict, resolver: IdentityResolver,
 
     if db is not None:
         try:
+            edges, origins = [], None
+            if lineage_src is not None and trace.get("evidence"):
+                edges = lineage_src.edges_for(lineage.case_resources(trace["evidence"]),
+                                              trace.get("audit_at"))
+                origins = lineage_src.file_origins
             audit_db.save_case(db, case, our_status=status,
                                classification=trace.get("classification", ""),
                                classifier=trace.get("classifier"),
                                identity=trace.get("identity"),
                                evidence=trace.get("evidence"),
                                decision=trace.get("decision"),
-                               steps=steps)
+                               steps=steps, lineage_edges=edges, file_origins=origins)
         except Exception as exc:  # noqa: BLE001 — the database is optional
             warn(f"{case_id}: could not save to audit.db ({type(exc).__name__}: {exc})")
     return result
@@ -177,12 +186,19 @@ def main() -> int:
         warn(f"could not open audit.db ({type(exc).__name__}: {exc}); "
              "continuing without the database")
         db = None
+    lineage_src = None
+    if db is not None:
+        try:
+            lineage_src = lineage.LineageSource(DATASET_DIR)
+        except Exception as exc:  # noqa: BLE001 — the map is optional
+            warn(f"could not load lineage data ({type(exc).__name__}: {exc}); "
+                 "saving cases without the lineage map")
 
     rows: list[tuple[str, str, str]] = []
     uncertain: list[str] = []
     failed: list[str] = []
     for case in cases:
-        status, steps_json, label, err = run_case(case, resolver, db)
+        status, steps_json, label, err = run_case(case, resolver, db, lineage_src)
         assert status in VALID_STATUSES, f"{case['case_id']}: bad status {status!r}"
         rows.append((case["case_id"], status, steps_json))
         if label == ClassificationResult.UNCERTAIN:

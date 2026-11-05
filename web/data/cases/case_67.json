@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "ra****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**43",
       "is_historical": false,
-      "audit_id": "audit_266"
+      "audit_id": "audit_266",
+      "changed_at": "2026-05-08T16:31:44Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "1c86a759…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "R. R.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**73",
       "is_historical": true,
-      "audit_id": "audit_266"
+      "audit_id": "audit_266",
+      "changed_at": "2026-05-08T16:31:44Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ra****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,9 +70,95 @@
       "system_id": "account_service",
       "resource_id": "account_9079",
       "matched_identifier": "email:ra****@outlook.com",
-      "captured_at": "2026-09-16T08:37:39Z"
+      "captured_at": "2026-09-16T08:37:39Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3646",
+      "event_time": "2026-09-04T09:56:13Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "account_service",
+      "source_resource_id": "account_9079",
+      "target_system": "account_replication_cluster",
+      "target_resource_id": "account_9079",
+      "reported_result": "SUCCESS",
+      "details": "Replication worker reported its final checkpoint for account_9079."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_9079|",
+        "system_id": "account_service",
+        "resource_id": "account_9079",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_93"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:ra****@outlook.com"
+        ],
+        "first_captured_at": "2026-09-16T08:37:39Z",
+        "last_captured_at": "2026-09-16T08:37:39Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "account_replication_cluster|account_9079|",
+        "system_id": "account_replication_cluster",
+        "resource_id": "account_9079",
+        "replica_or_table": "",
+        "source": "activity",
+        "group": "copy",
+        "file_ids": [],
+        "origins": [],
+        "matched_identifiers": [],
+        "first_captured_at": "",
+        "last_captured_at": "",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_3646",
+        "event_time": "2026-09-04T09:56:13Z",
+        "label": "sync",
+        "reported_result": "SUCCESS",
+        "details": "Replication worker reported its final checkpoint for account_9079.",
+        "from": "account_service|account_9079|",
+        "to": "account_replication_cluster|account_9079|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

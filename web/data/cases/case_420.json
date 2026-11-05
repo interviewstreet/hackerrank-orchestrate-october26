@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "st****@fastmail.com",
       "is_historical": false,
-      "audit_id": "audit_108"
+      "audit_id": "audit_108",
+      "changed_at": "2025-11-24T18:35:12Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *17",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "90aa2a87…",
       "is_historical": false,
-      "audit_id": "audit_109"
+      "audit_id": "audit_109",
+      "changed_at": "2025-11-24T18:35:12Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "S. T.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "st****@fastmail.com",
       "is_historical": true,
-      "audit_id": "audit_108"
+      "audit_id": "audit_108",
+      "changed_at": "2025-11-24T18:35:12Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "b80a39f5…",
       "is_historical": true,
-      "audit_id": "audit_109"
+      "audit_id": "audit_109",
+      "changed_at": "2025-11-24T18:35:12Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "st****@fastmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_108",
+        "changed_at": "2025-11-24T18:35:12Z"
+      }
+    },
+    {
+      "value": "st****@fastmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,30 +87,147 @@
       "system_id": "account_service",
       "resource_id": "account_7606",
       "matched_identifier": "email:st****@fastmail.com",
-      "captured_at": "2026-03-25T08:59:44Z"
+      "captured_at": "2026-03-25T08:59:44Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_39",
       "system_id": "export_service",
       "resource_id": "export_389",
       "matched_identifier": "email:st****@fastmail.com",
-      "captured_at": "2026-03-25T08:59:44Z"
+      "captured_at": "2026-03-25T08:59:44Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_39",
       "system_id": "search_service",
       "resource_id": "search_8472",
       "matched_identifier": "email:st****@fastmail.com",
-      "captured_at": "2026-03-25T08:59:44Z"
+      "captured_at": "2026-03-25T08:59:44Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_39",
       "system_id": "security_service",
       "resource_id": "audit_record_9687",
       "matched_identifier": "user_id:user_418",
-      "captured_at": "2026-03-25T08:59:44Z"
+      "captured_at": "2026-03-25T08:59:44Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_7606|",
+        "system_id": "account_service",
+        "resource_id": "account_7606",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_39"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:st****@fastmail.com"
+        ],
+        "first_captured_at": "2026-03-25T08:59:44Z",
+        "last_captured_at": "2026-03-25T08:59:44Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "export_service|export_389|",
+        "system_id": "export_service",
+        "resource_id": "export_389",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_39"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:st****@fastmail.com"
+        ],
+        "first_captured_at": "2026-03-25T08:59:44Z",
+        "last_captured_at": "2026-03-25T08:59:44Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_8472|",
+        "system_id": "search_service",
+        "resource_id": "search_8472",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_39"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:st****@fastmail.com"
+        ],
+        "first_captured_at": "2026-03-25T08:59:44Z",
+        "last_captured_at": "2026-03-25T08:59:44Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_9687|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_9687",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_39"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_418"
+        ],
+        "first_captured_at": "2026-03-25T08:59:44Z",
+        "last_captured_at": "2026-03-25T08:59:44Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

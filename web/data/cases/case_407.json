@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "lu****@proton.me",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** *** *** *36",
       "is_historical": false,
-      "audit_id": "audit_88"
+      "audit_id": "audit_88",
+      "changed_at": "2025-10-30T22:11:24Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "4c877035…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "L. G.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *65",
       "is_historical": true,
-      "audit_id": "audit_88"
+      "audit_id": "audit_88",
+      "changed_at": "2025-10-30T22:11:24Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "lu****@proton.me",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,86 +70,699 @@
       "system_id": "object_storage",
       "resource_id": "object_storage_browser_20260213",
       "matched_identifier": "linked_file_name:****",
-      "captured_at": "2026-02-13T08:00:00Z"
+      "captured_at": "2026-02-13T08:00:00Z",
+      "replica_or_table": "",
+      "origin": "object_storage"
     },
     {
       "file_id": "evidence_38",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1922",
       "matched_identifier": "email:lu****@proton.me",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "search_service",
       "resource_id": "search_5146",
       "matched_identifier": "email:lu****@proton.me",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "search_service",
+      "resource_id": "search_5146",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "search_service",
+      "resource_id": "search_5146",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "support_platform",
       "resource_id": "support_3802",
       "matched_identifier": "email:lu****@proton.me",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "support_platform",
+      "resource_id": "support_3802",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "support_platform",
+      "resource_id": "support_3802",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "support_platform",
       "resource_id": "support_6569",
       "matched_identifier": "email:lu****@proton.me",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "support_platform",
+      "resource_id": "support_6569",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "support_platform",
+      "resource_id": "support_6569",
+      "matched_identifier": "email:lu****@proton.me",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1922",
       "matched_identifier": "email_hash:4c877035…",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "email_hash:4c877035…",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "email_hash:4c877035…",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "search_service",
       "resource_id": "search_5146",
       "matched_identifier": "name:l. g.",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "search_service",
+      "resource_id": "search_5146",
+      "matched_identifier": "name:l. g.",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "search_service",
+      "resource_id": "search_5146",
+      "matched_identifier": "name:l. g.",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1922",
       "matched_identifier": "phone:*********36",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "phone:*********36",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "phone:*********36",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "analytics_platform",
       "resource_id": "analytics_1922",
       "matched_identifier": "user_id:user_405",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "analytics_platform",
+      "resource_id": "analytics_1922",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "search_service",
       "resource_id": "search_5146",
       "matched_identifier": "user_id:user_405",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "search_service",
+      "resource_id": "search_5146",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "search_service",
+      "resource_id": "search_5146",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "security_service",
       "resource_id": "audit_record_6152",
       "matched_identifier": "user_id:user_405",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6152",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "security_service",
+      "resource_id": "audit_record_6152",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_38",
       "system_id": "support_platform",
       "resource_id": "support_6569",
       "matched_identifier": "user_id:user_405",
-      "captured_at": "2026-03-30T10:00:00Z"
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "support_platform",
+      "resource_id": "support_6569",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_38",
+      "system_id": "support_platform",
+      "resource_id": "support_6569",
+      "matched_identifier": "user_id:user_405",
+      "captured_at": "2026-03-30T10:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_1922|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_1922",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "email_hash:4c877035…",
+          "phone:*********36",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "analytics_platform|analytics_1922|customer_data_replica_ap_south",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_1922",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "email_hash:4c877035…",
+          "phone:*********36",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "analytics_platform|analytics_1922|customer_data_replica_eu_west",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_1922",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "email_hash:4c877035…",
+          "phone:*********36",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "object_storage|object_storage_browser_20260213|",
+        "system_id": "object_storage",
+        "resource_id": "object_storage_browser_20260213",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_46"
+        ],
+        "origins": [
+          "object_storage"
+        ],
+        "matched_identifiers": [
+          "linked_file_name:****"
+        ],
+        "first_captured_at": "2026-02-13T08:00:00Z",
+        "last_captured_at": "2026-02-13T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_5146|",
+        "system_id": "search_service",
+        "resource_id": "search_5146",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "name:l. g.",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_5146|customer_data_replica_ap_south",
+        "system_id": "search_service",
+        "resource_id": "search_5146",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "name:l. g.",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_5146|customer_data_replica_eu_west",
+        "system_id": "search_service",
+        "resource_id": "search_5146",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "name:l. g.",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_6152|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_6152",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_6152|customer_data_replica_ap_south",
+        "system_id": "security_service",
+        "resource_id": "audit_record_6152",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_6152|customer_data_replica_eu_west",
+        "system_id": "security_service",
+        "resource_id": "audit_record_6152",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_3802|",
+        "system_id": "support_platform",
+        "resource_id": "support_3802",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_3802|customer_data_replica_ap_south",
+        "system_id": "support_platform",
+        "resource_id": "support_3802",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_3802|customer_data_replica_eu_west",
+        "system_id": "support_platform",
+        "resource_id": "support_3802",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_6569|",
+        "system_id": "support_platform",
+        "resource_id": "support_6569",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_6569|customer_data_replica_ap_south",
+        "system_id": "support_platform",
+        "resource_id": "support_6569",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_6569|customer_data_replica_eu_west",
+        "system_id": "support_platform",
+        "resource_id": "support_6569",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_38"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:lu****@proton.me",
+          "user_id:user_405"
+        ],
+        "first_captured_at": "2026-03-30T10:00:00Z",
+        "last_captured_at": "2026-03-30T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "ta****@icloud.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **14",
       "is_historical": false,
-      "audit_id": "audit_07"
+      "audit_id": "audit_07",
+      "changed_at": "2025-02-27T14:16:29Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "60505a17…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "R. T.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** **** **51",
       "is_historical": true,
-      "audit_id": "audit_07"
+      "audit_id": "audit_07",
+      "changed_at": "2025-02-27T14:16:29Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ta****@icloud.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,30 +70,147 @@
       "system_id": "account_service",
       "resource_id": "account_1897",
       "matched_identifier": "email:ta****@icloud.com",
-      "captured_at": "2026-03-15T07:00:00Z"
+      "captured_at": "2026-03-15T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "downstream_delivery_service"
     },
     {
       "file_id": "evidence_41",
       "system_id": "search_service",
       "resource_id": "search_1194",
       "matched_identifier": "email:ta****@icloud.com",
-      "captured_at": "2026-03-15T07:00:00Z"
+      "captured_at": "2026-03-15T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "downstream_delivery_service"
     },
     {
       "file_id": "evidence_41",
       "system_id": "support_platform",
       "resource_id": "support_4123",
       "matched_identifier": "email:ta****@icloud.com",
-      "captured_at": "2026-03-15T07:00:00Z"
+      "captured_at": "2026-03-15T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "downstream_delivery_service"
     },
     {
       "file_id": "evidence_41",
       "system_id": "security_service",
       "resource_id": "audit_record_4839",
       "matched_identifier": "user_id:user_440",
-      "captured_at": "2026-03-15T07:00:00Z"
+      "captured_at": "2026-03-15T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "downstream_delivery_service"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_1897|",
+        "system_id": "account_service",
+        "resource_id": "account_1897",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_41"
+        ],
+        "origins": [
+          "downstream_delivery_service"
+        ],
+        "matched_identifiers": [
+          "email:ta****@icloud.com"
+        ],
+        "first_captured_at": "2026-03-15T07:00:00Z",
+        "last_captured_at": "2026-03-15T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_1194|",
+        "system_id": "search_service",
+        "resource_id": "search_1194",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_41"
+        ],
+        "origins": [
+          "downstream_delivery_service"
+        ],
+        "matched_identifiers": [
+          "email:ta****@icloud.com"
+        ],
+        "first_captured_at": "2026-03-15T07:00:00Z",
+        "last_captured_at": "2026-03-15T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_4839|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_4839",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_41"
+        ],
+        "origins": [
+          "downstream_delivery_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_440"
+        ],
+        "first_captured_at": "2026-03-15T07:00:00Z",
+        "last_captured_at": "2026-03-15T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_4123|",
+        "system_id": "support_platform",
+        "resource_id": "support_4123",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_41"
+        ],
+        "origins": [
+          "downstream_delivery_service"
+        ],
+        "matched_identifiers": [
+          "email:ta****@icloud.com"
+        ],
+        "first_captured_at": "2026-03-15T07:00:00Z",
+        "last_captured_at": "2026-03-15T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "ob****@icloud.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **95",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "526cadf5…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "A. O.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ob****@icloud.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,16 +63,85 @@
       "system_id": "search_service",
       "resource_id": "search_5261",
       "matched_identifier": "email:ob****@icloud.com",
-      "captured_at": "2026-07-28T05:44:17Z"
+      "captured_at": "2026-07-28T05:44:17Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_85",
       "system_id": "support_platform",
       "resource_id": "support_3155",
       "matched_identifier": "email:ob****@icloud.com",
-      "captured_at": "2026-07-28T05:44:17Z"
+      "captured_at": "2026-07-28T05:44:17Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "search_service|search_5261|",
+        "system_id": "search_service",
+        "resource_id": "search_5261",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_85"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:ob****@icloud.com"
+        ],
+        "first_captured_at": "2026-07-28T05:44:17Z",
+        "last_captured_at": "2026-07-28T05:44:17Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_3155|",
+        "system_id": "support_platform",
+        "resource_id": "support_3155",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_85"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:ob****@icloud.com"
+        ],
+        "first_captured_at": "2026-07-28T05:44:17Z",
+        "last_captured_at": "2026-07-28T05:44:17Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "ni****@outlook.com",
       "is_historical": false,
-      "audit_id": "audit_69"
+      "audit_id": "audit_69",
+      "changed_at": "2025-10-11T00:36:49Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *27",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "ffcccdd8…",
       "is_historical": false,
-      "audit_id": "audit_70"
+      "audit_id": "audit_70",
+      "changed_at": "2025-10-11T00:36:49Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "N. F.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ni****@outlook.com",
       "is_historical": true,
-      "audit_id": "audit_69"
+      "audit_id": "audit_69",
+      "changed_at": "2025-10-11T00:36:49Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "fcd3f65f…",
       "is_historical": true,
-      "audit_id": "audit_70"
+      "audit_id": "audit_70",
+      "changed_at": "2025-10-11T00:36:49Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ni****@outlook.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_69",
+        "changed_at": "2025-10-11T00:36:49Z"
+      }
+    },
+    {
+      "value": "ni****@outlook.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,44 +87,249 @@
       "system_id": "account_service",
       "resource_id": "account_1035",
       "matched_identifier": "email:ni****@outlook.com",
-      "captured_at": "2026-02-08T07:00:00Z"
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     },
     {
       "file_id": "evidence_47",
       "system_id": "account_service",
       "resource_id": "account_1035",
       "matched_identifier": "name:n. f.",
-      "captured_at": "2026-02-08T07:00:00Z"
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     },
     {
       "file_id": "evidence_47",
       "system_id": "account_service",
       "resource_id": "account_1035",
       "matched_identifier": "phone:*********27",
-      "captured_at": "2026-02-08T07:00:00Z"
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     },
     {
       "file_id": "evidence_47",
       "system_id": "account_service",
       "resource_id": "account_1035",
       "matched_identifier": "user_id:user_509",
-      "captured_at": "2026-02-08T07:00:00Z"
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     },
     {
       "file_id": "evidence_47",
       "system_id": "legal_service",
       "resource_id": "legal_hold_4887",
       "matched_identifier": "user_id:user_509",
-      "captured_at": "2026-02-08T07:00:00Z"
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_reporting_replica_capture"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "legal_service",
+      "resource_id": "legal_hold_4887",
+      "matched_identifier": "user_id:user_509",
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     },
     {
       "file_id": "evidence_47",
       "system_id": "security_service",
       "resource_id": "audit_record_4883",
       "matched_identifier": "user_id:user_509",
-      "captured_at": "2026-02-08T07:00:00Z"
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_reporting_replica_capture"
+    },
+    {
+      "file_id": "evidence_47",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4883",
+      "matched_identifier": "user_id:user_509",
+      "captured_at": "2026-02-08T07:00:00Z",
+      "replica_or_table": "customer_data_reporting_replica",
+      "origin": "customer_data_reporting_replica_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_271",
+      "event_time": "2026-01-23T07:59:15Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "account_service",
+      "source_resource_id": "account_1035",
+      "target_system": "account_replication_cluster",
+      "target_resource_id": "account_1035",
+      "reported_result": "SUCCESS",
+      "details": "Replication worker reported its final checkpoint for account_1035."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_replication_cluster|account_1035|",
+        "system_id": "account_replication_cluster",
+        "resource_id": "account_1035",
+        "replica_or_table": "",
+        "source": "activity",
+        "group": "copy",
+        "file_ids": [],
+        "origins": [],
+        "matched_identifiers": [],
+        "first_captured_at": "",
+        "last_captured_at": "",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "account_service|account_1035|customer_data_reporting_replica",
+        "system_id": "account_service",
+        "resource_id": "account_1035",
+        "replica_or_table": "customer_data_reporting_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_47"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:ni****@outlook.com",
+          "name:n. f.",
+          "phone:*********27",
+          "user_id:user_509"
+        ],
+        "first_captured_at": "2026-02-08T07:00:00Z",
+        "last_captured_at": "2026-02-08T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_4883|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_4883",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_47"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_509"
+        ],
+        "first_captured_at": "2026-02-08T07:00:00Z",
+        "last_captured_at": "2026-02-08T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_4883|customer_data_reporting_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_4883",
+        "replica_or_table": "customer_data_reporting_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_47"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_509"
+        ],
+        "first_captured_at": "2026-02-08T07:00:00Z",
+        "last_captured_at": "2026-02-08T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "legal_service|legal_hold_4887|",
+        "system_id": "legal_service",
+        "resource_id": "legal_hold_4887",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_47"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_509"
+        ],
+        "first_captured_at": "2026-02-08T07:00:00Z",
+        "last_captured_at": "2026-02-08T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "legal_service|legal_hold_4887|customer_data_reporting_replica",
+        "system_id": "legal_service",
+        "resource_id": "legal_hold_4887",
+        "replica_or_table": "customer_data_reporting_replica",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_47"
+        ],
+        "origins": [
+          "customer_data_reporting_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_509"
+        ],
+        "first_captured_at": "2026-02-08T07:00:00Z",
+        "last_captured_at": "2026-02-08T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_271",
+        "event_time": "2026-01-23T07:59:15Z",
+        "label": "sync",
+        "reported_result": "SUCCESS",
+        "details": "Replication worker reported its final checkpoint for account_1035.",
+        "from": "account_service|account_1035|customer_data_reporting_replica",
+        "to": "account_replication_cluster|account_1035|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

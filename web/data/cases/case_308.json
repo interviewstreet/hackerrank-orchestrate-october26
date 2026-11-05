@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "la****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **68",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "54f049d0…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "L. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "la****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,30 +63,438 @@
       "system_id": "backup_service",
       "resource_id": "backup_4917",
       "matched_identifier": "user_id:user_306",
-      "captured_at": "2026-05-19T06:00:00Z"
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "backup_service",
+      "resource_id": "backup_4917",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "backup_service",
+      "resource_id": "backup_4917",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_29",
       "system_id": "integration_service",
       "resource_id": "data_flow_8933",
       "matched_identifier": "user_id:user_306",
-      "captured_at": "2026-05-19T06:00:00Z"
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8933",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_8933",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_29",
       "system_id": "security_service",
       "resource_id": "audit_record_3221",
       "matched_identifier": "user_id:user_306",
-      "captured_at": "2026-05-19T06:00:00Z"
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3221",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3221",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_29",
       "system_id": "support_platform",
       "resource_id": "support_6046",
       "matched_identifier": "user_id:user_306",
-      "captured_at": "2026-05-19T06:00:00Z"
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "support_platform",
+      "resource_id": "support_6046",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_29",
+      "system_id": "support_platform",
+      "resource_id": "support_6046",
+      "matched_identifier": "user_id:user_306",
+      "captured_at": "2026-05-19T06:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_1721",
+      "event_time": "2026-05-04T05:45:06Z",
+      "event_type": "DISABLE_DATA_FLOW",
+      "kind": "control",
+      "label": "flow disabled",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_8933",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_8933",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for data_flow_8933."
+    },
+    {
+      "activity_id": "activity_1722",
+      "event_time": "2026-05-04T05:52:35Z",
+      "event_type": "BLOCK_RESTORE",
+      "kind": "control",
+      "label": "restore blocked",
+      "source_system": "deletion_worker",
+      "source_resource_id": "backup_4917",
+      "target_system": "backup_service",
+      "target_resource_id": "backup_4917",
+      "reported_result": "SUCCESS",
+      "details": "Policy action completed for backup_4917."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_8933|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_8933",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_1721",
+            "event_time": "2026-05-04T05:45:06Z",
+            "label": "flow disabled",
+            "reported_result": "SUCCESS",
+            "details": "Policy action completed for data_flow_8933."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_8933|customer_data_replica_ap_south",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_8933",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_8933|customer_data_replica_eu_west",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_8933",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3221|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3221",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3221|customer_data_replica_ap_south",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3221",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3221|customer_data_replica_eu_west",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3221",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_6046|",
+        "system_id": "support_platform",
+        "resource_id": "support_6046",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_6046|customer_data_replica_ap_south",
+        "system_id": "support_platform",
+        "resource_id": "support_6046",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_6046|customer_data_replica_eu_west",
+        "system_id": "support_platform",
+        "resource_id": "support_6046",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_4917|",
+        "system_id": "backup_service",
+        "resource_id": "backup_4917",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_1722",
+            "event_time": "2026-05-04T05:52:35Z",
+            "label": "restore blocked",
+            "reported_result": "SUCCESS",
+            "details": "Policy action completed for backup_4917."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_4917|customer_data_replica_ap_south",
+        "system_id": "backup_service",
+        "resource_id": "backup_4917",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_4917|customer_data_replica_eu_west",
+        "system_id": "backup_service",
+        "resource_id": "backup_4917",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_29"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_306"
+        ],
+        "first_captured_at": "2026-05-19T06:00:00Z",
+        "last_captured_at": "2026-05-19T06:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

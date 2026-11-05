@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "y.****@gmail.com",
       "is_historical": false,
-      "audit_id": "audit_119"
+      "audit_id": "audit_119",
+      "changed_at": "2025-12-10T03:32:21Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **59",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "677ae6b9…",
       "is_historical": false,
-      "audit_id": "audit_120"
+      "audit_id": "audit_120",
+      "changed_at": "2025-12-10T03:32:21Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "Y. O.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "y.****@gmail.com",
       "is_historical": true,
-      "audit_id": "audit_119"
+      "audit_id": "audit_119",
+      "changed_at": "2025-12-10T03:32:21Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "40883bc3…",
       "is_historical": true,
-      "audit_id": "audit_120"
+      "audit_id": "audit_120",
+      "changed_at": "2025-12-10T03:32:21Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "y.****@gmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_119",
+        "changed_at": "2025-12-10T03:32:21Z"
+      }
+    },
+    {
+      "value": "y.****@gmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,23 +88,138 @@
       "system_id": "account_service",
       "resource_id": "account_3978",
       "matched_identifier": "email:y.****@gmail.com",
-      "captured_at": "2026-04-09T12:00:00Z"
+      "captured_at": "2026-04-09T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_export_service"
     },
     {
       "file_id": "evidence_36",
       "system_id": "backup_service",
       "resource_id": "backup_1668",
       "matched_identifier": "email:y.****@gmail.com",
-      "captured_at": "2026-04-09T12:00:00Z"
+      "captured_at": "2026-04-09T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_export_service"
     },
     {
       "file_id": "evidence_36",
       "system_id": "security_service",
       "resource_id": "audit_record_2536",
       "matched_identifier": "user_id:user_385",
-      "captured_at": "2026-04-09T12:00:00Z"
+      "captured_at": "2026-04-09T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_export_service"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_1166",
+      "event_time": "2026-03-27T12:42:32Z",
+      "event_type": "CHECK_RESTORE_ACCESS",
+      "kind": "control",
+      "label": "restore-access check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "backup_1668",
+      "target_system": "backup_service",
+      "target_resource_id": "backup_1668",
+      "reported_result": "SUCCESS",
+      "details": "Restore-access check confirmed that archive backup_1668 can still be restored."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_3978|",
+        "system_id": "account_service",
+        "resource_id": "account_3978",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_36"
+        ],
+        "origins": [
+          "customer_export_service"
+        ],
+        "matched_identifiers": [
+          "email:y.****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-09T12:00:00Z",
+        "last_captured_at": "2026-04-09T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_2536|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_2536",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_36"
+        ],
+        "origins": [
+          "customer_export_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_385"
+        ],
+        "first_captured_at": "2026-04-09T12:00:00Z",
+        "last_captured_at": "2026-04-09T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_1668|",
+        "system_id": "backup_service",
+        "resource_id": "backup_1668",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_36"
+        ],
+        "origins": [
+          "customer_export_service"
+        ],
+        "matched_identifiers": [
+          "email:y.****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-09T12:00:00Z",
+        "last_captured_at": "2026-04-09T12:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_1166",
+            "event_time": "2026-03-27T12:42:32Z",
+            "label": "restore-access check",
+            "reported_result": "SUCCESS",
+            "details": "Restore-access check confirmed that archive backup_1668 can still be restored."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

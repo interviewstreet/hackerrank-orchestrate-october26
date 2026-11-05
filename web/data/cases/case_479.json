@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "ya****@proton.me",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **24",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "a9ecf639…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "Y. O.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ya****@proton.me",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,16 +63,85 @@
       "system_id": "support_platform",
       "resource_id": "support_4665",
       "matched_identifier": "email:ya****@proton.me",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "security_service",
       "resource_id": "audit_record_5745",
       "matched_identifier": "user_id:user_477",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "security_service|audit_record_5745|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_5745",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "user_id:user_477"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_4665|",
+        "system_id": "support_platform",
+        "resource_id": "support_4665",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "email:ya****@proton.me"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

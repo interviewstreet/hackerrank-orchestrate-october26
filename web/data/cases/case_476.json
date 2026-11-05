@@ -19,25 +19,41 @@
       "kind": "email",
       "value": "ma****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** *** *** *22",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "6c4b5f63…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "M. K.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ma****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -46,37 +62,158 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_8899",
       "matched_identifier": "email:ma****@outlook.com",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "search_service",
       "resource_id": "search_3759",
       "matched_identifier": "email:ma****@outlook.com",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "search_service",
       "resource_id": "search_3759",
       "matched_identifier": "name:m. k.",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "search_service",
       "resource_id": "search_3759",
       "matched_identifier": "user_id:user_474",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "security_service",
       "resource_id": "audit_record_4197",
       "matched_identifier": "user_id:user_474",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_378",
+      "event_time": "2026-01-31T10:44:29Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_8899",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_8899",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_8899 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_8899|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_8899",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "email:ma****@outlook.com"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_378",
+            "event_time": "2026-01-31T10:44:29Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_8899 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_3759|",
+        "system_id": "search_service",
+        "resource_id": "search_3759",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "email:ma****@outlook.com",
+          "name:m. k.",
+          "user_id:user_474"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_4197|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_4197",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "user_id:user_474"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

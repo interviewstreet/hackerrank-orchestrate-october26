@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "re****@icloud.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** **** ****80",
       "is_historical": false,
-      "audit_id": "audit_04"
+      "audit_id": "audit_04",
+      "changed_at": "2025-01-28T13:16:29Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "28e05ee0…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "H. R.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** **** ****80",
       "is_historical": true,
-      "audit_id": "audit_04"
+      "audit_id": "audit_04",
+      "changed_at": "2025-01-28T13:16:29Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "re****@icloud.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,30 +70,169 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_9918",
       "matched_identifier": "email:re****@icloud.com",
-      "captured_at": "2026-04-14T05:40:07Z"
+      "captured_at": "2026-04-14T05:40:07Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_70",
       "system_id": "integration_service",
       "resource_id": "data_flow_6090",
       "matched_identifier": "email:re****@icloud.com",
-      "captured_at": "2026-04-14T05:40:07Z"
+      "captured_at": "2026-04-14T05:40:07Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_70",
       "system_id": "support_platform",
       "resource_id": "support_5071",
       "matched_identifier": "email:re****@icloud.com",
-      "captured_at": "2026-04-14T05:40:07Z"
+      "captured_at": "2026-04-14T05:40:07Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_70",
       "system_id": "search_service",
       "resource_id": "search_8171",
       "matched_identifier": "email:re****@icloud.com",
-      "captured_at": "2026-04-14T05:40:07Z"
+      "captured_at": "2026-04-14T05:40:07Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_1317",
+      "event_time": "2026-04-07T07:50:43Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_6090",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_6090",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_6090 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_9918|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_9918",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_70"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:re****@icloud.com"
+        ],
+        "first_captured_at": "2026-04-14T05:40:07Z",
+        "last_captured_at": "2026-04-14T05:40:07Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_6090|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_6090",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_70"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:re****@icloud.com"
+        ],
+        "first_captured_at": "2026-04-14T05:40:07Z",
+        "last_captured_at": "2026-04-14T05:40:07Z",
+        "claims": [
+          {
+            "activity_id": "activity_1317",
+            "event_time": "2026-04-07T07:50:43Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_6090 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_8171|",
+        "system_id": "search_service",
+        "resource_id": "search_8171",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_70"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:re****@icloud.com"
+        ],
+        "first_captured_at": "2026-04-14T05:40:07Z",
+        "last_captured_at": "2026-04-14T05:40:07Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_5071|",
+        "system_id": "support_platform",
+        "resource_id": "support_5071",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_70"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:re****@icloud.com"
+        ],
+        "first_captured_at": "2026-04-14T05:40:07Z",
+        "last_captured_at": "2026-04-14T05:40:07Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

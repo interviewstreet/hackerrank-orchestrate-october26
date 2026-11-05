@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "ap****@icloud.com",
       "is_historical": false,
-      "audit_id": "audit_89"
+      "audit_id": "audit_89",
+      "changed_at": "2025-10-31T04:21:34Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **82",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "b3ceaf96…",
       "is_historical": false,
-      "audit_id": "audit_90"
+      "audit_id": "audit_90",
+      "changed_at": "2025-10-31T04:21:34Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "A. A.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ap****@icloud.com",
       "is_historical": true,
-      "audit_id": "audit_89"
+      "audit_id": "audit_89",
+      "changed_at": "2025-10-31T04:21:34Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "b2f931fe…",
       "is_historical": true,
-      "audit_id": "audit_90"
+      "audit_id": "audit_90",
+      "changed_at": "2025-10-31T04:21:34Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ap****@icloud.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_89",
+        "changed_at": "2025-10-31T04:21:34Z"
+      }
+    },
+    {
+      "value": "ap****@icloud.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,9 +87,54 @@
       "system_id": "search_service",
       "resource_id": "search_8417",
       "matched_identifier": "email:ap****@icloud.com",
-      "captured_at": "2026-02-28T10:36:37Z"
+      "captured_at": "2026-02-28T10:36:37Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "search_service|search_8417|",
+        "system_id": "search_service",
+        "resource_id": "search_8417",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_65"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:ap****@icloud.com"
+        ],
+        "first_captured_at": "2026-02-28T10:36:37Z",
+        "last_captured_at": "2026-02-28T10:36:37Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "ol****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+* (***) ***-**03",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "1fa7764c…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "O. B.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ol****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,44 +63,209 @@
       "system_id": "security_service",
       "resource_id": "audit_record_001",
       "matched_identifier": "user_id:user_03",
-      "captured_at": "2026-09-05T07:00:00Z"
+      "captured_at": "2026-09-05T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
     },
     {
       "file_id": "evidence_37",
       "system_id": "security_service",
       "resource_id": "audit_record_002",
       "matched_identifier": "user_id:user_03",
-      "captured_at": "2026-09-05T07:00:00Z"
+      "captured_at": "2026-09-05T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
     },
     {
       "file_id": "evidence_37",
       "system_id": "security_service",
       "resource_id": "audit_record_003",
       "matched_identifier": "user_id:user_03",
-      "captured_at": "2026-09-05T07:00:00Z"
+      "captured_at": "2026-09-05T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
     },
     {
       "file_id": "evidence_37",
       "system_id": "security_service",
       "resource_id": "audit_record_004",
       "matched_identifier": "user_id:user_03",
-      "captured_at": "2026-09-05T07:00:00Z"
+      "captured_at": "2026-09-05T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
     },
     {
       "file_id": "evidence_37",
       "system_id": "security_service",
       "resource_id": "audit_record_005",
       "matched_identifier": "user_id:user_03",
-      "captured_at": "2026-09-05T07:00:00Z"
+      "captured_at": "2026-09-05T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
     },
     {
       "file_id": "evidence_37",
       "system_id": "security_service",
       "resource_id": "audit_record_006",
       "matched_identifier": "user_id:user_03",
-      "captured_at": "2026-09-05T07:00:00Z"
+      "captured_at": "2026-09-05T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "security_service"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "security_service|audit_record_001|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_001",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_37"
+        ],
+        "origins": [
+          "security_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_03"
+        ],
+        "first_captured_at": "2026-09-05T07:00:00Z",
+        "last_captured_at": "2026-09-05T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_002|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_002",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_37"
+        ],
+        "origins": [
+          "security_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_03"
+        ],
+        "first_captured_at": "2026-09-05T07:00:00Z",
+        "last_captured_at": "2026-09-05T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_003|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_003",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_37"
+        ],
+        "origins": [
+          "security_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_03"
+        ],
+        "first_captured_at": "2026-09-05T07:00:00Z",
+        "last_captured_at": "2026-09-05T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_004|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_004",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_37"
+        ],
+        "origins": [
+          "security_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_03"
+        ],
+        "first_captured_at": "2026-09-05T07:00:00Z",
+        "last_captured_at": "2026-09-05T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_005|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_005",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_37"
+        ],
+        "origins": [
+          "security_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_03"
+        ],
+        "first_captured_at": "2026-09-05T07:00:00Z",
+        "last_captured_at": "2026-09-05T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_006|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_006",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_37"
+        ],
+        "origins": [
+          "security_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_03"
+        ],
+        "first_captured_at": "2026-09-05T07:00:00Z",
+        "last_captured_at": "2026-09-05T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

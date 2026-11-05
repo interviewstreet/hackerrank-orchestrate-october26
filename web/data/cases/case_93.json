@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "t.****@yahoo.com",
       "is_historical": false,
-      "audit_id": "audit_258"
+      "audit_id": "audit_258",
+      "changed_at": "2026-05-04T00:38:03Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**75",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "d09e1dbe…",
       "is_historical": false,
-      "audit_id": "audit_259"
+      "audit_id": "audit_259",
+      "changed_at": "2026-05-04T00:38:03Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "T. L.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "t.****@yahoo.com",
       "is_historical": true,
-      "audit_id": "audit_258"
+      "audit_id": "audit_258",
+      "changed_at": "2026-05-04T00:38:03Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "bb849bc0…",
       "is_historical": true,
-      "audit_id": "audit_259"
+      "audit_id": "audit_259",
+      "changed_at": "2026-05-04T00:38:03Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "t.****@yahoo.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_258",
+        "changed_at": "2026-05-04T00:38:03Z"
+      }
+    },
+    {
+      "value": "t.****@yahoo.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,30 +87,209 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_047",
       "matched_identifier": "email:t.****@yahoo.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_89",
       "system_id": "account_service",
       "resource_id": "account_4421",
       "matched_identifier": "email:t.****@yahoo.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_89",
       "system_id": "search_service",
       "resource_id": "search_1310",
       "matched_identifier": "email:t.****@yahoo.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_89",
       "system_id": "support_platform",
       "resource_id": "support_1824",
       "matched_identifier": "email:t.****@yahoo.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3231",
+      "event_time": "2026-08-13T06:54:09Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "account_service",
+      "source_resource_id": "account_4421",
+      "target_system": "account_replication_cluster",
+      "target_resource_id": "account_4421",
+      "reported_result": "PARTIAL",
+      "details": "Replication worker reported its final checkpoint for account_4421."
+    },
+    {
+      "activity_id": "activity_3234",
+      "event_time": "2026-08-13T07:13:38Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_047",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_047",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_047 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_4421|",
+        "system_id": "account_service",
+        "resource_id": "account_4421",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:t.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "account_replication_cluster|account_4421|",
+        "system_id": "account_replication_cluster",
+        "resource_id": "account_4421",
+        "replica_or_table": "",
+        "source": "activity",
+        "group": "copy",
+        "file_ids": [],
+        "origins": [],
+        "matched_identifiers": [],
+        "first_captured_at": "",
+        "last_captured_at": "",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_047|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_047",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:t.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [
+          {
+            "activity_id": "activity_3234",
+            "event_time": "2026-08-13T07:13:38Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_047 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_1310|",
+        "system_id": "search_service",
+        "resource_id": "search_1310",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:t.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_1824|",
+        "system_id": "support_platform",
+        "resource_id": "support_1824",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:t.****@yahoo.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_3231",
+        "event_time": "2026-08-13T06:54:09Z",
+        "label": "sync",
+        "reported_result": "PARTIAL",
+        "details": "Replication worker reported its final checkpoint for account_4421.",
+        "from": "account_service|account_4421|",
+        "to": "account_replication_cluster|account_4421|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

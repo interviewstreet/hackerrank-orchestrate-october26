@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "hc****@fastmail.com",
       "is_historical": false,
-      "audit_id": "audit_185"
+      "audit_id": "audit_185",
+      "changed_at": "2026-02-18T03:47:36Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** **** ****50",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "78293e50…",
       "is_historical": false,
-      "audit_id": "audit_186"
+      "audit_id": "audit_186",
+      "changed_at": "2026-02-18T03:47:36Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "H. C.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "hc****@fastmail.com",
       "is_historical": true,
-      "audit_id": "audit_185"
+      "audit_id": "audit_185",
+      "changed_at": "2026-02-18T03:47:36Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "c4130f8a…",
       "is_historical": true,
-      "audit_id": "audit_186"
+      "audit_id": "audit_186",
+      "changed_at": "2026-02-18T03:47:36Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "hc****@fastmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_185",
+        "changed_at": "2026-02-18T03:47:36Z"
+      }
+    },
+    {
+      "value": "hc****@fastmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,16 +88,85 @@
       "system_id": "export_service",
       "resource_id": "export_8598",
       "matched_identifier": "email:hc****@fastmail.com",
-      "captured_at": "2026-06-18T11:44:03Z"
+      "captured_at": "2026-06-18T11:44:03Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     },
     {
       "file_id": "evidence_78",
       "system_id": "search_service",
       "resource_id": "search_2936",
       "matched_identifier": "email:hc****@fastmail.com",
-      "captured_at": "2026-06-18T11:44:03Z"
+      "captured_at": "2026-06-18T11:44:03Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "export_service|export_8598|",
+        "system_id": "export_service",
+        "resource_id": "export_8598",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_78"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:hc****@fastmail.com"
+        ],
+        "first_captured_at": "2026-06-18T11:44:03Z",
+        "last_captured_at": "2026-06-18T11:44:03Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_2936|",
+        "system_id": "search_service",
+        "resource_id": "search_2936",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_78"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:hc****@fastmail.com"
+        ],
+        "first_captured_at": "2026-06-18T11:44:03Z",
+        "last_captured_at": "2026-06-18T11:44:03Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -62,6 +62,47 @@ export type Step = {
   evidence_id: string;
 };
 
+export type TrailEntry = {
+  value: string; // masked email
+  is_current: boolean;
+  is_request: boolean;
+  replaced_by: { audit_id: string; changed_at: string } | null;
+};
+
+export type LineageClaim = {
+  activity_id: string;
+  event_time: string;
+  label: string;
+  reported_result: string;
+  details: string;
+};
+
+export type LineageNode = {
+  id: string;
+  system_id: string;
+  resource_id: string;
+  replica_or_table: string;
+  source: "evidence" | "activity";
+  group: "primary" | "copy" | "backup";
+  file_ids: string[];
+  origins: string[];
+  matched_identifiers: string[];
+  first_captured_at: string;
+  last_captured_at: string;
+  claims: LineageClaim[];
+  active_flow: { kind: string; active_at_audit: boolean; evidence_id: string } | null;
+  restore_risk: { active_at_audit: boolean; evidence_id: string } | null;
+};
+
+export type LineageEdge = LineageClaim & { from: string; to: string; kind: "claim" };
+
+export type Lineage = {
+  groups: { id: LineageNode["group"]; label: string }[];
+  nodes: LineageNode[];
+  edges: LineageEdge[];
+  edge_note: string;
+};
+
 export type CaseDetail = CaseListItem & {
   request_text: string;
   confidence: string;
@@ -71,7 +112,9 @@ export type CaseDetail = CaseListItem & {
   audit_at: string;
   user_id: string | null;
   identities: Identity[];
+  identity_trail: TrailEntry[];
   evidence_hits: EvidenceHit[];
+  lineage: Lineage;
   resources: unknown[];
   flows: unknown[];
   restore_risks: unknown[];
@@ -104,6 +147,14 @@ export const REPORTED_LABELS: Record<string, string> = {
   PARTIALLY_COMPLETE: "Partially complete",
   NOT_STARTED: "Not started",
 };
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "2026-05-28T19:48:13Z" -> "28 May 2026" (UTC date, no locale). */
+export function formatDay(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? "");
+  return m ? `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]} ${m[1]}` : iso || "—";
+}
 
 /** "2026-09-26T10:38:56Z" -> "2026-09-26 10:38 UTC" (no locale, no timezone shift). */
 export function formatUtc(iso: string): string {

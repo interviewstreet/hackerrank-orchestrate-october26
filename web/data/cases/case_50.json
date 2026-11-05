@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "da****@icloud.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **94",
       "is_historical": false,
-      "audit_id": "audit_34"
+      "audit_id": "audit_34",
+      "changed_at": "2025-07-01T19:16:29Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "09f05b9f…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "O. D.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **08",
       "is_historical": true,
-      "audit_id": "audit_34"
+      "audit_id": "audit_34",
+      "changed_at": "2025-07-01T19:16:29Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "da****@icloud.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,16 +70,64 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_7438",
       "matched_identifier": "email:da****@icloud.com",
-      "captured_at": "2026-07-13T10:00:00Z"
+      "captured_at": "2026-07-13T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "analytics_platform"
     },
     {
       "file_id": "evidence_19",
       "system_id": "analytics_platform",
       "resource_id": "analytics_7438",
       "matched_identifier": "user_id:user_20",
-      "captured_at": "2026-07-13T10:00:00Z"
+      "captured_at": "2026-07-13T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "analytics_platform"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_7438|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_7438",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_19"
+        ],
+        "origins": [
+          "analytics_platform"
+        ],
+        "matched_identifiers": [
+          "email:da****@icloud.com",
+          "user_id:user_20"
+        ],
+        "first_captured_at": "2026-07-13T10:00:00Z",
+        "last_captured_at": "2026-07-13T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

@@ -21,25 +21,41 @@
       "kind": "email",
       "value": "k.****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** *** *** *00",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "bbe3d96d…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "K. K.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "k.****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -48,16 +64,169 @@
       "system_id": "backup_service",
       "resource_id": "backup_2427",
       "matched_identifier": "email:k.****@gmail.com",
-      "captured_at": "2026-06-13T11:00:00Z"
+      "captured_at": "2026-06-13T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "backup_service",
+      "resource_id": "backup_2427",
+      "matched_identifier": "email:k.****@gmail.com",
+      "captured_at": "2026-06-13T11:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_24",
       "system_id": "security_service",
       "resource_id": "audit_record_2513",
       "matched_identifier": "user_id:user_253",
-      "captured_at": "2026-06-13T11:00:00Z"
+      "captured_at": "2026-06-13T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_24",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2513",
+      "matched_identifier": "user_id:user_253",
+      "captured_at": "2026-06-13T11:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_2024",
+      "event_time": "2026-05-23T11:38:50Z",
+      "event_type": "CHECK_RESTORE_ACCESS",
+      "kind": "control",
+      "label": "restore-access check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "backup_2427",
+      "target_system": "backup_service",
+      "target_resource_id": "backup_2427",
+      "reported_result": "SUCCESS",
+      "details": "Restore-access check confirmed that archive backup_2427 can still be restored."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "security_service|audit_record_2513|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_2513",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_24"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_253"
+        ],
+        "first_captured_at": "2026-06-13T11:00:00Z",
+        "last_captured_at": "2026-06-13T11:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_2513|customer_data_read_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_2513",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_24"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_253"
+        ],
+        "first_captured_at": "2026-06-13T11:00:00Z",
+        "last_captured_at": "2026-06-13T11:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_2427|",
+        "system_id": "backup_service",
+        "resource_id": "backup_2427",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_24"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:k.****@gmail.com"
+        ],
+        "first_captured_at": "2026-06-13T11:00:00Z",
+        "last_captured_at": "2026-06-13T11:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_2024",
+            "event_time": "2026-05-23T11:38:50Z",
+            "label": "restore-access check",
+            "reported_result": "SUCCESS",
+            "details": "Restore-access check confirmed that archive backup_2427 can still be restored."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_2427|customer_data_read_replica",
+        "system_id": "backup_service",
+        "resource_id": "backup_2427",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_24"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:k.****@gmail.com"
+        ],
+        "first_captured_at": "2026-06-13T11:00:00Z",
+        "last_captured_at": "2026-06-13T11:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

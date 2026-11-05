@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "ni****@outlook.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *** ** 65",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "839f75e7…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "N. J.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ni****@outlook.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,37 +63,156 @@
       "system_id": "account_service",
       "resource_id": "account_3205",
       "matched_identifier": "email:ni****@outlook.com",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "account_service",
       "resource_id": "account_3205",
       "matched_identifier": "name:n. j.",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "account_service",
       "resource_id": "account_3205",
       "matched_identifier": "phone:*********65",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "account_service",
       "resource_id": "account_3205",
       "matched_identifier": "user_id:user_473",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     },
     {
       "file_id": "evidence_45",
       "system_id": "security_service",
       "resource_id": "audit_record_5667",
       "matched_identifier": "user_id:user_473",
-      "captured_at": "2026-02-23T10:00:00Z"
+      "captured_at": "2026-02-23T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "records_assurance_snapshot_bundle"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_420",
+      "event_time": "2026-02-03T11:00:13Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "account_service",
+      "source_resource_id": "account_3205",
+      "target_system": "account_replication_cluster",
+      "target_resource_id": "account_3205",
+      "reported_result": "SUCCESS",
+      "details": "Replication worker reported its final checkpoint for account_3205."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_3205|",
+        "system_id": "account_service",
+        "resource_id": "account_3205",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "email:ni****@outlook.com",
+          "name:n. j.",
+          "phone:*********65",
+          "user_id:user_473"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "account_replication_cluster|account_3205|",
+        "system_id": "account_replication_cluster",
+        "resource_id": "account_3205",
+        "replica_or_table": "",
+        "source": "activity",
+        "group": "copy",
+        "file_ids": [],
+        "origins": [],
+        "matched_identifiers": [],
+        "first_captured_at": "",
+        "last_captured_at": "",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_5667|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_5667",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_45"
+        ],
+        "origins": [
+          "records_assurance_snapshot_bundle"
+        ],
+        "matched_identifiers": [
+          "user_id:user_473"
+        ],
+        "first_captured_at": "2026-02-23T10:00:00Z",
+        "last_captured_at": "2026-02-23T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_420",
+        "event_time": "2026-02-03T11:00:13Z",
+        "label": "sync",
+        "reported_result": "SUCCESS",
+        "details": "Replication worker reported its final checkpoint for account_3205.",
+        "from": "account_service|account_3205|",
+        "to": "account_replication_cluster|account_3205|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

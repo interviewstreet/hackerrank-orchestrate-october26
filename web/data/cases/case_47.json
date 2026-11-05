@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "zo****@proton.me",
       "is_historical": false,
-      "audit_id": "audit_295"
+      "audit_id": "audit_295",
+      "changed_at": "2026-05-28T21:52:41Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *50",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "9098fec1…",
       "is_historical": false,
-      "audit_id": "audit_296"
+      "audit_id": "audit_296",
+      "changed_at": "2026-05-28T21:52:41Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "Z. D.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "zo****@proton.me",
       "is_historical": true,
-      "audit_id": "audit_295"
+      "audit_id": "audit_295",
+      "changed_at": "2026-05-28T21:52:41Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "28d1f9e5…",
       "is_historical": true,
-      "audit_id": "audit_296"
+      "audit_id": "audit_296",
+      "changed_at": "2026-05-28T21:52:41Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "zo****@proton.me",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_295",
+        "changed_at": "2026-05-28T21:52:41Z"
+      }
+    },
+    {
+      "value": "zo****@proton.me",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,16 +88,85 @@
       "system_id": "support_platform",
       "resource_id": "support_5742",
       "matched_identifier": "email:zo****@proton.me",
-      "captured_at": "2026-09-26T10:38:56Z"
+      "captured_at": "2026-09-26T10:38:56Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_94",
       "system_id": "search_service",
       "resource_id": "search_4324",
       "matched_identifier": "email:zo****@proton.me",
-      "captured_at": "2026-09-26T10:38:56Z"
+      "captured_at": "2026-09-26T10:38:56Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "search_service|search_4324|",
+        "system_id": "search_service",
+        "resource_id": "search_4324",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_94"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:zo****@proton.me"
+        ],
+        "first_captured_at": "2026-09-26T10:38:56Z",
+        "last_captured_at": "2026-09-26T10:38:56Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_5742|",
+        "system_id": "support_platform",
+        "resource_id": "support_5742",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_94"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:zo****@proton.me"
+        ],
+        "first_captured_at": "2026-09-26T10:38:56Z",
+        "last_captured_at": "2026-09-26T10:38:56Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

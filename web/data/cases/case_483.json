@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "t.****@gmail.com",
       "is_historical": false,
-      "audit_id": "audit_78"
+      "audit_id": "audit_78",
+      "changed_at": "2025-10-21T03:08:33Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** *****-**85",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "555a1d56…",
       "is_historical": false,
-      "audit_id": "audit_79"
+      "audit_id": "audit_79",
+      "changed_at": "2025-10-21T03:08:33Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "T. O.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "t.****@gmail.com",
       "is_historical": true,
-      "audit_id": "audit_78"
+      "audit_id": "audit_78",
+      "changed_at": "2025-10-21T03:08:33Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "973b929b…",
       "is_historical": true,
-      "audit_id": "audit_79"
+      "audit_id": "audit_79",
+      "changed_at": "2025-10-21T03:08:33Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "t.****@gmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_78",
+        "changed_at": "2025-10-21T03:08:33Z"
+      }
+    },
+    {
+      "value": "t.****@gmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,30 +87,190 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_3669",
       "matched_identifier": "email:t.****@gmail.com",
-      "captured_at": "2026-02-18T08:39:11Z"
+      "captured_at": "2026-02-18T08:39:11Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_64",
       "system_id": "support_platform",
       "resource_id": "support_4364",
       "matched_identifier": "email:t.****@gmail.com",
-      "captured_at": "2026-02-18T08:39:11Z"
+      "captured_at": "2026-02-18T08:39:11Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_64",
       "system_id": "search_service",
       "resource_id": "search_1613",
       "matched_identifier": "email:t.****@gmail.com",
-      "captured_at": "2026-02-18T08:39:11Z"
+      "captured_at": "2026-02-18T08:39:11Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     },
     {
       "file_id": "evidence_64",
       "system_id": "backup_service",
       "resource_id": "backup_4600",
       "matched_identifier": "email:t.****@gmail.com",
-      "captured_at": "2026-02-18T08:39:11Z"
+      "captured_at": "2026-02-18T08:39:11Z",
+      "replica_or_table": "",
+      "origin": "service_readback_logs"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_492",
+      "event_time": "2026-02-09T09:47:19Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_3669",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_3669",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_3669 remains enabled."
+    },
+    {
+      "activity_id": "activity_495",
+      "event_time": "2026-02-09T10:25:18Z",
+      "event_type": "CHECK_RESTORE_ACCESS",
+      "kind": "control",
+      "label": "restore-access check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "backup_4600",
+      "target_system": "backup_service",
+      "target_resource_id": "backup_4600",
+      "reported_result": "SUCCESS",
+      "details": "Restore-access check confirmed that archive backup_4600 can still be restored."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_3669|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_3669",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_64"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:t.****@gmail.com"
+        ],
+        "first_captured_at": "2026-02-18T08:39:11Z",
+        "last_captured_at": "2026-02-18T08:39:11Z",
+        "claims": [
+          {
+            "activity_id": "activity_492",
+            "event_time": "2026-02-09T09:47:19Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_3669 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_1613|",
+        "system_id": "search_service",
+        "resource_id": "search_1613",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_64"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:t.****@gmail.com"
+        ],
+        "first_captured_at": "2026-02-18T08:39:11Z",
+        "last_captured_at": "2026-02-18T08:39:11Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_4364|",
+        "system_id": "support_platform",
+        "resource_id": "support_4364",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_64"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:t.****@gmail.com"
+        ],
+        "first_captured_at": "2026-02-18T08:39:11Z",
+        "last_captured_at": "2026-02-18T08:39:11Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "backup_service|backup_4600|",
+        "system_id": "backup_service",
+        "resource_id": "backup_4600",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "backup",
+        "file_ids": [
+          "evidence_64"
+        ],
+        "origins": [
+          "service_readback_logs"
+        ],
+        "matched_identifiers": [
+          "email:t.****@gmail.com"
+        ],
+        "first_captured_at": "2026-02-18T08:39:11Z",
+        "last_captured_at": "2026-02-18T08:39:11Z",
+        "claims": [
+          {
+            "activity_id": "activity_495",
+            "event_time": "2026-02-09T10:25:18Z",
+            "label": "restore-access check",
+            "reported_result": "SUCCESS",
+            "details": "Restore-access check confirmed that archive backup_4600 can still be restored."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

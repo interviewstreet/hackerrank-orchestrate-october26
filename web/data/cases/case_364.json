@@ -20,25 +20,41 @@
       "kind": "email",
       "value": "wa****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **94",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "9741d644…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "K. W.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "wa****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -47,30 +63,147 @@
       "system_id": "account_service",
       "resource_id": "account_7653",
       "matched_identifier": "email:wa****@gmail.com",
-      "captured_at": "2026-04-19T06:59:43Z"
+      "captured_at": "2026-04-19T06:59:43Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_34",
       "system_id": "search_service",
       "resource_id": "search_8198",
       "matched_identifier": "email:wa****@gmail.com",
-      "captured_at": "2026-04-19T06:59:43Z"
+      "captured_at": "2026-04-19T06:59:43Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_34",
       "system_id": "support_platform",
       "resource_id": "support_9699",
       "matched_identifier": "email:wa****@gmail.com",
-      "captured_at": "2026-04-19T06:59:43Z"
+      "captured_at": "2026-04-19T06:59:43Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_34",
       "system_id": "security_service",
       "resource_id": "audit_record_7136",
       "matched_identifier": "user_id:user_362",
-      "captured_at": "2026-04-19T06:59:43Z"
+      "captured_at": "2026-04-19T06:59:43Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_7653|",
+        "system_id": "account_service",
+        "resource_id": "account_7653",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_34"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:wa****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-19T06:59:43Z",
+        "last_captured_at": "2026-04-19T06:59:43Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_8198|",
+        "system_id": "search_service",
+        "resource_id": "search_8198",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_34"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:wa****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-19T06:59:43Z",
+        "last_captured_at": "2026-04-19T06:59:43Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_7136|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_7136",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_34"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_362"
+        ],
+        "first_captured_at": "2026-04-19T06:59:43Z",
+        "last_captured_at": "2026-04-19T06:59:43Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_9699|",
+        "system_id": "support_platform",
+        "resource_id": "support_9699",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_34"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "email:wa****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-19T06:59:43Z",
+        "last_captured_at": "2026-04-19T06:59:43Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

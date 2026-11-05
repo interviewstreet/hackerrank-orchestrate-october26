@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "cm****@fastmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** * ** ** ** 05",
       "is_historical": false,
-      "audit_id": "audit_30"
+      "audit_id": "audit_30",
+      "changed_at": "2025-06-17T05:06:19Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "2a2f4423…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "C. M.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** * ** ** ** 06",
       "is_historical": true,
-      "audit_id": "audit_30"
+      "audit_id": "audit_30",
+      "changed_at": "2025-06-17T05:06:19Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "cm****@fastmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,37 +70,207 @@
       "system_id": "identity_service",
       "resource_id": "tombstone_7389",
       "matched_identifier": "email:cm****@fastmail.com",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_7389",
+      "matched_identifier": "email:cm****@fastmail.com",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "identity_service",
       "resource_id": "tombstone_7389",
       "matched_identifier": "email_hash:2a2f4423…",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_7389",
+      "matched_identifier": "email_hash:2a2f4423…",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "identity_service",
       "resource_id": "tombstone_7389",
       "matched_identifier": "name:c. m.",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_7389",
+      "matched_identifier": "name:c. m.",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "identity_service",
       "resource_id": "tombstone_7389",
       "matched_identifier": "user_id:user_550",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "identity_service",
+      "resource_id": "tombstone_7389",
+      "matched_identifier": "user_id:user_550",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     },
     {
       "file_id": "evidence_52",
       "system_id": "security_service",
       "resource_id": "audit_record_3831",
       "matched_identifier": "user_id:user_550",
-      "captured_at": "2026-09-20T12:00:00Z"
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_failover_replica_capture"
+    },
+    {
+      "file_id": "evidence_52",
+      "system_id": "security_service",
+      "resource_id": "audit_record_3831",
+      "matched_identifier": "user_id:user_550",
+      "captured_at": "2026-09-20T12:00:00Z",
+      "replica_or_table": "customer_data_failover_replica",
+      "origin": "customer_data_failover_replica_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "identity_service|tombstone_7389|",
+        "system_id": "identity_service",
+        "resource_id": "tombstone_7389",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:cm****@fastmail.com",
+          "email_hash:2a2f4423…",
+          "name:c. m.",
+          "user_id:user_550"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "identity_service|tombstone_7389|customer_data_failover_replica",
+        "system_id": "identity_service",
+        "resource_id": "tombstone_7389",
+        "replica_or_table": "customer_data_failover_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:cm****@fastmail.com",
+          "email_hash:2a2f4423…",
+          "name:c. m.",
+          "user_id:user_550"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3831|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3831",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_550"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3831|customer_data_failover_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3831",
+        "replica_or_table": "customer_data_failover_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_52"
+        ],
+        "origins": [
+          "customer_data_failover_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_550"
+        ],
+        "first_captured_at": "2026-09-20T12:00:00Z",
+        "last_captured_at": "2026-09-20T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

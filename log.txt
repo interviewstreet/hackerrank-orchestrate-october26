@@ -634,3 +634,41 @@ branch=main
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-05T06:10:32Z] Data lineage map + identity trail on the case page
+
+User Prompt (verbatim, secrets redacted):
+Copy everything in the grey box and send it to Claude:
+
+> Now build the first innovation feature: a **data lineage map** on each case page, showing where the person's data lives and how it travelled between systems.
+>
+> 1. **Data:** P3's flows aren't connected yet, so build the map from what we have:
+>    - nodes = every system and resource in the case's evidence_hits, grouped into columns: primary systems (e.g. account_service) → copies (replicas, search indexes, analytics, exports, logs, support) → backups and archives. Decide the group from the system_id and the evidence file's origin.
+>    - edges = from `dataset/system_activity.csv`, only rows about this case's resources and at or before audit_at (sync, export, backup, restore, indexing). Save these in a new `lineage_edges` table in audit.db, and include them in the case JSON. Label them **"reported activity (claims)"**, because activity results are claims, not proof. Don't use them for any deletion decision.
+>    - when P3's `flows` and `restore_risks` exist, show them on top, as active flows in red and restore risks in orange.
+> 2. **Map:** draw it as an SVG on the case page, with no heavy library: system boxes in columns, arrows for edges, each node showing system_id, resource_id and the evidence file_id. Hover or tap a node to see its details. Add a short legend.
+> 3. Add an **identity trail** above the map: the request email → older or newer emails, with the audit_id and date of each change (e.g. old email → audit_293, 28 May 2026 → current email). Use masked values.
+> 4. If a case has no evidence, show "No copies found" instead of an empty map.
+> 5. Add Python tests for the lineage_edges extraction. Rerun main.py and export_web_data.py, and run `npm run build` with no errors.
+> 6. Tell me which 3 cases have the most interesting maps (the most systems and edges) for my demo, and what each one shows.
+>
+> Don't change identity_resolver.py, request_classifier.py or P2's files.
+
+When it finishes, paste the result here, especially the 3 demo cases.
+
+Agent Response Summary:
+Added code/lineage.py (node_group(): primary / copy / backup from system_id, evidence origin and replica; activity rows matched by resource_id or a resource named in details, at or before audit_at; movements = sync/index/export/cache/restore, flow/backup claims = control). New lineage_edges table (256 rows: 82 sync edges, 174 flow/backup claims), plus evidence_hits.replica_or_table/origin and identities.changed_at/matches_request; main.py computes edges inside the existing DB try/except (display only, answers unchanged). Export adds lineage (nodes, claim edges, P3 flow/restore overlays) and identity_trail, all masked; the privacy tests caught an unmasked matched_identifier in the map nodes, which was fixed before export. Frontend: IdentityTrail and an SVG LineageMap (3 columns, dashed claim arrows, red/orange P3 overlays, hover/tap/keyboard details, legend, "No copies found"). Demo picks: case_37, case_390, case_91. 193 Python tests pass; npm run build passes.
+
+Actions:
+* Created code/lineage.py, code/test_lineage.py, web/components/LineageMap.tsx, web/components/IdentityTrail.tsx
+* Modified code/audit_db.py, code/main.py, code/export_web_data.py, code/test_audit_db.py, code/test_export_web_data.py, web/lib/types.ts, web/app/cases/[id]/page.tsx
+* Ran: python3 code/main.py (518 rows, 0/508/10); python3 code/export_web_data.py; python3 -m unittest discover -s code -p "test_*.py" -> 193 OK; npm run build (OK)
+* Ran: headless Chrome screenshots via DevTools (scratchpad only)
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none

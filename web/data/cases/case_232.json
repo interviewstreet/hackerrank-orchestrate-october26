@@ -20,31 +20,49 @@
       "kind": "email",
       "value": "gy****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **35",
       "is_historical": false,
-      "audit_id": "audit_20"
+      "audit_id": "audit_20",
+      "changed_at": "2025-05-03T14:46:59Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "46ebec8a…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "E. G.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **46",
       "is_historical": true,
-      "audit_id": "audit_20"
+      "audit_id": "audit_20",
+      "changed_at": "2025-05-03T14:46:59Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "gy****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -53,9 +71,54 @@
       "system_id": "support_platform",
       "resource_id": "support_9862",
       "matched_identifier": "email:gy****@gmail.com",
-      "captured_at": "2026-06-28T06:25:56Z"
+      "captured_at": "2026-06-28T06:25:56Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "support_platform|support_9862|",
+        "system_id": "support_platform",
+        "resource_id": "support_9862",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_80"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:gy****@gmail.com"
+        ],
+        "first_captured_at": "2026-06-28T06:25:56Z",
+        "last_captured_at": "2026-06-28T06:25:56Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

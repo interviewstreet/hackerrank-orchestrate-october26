@@ -19,31 +19,49 @@
       "kind": "email",
       "value": "jo****@proton.me",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** *** ** 05",
       "is_historical": false,
-      "audit_id": "audit_03"
+      "audit_id": "audit_03",
+      "changed_at": "2025-01-04T00:11:24Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "bf0907a9…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "J. L.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** *** ** 06",
       "is_historical": true,
-      "audit_id": "audit_03"
+      "audit_id": "audit_03",
+      "changed_at": "2025-01-04T00:11:24Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "jo****@proton.me",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -52,30 +70,147 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_7468",
       "matched_identifier": "email:jo****@proton.me",
-      "captured_at": "2026-01-29T11:44:59Z"
+      "captured_at": "2026-01-29T11:44:59Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_62",
       "system_id": "support_platform",
       "resource_id": "support_9832",
       "matched_identifier": "email:jo****@proton.me",
-      "captured_at": "2026-01-29T11:44:59Z"
+      "captured_at": "2026-01-29T11:44:59Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_62",
       "system_id": "support_platform",
       "resource_id": "support_3896",
       "matched_identifier": "email:jo****@proton.me",
-      "captured_at": "2026-01-29T11:44:59Z"
+      "captured_at": "2026-01-29T11:44:59Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_62",
       "system_id": "search_service",
       "resource_id": "search_1091",
       "matched_identifier": "email:jo****@proton.me",
-      "captured_at": "2026-01-29T11:44:59Z"
+      "captured_at": "2026-01-29T11:44:59Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_7468|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_7468",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_62"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:jo****@proton.me"
+        ],
+        "first_captured_at": "2026-01-29T11:44:59Z",
+        "last_captured_at": "2026-01-29T11:44:59Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_1091|",
+        "system_id": "search_service",
+        "resource_id": "search_1091",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_62"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:jo****@proton.me"
+        ],
+        "first_captured_at": "2026-01-29T11:44:59Z",
+        "last_captured_at": "2026-01-29T11:44:59Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_3896|",
+        "system_id": "support_platform",
+        "resource_id": "support_3896",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_62"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:jo****@proton.me"
+        ],
+        "first_captured_at": "2026-01-29T11:44:59Z",
+        "last_captured_at": "2026-01-29T11:44:59Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_9832|",
+        "system_id": "support_platform",
+        "resource_id": "support_9832",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_62"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:jo****@proton.me"
+        ],
+        "first_captured_at": "2026-01-29T11:44:59Z",
+        "last_captured_at": "2026-01-29T11:44:59Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

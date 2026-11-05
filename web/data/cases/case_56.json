@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "el****@outlook.com",
       "is_historical": false,
-      "audit_id": "audit_289"
+      "audit_id": "audit_289",
+      "changed_at": "2026-05-23T17:31:44Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *12",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "1e90d6d1…",
       "is_historical": false,
-      "audit_id": "audit_290"
+      "audit_id": "audit_290",
+      "changed_at": "2026-05-23T17:31:44Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "E. R.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "el****@outlook.com",
       "is_historical": true,
-      "audit_id": "audit_289"
+      "audit_id": "audit_289",
+      "changed_at": "2026-05-23T17:31:44Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "3a48dce7…",
       "is_historical": true,
-      "audit_id": "audit_290"
+      "audit_id": "audit_290",
+      "changed_at": "2026-05-23T17:31:44Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "el****@outlook.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_289",
+        "changed_at": "2026-05-23T17:31:44Z"
+      }
+    },
+    {
+      "value": "el****@outlook.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,16 +87,169 @@
       "system_id": "integration_service",
       "resource_id": "data_flow_373",
       "matched_identifier": "email:el****@outlook.com",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "integration_service",
+      "resource_id": "data_flow_373",
+      "matched_identifier": "email:el****@outlook.com",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     },
     {
       "file_id": "evidence_05",
       "system_id": "security_service",
       "resource_id": "audit_record_4078",
       "matched_identifier": "user_id:user_54",
-      "captured_at": "2026-09-21T10:00:00Z"
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_read_replica_capture"
+    },
+    {
+      "file_id": "evidence_05",
+      "system_id": "security_service",
+      "resource_id": "audit_record_4078",
+      "matched_identifier": "user_id:user_54",
+      "captured_at": "2026-09-21T10:00:00Z",
+      "replica_or_table": "customer_data_read_replica",
+      "origin": "customer_data_read_replica_capture"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_3513",
+      "event_time": "2026-08-29T10:48:19Z",
+      "event_type": "CHECK_DATA_FLOW",
+      "kind": "control",
+      "label": "flow check",
+      "source_system": "deletion_worker",
+      "source_resource_id": "data_flow_373",
+      "target_system": "integration_service",
+      "target_resource_id": "data_flow_373",
+      "reported_result": "SUCCESS",
+      "details": "Connector status check confirmed that data flow data_flow_373 remains enabled."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "integration_service|data_flow_373|",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_373",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:el****@outlook.com"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [
+          {
+            "activity_id": "activity_3513",
+            "event_time": "2026-08-29T10:48:19Z",
+            "label": "flow check",
+            "reported_result": "SUCCESS",
+            "details": "Connector status check confirmed that data flow data_flow_373 remains enabled."
+          }
+        ],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "integration_service|data_flow_373|customer_data_read_replica",
+        "system_id": "integration_service",
+        "resource_id": "data_flow_373",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "email:el****@outlook.com"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_4078|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_4078",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_54"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_4078|customer_data_read_replica",
+        "system_id": "security_service",
+        "resource_id": "audit_record_4078",
+        "replica_or_table": "customer_data_read_replica",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_05"
+        ],
+        "origins": [
+          "customer_data_read_replica_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_54"
+        ],
+        "first_captured_at": "2026-09-21T10:00:00Z",
+        "last_captured_at": "2026-09-21T10:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

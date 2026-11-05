@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "tu****@outlook.com",
       "is_historical": false,
-      "audit_id": "audit_99"
+      "audit_id": "audit_99",
+      "changed_at": "2025-11-14T18:24:25Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** *** *** **26",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "05f562f8…",
       "is_historical": false,
-      "audit_id": "audit_100"
+      "audit_id": "audit_100",
+      "changed_at": "2025-11-14T18:24:25Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "T. A.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "tu****@outlook.com",
       "is_historical": true,
-      "audit_id": "audit_99"
+      "audit_id": "audit_99",
+      "changed_at": "2025-11-14T18:24:25Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "060789c4…",
       "is_historical": true,
-      "audit_id": "audit_100"
+      "audit_id": "audit_100",
+      "changed_at": "2025-11-14T18:24:25Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "tu****@outlook.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_99",
+        "changed_at": "2025-11-14T18:24:25Z"
+      }
+    },
+    {
+      "value": "tu****@outlook.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,16 +88,126 @@
       "system_id": "account_service",
       "resource_id": "account_3002",
       "matched_identifier": "email:tu****@outlook.com",
-      "captured_at": "2026-03-15T07:00:00Z"
+      "captured_at": "2026-03-15T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "downstream_delivery_service"
     },
     {
       "file_id": "evidence_41",
       "system_id": "security_service",
       "resource_id": "audit_record_1149",
       "matched_identifier": "user_id:user_437",
-      "captured_at": "2026-03-15T07:00:00Z"
+      "captured_at": "2026-03-15T07:00:00Z",
+      "replica_or_table": "",
+      "origin": "downstream_delivery_service"
     }
   ],
+  "lineage_edges": [
+    {
+      "activity_id": "activity_638",
+      "event_time": "2026-02-19T07:38:13Z",
+      "event_type": "SYNC_RECORD",
+      "kind": "movement",
+      "label": "sync",
+      "source_system": "account_service",
+      "source_resource_id": "account_3002",
+      "target_system": "account_replication_cluster",
+      "target_resource_id": "account_3002",
+      "reported_result": "SUCCESS",
+      "details": "Replication worker reported its final checkpoint for account_3002."
+    }
+  ],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_3002|",
+        "system_id": "account_service",
+        "resource_id": "account_3002",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_41"
+        ],
+        "origins": [
+          "downstream_delivery_service"
+        ],
+        "matched_identifiers": [
+          "email:tu****@outlook.com"
+        ],
+        "first_captured_at": "2026-03-15T07:00:00Z",
+        "last_captured_at": "2026-03-15T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "account_replication_cluster|account_3002|",
+        "system_id": "account_replication_cluster",
+        "resource_id": "account_3002",
+        "replica_or_table": "",
+        "source": "activity",
+        "group": "copy",
+        "file_ids": [],
+        "origins": [],
+        "matched_identifiers": [],
+        "first_captured_at": "",
+        "last_captured_at": "",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_1149|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_1149",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_41"
+        ],
+        "origins": [
+          "downstream_delivery_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_437"
+        ],
+        "first_captured_at": "2026-03-15T07:00:00Z",
+        "last_captured_at": "2026-03-15T07:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [
+      {
+        "activity_id": "activity_638",
+        "event_time": "2026-02-19T07:38:13Z",
+        "label": "sync",
+        "reported_result": "SUCCESS",
+        "details": "Replication worker reported its final checkpoint for account_3002.",
+        "from": "account_service|account_3002|",
+        "to": "account_replication_cluster|account_3002|",
+        "kind": "claim"
+      }
+    ],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

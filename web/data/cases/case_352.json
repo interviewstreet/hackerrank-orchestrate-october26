@@ -20,31 +20,49 @@
       "kind": "email",
       "value": "ja****@gmail.com",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **71",
       "is_historical": false,
-      "audit_id": "audit_35"
+      "audit_id": "audit_35",
+      "changed_at": "2025-07-02T16:46:59Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "abf91c48…",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "D. J.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** **** **57",
       "is_historical": true,
-      "audit_id": "audit_35"
+      "audit_id": "audit_35",
+      "changed_at": "2025-07-02T16:46:59Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ja****@gmail.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -53,16 +71,85 @@
       "system_id": "support_platform",
       "resource_id": "support_3980",
       "matched_identifier": "email:ja****@gmail.com",
-      "captured_at": "2026-04-29T08:32:22Z"
+      "captured_at": "2026-04-29T08:32:22Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_71",
       "system_id": "search_service",
       "resource_id": "search_5685",
       "matched_identifier": "email:ja****@gmail.com",
-      "captured_at": "2026-04-29T08:32:22Z"
+      "captured_at": "2026-04-29T08:32:22Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "search_service|search_5685|",
+        "system_id": "search_service",
+        "resource_id": "search_5685",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_71"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:ja****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-29T08:32:22Z",
+        "last_captured_at": "2026-04-29T08:32:22Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_3980|",
+        "system_id": "support_platform",
+        "resource_id": "support_3980",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_71"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:ja****@gmail.com"
+        ],
+        "first_captured_at": "2026-04-29T08:32:22Z",
+        "last_captured_at": "2026-04-29T08:32:22Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

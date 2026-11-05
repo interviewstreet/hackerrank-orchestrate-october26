@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "ka****@gmail.com",
       "is_historical": false,
-      "audit_id": "audit_246"
+      "audit_id": "audit_246",
+      "changed_at": "2026-04-19T05:10:47Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** *** *** *44",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "18c3311e…",
       "is_historical": false,
-      "audit_id": "audit_247"
+      "audit_id": "audit_247",
+      "changed_at": "2026-04-19T05:10:47Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "K. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ka****@gmail.com",
       "is_historical": true,
-      "audit_id": "audit_246"
+      "audit_id": "audit_246",
+      "changed_at": "2026-04-19T05:10:47Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "5de27a92…",
       "is_historical": true,
-      "audit_id": "audit_247"
+      "audit_id": "audit_247",
+      "changed_at": "2026-04-19T05:10:47Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ka****@gmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_246",
+        "changed_at": "2026-04-19T05:10:47Z"
+      }
+    },
+    {
+      "value": "ka****@gmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,16 +87,85 @@
       "system_id": "analytics_platform",
       "resource_id": "analytics_1103",
       "matched_identifier": "email:ka****@gmail.com",
-      "captured_at": "2026-08-17T09:42:50Z"
+      "captured_at": "2026-08-17T09:42:50Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     },
     {
       "file_id": "evidence_87",
       "system_id": "search_service",
       "resource_id": "search_9752",
       "matched_identifier": "email:ka****@gmail.com",
-      "captured_at": "2026-08-17T09:42:50Z"
+      "captured_at": "2026-08-17T09:42:50Z",
+      "replica_or_table": "",
+      "origin": "customer_data_inventory_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "analytics_platform|analytics_1103|",
+        "system_id": "analytics_platform",
+        "resource_id": "analytics_1103",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_87"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:ka****@gmail.com"
+        ],
+        "first_captured_at": "2026-08-17T09:42:50Z",
+        "last_captured_at": "2026-08-17T09:42:50Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_9752|",
+        "system_id": "search_service",
+        "resource_id": "search_9752",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_87"
+        ],
+        "origins": [
+          "customer_data_inventory_capture"
+        ],
+        "matched_identifiers": [
+          "email:ka****@gmail.com"
+        ],
+        "first_captured_at": "2026-08-17T09:42:50Z",
+        "last_captured_at": "2026-08-17T09:42:50Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

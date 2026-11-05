@@ -19,37 +19,66 @@
       "kind": "email",
       "value": "ch****@gmail.com",
       "is_historical": false,
-      "audit_id": "audit_303"
+      "audit_id": "audit_303",
+      "changed_at": "2026-06-03T02:15:52Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** **** **24",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "e80b6f27…",
       "is_historical": false,
-      "audit_id": "audit_304"
+      "audit_id": "audit_304",
+      "changed_at": "2026-06-03T02:15:52Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "J. C.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ch****@gmail.com",
       "is_historical": true,
-      "audit_id": "audit_303"
+      "audit_id": "audit_303",
+      "changed_at": "2026-06-03T02:15:52Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "fc79be7e…",
       "is_historical": true,
-      "audit_id": "audit_304"
+      "audit_id": "audit_304",
+      "changed_at": "2026-06-03T02:15:52Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ch****@gmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_303",
+        "changed_at": "2026-06-03T02:15:52Z"
+      }
+    },
+    {
+      "value": "ch****@gmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -58,30 +87,147 @@
       "system_id": "account_service",
       "resource_id": "account_1810",
       "matched_identifier": "email:ch****@gmail.com",
-      "captured_at": "2026-10-01T12:00:00Z"
+      "captured_at": "2026-10-01T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_account_service"
     },
     {
       "file_id": "evidence_03",
       "system_id": "search_service",
       "resource_id": "search_3200",
       "matched_identifier": "email:ch****@gmail.com",
-      "captured_at": "2026-10-01T12:00:00Z"
+      "captured_at": "2026-10-01T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_account_service"
     },
     {
       "file_id": "evidence_03",
       "system_id": "support_platform",
       "resource_id": "support_4887",
       "matched_identifier": "email:ch****@gmail.com",
-      "captured_at": "2026-10-01T12:00:00Z"
+      "captured_at": "2026-10-01T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_account_service"
     },
     {
       "file_id": "evidence_03",
       "system_id": "security_service",
       "resource_id": "audit_record_8349",
       "matched_identifier": "user_id:user_38",
-      "captured_at": "2026-10-01T12:00:00Z"
+      "captured_at": "2026-10-01T12:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_account_service"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_1810|",
+        "system_id": "account_service",
+        "resource_id": "account_1810",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_03"
+        ],
+        "origins": [
+          "customer_account_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@gmail.com"
+        ],
+        "first_captured_at": "2026-10-01T12:00:00Z",
+        "last_captured_at": "2026-10-01T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_3200|",
+        "system_id": "search_service",
+        "resource_id": "search_3200",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_03"
+        ],
+        "origins": [
+          "customer_account_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@gmail.com"
+        ],
+        "first_captured_at": "2026-10-01T12:00:00Z",
+        "last_captured_at": "2026-10-01T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_8349|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_8349",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_03"
+        ],
+        "origins": [
+          "customer_account_service"
+        ],
+        "matched_identifiers": [
+          "user_id:user_38"
+        ],
+        "first_captured_at": "2026-10-01T12:00:00Z",
+        "last_captured_at": "2026-10-01T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_4887|",
+        "system_id": "support_platform",
+        "resource_id": "support_4887",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_03"
+        ],
+        "origins": [
+          "customer_account_service"
+        ],
+        "matched_identifiers": [
+          "email:ch****@gmail.com"
+        ],
+        "first_captured_at": "2026-10-01T12:00:00Z",
+        "last_captured_at": "2026-10-01T12:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

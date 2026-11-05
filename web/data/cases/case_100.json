@@ -20,37 +20,66 @@
       "kind": "email",
       "value": "na****@gmail.com",
       "is_historical": false,
-      "audit_id": "audit_256"
+      "audit_id": "audit_256",
+      "changed_at": "2026-05-03T20:15:52Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **48",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "f4e9abcb…",
       "is_historical": false,
-      "audit_id": "audit_257"
+      "audit_id": "audit_257",
+      "changed_at": "2026-05-03T20:15:52Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "M. N.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "na****@gmail.com",
       "is_historical": true,
-      "audit_id": "audit_256"
+      "audit_id": "audit_256",
+      "changed_at": "2026-05-03T20:15:52Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "1fb889a8…",
       "is_historical": true,
-      "audit_id": "audit_257"
+      "audit_id": "audit_257",
+      "changed_at": "2026-05-03T20:15:52Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "na****@gmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_256",
+        "changed_at": "2026-05-03T20:15:52Z"
+      }
+    },
+    {
+      "value": "na****@gmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -59,16 +88,85 @@
       "system_id": "support_platform",
       "resource_id": "support_1630",
       "matched_identifier": "email:na****@gmail.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     },
     {
       "file_id": "evidence_89",
       "system_id": "search_service",
       "resource_id": "search_018",
       "matched_identifier": "email:na****@gmail.com",
-      "captured_at": "2026-09-01T05:33:16Z"
+      "captured_at": "2026-09-01T05:33:16Z",
+      "replica_or_table": "",
+      "origin": "service_resource_export"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "search_service|search_018|",
+        "system_id": "search_service",
+        "resource_id": "search_018",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:na****@gmail.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_1630|",
+        "system_id": "support_platform",
+        "resource_id": "support_1630",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_89"
+        ],
+        "origins": [
+          "service_resource_export"
+        ],
+        "matched_identifiers": [
+          "email:na****@gmail.com"
+        ],
+        "first_captured_at": "2026-09-01T05:33:16Z",
+        "last_captured_at": "2026-09-01T05:33:16Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

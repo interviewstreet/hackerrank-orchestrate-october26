@@ -20,43 +20,74 @@
       "kind": "email",
       "value": "ha****@zoho.com",
       "is_historical": false,
-      "audit_id": "audit_277"
+      "audit_id": "audit_277",
+      "changed_at": "2026-05-17T20:18:43Z",
+      "matches_request": true
     },
     {
       "kind": "phone",
       "value": "+** ** **** **07",
       "is_historical": false,
-      "audit_id": "audit_279"
+      "audit_id": "audit_279",
+      "changed_at": "2026-05-17T20:18:43Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "db83a42f…",
       "is_historical": false,
-      "audit_id": "audit_278"
+      "audit_id": "audit_278",
+      "changed_at": "2026-05-17T20:18:43Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "H. S.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "ha****@zoho.com",
       "is_historical": true,
-      "audit_id": "audit_277"
+      "audit_id": "audit_277",
+      "changed_at": "2026-05-17T20:18:43Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+** ** **** **05",
       "is_historical": true,
-      "audit_id": "audit_279"
+      "audit_id": "audit_279",
+      "changed_at": "2026-05-17T20:18:43Z",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "532f8531…",
       "is_historical": true,
-      "audit_id": "audit_278"
+      "audit_id": "audit_278",
+      "changed_at": "2026-05-17T20:18:43Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "ha****@zoho.com",
+      "is_current": false,
+      "is_request": false,
+      "replaced_by": {
+        "audit_id": "audit_277",
+        "changed_at": "2026-05-17T20:18:43Z"
+      }
+    },
+    {
+      "value": "ha****@zoho.com",
+      "is_current": true,
+      "is_request": true,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -65,65 +96,179 @@
       "system_id": "account_service",
       "resource_id": "account_5762",
       "matched_identifier": "email:ha****@zoho.com",
-      "captured_at": "2026-09-15T11:59:39Z"
+      "captured_at": "2026-09-15T11:59:39Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_01",
       "system_id": "support_platform",
       "resource_id": "support_9538",
       "matched_identifier": "phone:**********05",
-      "captured_at": "2026-09-15T11:59:39Z"
+      "captured_at": "2026-09-15T11:59:39Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_01",
       "system_id": "security_service",
       "resource_id": "audit_record_3753",
       "matched_identifier": "user_id:user_11",
-      "captured_at": "2026-09-15T11:59:39Z"
+      "captured_at": "2026-09-15T11:59:39Z",
+      "replica_or_table": "",
+      "origin": "central_observability_export"
     },
     {
       "file_id": "evidence_04",
       "system_id": "account_service",
       "resource_id": "account_5762",
       "matched_identifier": "email:ha****@zoho.com",
-      "captured_at": "2026-09-26T11:00:00Z"
+      "captured_at": "2026-09-26T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_admin_portal"
     },
     {
       "file_id": "evidence_04",
       "system_id": "support_platform",
       "resource_id": "support_9538",
       "matched_identifier": "email:ha****@zoho.com",
-      "captured_at": "2026-09-26T11:00:00Z"
+      "captured_at": "2026-09-26T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_admin_portal"
     },
     {
       "file_id": "evidence_04",
       "system_id": "account_service",
       "resource_id": "account_5762",
       "matched_identifier": "phone:**********07",
-      "captured_at": "2026-09-26T11:00:00Z"
+      "captured_at": "2026-09-26T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_admin_portal"
     },
     {
       "file_id": "evidence_04",
       "system_id": "support_platform",
       "resource_id": "support_9538",
       "matched_identifier": "phone:**********07",
-      "captured_at": "2026-09-26T11:00:00Z"
+      "captured_at": "2026-09-26T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_admin_portal"
     },
     {
       "file_id": "evidence_04",
       "system_id": "account_service",
       "resource_id": "account_5762",
       "matched_identifier": "user_id:user_11",
-      "captured_at": "2026-09-26T11:00:00Z"
+      "captured_at": "2026-09-26T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_admin_portal"
     },
     {
       "file_id": "evidence_04",
       "system_id": "support_platform",
       "resource_id": "support_9538",
       "matched_identifier": "user_id:user_11",
-      "captured_at": "2026-09-26T11:00:00Z"
+      "captured_at": "2026-09-26T11:00:00Z",
+      "replica_or_table": "",
+      "origin": "account_admin_portal"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "account_service|account_5762|",
+        "system_id": "account_service",
+        "resource_id": "account_5762",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "primary",
+        "file_ids": [
+          "evidence_01",
+          "evidence_04"
+        ],
+        "origins": [
+          "central_observability_export",
+          "account_admin_portal"
+        ],
+        "matched_identifiers": [
+          "email:ha****@zoho.com",
+          "phone:**********07",
+          "user_id:user_11"
+        ],
+        "first_captured_at": "2026-09-15T11:59:39Z",
+        "last_captured_at": "2026-09-26T11:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_3753|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_3753",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_01"
+        ],
+        "origins": [
+          "central_observability_export"
+        ],
+        "matched_identifiers": [
+          "user_id:user_11"
+        ],
+        "first_captured_at": "2026-09-15T11:59:39Z",
+        "last_captured_at": "2026-09-15T11:59:39Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "support_platform|support_9538|",
+        "system_id": "support_platform",
+        "resource_id": "support_9538",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_01",
+          "evidence_04"
+        ],
+        "origins": [
+          "central_observability_export",
+          "account_admin_portal"
+        ],
+        "matched_identifiers": [
+          "phone:**********05",
+          "email:ha****@zoho.com",
+          "phone:**********07",
+          "user_id:user_11"
+        ],
+        "first_captured_at": "2026-09-15T11:59:39Z",
+        "last_captured_at": "2026-09-26T11:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],

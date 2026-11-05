@@ -21,37 +21,66 @@
       "kind": "email",
       "value": "mr****@fastmail.com",
       "is_historical": false,
-      "audit_id": "audit_136"
+      "audit_id": "audit_136",
+      "changed_at": "2025-12-24T17:35:12Z",
+      "matches_request": false
     },
     {
       "kind": "phone",
       "value": "+*** ** *** **05",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email_hash",
       "value": "2242ebfd…",
       "is_historical": false,
-      "audit_id": "audit_137"
+      "audit_id": "audit_137",
+      "changed_at": "2025-12-24T17:35:12Z",
+      "matches_request": false
     },
     {
       "kind": "name",
       "value": "M. R.",
       "is_historical": false,
-      "audit_id": ""
+      "audit_id": "",
+      "changed_at": "",
+      "matches_request": false
     },
     {
       "kind": "email",
       "value": "mr****@fastmail.com",
       "is_historical": true,
-      "audit_id": "audit_136"
+      "audit_id": "audit_136",
+      "changed_at": "2025-12-24T17:35:12Z",
+      "matches_request": true
     },
     {
       "kind": "email_hash",
       "value": "979e74c6…",
       "is_historical": true,
-      "audit_id": "audit_137"
+      "audit_id": "audit_137",
+      "changed_at": "2025-12-24T17:35:12Z",
+      "matches_request": false
+    }
+  ],
+  "identity_trail": [
+    {
+      "value": "mr****@fastmail.com",
+      "is_current": false,
+      "is_request": true,
+      "replaced_by": {
+        "audit_id": "audit_136",
+        "changed_at": "2025-12-24T17:35:12Z"
+      }
+    },
+    {
+      "value": "mr****@fastmail.com",
+      "is_current": true,
+      "is_request": false,
+      "replaced_by": null
     }
   ],
   "evidence_hits": [
@@ -60,37 +89,362 @@
       "system_id": "export_service",
       "resource_id": "export_350",
       "matched_identifier": "email:mr****@fastmail.com",
-      "captured_at": "2026-04-24T08:00:00Z"
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "matched_identifier": "email:mr****@fastmail.com",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "export_service",
+      "resource_id": "export_350",
+      "matched_identifier": "email:mr****@fastmail.com",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_33",
       "system_id": "search_service",
       "resource_id": "search_957",
       "matched_identifier": "email:mr****@fastmail.com",
-      "captured_at": "2026-04-24T08:00:00Z"
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "matched_identifier": "email:mr****@fastmail.com",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "matched_identifier": "email:mr****@fastmail.com",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_33",
       "system_id": "search_service",
       "resource_id": "search_957",
       "matched_identifier": "name:m. r.",
-      "captured_at": "2026-04-24T08:00:00Z"
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "matched_identifier": "name:m. r.",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "matched_identifier": "name:m. r.",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_33",
       "system_id": "search_service",
       "resource_id": "search_957",
       "matched_identifier": "user_id:user_358",
-      "captured_at": "2026-04-24T08:00:00Z"
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "matched_identifier": "user_id:user_358",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "search_service",
+      "resource_id": "search_957",
+      "matched_identifier": "user_id:user_358",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     },
     {
       "file_id": "evidence_33",
       "system_id": "security_service",
       "resource_id": "audit_record_2605",
       "matched_identifier": "user_id:user_358",
-      "captured_at": "2026-04-24T08:00:00Z"
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "matched_identifier": "user_id:user_358",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_ap_south",
+      "origin": "customer_data_regional_replicas_capture"
+    },
+    {
+      "file_id": "evidence_33",
+      "system_id": "security_service",
+      "resource_id": "audit_record_2605",
+      "matched_identifier": "user_id:user_358",
+      "captured_at": "2026-04-24T08:00:00Z",
+      "replica_or_table": "customer_data_replica_eu_west",
+      "origin": "customer_data_regional_replicas_capture"
     }
   ],
+  "lineage_edges": [],
+  "lineage": {
+    "groups": [
+      {
+        "id": "primary",
+        "label": "Primary systems"
+      },
+      {
+        "id": "copy",
+        "label": "Copies"
+      },
+      {
+        "id": "backup",
+        "label": "Backups & archives"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "export_service|export_350|",
+        "system_id": "export_service",
+        "resource_id": "export_350",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "export_service|export_350|customer_data_replica_ap_south",
+        "system_id": "export_service",
+        "resource_id": "export_350",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "export_service|export_350|customer_data_replica_eu_west",
+        "system_id": "export_service",
+        "resource_id": "export_350",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_957|",
+        "system_id": "search_service",
+        "resource_id": "search_957",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com",
+          "name:m. r.",
+          "user_id:user_358"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_957|customer_data_replica_ap_south",
+        "system_id": "search_service",
+        "resource_id": "search_957",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com",
+          "name:m. r.",
+          "user_id:user_358"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "search_service|search_957|customer_data_replica_eu_west",
+        "system_id": "search_service",
+        "resource_id": "search_957",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "email:mr****@fastmail.com",
+          "name:m. r.",
+          "user_id:user_358"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_2605|",
+        "system_id": "security_service",
+        "resource_id": "audit_record_2605",
+        "replica_or_table": "",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_358"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_2605|customer_data_replica_ap_south",
+        "system_id": "security_service",
+        "resource_id": "audit_record_2605",
+        "replica_or_table": "customer_data_replica_ap_south",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_358"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      },
+      {
+        "id": "security_service|audit_record_2605|customer_data_replica_eu_west",
+        "system_id": "security_service",
+        "resource_id": "audit_record_2605",
+        "replica_or_table": "customer_data_replica_eu_west",
+        "source": "evidence",
+        "group": "copy",
+        "file_ids": [
+          "evidence_33"
+        ],
+        "origins": [
+          "customer_data_regional_replicas_capture"
+        ],
+        "matched_identifiers": [
+          "user_id:user_358"
+        ],
+        "first_captured_at": "2026-04-24T08:00:00Z",
+        "last_captured_at": "2026-04-24T08:00:00Z",
+        "claims": [],
+        "active_flow": null,
+        "restore_risk": null
+      }
+    ],
+    "edges": [],
+    "edge_note": "reported activity (claims)"
+  },
   "resources": [],
   "flows": [],
   "restore_risks": [],
