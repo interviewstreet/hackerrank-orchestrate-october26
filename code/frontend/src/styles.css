@@ -63,3 +63,6 @@
 }
 
 @media(min-width:1200px){.exposure-field,.hero[data-motion-paused="true"] .exposure-field{background:radial-gradient(ellipse 760px 780px at 57% 50%,#007BFF 0%,#66B5FF 67%,#D9EEFF 83%,#e7f3fc 100%)}.hero-globe .globe-caption{right:48px}.hero-globe .graph-browser>summary{padding-block:12px}.hero-case select{padding-block:9px}}
+
+/* Email controls reuse the existing panels, fields and action buttons. */
+.email-panel,.email-panel form{display:grid;gap:12px;min-width:0}.email-panel label{display:grid;gap:7px;font-size:12px}.email-panel textarea{font:inherit;line-height:1.6;color:var(--text);background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;resize:vertical;width:100%;max-width:100%}.email-panel textarea:focus-visible{outline:2px solid #007BFF;outline-offset:4px}.email-panel .title-actions{flex-wrap:wrap;gap:8px}.email-panel .email-confirm{display:flex;align-items:flex-start;gap:8px;line-height:1.6}.email-panel input[type=checkbox]{width:auto;margin-top:4px}.email-panel .history-row{padding:12px 0}.email-panel input:disabled,.email-panel textarea:disabled{opacity:.7}.email-panel [role=alert]{color:#bc2642}

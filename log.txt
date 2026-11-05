@@ -1761,3 +1761,370 @@ branch=member-1-frontend-slack
 repo_root=C:\Users\Luzain Sara\Documents\EraSight
 worktree=C:\Users\Luzain Sara\Documents\EraSight
 parent_agent=none
+
+## [2026-11-05T02:24:08.135467+00:00] Wire the secure email adapter into the existing API
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: log.txt
+
+## Open tabs:
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+- .env: .env
+- .env.local: code/frontend/.env.local
+
+## My request:
+Begin Phase 4, Step 1: Resend backend wiring.
+Read `code/integrations/email/INTEGRATION_PLAN.md` and integrate the existing secure EmailHttpAdapter into `code/server.py` exactly as documented.
+Preserve all existing endpoints, CSRF protections, localhost-only binding, Slack integration, 518-case engine, and CaseAuditResult contract.
+Do not modify the email package, engine, or .env files. Do not hardcode secrets.
+Run backend pytest tests and relevant email API checks. Report the results and any manual setup required.
+Do not commit or push.
+
+
+Agent Response Summary:
+Read Member Two's INTEGRATION_PLAN.md and wired the existing EmailHttpAdapter into code/server.py after environment and case loading, passing raw CaseAuditResult dictionaries internally without changing their schema. Added the documented session/CSRF/body-size boundary, GET/POST/PUT dispatch and Authorization/PUT preflight support while preserving localhost binding and all existing case/session/Slack routes. Added 18 real-loopback HTTP checks using an in-memory outbox and fake Resend for authentication, separation of duties, allowlists, forged actor names, framing and startup wiring. The complete Windows Python 3.14 suite passed 278 tests with zero failures/skips and one existing Starlette/httpx warning; no real email was sent, no protected package or env file was edited, and no commit or push occurred.
+
+Actions:
+* Updated code/server.py and added code/tests/test_email_server.py only, apart from this required log append.
+* Ran the full backend pytest suite with external temporary files and PDF/OCR tools available; git diff --check passed.
+* Verified engine, email package and shared contract have no changes; kept credentials server-side.
+* Manual setup remains operator-token generation, recipient allowlist, verified Resend sender/key and API restart; frontend email controls remain unchanged.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T02:41:06.382503+00:00] Add the authenticated per-case email frontend
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Active file: .env
+
+## Open tabs:
+- .env: .env
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+- .env.local: code/frontend/.env.local
+
+## My request:
+Implement Phase 4 Resend email frontend using the existing authenticated email API and `code/integrations/email/INTEGRATION_PLAN.md`.
+
+Add a per-case email panel with:
+
+- Password-style operator token input, stored only in memory and cleared on refresh.
+- GET /api/email/status authentication check and allowed-recipient selection.
+- Draft creation, subject/body editing, submission, independent approval/rejection, and confirmed sending.
+- Audit trail and SENT/FAILED delivery status.
+- Disabled Approve for the drafter and state-dependent buttons.
+- Credentials, existing CSRF token, and Bearer authorization on every email request.
+- Clear handling for 401, 403, 409, 429, and 503, plus loading and empty states.
+
+Preserve the existing frontend design, 3D graphs, Slack reports, engine, and API contract.
+
+Add tests proving tokens are not persisted and the drafter cannot approve their own email. Run frontend tests, production build, and backend tests.
+
+Do not modify the email package, engine, or .env files. Do not send a real email. Do not commit or push.
+
+
+Agent Response Summary:
+Implemented a per-case customer email panel using the existing authenticated API: password-style memory-only operator login, server status and allowlist, generated drafts, editing, submission, independent review, explicit send confirmation, audit events and SENT/FAILED states. Every email request includes credentials, current session CSRF and bearer authorization; tokens are never persisted or placed in URLs, and case changes/unmounts clear login and cancel stale requests. Added tests proving no persistent storage access and disabled approval for authors, plus safe error handling, recipient matching, no uncertain retries and FAILED response handling. Validation passed: 46 frontend tests, 278 backend tests, production build and a frontend-to-real-adapter loopback check with fake Resend; no real email was sent. Existing design/graphs/Slack paths and the engine/email contracts are preserved; email package, engine and environment files were not modified, and no commit or push occurred.
+
+Actions:
+* Added frontend EmailPanel.tsx, email.ts and email.test.tsx; updated App.tsx, scoped form styles, test script and frontend documentation.
+* Read INTEGRATION_PLAN.md, adapter response shapes and approval audit rules without changing Member Two files.
+* Ran all frontend/backend tests and production build, plus a fake-only loopback integration scenario.
+* Ran git diff --check, checked protected paths/environment-key safety and restored generated build metadata.
+* Kept prior uncommitted backend wiring intact; manual activation requires API restart and configured operator access.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T02:52:23.013639+00:00] Diagnose and prevent unsupported Vite port origin rejection
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Open tabs:
+- .env: .env
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+- .env.local: code/frontend/.env.local
+
+## My request:
+Diagnose the EraSight live frontend error after Phase 4 email integration:
+"Unable to load investigations — API request failed (403)."
+The backend is running on 127.0.0.1:8000 and the frontend is running through Vite on localhost:5173.
+Inspect the actual failing request using the frontend API client, Vite proxy configuration, code/server.py routing, session cookies, CSRF/origin checks, and the new email adapter dispatch.
+Determine the exact source of the 403. Verify that existing investigation endpoints remain accessible through their intended authenticated session and that email bearer authentication applies only to /api/email/*.
+Apply the smallest secure fix if needed. Do not disable CSRF, authentication, or origin protections.
+Preserve the engine, email package, Slack, CaseAuditResult contract, and existing design.
+Run frontend and backend tests, verify live investigations load, and report the root cause.
+Do not send real emails, commit, or push.
+
+
+Agent Response Summary:
+Inspected the actual browser showing the error and found it on 127.0.0.1:5174 rather than the reported port 5173. Reproduced HTTP 403 through that proxy and independently with its unsupported Host and Origin headers; port 5173 returned all 518 cases, proving the rejection was the existing trusted-browser guard rather than email bearer or CSRF dispatch. Configured fixed development/preview ports with strictPort so duplicate Vite launches fail clearly instead of silently selecting an untrusted port, preserving all backend protections and the unchanged proxy header behavior. Navigated the browser to localhost:5173 and verified live investigations and the 3D graph; a session-cookie case read returned 200/518 while email status without bearer returned 401. All 47 frontend tests, 282 backend tests and production build passed; no real email, commit, push or branch change occurred.
+
+Actions:
+* Updated Vite configuration, its regression test, the frontend test script and port troubleshooting documentation.
+* Added four server-level regression cases for allowlisted proxy hosts/origins and email-only bearer enforcement.
+* Verified the duplicate Vite launch now exits with Port 5173 already in use.
+* Ran full frontend/backend tests, production build and git diff --check; restored generated build metadata.
+* Preserved engine, email package, CaseAuditResult, design, Slack and current security checks; appended this log only.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T03:04:36.789340+00:00] Email operator login diagnosis
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Open tabs:
+- .env: .env
+- .env.local: code/frontend/.env.local
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+
+## My request:
+Diagnose the EraSight email operator login failure.
+
+Problem: A freshly generated Member1 token is rejected by the frontend with "Operator token is invalid or expired. Sign in again."
+
+Investigate:
+
+1. Whether code/server.py loads the root .env correctly.
+2. Whether email_operator_token.py writes credentials in the format expected by EmailHttpAdapter.
+3. Whether the running process on port 8000 is the latest backend.
+4. Whether GET /api/email/status fails because of the bearer token, session cookie, origin, or another condition.
+5. Whether the frontend is incorrectly displaying a generic token error for another failure.
+
+Use safe diagnostics without printing, copying, or logging actual tokens, API keys, or credential hashes.
+
+Apply the smallest secure fix if needed. Preserve authentication, CSRF, localhost binding, email package, and engine. Run relevant tests and verify the login workflow using temporary test credentials only.
+
+Do not modify my real .env, regenerate my tokens, send emails, commit, or push.
+
+Report the root cause and exact manual steps needed.
+
+
+Agent Response Summary:
+Identified the running API's startup configuration snapshot as older than the saved operator configuration. Verified generator/adapter format compatibility and authentication boundaries using temporary credentials only. Clarified the frontend 401 message and documented restart and environment override troubleshooting. Backend tests: 284 passed; frontend tests: 48 passed; production build passed. Real environment files and credentials were untouched; no emails sent, commits, or pushes.
+
+Actions:
+* Updated frontend email 401 wording and troubleshooting README.
+* Added temporary credential rotation/generator and 401-versus-403 regression tests.
+* Ran full backend/frontend tests, production build, and safe live HTTP checks.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T03:10:04.347374+00:00] Running operator configuration diagnostics
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Open tabs:
+- .env: .env
+- .env.local: code/frontend/.env.local
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+
+## My request:
+EraSight Member1 operator login still returns 401 after restarting the backend and clearing the EMAIL_OPERATORS shell override.
+
+Diagnose the actual running configuration without displaying any secrets.
+
+Check whether:
+
+- The current backend process started after the latest .env modification.
+- The backend loads EMAIL_OPERATORS from the expected root .env.
+- The Member1 operator entry is present and structurally valid.
+- Any environment override is still taking precedence.
+- The frontend is sending the bearer token correctly.
+- The request has a valid session cookie and trusted origin.
+
+Use only boolean checks, counts, and redacted diagnostics. Never print, copy, hash for display, or expose my real token, credential hashes, or API keys.
+
+Do not regenerate credentials, modify .env, weaken authentication, send emails, commit, or push.
+
+Report the precise cause and minimal manual fix.
+
+
+Agent Response Summary:
+Verified with boolean diagnostics that the listener is this checkout's loopback backend, started after root configuration changed. Read the running process environment privately and confirmed its operator configuration exactly matches the valid two-entry root configuration including Member1. Verified Vite session cookies and origin enforcement with a deliberately invalid temporary bearer; a valid session reaches bearer rejection, while missing sessions and untrusted origins are blocked separately. Actual browser token contents were not accessed, so the exact input mismatch remains unverified; no credentials or application configuration were changed.
+
+Actions:
+* Inspected source and process metadata; emitted booleans/counts only for sensitive configuration checks.
+* Ran read-only live session and email status checks using an intentionally invalid temporary token.
+* Ran git diff --check.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T03:35:09.152970+00:00] Browser operator request inspection
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Open tabs:
+- .env: .env
+- .env.local: code/frontend/.env.local
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+
+## My request:
+Investigate the remaining EraSight operator login 401 in the live browser.
+
+The backend configuration, operator count, environment, session, and origin have already been verified correct.
+
+Inspect the frontend's GET /api/email/status request after clicking Check operator access.
+
+Verify only:
+
+- Authorization header exists.
+- It uses the Bearer scheme.
+- The token value is nonempty and is transmitted unchanged from the in-memory input.
+- Session cookie is included.
+- No frontend state or event handling clears the token before the request.
+
+Do not print, log, expose, or persist any real token or Authorization header value. Use redacted diagnostics and temporary test credentials if needed.
+
+Fix any confirmed frontend bug without weakening authentication. Do not modify .env, regenerate tokens, send emails, commit, or push.
+
+Report whether the browser request is correct and what the user must do next.
+
+
+Agent Response Summary:
+Inspected frontend request construction and token lifecycle; leading/trailing whitespace is trimmed and state is cleared only after response or successful authentication. All 48 frontend tests passed. Browser automation host was unavailable; desktop fallback encountered unreliable focus/control state and could not safely capture the actual login request, so live header and input equality remain unverified. No real token/header was displayed or persisted, and no application code, environment, credentials, or email delivery was changed.
+
+Actions:
+* Inspected frontend source and attempted safe browser/desktop diagnostics.
+* Ran npm frontend tests: 48 passed.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T03:35:09.155367+00:00] Browser operator request inspection
+
+User Prompt (verbatim, secrets redacted):
+<send_user_message_question_reply>
+[{"questionItemId":"[\"request_user_input_async\",\"call_3e4b2a116baa4f838061f4a8bfb17e76\",0]","question":"Please select the EraSight tab in Edge and leave that window idle, then reply “ready.” I need control of that tab to complete the live request check without exposing raw headers.","answer":"ready"}]
+</send_user_message_question_reply>
+
+
+Agent Response Summary:
+Inspected frontend request construction and token lifecycle; leading/trailing whitespace is trimmed and state is cleared only after response or successful authentication. All 48 frontend tests passed. Browser automation host was unavailable; desktop fallback encountered unreliable focus/control state and could not safely capture the actual login request, so live header and input equality remain unverified. No real token/header was displayed or persisted, and no application code, environment, credentials, or email delivery was changed.
+
+Actions:
+* Inspected frontend source and attempted safe browser/desktop diagnostics.
+* Ran npm frontend tests: 48 passed.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none
+
+## [2026-11-05T03:48:35.023543+00:00] Persistent email login root cause
+
+User Prompt (verbatim, secrets redacted):
+# Context from my IDE setup:
+
+## Open tabs:
+- .env: .env
+- .env.local: code/frontend/.env.local
+- log.txt: log.txt
+- COMMIT_EDITMSG: .git/COMMIT_EDITMSG
+- .env.example: .env.example
+
+## My request:
+Perform a complete root-cause investigation of EraSight's persistent Member1 email login 401.
+
+Known facts:
+
+- The raw token passes the local hash check: FOUND in root .env.
+- Backend loads the current .env and has two operators.
+- Member1 is present.
+- Session and origin checks work.
+- Frontend source includes Bearer authentication.
+- Actual browser login still returns 401.
+
+Check ALL remaining causes:
+
+1. Verify the token hash belongs to the Member1 operator entry, not merely somewhere in .env.
+2. Verify token generation, hashing, parsing, and validation use identical rules.
+3. Check for duplicate operator names, overwritten entries, malformed JSON, and stale hashes.
+4. Check effective environment variables and running backend process.
+5. Trace the actual GET /api/email/status request through Vite and server.py.
+6. Verify the frontend sends the exact in-memory token with a correctly formed Bearer header and session cookie.
+7. Check for whitespace, copy/paste, state-reset, or token truncation bugs.
+8. Check whether another server or proxy handles the request.
+9. Verify whether the server returns 401 specifically from operator authentication.
+
+Use safe temporary credentials and redacted/boolean-only diagnostics. Never print, log, expose, or persist real tokens, hashes, cookies, or Authorization headers.
+
+Do not regenerate my credentials or modify .env. Do not weaken authentication, modify the engine/email package unnecessarily, send emails, commit, or push.
+
+If a code defect is confirmed, apply the smallest safe fix and run relevant tests.
+
+Report the exact root cause, what was ruled out, and the minimal steps to make Member1 login succeed.
+
+
+Agent Response Summary:
+New live checks show that root environment configuration changed after API startup and the current Member1 credential differs from the running process credential, unlike the previous turn's equality result. Root configuration has one assignment and two valid unique operators, with no duplicate names or credential hashes. Direct and proxied temporary invalid bearer requests both reached the adapter's exact operator authentication rejection; served frontend source contains current bearer and session behavior. Relevant backend tests passed 56/56 and frontend tests passed 48/48. Browser console shows the status 401, but real token identity/equality was not inspected and DevTools paste safety warning was respected; no real credentials, cookies or header values were exposed or persisted, and no environment, engine, email package or application code was modified.
+
+Actions:
+* Compared current root and live process Member1 configuration in memory using boolean-only outputs.
+* Inspected generator, parser, validator, session routing, Vite target and served frontend source.
+* Ran targeted backend and frontend tests, safe temporary live HTTP checks, and git diff --check.
+* Inspected browser console without bypassing its code-paste warning.
+
+Context:
+tool=codex_vscode
+model=gpt-6.1-sol
+branch=member-1-frontend-slack
+repo_root=C:\Users\Luzain Sara\Documents\EraSight
+worktree=C:\Users\Luzain Sara\Documents\EraSight
+parent_agent=none

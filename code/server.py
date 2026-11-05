@@ -23,6 +23,9 @@ from engine.case_analyzer import build_context
 from engine.pipeline import run_cases
 from notifications.slack import CASE_ID, SlackError, deliver, configuration
 from presentation import present
+from integrations.email.email_service import build_service_from_env
+from integrations.email.http_adapter import EmailHttpAdapter, MAX_BODY, PREFIX
+from integrations.email.operators import Operators
 
 ORIGINS = {'http://127.0.0.1:5173', 'http://localhost:5173',
            'http://127.0.0.1:4173', 'http://localhost:4173'}
@@ -43,6 +46,7 @@ class ApiServer(ThreadingHTTPServer):
             raise ValueError('This local API must bind to 127.0.0.1.')
         self.results = {r.case_id: r for r in results}
         self.requests = {r["case_id"]: r for r in requests}
+        self.email = None
         self.sessions = {}
         self.lock = threading.Lock()
         self.delivery_lock = threading.Lock()
@@ -97,18 +101,47 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, KeyError, CookieError):
             return None
 
+    def email_request(self):
+        """Keep local-session/CSRF protections in front of the operator-authenticated adapter."""
+        if not (self.path == PREFIX or self.path.startswith(PREFIX + '/')):
+            return False
+        session = self.session()
+        if not self.trusted_browser() or self.headers.get('Origin', '') not in ORIGINS | {''} or not session:
+            self.reply(403, {'error': 'Email session expired. Refresh and try again.'})
+        elif self.command != 'GET' and not hmac.compare_digest(
+                self.headers.get('X-CSRF-Token', '').encode(), session['csrf'].encode('ascii')):
+            self.reply(403, {'error': 'Email session expired. Refresh and try again.'})
+        else:
+            try:
+                size = int(self.headers.get('Content-Length', '0'))
+            except ValueError:
+                size = -1
+            if not 0 <= size <= MAX_BODY or self.headers.get('Transfer-Encoding'):
+                self.reply(413, {'error': 'Request body is too large.'})
+            elif self.server.email is None:
+                self.reply(503, {'error': 'Email actions are not configured on the server.'})
+            else:
+                self.reply(*self.server.email.handle(self.command, self.path, self.headers, self.rfile.read(size)))
+        return True
+
+    def do_PUT(self):
+        if not self.email_request():
+            self.reply(404, {'error': 'Endpoint not found.'})
+
     def do_OPTIONS(self):
         if not self.trusted_browser() or self.headers.get('Origin') not in ORIGINS:
             return self.reply(403, {'error': 'Origin is not allowed.'})
         self.send_response(204)
         self.send_header('Access-Control-Allow-Origin', self.headers['Origin'])
         self.send_header('Access-Control-Allow-Credentials', 'true')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token, Authorization')
         self.send_header('Vary', 'Origin')
         self.end_headers()
 
     def do_GET(self):
+        if self.email_request():
+            return
         if not self.trusted_browser():
             return self.reply(403, {'error': 'This API is restricted to the local EraSight application.'})
         if self.path == '/api/session':
@@ -131,6 +164,8 @@ class Handler(BaseHTTPRequestHandler):
         return self.reply(404, {'error': 'Endpoint not found.'})
 
     def do_POST(self):
+        if self.email_request():
+            return
         if not self.trusted_browser() or self.headers.get('Origin') not in ORIGINS:
             return self.reply(403, {'error': 'Notification request origin is not allowed.'})
         session = self.session()
@@ -193,6 +228,9 @@ def main():
         with (args.dataset / 'deletion_requests.csv').open(encoding='utf-8', newline='') as request_file:
             requests = list(csv.DictReader(request_file))
         with ApiServer(('127.0.0.1', args.port), results, requests) as server:
+            server.email = EmailHttpAdapter(
+                build_service_from_env(), Operators.from_env(os.environ),
+                case_provider=lambda cid: server.results[cid].to_dict() if cid in server.results else None)
             print(f'EraSight local API: http://127.0.0.1:{args.port} ({len(results)} engine cases)')
             server.serve_forever()
     except KeyboardInterrupt:

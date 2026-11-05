@@ -20,7 +20,7 @@ npm.cmd run preview
 
 Live backend results are the default. Set `VITE_DATA_MODE=demo` explicitly for the clearly labeled demonstration workspace with six fictional cases, including complete and incomplete outcomes. Navigation, search, result filters, case selection, 3D globe rotation/zoom, node inspection, finding-path highlighting, recommended actions, evidence capture history, analytics, and per-case JSON download work locally. The canvas has a keyboard-accessible node list. No graph relationship is inferred from live data.
 
-To use Member Two's results, copy `.env.example` to `.env.local`, set `VITE_DATA_MODE=live`, set the API base URL and restart Vite. See [CONTRACT.md](./CONTRACT.md). Live API failures remain visible with Retry. The local presentation API and Slack route are available through code/server.py. Slack delivery requires live engine data; demo sends are disabled. Email routes remain a separate Member Two integration milestone.
+To use Member Two's results, copy `.env.example` to `.env.local`, set `VITE_DATA_MODE=live`, set the API base URL and restart Vite. See [CONTRACT.md](./CONTRACT.md). Live API failures remain visible with Retry. The local presentation API and Slack route are available through code/server.py. Slack delivery requires live engine data; demo sends are disabled. Email actions use the existing secure adapter; see Phase 4 below.
 
 Never set webhook URLs or provider keys in a `VITE_` variable: those values are public browser configuration. This frontend does not alter the dataset, engine, or challenge `output.csv`.
 
@@ -73,7 +73,7 @@ All four pages share the existing `GET /api/cases` response:
 
 The server adds only operational request metadata to the presentation adapter. Raw email, request text, identity values and evidence paths remain excluded. Audit decisions and remediation order stay unchanged. Live failures, invalid data and empty responses never load demo fixtures; errors remain visible with Retry. Demo mode requires an explicit setting. Refresh preserves a selected case when it still exists and ignores aborted responses.
 
-Checks: `python -m pytest code/tests/test_slack.py`, `npm.cmd test --prefix code/frontend`, and `npm.cmd run build --prefix code/frontend`. The tests cover live loading, all four consumers, malformed/duplicate responses, empty results, network failures and cancellation. Existing Slack HTML report/security tests remain included. Resend's approval and delivery package is unchanged; mounting its router and adding email approval controls remain a separate integration task.
+Checks: `python -m pytest code/tests/test_slack.py`, `npm.cmd test --prefix code/frontend`, and `npm.cmd run build --prefix code/frontend`. The tests cover live loading, all four consumers, malformed/duplicate responses, empty results, network failures and cancellation. Existing Slack HTML report/security tests remain included. Resend's approval and delivery package is unchanged; the Phase 4 email panel uses its secure standard-library adapter rather than mounting the FastAPI router.
 
 
 ## Phase 3: investigation review
@@ -90,3 +90,32 @@ Open any real case from Overview or Investigations. The detail-view case selecto
 The requested `code/integrations/email/INTEGRATION_PLAN.md` was absent from this checkout; the existing shared contract and package README were inspected, and the strict email boundary above takes precedence. The engine's CaseAuditResult and the email package are unchanged.
 
 Verification: `npm.cmd test --prefix code/frontend`, `npm.cmd run build --prefix code/frontend`, and `python -m pytest code/tests/test_slack.py`. Check a COMPLETE, INCOMPLETE and NOT_APPLICABLE case in live mode, switch cases after reviewing evidence, and confirm the case header, tabs, graph and communication feedback stay aligned. A real Slack check must include both successful upload/link retrieval and authenticated HTML download; text-only success is not a valid verification.
+
+
+## Phase 4: per-case authenticated email
+
+The Customer email panel uses the existing `/api/email` routes in `code/server.py`. After configuring the server as described in [Member Two's integration plan](../integrations/email/INTEGRATION_PLAN.md), restart the API and refresh Vite. No token or Resend key belongs in a Vite environment variable.
+
+1. Open a real investigation. Enter an operator login token in the password field and choose **Check operator access**. The server identifies the operator and supplies the allowed recipients. Tokens stay only in component/client memory; they are cleared on page refresh, case change, navigation away or **Clear operator login**. They are never placed in browser storage, URLs, exported case reports or logs.
+2. Choose an allowed address, or enter an address at an allowed domain. **Create or open draft** asks the backend to generate customer-safe content from the selected case; duplicate drafts reopen the existing record. Select among the case's emails with **Case email**.
+3. Edit and save the subject/body, then **Submit for approval**. Pending and approved content is read-only. Clear the operator login and sign in as a different operator to approve or reject; authors, editors and submitters cannot approve through this UI, even if demo self-approval is enabled on the backend.
+4. For an APPROVED record, check the explicit recipient confirmation before **Send approved email**. The server rechecks the content hash and approval. No automatic mutation retries occur. After a rejected draft, edit and re-draft it; a FAILED send must be submitted for approval again.
+5. **Refresh email status** fetches current state and audit events. After errors or uncertain sends, refreshing is required before further actions. `SENT` means the provider accepted the send, not verified inbox delivery. The loopback API does not receive Resend delivery webhooks; delivered/bounced events are unavailable unless a separate secure webhook listener is configured outside this UI.
+
+Every email request includes credentials, the current session CSRF token and bearer authorization. The password form is unavailable in demo mode. Backend 401/403/409/429/503 outcomes have fixed, safe messages; server error bodies are not echoed. The frontend remains usable without email configuration, and Slack HTML reporting is independent.
+
+Tests: `npm.cmd test --prefix code/frontend` and `npm.cmd run build --prefix code/frontend`; backend checks are `python -m pytest code/tests`. Email tests use fake transports only, including the send path. Do not enter production tokens or send real emails as part of automated testing.
+
+
+### Vite port and local API protections
+
+Use `http://localhost:5173` or `http://127.0.0.1:5173` for development, and port 4173 for preview. Both Vite configurations use `strictPort: true`: if a port is occupied, Vite stops instead of silently shifting to 5174. Reuse the existing server or stop the duplicate before restarting. Do not bypass this by overriding the port or widening the backend's origin allowlist.
+
+A page opened on port 5174 sends an untrusted Host (and, when present, Origin) through the unchanged proxy, so `/api/cases` correctly returns 403. This rejection precedes case routing and is unrelated to email bearer authentication. The bearer requirement applies only to `/api/email/*`; Slack still uses its existing session/CSRF checks. Case reads remain available through the trusted local proxy, including with the current session cookie. No authentication or CSRF checks were relaxed.
+
+
+### Operator login after a token update
+
+Operator credentials are a startup snapshot. `email_operator_token.py --env-file .env` stores a `name:SHA-256-hash` entry; the password field takes the raw one-time login token, not the hash or the `EMAIL_OPERATORS` line. Saving or rotating a token does not reload the running API. Restart the backend, then refresh the frontend and sign in with the already-generated token. Re-generating again would replace the token you just saved.
+
+A 401 from `/api/email/status` means bearer authentication failed. Session/origin/CSRF failures use 403, missing operator/recipient configuration uses 503, and login rate limiting uses 429. Operators have no automatic token expiry; tokens remain valid until replaced. If a shell defines `EMAIL_OPERATORS`, it takes precedence over the root `.env`; clear that shell override before restarting when the root file is intended to be authoritative. Never share the raw token or its stored hash for troubleshooting.

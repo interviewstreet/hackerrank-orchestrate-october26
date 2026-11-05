@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "tsx --test src/data.test.ts src/slack.test.ts src/api.test.ts src/investigation.test.ts"
+    "test": "tsx --test src/data.test.ts src/slack.test.ts src/api.test.ts src/investigation.test.ts src/email.test.tsx src/proxy.test.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
