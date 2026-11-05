@@ -118,6 +118,8 @@ class TestExport(unittest.TestCase):
                          {"COMPLETE": 1, "INCOMPLETE": 1, "NOT_APPLICABLE": 0})
         self.assertEqual(s["reported_vs_ours"]["NOT_STARTED"]["NOT_APPLICABLE"], 1)
         self.assertEqual(s["reported_complete_but_not_complete"], 1)
+        # case_t1 has P3 resources and P4 steps
+        self.assertIs(s["policy_engine_connected"], True)
         # case_t2 was saved without a classifier result -> "unknown"
         self.assertEqual(s["language_counts"], {"en": 1, "es": 0, "pt": 0, "fr": 1,
                                                 "ja": 0, "ko": 0, "unknown": 1})
@@ -127,7 +129,7 @@ class TestExport(unittest.TestCase):
         self.assertEqual([c["case_id"] for c in lst], ["case_t1", "case_t2", "case_t10"])
         self.assertEqual(lst[0], {"case_id": "case_t1", "email": "ol****@example.com",
                                   "reported_status": "COMPLETE", "our_status": "INCOMPLETE",
-                                  "classification": "IS_DELETION"})
+                                  "classification": "IS_DELETION", "language": "en"})
 
     def test_case_detail(self):
         c = self.load("cases/case_t1.json")
@@ -175,6 +177,16 @@ class TestExport(unittest.TestCase):
         ex.export(self.db_path, self.out)
         after = {p: p.read_bytes() for p in self.out.rglob("*.json")}
         self.assertEqual(after, before)
+
+    def test_placeholder_decisions_are_not_connected(self):
+        db = Path(self.tmp.name) / "placeholder.db"
+        conn = audit_db.connect(db)
+        audit_db.save_case(conn, CASE, our_status="INCOMPLETE", classification="IS_DELETION",
+                           decision={"resources": [], "flows": [], "restore_risks": [],
+                                     "timeline": []}, steps=[])
+        conn.close()
+        s = ex.export(db, Path(self.tmp.name) / "out2")
+        self.assertIs(s["policy_engine_connected"], False)
 
     def test_missing_db_gives_clear_error(self):
         with self.assertRaises(FileNotFoundError) as ctx:

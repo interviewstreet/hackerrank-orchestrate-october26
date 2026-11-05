@@ -595,3 +595,42 @@ branch=main
 repo_root=/Users/admin/Documents/TRACE/TRACE
 worktree=main
 parent_agent=none
+
+## [2026-11-05T05:48:19Z] Website main pages: overview chart, cases table, case detail
+
+User Prompt (verbatim, secrets redacted):
+Now build the main pages of the website. Use the existing API routes; don’t change the backend unless something is missing.
+
+Overview page (home): keep the 3 status cards, and add:
+a “Claim vs reality” chart: what the shop reported (COMPLETE / PARTIALLY_COMPLETE / NOT_STARTED) vs what we found, using reported_vs_ours
+a big headline number: “X cases the shop marked COMPLETE still have personal data”
+a language breakdown (6 languages)
+a short “How TRACE works” strip with 4 steps: Classify → Resolve identity → Find evidence → Decide
+Cases page (/cases): a searchable, filterable table of all 518 cases (case_id, masked email, reported status, our status, language), with status badges. Clicking a row opens the case page.
+Case page (/cases/[id]): sections for:
+the request: text, language, and the classifier’s decision with its reason and matched signals
+identity: current and historical identifiers, with historical ones clearly labelled and their audit_id shown
+evidence found: file_id, system, resource, matched identifier, captured_at
+steps: the steps_json table (show “Waiting for the policy engine” if empty)
+a “Reported vs our verdict” banner at the top, in red when the shop said COMPLETE but we found otherwise
+Add a simple top navigation bar (Overview, Cases) and make every page work on mobile.
+Use a chart library only if it’s small (e.g. Recharts). Keep the dark professional design.
+Run npm run build with no errors. Then tell me exactly what to click to check case_43 and case_538 locally.
+
+Agent Response Summary:
+Built the Overview (hero number, 3 status cards linking to filtered cases, Claim vs reality stacked bars with legend, hover/focus tooltips and table view, language bars, How TRACE works strip), /cases (search + verdict/shop/language filters synced to the URL, clickable rows, badges, mobile-friendly columns) and /cases/[id] (verdict banner red for shop-COMPLETE/our-INCOMPLETE, request with reason and signals, identity with Current/Historical labels and audit_id, evidence table, steps with "Waiting for the policy engine"), plus a top nav. No chart library: plain HTML/CSS bars using the dataviz status palette. Backend additions only where missing: language in cases.json, and summary.policy_engine_connected so the site labels the placeholder-driven numbers as Preliminary. Checked layouts by screenshot at 1280px and with DevTools 390px phone emulation (no horizontal overflow on any page); moved identity Current/Historical + audit_id under the value on phones. npm run build passes; 169 Python tests pass.
+
+Actions:
+* Modified code/export_web_data.py, code/test_export_web_data.py; reran python3 code/export_web_data.py
+* Created web/lib/types.ts, web/components/(Nav, Badges, ClaimChart, LanguageBars).tsx, web/app/cases/page.tsx, web/app/cases/CasesTable.tsx, web/app/cases/[id]/page.tsx
+* Modified web/app/page.tsx, web/app/layout.tsx, web/app/globals.css, web/lib/data.ts
+* Ran: npm run build (OK); headless Chrome screenshots + DevTools mobile check (scratchpad only)
+* Ran: python3 -m unittest discover -s code -p "test_*.py" -> 169 OK
+
+Context:
+tool=Claude Code for VS Code
+model=claude-opus-5-5
+branch=main
+repo_root=/Users/admin/Documents/TRACE/TRACE
+worktree=main
+parent_agent=none

@@ -1,12 +1,33 @@
 @import "tailwindcss";
 
+/* Dark palette (dataviz reference: page plane, chart surface, ink, hairlines) */
+@theme {
+  --color-page: #0d0d0d;
+  --color-surface: #1a1a19;
+  --color-surface-2: #232321;
+  --color-ink: #f0efec;
+  --color-ink-2: #c3c2b7;
+  --color-muted: #898781;
+  --color-hairline: #2c2c2a;
+  --color-axis: #383835;
+  --color-good: #0ca30c;
+  --color-critical: #d03b3b;
+  --color-series: #3987e5;
+}
+
 :root {
   color-scheme: dark;
 }
 
 body {
-  background-color: #0b0d12;
-  color: #e6e8ee;
+  background-color: var(--color-page);
+  color: var(--color-ink);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Japanese / Korean request texts */
+:lang(ja),
+:lang(ko) {
+  font-family: ui-sans-serif, system-ui, "Hiragino Sans", "Apple SD Gothic Neo", "Noto Sans CJK JP", "Noto Sans CJK KR", sans-serif;
 }

@@ -39,5 +39,6 @@
     "fr": 12,
     "ja": 12,
     "ko": 12
-  }
+  },
+  "policy_engine_connected": false
 }

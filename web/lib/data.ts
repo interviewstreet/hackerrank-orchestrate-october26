@@ -6,26 +6,10 @@ import path from "node:path";
 // It is outside public/, so it is only reachable through the API routes.
 const DATA_DIR = path.join(process.cwd(), "data");
 
-export const STATUSES = ["COMPLETE", "INCOMPLETE", "NOT_APPLICABLE"] as const;
-export type Status = (typeof STATUSES)[number];
+import { OUR_STATUSES, type CaseListItem, type Status, type Summary } from "./types";
 
-export type Summary = {
-  total_cases: number;
-  status_counts: Record<string, number>;
-  reported_status_counts: Record<string, number>;
-  reported_vs_ours: Record<string, Record<string, number>>;
-  reported_complete_but_not_complete: number;
-  classification_counts: Record<string, number>;
-  language_counts: Record<string, number>;
-};
-
-export type CaseListItem = {
-  case_id: string;
-  email: string; // already masked by the export
-  reported_status: string;
-  our_status: string;
-  classification: string;
-};
+export const STATUSES = OUR_STATUSES;
+export type { CaseListItem, Status, Summary };
 
 // Only ids like "case_43": the id becomes a file name, so nothing else is allowed.
 const CASE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;

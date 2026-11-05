@@ -152,7 +152,16 @@ def build_summary(conn: sqlite3.Connection) -> dict:
             Counter(c["classification"] for c in cases).items())),
         "language_counts": _language_counts(Counter(c["language"] or "unknown"
                                                     for c in cases)),
+        # False while P3's decide() / P4's build_steps() are placeholders: then
+        # every deletion case is INCOMPLETE by default, not by evidence, and the
+        # website labels the numbers as preliminary.
+        "policy_engine_connected": _policy_engine_connected(conn),
     }
+
+
+def _policy_engine_connected(conn: sqlite3.Connection) -> bool:
+    return any(conn.execute(f"SELECT 1 FROM {t} LIMIT 1").fetchone()
+               for t in ("resources", "flows", "restore_risks", "steps"))
 
 
 def _language_counts(counts: Counter) -> dict[str, int]:
@@ -164,7 +173,7 @@ def _language_counts(counts: Counter) -> dict[str, int]:
 
 def build_case_list(conn: sqlite3.Connection) -> list[dict]:
     rows = _rows(conn, "SELECT case_id, email, reported_status, our_status, "
-                       "classification FROM cases")
+                       "classification, language FROM cases")
     out = [dict(r, email=mask_email(r["email"])) for r in rows]
     return sorted(out, key=lambda r: _case_sort_key(r["case_id"]))
 
