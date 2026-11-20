@@ -70,7 +70,7 @@ case_id,deletion_status,steps_json
 | `deletion_status` | `COMPLETE`, `INCOMPLETE`, or `NOT_APPLICABLE` |
 | `steps_json` | Ordered JSON array of findings, remediation actions, and verification checks |
 
-The final file must contain exactly 518 data rows, sorted by `case_id`.
+The final file must contain one data row per public request (518 in this checkout). Local preparation matches IDs irrespective of CSV row order; step-array order remains significant.
 
 Each object in `steps_json` must contain:
 
@@ -130,7 +130,7 @@ The grader parses `steps_json` as JSON. JSON object-key order and whitespace are
 
 `output.csv` will be compared with hidden canonical answers. Scoring will consider the correctness of `deletion_status`, identity resolution, discovered records and risks, cited evidence, policy decisions, and the completeness and order of `steps_json`.
 
-Your `code.zip` must include `evaluation/evaluation_report.md` containing:
+Your `code.zip` must include `code/evaluation/evaluation_report.md` containing:
 
 - case-level status accuracy;
 - step-level and field-level accuracy;
@@ -140,9 +140,11 @@ Your `code.zip` must include `evaluation/evaluation_report.md` containing:
 
 ## Submission
 
+After your first coding-agent interaction, run `python3 orchestrate.py check` (Windows: `py orchestrate.py check`). Before upload, finish generating inputs and run `python3 orchestrate.py prepare` (Windows: `py orchestrate.py prepare`). Python 3.10+ is required. Upload the three files in `submission/` separately; see README for the mapping. CSV rows are matched by ID for local checks; step-array order remains required.
+
 | Item | Description |
 | --- | --- |
-| `code.zip` | Runnable solution, prompts, configuration, README, and `evaluation/` folder |
+| `code.zip` | Runnable solution, prompts, configuration, README, and `code/evaluation/` folder |
 | `output.csv` | One answer row for every request |
 | `chat_transcript` | Transcript showing how the system was developed or used |
 | AI interview | Explanation of the approach and evaluation |
@@ -152,7 +154,7 @@ Your `code.zip` must include `evaluation/evaluation_report.md` containing:
 Your `code.zip` must include one token-usage file:
 
 ```text
-evaluation/usage_report.md
+code/evaluation/usage_report.md
 ```
 
 The report must summarize the final full-dataset run that produced `output.csv`, including model providers and names, model calls, input and output tokens, total and average tokens per request, and estimated total and per-request cost. If multiple models are used, include both per-model and overall totals in the same file.

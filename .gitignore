@@ -1,0 +1,18 @@
+# Generated local upload artifacts and preparation bookkeeping.
+/submission/
+/.orchestrate-stage-*/
+/.orchestrate-backup-*/
+/.orchestrate.lock
+/.orchestrate-state.json*
+/code.zip
+/output.csv
+/log.txt
+# Local credentials, environments and Python caches.
+.env
+.env.*
+!.env.example
+!.env.sample
+.venv/
+venv/
+__pycache__/
+*.py[cod]

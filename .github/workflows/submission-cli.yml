@@ -1,0 +1,19 @@
+name: Submission CLI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  synthetic-contract:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ['3.10', '3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -B -m unittest discover -s tests/submission_cli -v
+      - run: python -B orchestrate.py --version

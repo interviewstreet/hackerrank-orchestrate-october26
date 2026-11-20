@@ -1,0 +1,55 @@
+[
+  {
+    "name": "BOM, CRLF and reverse row order",
+    "csv": "﻿case_id,deletion_status,steps_json\r\nsynthetic_2,NOT_APPLICABLE,[]\r\nsynthetic_1,NOT_APPLICABLE,[]\r\n",
+    "errors": []
+  },
+  {
+    "name": "Blank records skipped",
+    "csv": "case_id,deletion_status,steps_json\n\nsynthetic_1,NOT_APPLICABLE,[]\nsynthetic_2,NOT_APPLICABLE,[]\n",
+    "errors": []
+  },
+  {
+    "name": "Header whitespace rejected",
+    "csv": "case_id, deletion_status,steps_json\n",
+    "errors": [
+      "OUTPUT_HEADER"
+    ]
+  },
+  {
+    "name": "Duplicate headers rejected",
+    "csv": "case_id,case_id,steps_json\n",
+    "errors": [
+      "OUTPUT_HEADER"
+    ]
+  },
+  {
+    "name": "Missing IDs detected",
+    "csv": "case_id,deletion_status,steps_json\nsynthetic_1,NOT_APPLICABLE,[]\n",
+    "errors": [
+      "OUTPUT_MISSING_IDS"
+    ]
+  },
+  {
+    "name": "Extra cells rejected",
+    "csv": "case_id,deletion_status,steps_json\nsynthetic_1,NOT_APPLICABLE,[],extra\nsynthetic_2,NOT_APPLICABLE,[]\n",
+    "errors": [
+      "OUTPUT_CELLS",
+      "OUTPUT_MISSING_IDS"
+    ]
+  },
+  {
+    "name": "Unterminated quote rejected",
+    "csv": "case_id,deletion_status,steps_json\nsynthetic_1,COMPLETE,\"unterminated",
+    "errors": [
+      "OUTPUT_UNREADABLE"
+    ]
+  },
+  {
+    "name": "Empty transcript sections rejected",
+    "log": "## [2026-11-20T10:01:00Z] Synthetic turn\nUser Prompt:\n\nAgent Response Summary:\nsynthetic\nActions:\nsynthetic\nContext:\ntool=SyntheticHarness\nmodel=synthetic-model\n",
+    "errors": [
+      "TRANSCRIPT_FORMAT"
+    ]
+  }
+]
