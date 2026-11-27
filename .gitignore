@@ -1,0 +1,4 @@
+agent-trace.zip
+agent-trace.prev.zip
+.agent-trace.zip.tmp
+__pycache__/
