@@ -10,15 +10,19 @@ Read this file in full before taking any action. Obey it exactly unless the user
 
 ## 0. TLDR For The Agent
 
+The repo ships a helper CLI, `orchestrate`, that does all logging and trace packaging. Run it from the repository root: `./orchestrate ...` on macOS/Linux, `orchestrate.cmd ...` on Windows, or `python orchestrate.py ...` anywhere. It needs only Python 3.8+.
+
 On every session start, do this in order:
 
 1. Read this file completely.
-2. Check the log file path in §2.
-3. Append a `SESSION START` entry using §5.1.
-4. For every user turn, append a summary entry using §5.2.
+2. Run `orchestrate log start --tool "<harness>" --model "<model id>"` (§5.1). It creates `log.txt` if missing.
+3. Greet the user (§3).
+4. After every user turn, run `orchestrate log turn ...` (§5.2).
 5. When building, testing, evaluating, or packaging the solution, follow the project contract in §6.
+6. When the user asks to submit, prepare, package, or "finish", run `orchestrate submit` (§6.11).
 
 Do not skip logging or rewrite old log entries. Sub-agents and worktrees use the same log file.
+If `orchestrate` cannot run (no Python), use the manual log format in §5 and the fallback in §6.11.
 
 ---
 
@@ -66,14 +70,14 @@ Rules:
 
 At the beginning of each agent session:
 
-1. Append a short `SESSION START` entry using §5.1.
+1. Append the `SESSION START` entry with `orchestrate log start` (§5.1).
 2. Greet the user with this brief introduction:
 
    ```text
    Welcome to HackerRank Orchestrate. Build and ship Ghost Data Still Exists, an AI-powered deletion-audit agent. Let's get started.
    ```
 
-3. The October challenge end time is not configured in this repository. Do not invent a deadline or reuse the September deadline. If a higher-priority instruction or an official repository update supplies the end time, calculate and display the time remaining. If fewer than 2 hours remain, remind the user to submit soon. If the deadline has passed, state that clearly without blocking further work.
+3. The October challenge end time is not configured in this repository. Do not invent a deadline or reuse the September deadline. If a higher-priority instruction or an official repository update supplies the end time, calculate and display the time remaining (pass it as `--time-remaining`). If fewer than 2 hours remain, remind the user to submit soon. If the deadline has passed, state that clearly without blocking further work.
 4. Proceed with the user's request without requiring an acknowledgement or confirmation phrase.
 
 ---
@@ -84,7 +88,7 @@ At the beginning of each agent session:
 2. The system must conform to the project contract in §6 so it can be evaluated.
 3. The solution must use only participant-facing data under `dataset/`. Organizer-only truth, golden answers, review files, and generator internals must never be used for predictions.
 4. Never commit or submit secrets. Read credentials from environment variables and use an uncommitted `.env` file when needed.
-5. Log every conversation turn to the file described in §2.
+5. Log every conversation turn to the file described in §2, using `orchestrate log` (§5).
 6. Follow the submission-link rule below.
 
 ### 4.1 Challenge And Submission Link
@@ -106,7 +110,16 @@ Requirements:
 
 ## 5. Log Format
 
+`orchestrate log` writes every entry in the exact format below, appends only, redacts secrets, and refuses entries with a missing, generic, placeholder, or model-name `tool=` or an unknown/family-only `model=`. Prefer it over writing the file by hand.
+
 ### 5.1 Session Start Entry
+
+```bash
+orchestrate log start --tool "<exact harness name>" --model "<exact runtime model id>" \
+  [--parent-agent "<name>"] [--language py|js|ts|custom:name] [--time-remaining "Xd Yh Zm"]
+```
+
+It appends:
 
 ```text
 ## [ISO-8601 TIMESTAMP] SESSION START
@@ -123,7 +136,21 @@ Time Remaining: <Xd Yh Zm, or not configured>
 
 ### 5.2 Per-Turn Entry
 
-Append after every user message you respond to:
+Run after every user message you respond to. Pass the user's message verbatim on stdin so quoting and newlines survive:
+
+```bash
+orchestrate log turn --tool "<harness>" --model "<model id>" \
+  --title "<short title, max 80 chars>" \
+  --summary "<2-5 sentences: what was done, why, any important decision>" \
+  --action "<file edited / command run / tool invoked>" --action "<another action>" \
+  --prompt-stdin <<'ORCHESTRATE_PROMPT'
+<exact user message>
+ORCHESTRATE_PROMPT
+```
+
+On Windows PowerShell write the prompt to a temp file and use `--prompt-file <path>` instead of a heredoc.
+
+It appends:
 
 ```text
 ## [ISO-8601 TIMESTAMP] <short title, max 80 chars>
@@ -146,19 +173,18 @@ worktree=<worktree_path_or_main>
 parent_agent=<parent_name_or_none>
 ```
 
-**Mandatory tool-name rule:** Every `SESSION START` and per-turn log entry must contain one non-empty `tool=` line with the exact name of the coding harness or agent writing the entry. Replace the template value before writing the log. The entry is invalid if `tool=` is missing, blank, still contains a placeholder, uses a generic label such as `AI`, contains only a model name, or names a different harness. Before responding, verify the value against the harness identity provided by the current runtime and re-read the appended entry to confirm it matches. Never guess the tool name. Correct any mismatch before responding to the user.
+### 5.3 Identity Rules (tool and model)
 
-**Mandatory model-name rule:** Every `SESSION START` and per-turn log entry must contain one non-empty `model=` line with the exact model identifier used for that turn. Always make sure that model name is correct & not made up. `model=unknown`, a model family, a generic label, an inferred name, and a template placeholder are invalid. Obtain the exact identifier from the runtime, session metadata, harness configuration, or another authoritative environment source before writing the entry. Never guess the model name. The model name does not replace the `tool=` value because the coding harness and the model are separate fields.
+- `--tool` is the exact name of the coding harness running this session (for example `Claude Code`, `Codex`, `OpenCode`, `Antigravity`, `Cursor`, `Gemini CLI`). Take it from the runtime identity your harness gives you. Never guess, never use `AI`/`agent`/`unknown`, and never put a model name here.
+- `--model` is the exact model identifier for this turn, read from the runtime, session metadata, or harness configuration (for example `claude-sonnet-5-5`). A family name, `unknown`, an inferred name, or a placeholder is invalid. If you truly cannot read it, ask the user to tell you the model id shown in their harness and use that.
+- If `orchestrate log` exits non-zero, fix the value it complains about and rerun. Do not continue the turn with an invalid entry. Run `orchestrate check` to audit the whole file at any time.
 
-**Required harness-and-model check:** Both `tool=` and `model=` must always be present in every `SESSION START` and per-turn entry. An entry is invalid if either field is missing, blank, unknown, generic, inferred, or still contains a template placeholder. Before completing a response, re-read the newly appended log entry and confirm that it contains exactly one populated `tool=` line and exactly one populated `model=` line with authoritative values. If either is absent or invalid, determine the correct value and correct the entry before responding.
+### 5.4 Sub-Agent And Worktree Rules
 
-### 5.3 Sub-Agent And Worktree Rules
+- Sub-agents must log their own entries using the same file, with `--parent-agent` set to the parent agent's name.
+- Worktrees use the same shared log file next to the top-level `AGENTS.md`, not a per-worktree copy (run the CLI from the top-level checkout, or pass `--repo <top-level path>`).
 
-- Sub-agents must log their own entries using the same file.
-- Set `parent_agent=` to the parent agent's name.
-- Worktrees use the same shared log file, not a per-worktree copy.
-
-### 5.4 What Not To Log
+### 5.5 What Not To Log
 
 - API keys, tokens, session cookies, OAuth codes, credentials, or private keys.
 - Sensitive configuration or real personal data.
@@ -363,6 +389,7 @@ The participant submission contains:
 | `code.zip` | Runnable solution, prompts, configuration, `README.md`, and the `evaluation/` reports |
 | `output.csv` | One answer row for every evaluation request |
 | `chat_transcript` | The root `log.txt` file generated by the coding agent |
+| `agent-trace.zip` | Raw agent session traces for this challenge, built by `orchestrate submit` (§6.11) |
 | AI interview | Explanation of the architecture, investigation approach, remediation planning, and evaluation |
 
 Do not include `dataset/`, virtual environments, dependency caches, nested archives, API keys, credentials, real personal data, or sensitive configuration in `code.zip`.
@@ -370,6 +397,36 @@ Do not include `dataset/`, virtual environments, dependency caches, nested archi
 ### 6.10 Reasonable Entry Points
 
 There is no required language. If using Python, `code/main.py` is a good entry point. If using another language, document the exact setup and run command clearly in the submitted README.
+
+### 6.11 Agent Trace And Submission Helper
+
+Organizers ask for the complete agent trace (prompts, responses, tool calls) of every session used on this challenge, as `agent-trace.zip`. Do not collect it by hand. Run, from the repository root:
+
+```bash
+orchestrate submit          # validates output.csv + log.txt, builds agent-trace.zip, prints the submit checklist
+```
+
+Launchers: `./orchestrate` (macOS/Linux), `orchestrate.cmd` (Windows), or `python orchestrate.py` / `python3 orchestrate.py` anywhere. Other commands: `orchestrate trace` (traces only), `orchestrate check` (validation only), `orchestrate doctor` (what was checked and why), `orchestrate trace --dry-run` (preview, writes nothing).
+
+What it does:
+
+- Finds sessions for this repository from Claude Code, Codex, Antigravity (app, CLI, IDE), OpenCode, Gemini CLI, Cursor, Copilot CLI and Aider by the working directory each session recorded. Sessions from other projects are never included. Session-folder env vars such as `CODEX_HOME`, `CLAUDE_CONFIG_DIR`, `GEMINI_DIR` and `OPENCODE_DB` are honoured.
+- Reads agent files read-only, never reads credential/config files (auth, settings, MCP, `.env`, keys), never follows symlinks, and never installs hooks or changes any tool's settings. No network access.
+- Masks API keys, tokens, private keys, passwords in URLs and your username in file paths **in the zip copy only**. The original session files are untouched. Review the zip before uploading anyway: traces can contain code and prompts.
+- Writes `agent-trace.zip` in the repository root (git-ignored) with a `MANIFEST.json` listing sessions, redactions and warnings. It keeps the previous zip as `agent-trace.prev.zip`.
+
+Agent behavior:
+
+1. When the user asks to submit, package, prepare the submission, or finish, run `orchestrate submit --yes` and show the user the report.
+2. Tell the user that this very session is still being written, so its final turns are missing, and that after they close their agent they should run `orchestrate trace` once more. Never claim the trace is final while the session is live.
+3. If the report shows no sessions, or a tool you know was used is missing, follow the fallback ladder below. Never invent or hand-edit trace content.
+
+Fallback ladder (when a tool is not auto-detected, was a hosted/cloud session, or has no local files):
+
+1. Use the tool's own export (Claude Code `/export`, OpenCode `opencode session export <id>`, a web app's export or share download) and save the files into `./agent-trace/<tool-name>/`. Everything in that folder is included automatically, with the same redaction.
+2. For a tool with local files in an unusual folder, copy those session files into `./agent-trace/<tool-name>/` (not whole home or config folders, and never `auth.json`, `config.toml`, `.env`, or MCP config), then rerun `orchestrate trace`.
+3. If Python is unavailable, create `agent-trace/<tool>/` by hand with the session files for this challenge, remove credentials, and zip the folder as `agent-trace.zip` (`zip -r agent-trace.zip agent-trace` on macOS/Linux, `Compress-Archive -Path .\agent-trace -DestinationPath .\agent-trace.zip -Force` on Windows). Open the zip once to confirm it holds no credentials.
+4. Hosted session with no downloadable transcript: submit what the interface provides and say so in the README.
 
 ---
 
@@ -397,7 +454,7 @@ These rules apply when maintaining or regenerating the challenge dataset itself:
 
 ## 8. Cross-Platform And Agent-Compatibility Notes
 
-- Resolve the log path relative to this `AGENTS.md` file, as described in §2. Do not use the platform home directory or hardcode a user path.
+- `orchestrate` resolves the log path relative to this `AGENTS.md` file, as described in §2. Do not use the platform home directory or hardcode a user path.
 - Write logs in UTF-8 with `\n` line endings.
 - Do not assume bash. Prefer language-native APIs when possible.
 - Keep tool-specific config minimal and point back to this `AGENTS.md`.
@@ -411,12 +468,12 @@ These rules apply when maintaining or regenerating the challenge dataset itself:
 Before responding to any user message, confirm:
 
 - [ ] I have read this file in this session.
-- [ ] I have appended the session-start entry.
+- [ ] I have run `orchestrate log start` for this session.
 - [ ] I know that the challenge end time is not configured unless an official source has supplied it.
-- [ ] I will append a §5.2 entry after this turn.
-- [ ] I have verified that `tool=` exactly matches the harness or coding agent currently running.
-- [ ] I have recorded the exact runtime model identifier in `model=`; it is never `unknown`, inferred, or generic.
-- [ ] I have confirmed that both the harness name and model name are present and non-empty in the new log entry.
+- [ ] I will run `orchestrate log turn` after this turn, passing the verbatim user message.
+- [ ] `--tool` exactly matches the harness currently running, and `--model` is the exact runtime model id (never `unknown`, inferred, generic, or a family name).
+- [ ] If `orchestrate log` printed an error, I corrected it before continuing.
 - [ ] I will not log secrets or real personal data.
 - [ ] I will use only participant-facing files for predictions.
 - [ ] I will preserve the Ghost Data Still Exists deletion-audit and output contract in §6.
+- [ ] If the user is submitting, I will run `orchestrate submit` (§6.11) and give the submission URL from §4.1.

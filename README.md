@@ -115,6 +115,20 @@ This repository includes [`AGENTS.md`](./AGENTS.md), which instructs compatible 
 
 ---
 
+## Logging and Agent Trace
+
+The `orchestrate` helper in the repository root does the logging and the agent-trace packaging. It needs only Python 3.8+. Use `./orchestrate` on macOS/Linux and `orchestrate.cmd` on Windows.
+
+- **While you work:** you run nothing. Your coding agent reads [`AGENTS.md`](./AGENTS.md) and calls `orchestrate log` itself to write `log.txt`.
+- **When you are done:** quit your coding agent(s), then run `./orchestrate submit` from the repository root. It checks `output.csv` and `log.txt`, builds `agent-trace.zip`, and prints a checklist.
+- **Agent trace step:** upload `agent-trace.zip` at the agent-trace step. If you keep working after building it, run `./orchestrate trace` again to refresh it.
+
+Other commands: `./orchestrate doctor` shows which tools were detected, `./orchestrate trace --dry-run` previews what goes into the zip, and `./orchestrate check` validates `output.csv` and `log.txt`.
+
+The zip contains the raw session files of this repository for Claude Code, Codex, Antigravity, OpenCode, Gemini CLI, Cursor, Copilot CLI and Aider, in one folder per tool (for example `agent-trace/claude-code/`). API keys, tokens and your username in file paths are masked in the zip copy only; your original session files are never changed, and credential/config files are never read. If your tool is not detected, or you used a hosted session, put its exported files in `agent-trace/<tool-name>/` and run `./orchestrate trace`. Review the zip before uploading, since traces can include code, prompts and file paths.
+
+---
+
 ## Packaging `code.zip` and Submission
 
 | Item | Description |
