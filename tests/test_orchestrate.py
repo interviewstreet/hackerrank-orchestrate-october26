@@ -102,7 +102,10 @@ class CollectTests(Fixture):
         res = o.build_zip(self.ctx, sessions, out, keep_paths=False)
         z = zipfile.ZipFile(str(out))
         names = z.namelist()
-        self.assertTrue(any(n.endswith("claude-code/" + re.sub(r"[^A-Za-z0-9]", "-", str(self.repo)) + "/s1.jsonl") for n in names))
+        for want in ("agent-trace/claude-code/s1.jsonl", "agent-trace/claude-code/s1/sub.jsonl",
+                     "agent-trace/codex/rollout-abc.jsonl", "agent-trace/antigravity/conv1/walkthrough.md",
+                     "agent-trace/aider/.aider.chat.history.md"):
+            self.assertIn(want, names)
         self.assertIn("agent-trace/MANIFEST.json", names)
         self.assertFalse(any("mcp_config" in n for n in names))
         self.assertIn("agent-trace/windsurf/export.md", names)
@@ -290,10 +293,59 @@ class ArcNameTests(Fixture):
         r = Path(self.tmp.name).resolve() / "Users" / USER / "proj"
         r.mkdir(parents=True)
         ctx = o.Ctx(r, home=self.home, env=self.env)
-        enc = re.sub(r"[^A-Za-z0-9]", "-", str(r))
-        jl(self.home / ".claude" / "projects" / enc / "s1.jsonl", {"cwd": str(r)})
+        enc = re.sub(r"[^A-Za-z0-9]", "-", str(r)).strip("-")
+        t = self.home / ".cursor" / "projects" / enc / "agent-transcripts"
+        t.mkdir(parents=True)
+        (t / "t.txt").write_text("x")
         sessions, _ = o.collect_all(ctx)
         o.build_zip(ctx, sessions, r / "agent-trace.zip", False)
         names = zipfile.ZipFile(str(r / "agent-trace.zip")).namelist()
         self.assertFalse(any("Users-%s" % USER in n for n in names), names)
         self.assertTrue(any("Users-user" in n for n in names), names)
+
+
+class OpenCodeDbTests(Fixture):
+    def test_wal_mode_db_in_folder_with_spaces(self):
+        d = self.home / "my data" / "opencode"
+        d.mkdir(parents=True)
+        db = d / "opencode.db"
+        con = sqlite3.connect(str(db))
+        con.execute("pragma journal_mode=wal")
+        con.execute("create table session (id text, directory text)")
+        con.execute("create table message (id text, session_id text, data text)")
+        con.execute("create table part (id text, message_id text, session_id text, data text)")
+        con.execute("insert into session values ('ses_w', ?)", (str(self.repo),))
+        con.execute("insert into message values ('m1','ses_w','{}')")
+        con.execute("insert into part values ('p1','m1','ses_w','{\"text\":\"hi\"}')")
+        con.commit()
+        ctx = o.Ctx(self.repo, home=self.home, env={"OPENCODE_DB": str(db)})
+        try:
+            sessions, diag = o.collect_opencode(ctx)
+        finally:
+            con.close()
+        self.assertEqual([s.sid for s in sessions], ["ses_w"])
+        self.assertFalse(any("could not read" in d for d in diag), diag)
+        blob = json.loads(sessions[0].blobs[0][1].decode())
+        self.assertEqual(blob["messages"][0]["parts"][0]["id"], "p1")
+
+    def test_unreadable_db_does_not_break_collection(self):
+        bad = self.home / "opencode.db"
+        bad.write_text("not a database")
+        ctx = o.Ctx(self.repo, home=self.home, env={"OPENCODE_DB": str(bad)})
+        sessions, diag = o.collect_opencode(ctx)
+        self.assertEqual(sessions, [])
+        self.assertTrue(any("could not read" in d for d in diag))
+
+
+class ReportTests(Fixture):
+    def test_log_ok_is_reported_even_when_output_is_missing(self):
+        (self.repo / "log.txt").write_text(
+            "## [2026-01-01T00:00:00+00:00] SESSION START\n\ntool=Claude Code\nmodel=claude-sonnet-5-5\n")
+        buf = io.StringIO()
+        old, sys.stdout = sys.stdout, buf
+        try:
+            out_ok, log_ok = o.report_checks(self.ctx)
+        finally:
+            sys.stdout = old
+        self.assertEqual((out_ok, log_ok), (False, True))
+        self.assertIn("log.txt checks:\n  OK", buf.getvalue())

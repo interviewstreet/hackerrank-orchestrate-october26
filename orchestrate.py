@@ -29,6 +29,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+import tempfile
 import sys
 import time
 import zipfile
@@ -377,10 +378,10 @@ def collect_claude(ctx: Ctx) -> Collected:
                 if not hit:
                     continue
                 s = Session("claude-code", jl.stem, why)
-                s.add_file(jl, "claude-code/%s/%s" % (proj.name, jl.name))
+                s.add_file(jl, "claude-code/%s" % jl.name)
                 comp = proj / jl.stem
                 if comp.is_dir():
-                    s.add_tree(comp, "claude-code/%s/%s" % (proj.name, jl.stem))
+                    s.add_tree(comp, "claude-code/%s" % jl.stem)
                 sessions.append(s)
     return sessions, diag
 
@@ -407,7 +408,7 @@ def collect_codex(ctx: Ctx) -> Collected:
                 continue
             if any(under(c, ctx.roots) for c in head_cwds(jl)):
                 s = Session("codex", jl.stem.replace("rollout-", ""), "recorded cwd inside this repo")
-                s.add_file(jl, "codex/%s/%s" % (root.name, jl.relative_to(root).as_posix()))
+                s.add_file(jl, "codex/%s" % jl.name)
                 sessions.append(s)
     return sessions, diag
 
@@ -431,7 +432,7 @@ def collect_antigravity(ctx: Ctx) -> Collected:
                 continue
             if any(file_mentions(c, needles) for c in cand):
                 s = Session("antigravity", conv.name, "transcript mentions this repo's path")
-                s.add_tree(conv, "antigravity/%s/brain/%s" % (variant, conv.name))
+                s.add_tree(conv, "antigravity/%s" % conv.name)
                 sessions.append(s)
     return sessions, diag
 
@@ -446,6 +447,17 @@ def _opencode_db_path(ctx: Ctx) -> Optional[Path]:
         if rc == 0 and txt:
             return Path(txt.splitlines()[-1])
     return ctx.xdg_data() / "opencode" / "opencode.db"
+
+
+def _copy_sqlite(db: Path, dest: Path) -> Path:
+    """Copy the db with its -wal/-shm files so a live or WAL-mode database opens read-only-safe."""
+    out = dest / "opencode.db"
+    shutil.copy2(str(db), str(out))
+    for suffix in ("-wal", "-shm"):
+        side = Path(str(db) + suffix)
+        if side.is_file():
+            shutil.copy2(str(side), str(dest / ("opencode.db" + suffix)))
+    return out
 
 
 def _sqlite_rows(con: sqlite3.Connection, table: str, where: str = "", args: tuple = ()):
@@ -489,8 +501,10 @@ def collect_opencode(ctx: Ctx) -> Collected:
     if db is not None:
         diag.append("%s (%s)" % (db, _exists(db)))
     if db is not None and db.is_file():
+        tmpdir = None
         try:
-            con = sqlite3.connect("file:%s?mode=ro" % db.as_posix(), uri=True, timeout=5)
+            tmpdir = tempfile.mkdtemp(prefix="orchestrate-opencode-")
+            con = sqlite3.connect(str(_copy_sqlite(db, Path(tmpdir))), timeout=5)
             try:
                 for row in _sqlite_rows(con, "session"):
                     sid = str(row.get("id", ""))
@@ -512,8 +526,11 @@ def collect_opencode(ctx: Ctx) -> Collected:
                     done_ids.add(sid)
             finally:
                 con.close()
-        except sqlite3.Error as exc:
+        except (sqlite3.Error, OSError) as exc:
             diag.append("could not read opencode.db: %s" % exc)
+        finally:
+            if tmpdir:
+                shutil.rmtree(tmpdir, ignore_errors=True)
     # 3) legacy JSON storage layout
     legacy = ctx.xdg_data() / "opencode" / "storage"
     sess_root = legacy / "session"
@@ -1044,7 +1061,7 @@ def _check_steps(cid: str, status: str, steps: list, warns: List[str]) -> List[s
     return errs
 
 
-def cmd_check(args, ctx: Ctx) -> int:
+def report_checks(ctx: Ctx) -> Tuple[bool, bool]:
     errors, warns, stats = check_output(ctx.repo)
     print("output.csv checks:")
     if stats:
@@ -1058,13 +1075,20 @@ def cmd_check(args, ctx: Ctx) -> int:
         print("  warn   %s" % w)
     if len(uniq) > 10:
         print("  warn   ... and %d more" % (len(uniq) - 10))
+    if not errors:
+        print("  OK")
     lerrs = check_log(ctx.repo)
     print("log.txt checks:")
     for e in lerrs[:15]:
         print("  ERROR  %s" % e)
-    if not errors and not lerrs:
-        print("  OK: output.csv and log.txt are valid.")
-    return 1 if (errors or lerrs) else 0
+    if not lerrs:
+        print("  OK")
+    return not errors, not lerrs
+
+
+def cmd_check(args, ctx: Ctx) -> int:
+    out_ok, log_ok = report_checks(ctx)
+    return 0 if (out_ok and log_ok) else 1
 
 
 # ---------------------------------------------------------------------------
@@ -1212,17 +1236,17 @@ def check_log(repo: Path) -> List[str]:
 
 def cmd_submit(args, ctx: Ctx) -> int:
     print("== 1/3  output.csv and log.txt ==")
-    rc_check = cmd_check(args, ctx)
+    out_ok, log_ok = report_checks(ctx)
     print("\n== 2/3  agent traces ==")
     rc_trace = cmd_trace(args, ctx)
     print("\n== 3/3  checklist ==")
-    print("  [%s] output.csv valid and log.txt entries valid" % ("x" if rc_check == 0 else " "))
+    print("  [%s] output.csv valid (518 rows, steps_json, ordering)" % ("x" if out_ok else " "))
+    print("  [%s] log.txt valid; upload it as the chat_transcript" % ("x" if log_ok else " "))
     print("  [%s] %s built (review it before uploading)" % ("x" if rc_trace == 0 else " ", ZIP_NAME))
     print("  [ ] code.zip: your solution, prompts, README.md, evaluation/evaluation_report.md and")
     print("      evaluation/usage_report.md. No dataset/, venvs, caches, nested archives or secrets.")
-    print("  [ ] log.txt is the chat_transcript you upload.")
     print("\nSubmit at: %s" % SUBMIT_URL)
-    return 0 if (rc_check == 0 and rc_trace == 0) else 1
+    return 0 if (out_ok and log_ok and rc_trace == 0) else 1
 
 
 # ---------------------------------------------------------------------------
